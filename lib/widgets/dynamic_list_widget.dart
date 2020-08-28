@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:yellow_naples/view_models/view_model.dart';
+import 'package:yellow_naples/view_models/common.dart';
 import 'package:provider/provider.dart';
 
 class DynamicListWidget extends StatelessWidget {

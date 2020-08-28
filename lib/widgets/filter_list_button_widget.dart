@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:yellow_naples/view_models/view_model.dart';
+import 'package:yellow_naples/view_models/common.dart';
 import 'package:provider/provider.dart';
 
 //Posa la llista en mode filtre per tal que mostri el widget per introduir la cerca
