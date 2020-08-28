@@ -1,9 +1,12 @@
 library yellow_naples;
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'view_model.dart';
 import 'package:meta/meta.dart';
 import 'dart:collection';
+
+import 'widgets/navigation_widget.dart';
 
 //Type of function that creates a ViewModel, needs a BuildContext
 typedef ViewModel CreateViewModelFunction(BuildContext context);
@@ -37,7 +40,7 @@ abstract class NavigationFlow<T> {
 
   NavigationFlow(this._defaultState, this._defaultCreateViewModelFunction);
 
-  Future<StateViewModel<T>> defaultStateViewModel(BuildContext context) async{
+  Future<StateViewModel<T>> defaultStateViewModel(BuildContext context) async {
     final viewModel = _defaultCreateViewModelFunction(context);
     await viewModel.initialize();
     return new StateViewModel<T>(_defaultState, viewModel);
@@ -81,7 +84,7 @@ class NavigationModel<T> extends ChangeNotifier {
     _updateCurrentStateViewModel(stateViewModel);
   }
 
-  Future<void> initializeDefault(BuildContext context) async{
+  Future<void> initializeDefault(BuildContext context) async {
     initialize(await _navigationFlow.defaultStateViewModel(context));
   }
 
@@ -133,5 +136,30 @@ class NavigationModel<T> extends ChangeNotifier {
     _history.removeLast();
 
     return true;
+  }
+
+  Widget get widget {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<NavigationModel<T>>.value(value: this),
+        ChangeNotifierProvider<NavigationModel>.value(value: this),
+      ],
+      builder: (context, child) {
+        //NavigationModel must be initialized with the context with access to
+        //the NavigationModel because when generating the initial view
+        //the context must have access to the NavigationModel
+        if (currentStateViewModel == null) {
+          return FutureBuilder<void>(
+              future: initializeDefault(context),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState != ConnectionState.done) {
+                  return Container(child: LinearProgressIndicator());
+                }
+                return NavigationWidget();
+              });
+        }
+        return NavigationWidget();
+      },
+    );
   }
 }
