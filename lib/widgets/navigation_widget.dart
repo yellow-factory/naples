@@ -30,7 +30,3 @@ class NavigationWidget extends StatelessWidget {
     ], child: w);
   }
 }
-
-//TODO: Coses que falten:
-//1.- Cal fer proves amb altres models de navegació...abstract
-//2.- Potser es pot tenir un navigation model que permeti navegar de qualsevol transició a qualsevol altra
