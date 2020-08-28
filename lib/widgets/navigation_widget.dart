@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
 import 'package:provider/provider.dart';
-import '../navigation.dart';
+import 'package:yellow_naples/navigation/navigation.dart';
 
 class NavigationWidget extends StatelessWidget {
   @override

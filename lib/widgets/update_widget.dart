@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../snack.dart';
-import '../navigation.dart';
+import 'package:yellow_naples/navigation/navigation.dart';
 import 'actions_widget.dart';
 import 'base_scaffold_widget.dart';
 import 'dynamic_form_widget.dart';

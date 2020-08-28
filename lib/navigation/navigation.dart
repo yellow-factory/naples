@@ -2,10 +2,10 @@ library yellow_naples;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'view_models/view_model.dart';
+import 'package:yellow_naples/view_models/view_model.dart';
 import 'package:meta/meta.dart';
 import 'dart:collection';
-import 'widgets/navigation_widget.dart';
+import 'package:yellow_naples/widgets/navigation_widget.dart';
 
 //Type of function that creates a ViewModel, needs a BuildContext
 typedef ViewModel CreateViewModelFunction(BuildContext context);

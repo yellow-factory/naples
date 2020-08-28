@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
-import 'package:yellow_naples/navigation.dart';
+import 'package:yellow_naples/navigation/navigation.dart';
 import 'package:yellow_naples/widgets/create_widget.dart';
 import 'package:yellow_naples/widgets/list_widget.dart';
 import 'package:yellow_naples/widgets/update_widget.dart';
@@ -37,7 +37,7 @@ abstract class CreateViewModel<T> extends GetSetViewModel<T> {
 //TODO: SearchableViewModel<T, U>, TableViewModel...
 
 //TODO: Potser hi hauria d'haver una versió més general de ListViewModel a view_model.dart
-//que no estigui lligada a cap widget en concret i aquí la versió més evolucionada, de la 
+//que no estigui lligada a cap widget en concret i aquí la versió més evolucionada, de la
 //bàsica (idea semblant a getsetviewmodel) haurien de sortir list, table, etc.
 
 //T tipus de dades de la llista
