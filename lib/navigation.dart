@@ -2,7 +2,7 @@ library yellow_naples;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'view_model.dart';
+import 'view_models/view_model.dart';
 import 'package:meta/meta.dart';
 import 'dart:collection';
 import 'widgets/navigation_widget.dart';

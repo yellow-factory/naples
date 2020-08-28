@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:yellow_naples/view_model.dart';
+import 'package:yellow_naples/view_models/view_model.dart';
 import 'package:provider/provider.dart';
 
 class DynamicFormWidget extends StatelessWidget {
@@ -8,8 +8,7 @@ class DynamicFormWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var properties =
-        context.select<GetSetViewModel, Iterable<EditableViewModelProperty>>(
-            (x) => x.properties);
+        context.select<GetSetViewModel, Iterable<EditableViewModelProperty>>((x) => x.properties);
 
     return Form(
       child: Column(

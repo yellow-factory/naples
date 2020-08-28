@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import './snack_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:yellow_naples/view_model.dart';
+import 'package:yellow_naples/view_models/view_model.dart';
 
 class BaseScaffoldWidget extends StatelessWidget {
   final Widget child;

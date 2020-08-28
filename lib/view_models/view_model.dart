@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import './utils.dart';
-import './widgets/create_widget.dart';
-import './widgets/list_widget.dart';
-import './widgets/update_widget.dart';
+import '../utils.dart';
+import '../widgets/create_widget.dart';
+import '../widgets/list_widget.dart';
+import '../widgets/update_widget.dart';
 
 //TODO: Les ViewModels CreateViewModel, UpdateViewModel i ListViewModel potser
 //són massa específiques i potser s'haurien de posar a banda...

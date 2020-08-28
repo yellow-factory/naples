@@ -3,7 +3,7 @@ import '../snack.dart';
 import 'actions_widget.dart';
 import 'base_scaffold_widget.dart';
 import 'dynamic_form_widget.dart';
-import '../view_model.dart';
+import 'package:yellow_naples/view_models/view_model.dart';
 import 'package:provider/provider.dart';
 import '../navigation.dart';
 

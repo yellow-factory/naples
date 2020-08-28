@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:yellow_naples/view_model.dart';
+import 'package:yellow_naples/view_models/view_model.dart';
 
 class FilterListWidget extends StatefulWidget {
   FilterListWidget({Key key}) : super(key: key);
@@ -37,8 +37,7 @@ class _FilterListWidgetState extends State<FilterListWidget> {
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Card(
               child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 12.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12.0),
                   child: TextField(
                     autofocus: true,
                     decoration: InputDecoration(
