@@ -5,8 +5,6 @@ import 'package:provider/provider.dart';
 import 'view_model.dart';
 import 'package:meta/meta.dart';
 import 'dart:collection';
-
-import 'widgets/navigation_widget.dart';
 import 'widgets/navigation_widget.dart';
 
 //Type of function that creates a ViewModel, needs a BuildContext
