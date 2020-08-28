@@ -16,6 +16,32 @@ abstract class OneTimeInitializable {
   }
 }
 
+abstract class OneTimeInitializable1<T> {
+  bool _initialized1 = false;
+
+  @protected
+  Future<void> init1(T t);
+
+  Future<void> initialize1(T t) async {
+    if (_initialized1) return;
+    await init1(t);
+    _initialized1 = true;
+  }
+}
+
+abstract class OneTimeInitializable2<T, U> {
+  bool _initialized2 = false;
+
+  @protected
+  Future<void> init2(T t, U u);
+
+  Future<void> initialize2(T t, U u) async {
+    if (_initialized2) return;
+    await init2(t, u);
+    _initialized2 = true;
+  }
+}
+
 abstract class Refreshable {
   Future<void> refresh();
 }
@@ -31,10 +57,13 @@ class UidParam extends ValueNotifier<String> {
 //TODO: Les que estan per sobre d'aquí no haurien d'estar aquí, són més generals i tenen a veure amb altres coses...
 //TODO: No tinc clar si el context hauria de ser un paràmetre del constructor o un paràmetre de initialize...
 
-abstract class ViewModel extends ChangeNotifier with OneTimeInitializable {
+abstract class ViewModel extends ChangeNotifier with OneTimeInitializable1<BuildContext> {
   BuildContext context;
 
-  ViewModel(this.context);
+  @override
+  Future<void> init1(BuildContext context) async {
+    this.context = context;
+  }
 
   T getProvided<T>() => Provider.of<T>(context, listen: false);
 
@@ -51,8 +80,6 @@ abstract class GetSetViewModel<T> extends ViewModel {
   final _properties = List<EditableViewModelProperty>();
   T model;
 
-  GetSetViewModel(BuildContext c) : super(c);
-
   Iterable<EditableViewModelProperty> get properties => _properties;
 
   void _add(EditableViewModelProperty property) {
@@ -61,7 +88,8 @@ abstract class GetSetViewModel<T> extends ViewModel {
   }
 
   @override
-  Future<void> init() async {
+  Future<void> init1(BuildContext context) async {
+    super.init1(context);
     model = await get();
     addProperties();
   }

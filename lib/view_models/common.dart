@@ -7,8 +7,6 @@ import 'package:yellow_naples/widgets/list_widget.dart';
 import 'package:yellow_naples/widgets/update_widget.dart';
 
 abstract class StepViewModel<T> extends GetSetViewModel<T> {
-  StepViewModel(BuildContext c) : super(c);
-
   Future<void> next();
   Future<void> previous() async {
     var back = await Provider.of<NavigationModel>(context, listen: false).back();
@@ -17,8 +15,6 @@ abstract class StepViewModel<T> extends GetSetViewModel<T> {
 }
 
 abstract class UpdateViewModel<T> extends GetSetViewModel<T> {
-  UpdateViewModel(BuildContext c) : super(c);
-
   @override
   Widget get widget {
     return ChangeNotifierProvider<GetSetViewModel>.value(value: this, child: UpdateWidget());
@@ -26,8 +22,6 @@ abstract class UpdateViewModel<T> extends GetSetViewModel<T> {
 }
 
 abstract class CreateViewModel<T> extends GetSetViewModel<T> {
-  CreateViewModel(BuildContext c) : super(c);
-
   @override
   Widget get widget {
     return ChangeNotifierProvider<GetSetViewModel>.value(value: this, child: CreateWidget());
@@ -47,8 +41,6 @@ abstract class ListViewModel<T> extends ViewModel with Refreshable {
   String _filterValue = "";
   T _selectedItem;
   bool loading = false;
-
-  ListViewModel(BuildContext c) : super(c);
 
   //Hi hauria d'haver una enumeració per saber si filtre per title, subtitle o tots dos
   //Hi hauria d'haver una enumeració per saber com fer el tipus d'enumeració: StartsWith, contains...
@@ -79,7 +71,8 @@ abstract class ListViewModel<T> extends ViewModel with Refreshable {
   }
 
   @override
-  Future<void> init() async {
+  Future<void> init1(BuildContext context) async {
+    await super.init1(context);
     await load();
   }
 

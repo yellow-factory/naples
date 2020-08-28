@@ -7,8 +7,8 @@ import 'package:meta/meta.dart';
 import 'dart:collection';
 import 'package:yellow_naples/widgets/navigation_widget.dart';
 
-//Type of function that creates a ViewModel, needs a BuildContext
-typedef ViewModel CreateViewModelFunction(BuildContext context);
+//Type of function that creates a ViewModel
+typedef ViewModel CreateViewModelFunction();
 
 class Transition<T> {
   final T beginningState;
@@ -19,10 +19,10 @@ class Transition<T> {
   Transition(this.beginningState, this.endingState, this._createViewModelFunction, this.allowBack);
 
   Future<StateViewModel<T>> createStateViewModel(BuildContext context) async {
-    var vm = _createViewModelFunction(context);
-    if (vm == null) throw new Exception("ViewModel is null");
-    await vm.initialize();
-    return StateViewModel<T>(endingState, vm);
+    var viewModel = _createViewModelFunction();
+    if (viewModel == null) throw new Exception("ViewModel is null");
+    await viewModel.initialize1(context);
+    return StateViewModel<T>(endingState, viewModel);
   }
 }
 
@@ -40,8 +40,9 @@ abstract class NavigationFlow<T> {
   NavigationFlow(this._defaultState, this._defaultCreateViewModelFunction);
 
   StateViewModel<T> defaultStateViewModel(BuildContext context) {
-    final viewModel = _defaultCreateViewModelFunction(context);
-    viewModel.initialize();
+    final viewModel = _defaultCreateViewModelFunction();
+    if (viewModel == null) throw new Exception("ViewModel is null");
+    viewModel.initialize1(context);
     return new StateViewModel<T>(_defaultState, viewModel);
   }
 
@@ -72,24 +73,30 @@ abstract class NavigationFlow<T> {
 //TODO: Podria ser interessant que NavigationModel disposés de la funció forward que fés la transició per defecte si només n'hi ha una, és a dir que busqués
 
 //T és el tipus que diferencia cadascun dels estats i per tant ViewModels diferents que hi pot haver
-class NavigationModel<T> extends ChangeNotifier {
+class NavigationModel<T> extends ChangeNotifier
+    with
+        OneTimeInitializable1<BuildContext>,
+        OneTimeInitializable2<BuildContext, StateViewModel<T>> {
+  BuildContext context;
   StateViewModel<T> _currentStateViewModel;
-  ListQueue<StateViewModel<T>> _history = ListQueue<StateViewModel<T>>();
+  final ListQueue<StateViewModel<T>> _history = ListQueue<StateViewModel<T>>();
   final NavigationFlow<T> _navigationFlow;
 
   NavigationModel(this._navigationFlow);
 
-  void initialize(StateViewModel<T> stateViewModel) {
+  Future<void> init2(BuildContext context, StateViewModel<T> stateViewModel) async {
+    this.context = context;
     _updateCurrentStateViewModel(stateViewModel);
   }
 
-  void initializeDefault(BuildContext context) {
-    initialize(_navigationFlow.defaultStateViewModel(context));
+  Future<void> init1(BuildContext context) async {
+    var stateViewModel = _navigationFlow.defaultStateViewModel(context);
+    initialize2(context, stateViewModel);
   }
 
   StateViewModel<T> get currentStateViewModel => _currentStateViewModel;
 
-  Future<bool> transition(BuildContext context, T newState) async {
+  Future<bool> transition(T newState) async {
     if (isBack(newState)) back();
 
     var tm = _navigationFlow.getTransitionModel(currentStateViewModel.state, newState);
@@ -147,9 +154,7 @@ class NavigationModel<T> extends ChangeNotifier {
         //NavigationModel must be initialized with the context with access to
         //the NavigationModel because when generating the initial view
         //the context must have access to the NavigationModel
-        if (currentStateViewModel == null) {
-          initializeDefault(context);
-        }
+        initialize1(context);
         return NavigationWidget();
       },
     );
