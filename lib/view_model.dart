@@ -6,6 +6,9 @@ import './widgets/create_widget.dart';
 import './widgets/list_widget.dart';
 import './widgets/update_widget.dart';
 
+//TODO: Les ViewModels CreateViewModel, UpdateViewModel i ListViewModel potser
+//són massa específiques i potser s'haurien de posar a banda...
+
 abstract class OneTimeInitializable {
   bool _initialized = false;
 
@@ -66,7 +69,10 @@ abstract class GetSetViewModel<T> extends ViewModel {
     addProperties();
   }
 
-  void addProperties();
+  void addProperties() {
+    _properties.clear();
+  }
+
   Future<T> get();
   Future<void> set();
 

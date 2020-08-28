@@ -37,9 +37,9 @@ abstract class NavigationFlow<T> {
 
   NavigationFlow(this._defaultState, this._defaultCreateViewModelFunction);
 
-  StateViewModel<T> defaultStateViewModel(BuildContext context) {
+  Future<StateViewModel<T>> defaultStateViewModel(BuildContext context) async{
     final viewModel = _defaultCreateViewModelFunction(context);
-    viewModel.initialize();
+    await viewModel.initialize();
     return new StateViewModel<T>(_defaultState, viewModel);
   }
 
@@ -81,8 +81,8 @@ class NavigationModel<T> extends ChangeNotifier {
     _updateCurrentStateViewModel(stateViewModel);
   }
 
-  void initializeDefault(BuildContext context) {
-    initialize(_navigationFlow.defaultStateViewModel(context));
+  Future<void> initializeDefault(BuildContext context) async{
+    initialize(await _navigationFlow.defaultStateViewModel(context));
   }
 
   StateViewModel<T> get currentStateViewModel => _currentStateViewModel;
