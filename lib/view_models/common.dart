@@ -2,29 +2,40 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
 import 'package:yellow_naples/navigation/navigation.dart';
-import 'package:yellow_naples/widgets/create_widget.dart';
 import 'package:yellow_naples/widgets/list_widget.dart';
-import 'package:yellow_naples/widgets/update_widget.dart';
+import 'package:yellow_naples/widgets/savecancel_widget.dart';
+
+import '../snack.dart';
 
 abstract class StepViewModel<T> extends GetSetViewModel<T> {
   Future<void> next();
   Future<void> previous() async {
     var back = await Provider.of<NavigationModel>(context, listen: false).back();
-    print('Cancelling: $back');
+    print('Invoking back, result: $back');
   }
 }
 
-abstract class UpdateViewModel<T> extends GetSetViewModel<T> {
-  @override
-  Widget get widget {
-    return ChangeNotifierProvider<GetSetViewModel>.value(value: this, child: UpdateWidget());
+abstract class SaveCancelViewModel<T> extends GetSetViewModel<T> {
+  Future<void> cancel() async {
+    var back = await Provider.of<NavigationModel>(context, listen: false).back();
+    print('Invoking back, result: $back');
   }
-}
 
-abstract class CreateViewModel<T> extends GetSetViewModel<T> {
+  Future<void> save() async {
+    if (!valid) return;
+    update(); //Send the changes of the controls to the viewmodel
+    await set(); //Send the changes to the backend
+    await Provider.of<NavigationModel>(context, listen: false)
+        .back(); //Returns to the previous view
+    Provider.of<SnackModel>(context, listen: false).message = "Saved!"; //Sends a snack message
+  }
+
   @override
   Widget get widget {
-    return ChangeNotifierProvider<GetSetViewModel>.value(value: this, child: CreateWidget());
+    return MultiProvider(providers: [
+      ChangeNotifierProvider<SaveCancelViewModel>.value(value: this), //used by SaveCancelWidget
+      ChangeNotifierProvider<GetSetViewModel>.value(value: this) //used by DynamicFormWidget
+    ], child: SaveCancelWidget());
   }
 }
 
