@@ -32,8 +32,6 @@ class StateViewModel<T> {
   StateViewModel(this.state, this.viewModel);
 }
 
-//TODO: Podria ser interessant que NavigationModel disposés de la funció forward que fés la transició per defecte si només n'hi ha una, és a dir que busqués
-
 //T és el tipus que diferencia cadascun dels estats i per tant ViewModels diferents que hi pot haver
 class NavigationModel<T> extends ChangeNotifier
     with
@@ -69,16 +67,16 @@ class NavigationModel<T> extends ChangeNotifier
   }
 
   @protected
-  void addTransitionModel(Transition<T> transitionModel) {
-    if (getTransitionModel(transitionModel.beginningState, transitionModel.endingState) != null)
+  void addTransitionModel(Transition<T> transition) {
+    if (getTransition(transition.beginningState, transition.endingState) != null)
       throw new Exception("The specified transition already exist");
-    if (transitionModel.beginningState == transitionModel.endingState)
+    if (transition.beginningState == transition.endingState)
       throw new Exception("The beginningState and the endingState must be different");
-    _transitions.add(transitionModel);
+    _transitions.add(transition);
   }
 
   @protected
-  Transition<T> getTransitionModel(T beginningState, T endingState) {
+  Transition<T> getTransition(T beginningState, T endingState) {
     return _transitions.firstWhere(
         (element) => element.beginningState == beginningState && element.endingState == endingState,
         orElse: () => null);
@@ -87,19 +85,23 @@ class NavigationModel<T> extends ChangeNotifier
   StateViewModel<T> get currentStateViewModel => _currentStateViewModel;
 
   Future<bool> transition(T newState) async {
-    if (isBack(newState)) back();
+    if (canGoBack && _history.last.state == newState) back();
 
-    var tm = getTransitionModel(currentStateViewModel.state, newState);
+    final t = getTransition(currentStateViewModel.state, newState);
 
-    if (currentStateViewModel != null && tm == null) return false;
+    return _executeTransition(t);
+  }
+
+  Future<bool> _executeTransition(Transition transition) async {
+    if (currentStateViewModel != null && transition == null) return false;
 
     //Adds the current to the history
-    if (currentStateViewModel != null && tm.allowBack) {
+    if (currentStateViewModel != null && transition.allowBack) {
       _history.add(currentStateViewModel);
     }
 
     //Creates and initialize the ViewModel
-    var newStateViewModel = await tm.createStateViewModel(context);
+    var newStateViewModel = await transition.createStateViewModel(context);
 
     _updateCurrentStateViewModel(newStateViewModel);
 
@@ -111,13 +113,13 @@ class NavigationModel<T> extends ChangeNotifier
     notifyListeners();
   }
 
-  bool isBack(T newState) => _history.isNotEmpty && _history.last.state == newState;
+  bool get canGoBack => _history.isNotEmpty;
 
   Future<bool> back() async {
-    if (_history.isEmpty) return false;
+    if (!canGoBack) return false;
 
     //Get the last item in history
-    var last = _history.last;
+    final last = _history.last;
     ViewModel lastvm = last.viewModel;
 
     //Refresh the ViewModel if implements Refreshable
@@ -132,6 +134,23 @@ class NavigationModel<T> extends ChangeNotifier
     _history.removeLast();
 
     return true;
+  }
+
+  bool get canGoForward {
+    //Can go forward if exists one and only one transition to the next state
+    return _transitions
+            .where((element) => element.beginningState == currentStateViewModel.state)
+            .length ==
+        1;
+  }
+
+  Future<bool> forward() async {
+    if (!canGoForward) return false;
+
+    final t = _transitions
+        .singleWhere((element) => element.beginningState == currentStateViewModel.state);
+
+    return _executeTransition(t);
   }
 
   Widget get widget {
