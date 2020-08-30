@@ -19,13 +19,14 @@ class StepWidget extends StatelessWidget {
         child: BaseScaffoldWidget(
             child: ActionsWidget(actions: <ActionWrap>[
           ActionWrap(
-            title: "Continua",
-            action: () async => await viewModel.next(),
+            title: viewModel.hasNextStep ? "Continua" : "Finalitza",
+            action: () async => await viewModel.nextStep(),
           ),
-          ActionWrap(
-            title: "Torna",
-            action: () async => await viewModel.previous(),
-          ),
+          if (viewModel.hasPreviousStep)
+            ActionWrap(
+              title: "Torna",
+              action: () async => await viewModel.previousStep(),
+            ),
         ], child: DynamicFormWidget())));
   }
 }

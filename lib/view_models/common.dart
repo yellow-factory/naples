@@ -4,14 +4,28 @@ import 'package:yellow_naples/view_models/view_model.dart';
 import 'package:yellow_naples/navigation/navigation.dart';
 import 'package:yellow_naples/widgets/list_widget.dart';
 import 'package:yellow_naples/widgets/savecancel_widget.dart';
-
-import '../snack.dart';
+import 'package:yellow_naples/widgets/step_widget.dart';
+import 'package:yellow_naples/snack.dart';
 
 abstract class StepViewModel<T> extends GetSetViewModel<T> {
-  Future<void> next();
-  Future<void> previous() async {
-    var back = await Provider.of<NavigationModel>(context, listen: false).back();
-    print('Invoking back, result: $back');
+  bool get hasNextStep => Provider.of<NavigationModel>(context, listen: false).canGoForward;
+
+  Future<void> nextStep() async {
+    if (!valid) return;
+    update(); //Envia els canvis dels controls al viewmodel
+    await set(); //Envia els canvis al backend
+    await Provider.of<NavigationModel>(context, listen: false).forward();
+  }
+
+  bool get hasPreviousStep => Provider.of<NavigationModel>(context, listen: false).canGoBack;
+
+  Future<void> previousStep() async {
+    await Provider.of<NavigationModel>(context, listen: false).back();
+  }
+
+  @override
+  Widget get widget {
+    return ChangeNotifierProvider<StepViewModel>.value(value: this, child: StepWidget());
   }
 }
 
