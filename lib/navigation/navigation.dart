@@ -32,18 +32,33 @@ class StateViewModel<T> {
   StateViewModel(this.state, this.viewModel);
 }
 
-abstract class NavigationFlow<T> {
+//TODO: Podria ser interessant que NavigationModel disposés de la funció forward que fés la transició per defecte si només n'hi ha una, és a dir que busqués
+
+//T és el tipus que diferencia cadascun dels estats i per tant ViewModels diferents que hi pot haver
+class NavigationModel<T> extends ChangeNotifier
+    with
+        OneTimeInitializable1<BuildContext>,
+        OneTimeInitializable2<BuildContext, StateViewModel<T>> {
+  BuildContext context;
   T _defaultState;
   CreateViewModelFunction _defaultCreateViewModelFunction;
   List<Transition<T>> _transitions = List<Transition<T>>();
+  StateViewModel<T> _currentStateViewModel;
+  final ListQueue<StateViewModel<T>> _history = ListQueue<StateViewModel<T>>();
 
-  NavigationFlow(this._defaultState, this._defaultCreateViewModelFunction);
+  NavigationModel(this._defaultState, this._defaultCreateViewModelFunction);
 
-  StateViewModel<T> defaultStateViewModel(BuildContext context) {
+  Future<void> init2(BuildContext context, StateViewModel<T> stateViewModel) async {
+    this.context = context;
+    _updateCurrentStateViewModel(stateViewModel);
+  }
+
+  Future<void> init1(BuildContext context) async {
     final viewModel = _defaultCreateViewModelFunction();
     if (viewModel == null) throw new Exception("ViewModel is null");
     viewModel.initialize1(context);
-    return new StateViewModel<T>(_defaultState, viewModel);
+    final stateViewModel = StateViewModel<T>(_defaultState, viewModel);
+    initialize2(context, stateViewModel);
   }
 
   @protected
@@ -68,38 +83,13 @@ abstract class NavigationFlow<T> {
         (element) => element.beginningState == beginningState && element.endingState == endingState,
         orElse: () => null);
   }
-}
-
-//TODO: Podria ser interessant que NavigationModel disposés de la funció forward que fés la transició per defecte si només n'hi ha una, és a dir que busqués
-
-//T és el tipus que diferencia cadascun dels estats i per tant ViewModels diferents que hi pot haver
-class NavigationModel<T> extends ChangeNotifier
-    with
-        OneTimeInitializable1<BuildContext>,
-        OneTimeInitializable2<BuildContext, StateViewModel<T>> {
-  BuildContext context;
-  StateViewModel<T> _currentStateViewModel;
-  final ListQueue<StateViewModel<T>> _history = ListQueue<StateViewModel<T>>();
-  final NavigationFlow<T> _navigationFlow;
-
-  NavigationModel(this._navigationFlow);
-
-  Future<void> init2(BuildContext context, StateViewModel<T> stateViewModel) async {
-    this.context = context;
-    _updateCurrentStateViewModel(stateViewModel);
-  }
-
-  Future<void> init1(BuildContext context) async {
-    var stateViewModel = _navigationFlow.defaultStateViewModel(context);
-    initialize2(context, stateViewModel);
-  }
 
   StateViewModel<T> get currentStateViewModel => _currentStateViewModel;
 
   Future<bool> transition(T newState) async {
     if (isBack(newState)) back();
 
-    var tm = _navigationFlow.getTransitionModel(currentStateViewModel.state, newState);
+    var tm = getTransitionModel(currentStateViewModel.state, newState);
 
     if (currentStateViewModel != null && tm == null) return false;
 
