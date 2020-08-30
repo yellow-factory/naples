@@ -18,7 +18,7 @@ class SaveCancelWidget extends StatelessWidget {
         child: ActionsWidget(actions: <ActionWrap>[
       ActionWrap(
         title: "Save",
-        action: () async => viewModel.update(),
+        action: () async => viewModel.save(),
       ),
       ActionWrap(
         title: "Cancel",

@@ -154,12 +154,14 @@ abstract class GetSetViewModel<T> extends ViewModel {
   }
 
   void update() {
+    //Sends widgets info to model
     properties.where((x) => x.editable).forEach((x) {
       x.update();
     });
   }
 
   void undo() {
+    //Sends model info to widgets, reverse of update
     properties.where((x) => x.editable).forEach((x) {
       x.undo();
     });
