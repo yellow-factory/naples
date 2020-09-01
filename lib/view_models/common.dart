@@ -10,7 +10,7 @@ import 'package:yellow_naples/snack.dart';
 import '../widgets/dynamic_form_widget.dart';
 
 mixin StepViewModelController<T> on GetSetViewModel<T> {
-  NavigationModel get navigationModel => Provider.of<NavigationModel>(context, listen: false);
+  NavigationModel get navigationModel => getProvided();
 
   bool get hasNextStep => navigationModel.canGoForward;
 
@@ -44,8 +44,8 @@ abstract class SingleStepViewModel<T> extends GetSetViewModel<T> with StepViewMo
 }
 
 abstract class SaveCancelViewModel<T> extends GetSetViewModel<T> {
-  NavigationModel get navigationModel => Provider.of<NavigationModel>(context, listen: false);
-  SnackModel get snackModel => Provider.of<SnackModel>(context, listen: false);
+  NavigationModel get navigationModel => getProvided();
+  SnackModel get snackModel => getProvided();
 
   Future<void> cancel() async {
     var back = await navigationModel.back();
