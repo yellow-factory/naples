@@ -6,6 +6,7 @@ import 'package:yellow_naples/view_models/view_model.dart';
 import 'package:meta/meta.dart';
 import 'dart:collection';
 import 'package:yellow_naples/widgets/navigation_widget.dart';
+import 'package:yellow_naples/widgets/stepper_navigation_widget.dart';
 
 //Type of function that creates a ViewModel
 typedef ViewModel CreateViewModelFunction();
@@ -33,7 +34,7 @@ class StateViewModel<T> {
 }
 
 //T és el tipus que diferencia cadascun dels estats i per tant ViewModels diferents que hi pot haver
-class NavigationModel<T> extends ChangeNotifier
+abstract class NavigationModel<T> extends ChangeNotifier
     with
         OneTimeInitializable1<BuildContext>,
         OneTimeInitializable2<BuildContext, StateViewModel<T>> {
@@ -43,6 +44,7 @@ class NavigationModel<T> extends ChangeNotifier
   List<Transition<T>> _transitions = List<Transition<T>>();
   StateViewModel<T> _currentStateViewModel;
   final ListQueue<StateViewModel<T>> _history = ListQueue<StateViewModel<T>>();
+  //final bool _lazyViewInitialization;
 
   NavigationModel(this._defaultState, this._defaultCreateViewModelFunction);
 
@@ -83,6 +85,8 @@ class NavigationModel<T> extends ChangeNotifier
   }
 
   StateViewModel<T> get currentStateViewModel => _currentStateViewModel;
+
+  Iterable<StateViewModel> get history => _history;
 
   Future<bool> transition(T newState) async {
     if (canGoBack && _history.last.state == newState) back();
@@ -164,7 +168,38 @@ class NavigationModel<T> extends ChangeNotifier
         //the NavigationModel because when generating the initial view
         //the context must have access to the NavigationModel
         initialize1(context);
-        return NavigationWidget();
+        return MultiProvider(providers: [
+          ChangeNotifierProxyProvider<NavigationModel, TitleModel>(
+              create: (_) => TitleModel(currentStateViewModel.viewModel.title),
+              update: (_, navigationModel, titleModel) =>
+                  titleModel..value = navigationModel.currentStateViewModel.viewModel.title),
+        ], child: NavigationWidget());
+      },
+    );
+  }
+}
+
+abstract class StepsNavigationModel<T> extends NavigationModel<T> {
+  final String title;
+
+  StepsNavigationModel(T defaultState, CreateViewModelFunction defaultCreateViewModelFunction,
+      {this.title: ""})
+      : super(defaultState, defaultCreateViewModelFunction);
+
+  @override
+  Widget get widget {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<StepsNavigationModel<T>>.value(value: this),
+        ChangeNotifierProvider<StepsNavigationModel>.value(value: this),
+        ChangeNotifierProvider<NavigationModel<T>>.value(value: this),
+        ChangeNotifierProvider<NavigationModel>.value(value: this),
+        ChangeNotifierProvider<TitleModel>(create: (_) => TitleModel(this.title)),
+      ],
+      builder: (context, child) {
+        initialize1(context);
+        return ChangeNotifierProvider<ViewModel>(
+            create: (_) => currentStateViewModel.viewModel, child: StepperNavigationWidget());
       },
     );
   }

@@ -8,22 +8,23 @@ import 'package:provider/provider.dart';
 class SaveCancelWidget extends StatelessWidget {
   SaveCancelWidget({Key key}) : super(key: key);
 
-//TODO: Maybe "Save"/"Cancel" texts must be params of the widget...
-
   @override
   Widget build(BuildContext context) {
     var viewModel = context.watch<SaveCancelViewModel>();
 
     return BaseScaffoldWidget(
-        child: ActionsWidget(actions: <ActionWrap>[
-      ActionWrap(
-        title: "Save",
-        action: () async => viewModel.save(),
-      ),
-      ActionWrap(
-        title: "Cancel",
-        action: () async => viewModel.cancel(),
-      ),
-    ], child: DynamicFormWidget()));
+        child: Column(children: <Widget>[
+      DynamicFormWidget(),
+      ActionsWidget(actions: <ActionWrap>[
+        ActionWrap(
+          title: "Save",
+          action: () async => viewModel.save(),
+        ),
+        ActionWrap(
+          title: "Cancel",
+          action: () async => viewModel.cancel(),
+        ),
+      ]),
+    ]));
   }
 }
