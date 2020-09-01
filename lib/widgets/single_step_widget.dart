@@ -6,27 +6,30 @@ import 'package:yellow_naples/widgets/dynamic_form_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
 
-class StepWidget extends StatelessWidget {
-  StepWidget({Key key}) : super(key: key);
+class SingleStepWidget extends StatelessWidget {
+  SingleStepWidget({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var viewModel = context.watch<StepViewModel>();
+    var viewModel = context.watch<StepViewModelController>();
     //DynamicFormWidget depends on GetSetViewModel, this is the reason
     //why we register a notifier for GetSetViewModel with the same view
     return ChangeNotifierProvider<GetSetViewModel>.value(
         value: viewModel,
         child: BaseScaffoldWidget(
-            child: ActionsWidget(actions: <ActionWrap>[
-          ActionWrap(
-            title: viewModel.hasNextStep ? "Continua" : "Finalitza",
-            action: () async => await viewModel.nextStep(),
-          ),
-          if (viewModel.hasPreviousStep)
+            child: Column(children: <Widget>[
+          DynamicFormWidget(),
+          ActionsWidget(actions: <ActionWrap>[
             ActionWrap(
-              title: "Torna",
-              action: () async => await viewModel.previousStep(),
+              title: viewModel.hasNextStep ? "Continua" : "Finalitza",
+              action: () async => await viewModel.nextStep(),
             ),
-        ], child: DynamicFormWidget())));
+            if (viewModel.hasPreviousStep)
+              ActionWrap(
+                title: "Torna",
+                action: () async => await viewModel.previousStep(),
+              ),
+          ]),
+        ])));
   }
 }

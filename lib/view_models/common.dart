@@ -3,35 +3,52 @@ import 'package:provider/provider.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
 import 'package:yellow_naples/navigation/navigation.dart';
 import 'package:yellow_naples/widgets/list_widget.dart';
-import 'package:yellow_naples/widgets/savecancel_widget.dart';
-import 'package:yellow_naples/widgets/step_widget.dart';
+import 'package:yellow_naples/widgets/save_cancel_widget.dart';
+import 'package:yellow_naples/widgets/single_step_widget.dart';
 import 'package:yellow_naples/snack.dart';
 
-abstract class StepViewModel<T> extends GetSetViewModel<T> {
-  bool get hasNextStep => Provider.of<NavigationModel>(context, listen: false).canGoForward;
+import '../widgets/dynamic_form_widget.dart';
+
+mixin StepViewModelController<T> on GetSetViewModel<T> {
+  NavigationModel get navigationModel => getProvided();
+
+  bool get hasNextStep => navigationModel.canGoForward;
 
   Future<void> nextStep() async {
     if (!valid) return;
-    update(); //Envia els canvis dels controls al viewmodel
-    await set(); //Envia els canvis al backend
-    await Provider.of<NavigationModel>(context, listen: false).forward();
+    update(); //Sends changes from widgets to the model
+    await set(); //Sends changes from model to the backend
+    await navigationModel.forward();
   }
 
-  bool get hasPreviousStep => Provider.of<NavigationModel>(context, listen: false).canGoBack;
+  bool get hasPreviousStep => navigationModel.canGoBack;
 
   Future<void> previousStep() async {
-    await Provider.of<NavigationModel>(context, listen: false).back();
+    await navigationModel.back();
   }
+}
 
+abstract class RawStepViewModel<T> extends GetSetViewModel<T> with StepViewModelController<T> {
   @override
   Widget get widget {
-    return ChangeNotifierProvider<StepViewModel>.value(value: this, child: StepWidget());
+    return ChangeNotifierProvider<GetSetViewModel>.value(value: this, child: DynamicFormWidget());
+  }
+}
+
+abstract class SingleStepViewModel<T> extends GetSetViewModel<T> with StepViewModelController<T> {
+  @override
+  Widget get widget {
+    return ChangeNotifierProvider<StepViewModelController>.value(
+        value: this, child: SingleStepWidget());
   }
 }
 
 abstract class SaveCancelViewModel<T> extends GetSetViewModel<T> {
+  NavigationModel get navigationModel => getProvided();
+  SnackModel get snackModel => getProvided();
+
   Future<void> cancel() async {
-    var back = await Provider.of<NavigationModel>(context, listen: false).back();
+    var back = await navigationModel.back();
     print('Invoking back, result: $back');
   }
 
@@ -39,9 +56,8 @@ abstract class SaveCancelViewModel<T> extends GetSetViewModel<T> {
     if (!valid) return;
     update(); //Send the changes of the controls to the viewmodel
     await set(); //Send the changes to the backend
-    await Provider.of<NavigationModel>(context, listen: false)
-        .back(); //Returns to the previous view
-    Provider.of<SnackModel>(context, listen: false).message = "Saved!"; //Sends a snack message
+    await navigationModel.back(); //Returns to the previous view
+    snackModel.message = "Saved!"; //Sends a snack message
   }
 
   @override
