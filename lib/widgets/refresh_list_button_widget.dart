@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:yellow_naples/view_models/common.dart';
 import 'package:provider/provider.dart';
-
-import '../snack.dart';
+import 'package:yellow_naples/models.dart';
 
 class RefreshListButtonWidget extends StatelessWidget {
   RefreshListButtonWidget({Key key}) : super(key: key);

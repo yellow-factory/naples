@@ -5,7 +5,7 @@ import 'package:yellow_naples/navigation/navigation.dart';
 import 'package:yellow_naples/widgets/list_widget.dart';
 import 'package:yellow_naples/widgets/save_cancel_widget.dart';
 import 'package:yellow_naples/widgets/single_step_widget.dart';
-import 'package:yellow_naples/snack.dart';
+import 'package:yellow_naples/models.dart';
 
 import '../widgets/dynamic_form_widget.dart';
 
