@@ -2,20 +2,18 @@ library yellow_naples;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:yellow_naples/utils.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
 import 'package:meta/meta.dart';
 import 'dart:collection';
 import 'package:yellow_naples/widgets/navigation_widget.dart';
 import 'package:yellow_naples/widgets/stepper_navigation_widget.dart';
 
-//Type of function that creates a ViewModel
-typedef ViewModel CreateViewModelFunction();
-
 class Transition<T> {
   final T beginningState;
   final T endingState;
   final bool allowBack;
-  final CreateViewModelFunction _createViewModelFunction;
+  final FunctionOf<ViewModel> _createViewModelFunction;
 
   Transition(this.beginningState, this.endingState, this._createViewModelFunction, this.allowBack);
 
@@ -40,7 +38,7 @@ abstract class NavigationModel<T> extends ChangeNotifier
         OneTimeInitializable2<BuildContext, StateViewModel<T>> {
   BuildContext context;
   T _defaultState;
-  CreateViewModelFunction _defaultCreateViewModelFunction;
+  FunctionOf<ViewModel> _defaultCreateViewModelFunction;
   List<Transition<T>> _transitions = List<Transition<T>>();
   StateViewModel<T> _currentStateViewModel;
   final ListQueue<StateViewModel<T>> _history = ListQueue<StateViewModel<T>>();
@@ -62,7 +60,7 @@ abstract class NavigationModel<T> extends ChangeNotifier
   }
 
   @protected
-  void addTransition(T beginningState, T endingState, CreateViewModelFunction viewModelTransform,
+  void addTransition(T beginningState, T endingState, FunctionOf<ViewModel> viewModelTransform,
       {bool allowBack = true}) {
     var transitionModel = Transition<T>(beginningState, endingState, viewModelTransform, allowBack);
     addTransitionModel(transitionModel);
@@ -182,7 +180,7 @@ abstract class NavigationModel<T> extends ChangeNotifier
 abstract class StepsNavigationModel<T> extends NavigationModel<T> {
   final String title;
 
-  StepsNavigationModel(T defaultState, CreateViewModelFunction defaultCreateViewModelFunction,
+  StepsNavigationModel(T defaultState, FunctionOf<ViewModel> defaultCreateViewModelFunction,
       {this.title: ""})
       : super(defaultState, defaultCreateViewModelFunction);
 

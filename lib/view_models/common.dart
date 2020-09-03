@@ -60,6 +60,9 @@ abstract class SaveCancelViewModel<T> extends GetSetViewModel<T> {
     snackModel.message = "Saved!"; //Sends a snack message
   }
 
+//TODO: Igual que en el cas de SingleStepWidget, hauria de ser el SaveCancelWidget el que
+//exposés GetSetViewModel, i no des d'aquí, que tingui només una responsabilitat
+
   @override
   Widget get widget {
     return MultiProvider(providers: [

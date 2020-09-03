@@ -7,7 +7,7 @@ import 'package:yellow_naples/view_models/view_model.dart';
 abstract class StandardListViewModel<T> extends ListViewModel<T> {
 //TODO: De moment faig que el UidParam sempre contingui un String, però es podria fer més general, de T, de manera que enlloc d'emmagatzemar un String emmagatzemés un FunctionOf<T, U>
 
-  final FunctionOf<T, String> uniqueId;
+  final FunctionOf1<T, String> uniqueId;
 
   StandardListViewModel(this.uniqueId);
 

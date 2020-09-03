@@ -3,7 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../utils.dart';
 
-abstract class OneTimeInitializable {
+abstract class Initialized {
+  bool get initialized;
+}
+
+abstract class OneTimeInitializable implements Initialized {
   bool _initialized = false;
 
   @protected
@@ -14,9 +18,11 @@ abstract class OneTimeInitializable {
     await init();
     _initialized = true;
   }
+
+  bool get initialized => _initialized;
 }
 
-abstract class OneTimeInitializable1<T> {
+abstract class OneTimeInitializable1<T> implements Initialized {
   bool _initialized1 = false;
 
   @protected
@@ -27,9 +33,11 @@ abstract class OneTimeInitializable1<T> {
     await init1(t);
     _initialized1 = true;
   }
+
+  bool get initialized => _initialized1;
 }
 
-abstract class OneTimeInitializable2<T, U> {
+abstract class OneTimeInitializable2<T, U> implements Initialized {
   bool _initialized2 = false;
 
   @protected
@@ -40,9 +48,11 @@ abstract class OneTimeInitializable2<T, U> {
     await init2(t, u);
     _initialized2 = true;
   }
+
+  bool get initialized => _initialized2;
 }
 
-abstract class Refreshable {
+abstract class Refreshable implements Initialized {
   Future<void> refresh();
 }
 
@@ -84,7 +94,6 @@ abstract class GetSetViewModel<T> extends ViewModel {
 
   void _add(EditableViewModelProperty property) {
     _properties.add(property);
-    notifyListeners();
   }
 
   @override
@@ -96,18 +105,19 @@ abstract class GetSetViewModel<T> extends ViewModel {
 
   void addProperties() {
     _properties.clear();
+    notifyListeners();
   }
 
   Future<T> get();
   Future<void> set();
 
-  void addStringProperty(String label, GetProperty<T, String> getProperty,
-      {String hint,
+  void addStringProperty(FunctionOf<String> label, FunctionOf1<T, String> getProperty,
+      {FunctionOf<String> hint,
       bool autofocus = false,
-      SetProperty<T, String> setProperty,
-      Predicate<T> isRequired,
-      Predicate<T> isEditable,
-      IsValid<String> isValid}) {
+      ActionOf2<T, String> setProperty,
+      Predicate1<T> isRequired,
+      Predicate1<T> isEditable,
+      FunctionOf1<String, String> isValid}) {
     _add(StringViewModelProperty<T>(label, model, getProperty,
         hint: hint,
         autofocus: autofocus,
@@ -117,13 +127,13 @@ abstract class GetSetViewModel<T> extends ViewModel {
         isValid: isValid));
   }
 
-  void addIntProperty(String label, GetProperty<T, int> getProperty,
-      {String hint,
+  void addIntProperty(FunctionOf<String> label, FunctionOf1<T, int> getProperty,
+      {FunctionOf<String> hint,
       bool autofocus = false,
-      SetProperty<T, int> setProperty,
-      Predicate<T> isRequired,
-      Predicate<T> isEditable,
-      IsValid<int> isValid}) {
+      ActionOf2<T, int> setProperty,
+      Predicate1<T> isRequired,
+      Predicate1<T> isEditable,
+      FunctionOf1<int, String> isValid}) {
     _add(IntViewModelProperty<T>(label, model, getProperty,
         hint: hint,
         autofocus: autofocus,
@@ -133,13 +143,13 @@ abstract class GetSetViewModel<T> extends ViewModel {
         isValid: isValid));
   }
 
-  void addBoolProperty(String label, GetProperty<T, bool> getProperty,
-      {String hint,
+  void addBoolProperty(FunctionOf<String> label, FunctionOf1<T, bool> getProperty,
+      {FunctionOf<String> hint,
       bool autofocus = false,
-      SetProperty<T, bool> setProperty,
-      Predicate<T> isRequired,
-      Predicate<T> isEditable,
-      IsValid<bool> isValid}) {
+      ActionOf2<T, bool> setProperty,
+      Predicate1<T> isRequired,
+      Predicate1<T> isEditable,
+      FunctionOf1<bool, String> isValid}) {
     _add(BoolViewModelProperty<T>(label, model, getProperty,
         hint: hint,
         autofocus: autofocus,
@@ -168,21 +178,16 @@ abstract class GetSetViewModel<T> extends ViewModel {
   }
 }
 
-typedef U GetProperty<T, U>(T t);
-
 abstract class ViewModelProperty<T, U> {
-  final String label;
-  final String hint;
+  final FunctionOf<String> label;
+  final FunctionOf<String> hint;
   final T source;
-  final GetProperty<T, U> getProperty;
+  final FunctionOf1<T, U> getProperty;
 
   ViewModelProperty(this.label, this.source, this.getProperty, {this.hint});
 
   Widget get widget;
 }
-
-typedef void SetProperty<T, U>(T t, U u);
-typedef String IsValid<U>(U u);
 
 abstract class EditableViewModelProperty<T, U> extends ViewModelProperty<T, U> {
   //Pel que fa al control TextEditingController, té dues propietats: enabled i readonly,
@@ -197,13 +202,13 @@ abstract class EditableViewModelProperty<T, U> extends ViewModelProperty<T, U> {
   //https://forum.freecodecamp.org/t/how-to-validate-forms-and-user-input-the-easy-way-using-flutter/190377
 
   final bool autofocus;
-  final SetProperty<T, U> setProperty;
-  final Predicate<T> isRequired;
-  final Predicate<T> isEditable;
-  final IsValid<U> isValid;
+  final ActionOf2<T, U> setProperty;
+  final Predicate1<T> isRequired;
+  final Predicate1<T> isEditable;
+  final FunctionOf1<U, String> isValid;
 
-  EditableViewModelProperty(String label, T source, GetProperty<T, U> getProperty,
-      {String hint,
+  EditableViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, U> getProperty,
+      {FunctionOf<String> hint,
       this.autofocus = false,
       this.setProperty,
       this.isEditable,
@@ -247,13 +252,13 @@ abstract class EditableViewModelProperty<T, U> extends ViewModelProperty<T, U> {
 class StringViewModelProperty<T> extends EditableViewModelProperty<T, String> {
   final _controller = TextEditingController();
 
-  StringViewModelProperty(String label, T source, GetProperty<T, String> getProperty,
-      {String hint,
+  StringViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, String> getProperty,
+      {FunctionOf<String> hint,
       bool autofocus,
-      SetProperty<T, String> setProperty,
-      Predicate<T> isEditable,
-      Predicate<T> isRequired,
-      IsValid<String> isValid})
+      ActionOf2<T, String> setProperty,
+      Predicate1<T> isEditable,
+      Predicate1<T> isRequired,
+      FunctionOf1<String, String> isValid})
       : super(label, source, getProperty,
             hint: hint,
             autofocus: autofocus,
@@ -277,8 +282,8 @@ class StringViewModelProperty<T> extends EditableViewModelProperty<T, String> {
     return TextFormField(
       controller: _controller,
       decoration: InputDecoration(
-        hintText: hint,
-        labelText: label,
+        hintText: hint != null ? hint() : null,
+        labelText: label(),
       ),
       enabled: editable,
       autofocus: autofocus,
@@ -290,13 +295,13 @@ class StringViewModelProperty<T> extends EditableViewModelProperty<T, String> {
 class IntViewModelProperty<T> extends EditableViewModelProperty<T, int> {
   final _controller = TextEditingController();
 
-  IntViewModelProperty(String label, T source, GetProperty<T, int> getProperty,
-      {String hint,
+  IntViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, int> getProperty,
+      {FunctionOf<String> hint,
       bool autofocus,
-      SetProperty<T, int> setProperty,
-      Predicate<T> isEditable,
-      Predicate<T> isRequired,
-      IsValid<int> isValid})
+      ActionOf2<T, int> setProperty,
+      Predicate1<T> isEditable,
+      Predicate1<T> isRequired,
+      FunctionOf1<int, String> isValid})
       : super(label, source, getProperty,
             hint: hint,
             autofocus: autofocus,
@@ -326,8 +331,8 @@ class IntViewModelProperty<T> extends EditableViewModelProperty<T, int> {
     return TextFormField(
         controller: _controller,
         decoration: InputDecoration(
-          hintText: hint,
-          labelText: label,
+          hintText: hint != null ? hint() : null,
+          labelText: label(),
         ),
         enabled: editable,
         autofocus: autofocus,
@@ -335,7 +340,7 @@ class IntViewModelProperty<T> extends EditableViewModelProperty<T, int> {
           return validate(currentValue);
         },
         keyboardType: TextInputType.number,
-        inputFormatters: <TextInputFormatter>[WhitelistingTextInputFormatter.digitsOnly]);
+        inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly]);
   }
 }
 
@@ -344,13 +349,13 @@ enum BoolWidget { Switch, CheckboxRight, CheckboxLeft }
 class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
   final BoolWidget boolWidget;
 
-  BoolViewModelProperty(String label, T source, GetProperty<T, bool> getProperty,
-      {String hint,
+  BoolViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, bool> getProperty,
+      {FunctionOf<String> hint,
       bool autofocus,
-      SetProperty<T, bool> setProperty,
-      Predicate<T> isEditable,
-      Predicate<T> isRequired,
-      IsValid<bool> isValid,
+      ActionOf2<T, bool> setProperty,
+      Predicate1<T> isEditable,
+      Predicate1<T> isRequired,
+      FunctionOf1<bool, String> isValid,
       this.boolWidget = BoolWidget.CheckboxRight})
       : super(label, source, getProperty,
             hint: hint,
@@ -376,7 +381,7 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
     switch (boolWidget) {
       case BoolWidget.Switch:
         return SwitchListTile(
-          title: Text(label),
+          title: Text(label()),
           value: currentValue,
           onChanged: editable
               ? (value) {
@@ -397,11 +402,11 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
                     }
                   : null,
               autofocus: autofocus),
-          Text(label),
+          Text(label()),
         ]);
       default:
         return CheckboxListTile(
-            title: Text(label),
+            title: Text(label()),
             value: currentValue,
             onChanged: editable
                 ? (value) {

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 
 class SnackModel extends ChangeNotifier {
   String _message;
@@ -16,7 +17,13 @@ class SnackModel extends ChangeNotifier {
 }
 
 class CurrentLanguageModel extends ValueNotifier<String> {
-  CurrentLanguageModel(String value) : super(value);  
+  CurrentLanguageModel(String value) : super(value);
+
+  @override
+  set value(String newValue) {
+    Intl.defaultLocale = newValue;
+    super.value = newValue;
+  }
 }
 
 //Aquests s'haurien de traspassar aquí...

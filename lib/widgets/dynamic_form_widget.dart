@@ -7,13 +7,15 @@ class DynamicFormWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var properties =
-        context.select<GetSetViewModel, Iterable<EditableViewModelProperty>>((x) => x.properties);
+    // var properties =
+    //     context.select<GetSetViewModel, Iterable<EditableViewModelProperty>>((x) => x.properties);
+
+    final getSetViewModel = context.watch<GetSetViewModel>();
 
     return Form(
       child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: properties.map((e) => e.widget).toList()),
+          children: getSetViewModel.properties.map((e) => e.widget).toList()),
       autovalidate: true,
     );
   }
