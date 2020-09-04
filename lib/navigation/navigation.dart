@@ -168,9 +168,9 @@ abstract class NavigationModel<T> extends ChangeNotifier
         initialize1(context);
         return MultiProvider(providers: [
           ChangeNotifierProxyProvider<NavigationModel, TitleModel>(
-              create: (_) => TitleModel(currentStateViewModel.viewModel.title),
+              create: (_) => TitleModel(currentStateViewModel.viewModel.title()),
               update: (_, navigationModel, titleModel) =>
-                  titleModel..value = navigationModel.currentStateViewModel.viewModel.title),
+                  titleModel..value = navigationModel.currentStateViewModel.viewModel.title()),
         ], child: NavigationWidget());
       },
     );
