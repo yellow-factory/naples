@@ -64,6 +64,10 @@ class UidParam extends ValueNotifier<String> {
   UidParam(String value) : super(value);
 }
 
+class Param<T> extends ValueNotifier<T> {
+  Param(T t) : super(t);
+}
+
 //TODO: Les que estan per sobre d'aquí no haurien d'estar aquí, són més generals i tenen a veure amb altres coses...
 //TODO: No tinc clar si el context hauria de ser un paràmetre del constructor o un paràmetre de initialize...
 
