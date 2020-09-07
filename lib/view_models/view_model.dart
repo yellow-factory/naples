@@ -56,8 +56,8 @@ abstract class Refreshable implements Initialized {
   Future<void> refresh();
 }
 
-class TitleModel extends ValueNotifier<String> {
-  TitleModel(String value) : super(value);
+class TitleModel extends ValueNotifier<FunctionOf<String>> {
+  TitleModel(FunctionOf<String> value) : super(value);
 }
 
 class UidParam extends ValueNotifier<String> {

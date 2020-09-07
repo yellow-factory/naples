@@ -15,11 +15,11 @@ class BaseScaffoldWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var title = context.select<TitleModel, String>((vm) => vm.value);
+    var title = context.watch<TitleModel>();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(title.value()),
         actions: actions,
       ),
       body: Padding(

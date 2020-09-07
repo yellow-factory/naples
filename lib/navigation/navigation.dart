@@ -168,9 +168,9 @@ abstract class NavigationModel<T> extends ChangeNotifier
         initialize1(context);
         return MultiProvider(providers: [
           ChangeNotifierProxyProvider<NavigationModel, TitleModel>(
-              create: (_) => TitleModel(currentStateViewModel.viewModel.title()),
+              create: (_) => TitleModel(currentStateViewModel.viewModel.title),
               update: (_, navigationModel, titleModel) =>
-                  titleModel..value = navigationModel.currentStateViewModel.viewModel.title()),
+                  titleModel..value = navigationModel.currentStateViewModel.viewModel.title),
         ], child: NavigationWidget());
       },
     );
@@ -178,10 +178,10 @@ abstract class NavigationModel<T> extends ChangeNotifier
 }
 
 abstract class StepsNavigationModel<T> extends NavigationModel<T> {
-  final String title;
+  final FunctionOf<String> title;
 
   StepsNavigationModel(T defaultState, FunctionOf<ViewModel> defaultCreateViewModelFunction,
-      {this.title: ""})
+      {this.title})
       : super(defaultState, defaultCreateViewModelFunction);
 
   @override
