@@ -3,7 +3,6 @@ import 'package:yellow_naples/navigation/navigation.dart';
 import 'package:yellow_naples/standard_flow/service.dart';
 import 'package:yellow_naples/utils.dart';
 import 'package:yellow_naples/view_models/common.dart';
-import 'package:yellow_naples/view_models/view_model.dart';
 import 'navigation.dart';
 
 //T is the type of the model in the list
@@ -24,22 +23,22 @@ abstract class StandardListViewModel<T, U> extends ListViewModel<T> {
   @override
   Stream<T> getStream() => _listService.list();
 
-  NavigationModel<ListCreateUpdateFlow> get navigationModel => getProvided();
+  NavigationModel<StandardFlow> get navigationModel => getProvided();
 
   @override
   Future<void> select(T itemToSelect) async {
     //Registers the value for side/next view
-    final Param<U> param = getProvided();
+    final ValueNotifier<U> param = getProvided();
     param.value = keySelector(itemToSelect);
     //Executes navigation to the next view
-    var transitioned = await navigationModel.transition(ListCreateUpdateFlow.Update);
+    var transitioned = await navigationModel.transition(StandardFlow.Update);
     if (!transitioned) print('The transition has not been succesful!');
     super.select(itemToSelect);
   }
 
   @override
   Future<void> create() async {
-    var transitioned = await navigationModel.transition(ListCreateUpdateFlow.Create);
+    var transitioned = await navigationModel.transition(StandardFlow.Create);
     if (!transitioned) print('The transition has not been succesful!');
   }
 }
@@ -77,7 +76,7 @@ abstract class StandardUpdateViewModel<T, Get, Update> extends SaveCancelViewMod
 
   @override
   Future<Update> get() async {
-    final Param<Get> param = getProvided();
+    final ValueNotifier<Get> param = getProvided();
     return await _updateService.getUpdate(param.value);
   }
 

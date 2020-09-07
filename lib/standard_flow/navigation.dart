@@ -5,23 +5,24 @@ import 'package:yellow_naples/utils.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
 
 //Possible transition states
-enum ListCreateUpdateFlow { List, Create, Update }
+enum StandardFlow { List, Create, Update }
 
-class ListCreateUpdateStandardNavigationModel extends NavigationModel<ListCreateUpdateFlow> {
+// T is the type of the param used to navigate from list to update
+class ListCreateUpdateStandardNavigationModel<T> extends NavigationModel<StandardFlow> {
   final FunctionOf<ViewModel> _createCreateViewModel;
   final FunctionOf<ViewModel> _createUpdateViewModel;
 
   ListCreateUpdateStandardNavigationModel(FunctionOf<ViewModel> createListViewModel,
       this._createCreateViewModel, this._createUpdateViewModel)
-      : super(ListCreateUpdateFlow.List, createListViewModel) {
-    addTransition(ListCreateUpdateFlow.List, ListCreateUpdateFlow.Create, _createCreateViewModel);
-    addTransition(ListCreateUpdateFlow.List, ListCreateUpdateFlow.Update, _createUpdateViewModel);
+      : super(StandardFlow.List, createListViewModel) {
+    addTransition(StandardFlow.List, StandardFlow.Create, _createCreateViewModel);
+    addTransition(StandardFlow.List, StandardFlow.Update, _createUpdateViewModel);
   }
 
   @override
   Widget get widget {
     return
         //The Navigation flow in this case needs a param to navigate from list to edit
-        ChangeNotifierProvider<UidParam>(create: (_) => UidParam(null), child: super.widget);
+        ChangeNotifierProvider<ValueNotifier<T>>(create: (_) => ValueNotifier<T>(null), child: super.widget);
   }
 }

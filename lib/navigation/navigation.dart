@@ -2,6 +2,8 @@ library yellow_naples;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:yellow_naples/initialize.dart';
+import 'package:yellow_naples/models.dart';
 import 'package:yellow_naples/utils.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
 import 'package:meta/meta.dart';

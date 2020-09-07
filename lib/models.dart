@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:yellow_naples/utils.dart';
 
 class SnackModel extends ChangeNotifier {
   String _message;
@@ -26,11 +27,6 @@ class CurrentLanguageModel extends ValueNotifier<String> {
   }
 }
 
-//Aquests s'haurien de traspassar aquí...
-// class TitleModel extends ValueNotifier<String> {
-//   TitleModel(String value) : super(value);
-// }
-
-// class UidParam extends ValueNotifier<String> {
-//   UidParam(String value) : super(value);
-// }
+class TitleModel extends ValueNotifier<FunctionOf<String>> {
+  TitleModel(FunctionOf<String> value) : super(value);
+}

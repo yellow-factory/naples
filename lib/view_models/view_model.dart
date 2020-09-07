@@ -1,75 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:yellow_naples/initialize.dart';
 import '../utils.dart';
-
-abstract class Initialized {
-  bool get initialized;
-}
-
-abstract class OneTimeInitializable implements Initialized {
-  bool _initialized = false;
-
-  @protected
-  Future<void> init();
-
-  Future<void> initialize() async {
-    if (_initialized) return;
-    await init();
-    _initialized = true;
-  }
-
-  bool get initialized => _initialized;
-}
-
-abstract class OneTimeInitializable1<T> implements Initialized {
-  bool _initialized1 = false;
-
-  @protected
-  Future<void> init1(T t);
-
-  Future<void> initialize1(T t) async {
-    if (_initialized1) return;
-    await init1(t);
-    _initialized1 = true;
-  }
-
-  bool get initialized => _initialized1;
-}
-
-abstract class OneTimeInitializable2<T, U> implements Initialized {
-  bool _initialized2 = false;
-
-  @protected
-  Future<void> init2(T t, U u);
-
-  Future<void> initialize2(T t, U u) async {
-    if (_initialized2) return;
-    await init2(t, u);
-    _initialized2 = true;
-  }
-
-  bool get initialized => _initialized2;
-}
 
 abstract class Refreshable implements Initialized {
   Future<void> refresh();
 }
-
-class TitleModel extends ValueNotifier<FunctionOf<String>> {
-  TitleModel(FunctionOf<String> value) : super(value);
-}
-
-class UidParam extends ValueNotifier<String> {
-  UidParam(String value) : super(value);
-}
-
-class Param<T> extends ValueNotifier<T> {
-  Param(T t) : super(t);
-}
-
-//TODO: Les que estan per sobre d'aquí no haurien d'estar aquí, són més generals i tenen a veure amb altres coses...
-//TODO: No tinc clar si el context hauria de ser un paràmetre del constructor o un paràmetre de initialize...
 
 abstract class ViewModel extends ChangeNotifier with OneTimeInitializable1<BuildContext> {
   BuildContext context;
