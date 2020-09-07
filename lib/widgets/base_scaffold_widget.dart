@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:yellow_naples/widgets/title_widget.dart';
 import './snack_widget.dart';
-import 'package:provider/provider.dart';
-import 'package:yellow_naples/view_models/view_model.dart';
 
 class BaseScaffoldWidget extends StatelessWidget {
   final Widget child;
@@ -15,11 +14,9 @@ class BaseScaffoldWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var title = context.watch<TitleModel>();
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(title.value()),
+        title: TitleWidget(),
         actions: actions,
       ),
       body: Padding(

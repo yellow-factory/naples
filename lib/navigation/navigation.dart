@@ -166,12 +166,9 @@ abstract class NavigationModel<T> extends ChangeNotifier
         //the NavigationModel because when generating the initial view
         //the context must have access to the NavigationModel
         initialize1(context);
-        return MultiProvider(providers: [
-          ChangeNotifierProxyProvider<NavigationModel, TitleModel>(
-              create: (_) => TitleModel(currentStateViewModel.viewModel.title),
-              update: (_, navigationModel, titleModel) =>
-                  titleModel..value = navigationModel.currentStateViewModel.viewModel.title),
-        ], child: NavigationWidget());
+        return ChangeNotifierProvider(
+            create: (_) => TitleModel(currentStateViewModel.viewModel.title),
+            child: NavigationWidget());
       },
     );
   }
