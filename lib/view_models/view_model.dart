@@ -154,7 +154,8 @@ abstract class GetSetViewModel<T> extends ViewModel {
       ActionOf2<T, bool> setProperty,
       Predicate1<T> isRequired,
       Predicate1<T> isEditable,
-      FunctionOf1<bool, String> isValid}) {
+      FunctionOf1<bool, String> isValid,
+      BoolWidget boolWidget}) {
     _add(BoolViewModelProperty<T>(label, model, getProperty,
         hint: hint,
         flex: flex,
@@ -162,7 +163,8 @@ abstract class GetSetViewModel<T> extends ViewModel {
         setProperty: setProperty,
         isRequired: isRequired,
         isEditable: isEditable,
-        isValid: isValid));
+        isValid: isValid,
+        boolWidget: boolWidget));
   }
 
   bool get valid {
@@ -394,41 +396,53 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
   Widget get widget {
     switch (boolWidget) {
       case BoolWidget.Switch:
-        return SwitchListTile(
-          title: Text(label()),
-          value: currentValue,
-          onChanged: editable
-              ? (value) {
-                  this.setProperty(source, value);
-                }
-              : null,
-          autofocus: autofocus,
-          // activeTrackColor: Colors.lightGreenAccent,
-          // activeColor: Colors.green,
-        );
-      case BoolWidget.CheckboxLeft:
-        return Row(children: [
-          Checkbox(
-              value: currentValue,
-              onChanged: editable
-                  ? (value) {
-                      this.setProperty(source, value);
-                    }
-                  : null,
-              autofocus: autofocus),
-          Text(label()),
-        ]);
-      default:
-        return CheckboxListTile(
+        return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+          return SwitchListTile(
             title: Text(label()),
             value: currentValue,
             onChanged: editable
                 ? (value) {
-                    this.setProperty(source, value);
+                    setState(() {
+                      this.setProperty(source, value);
+                    });
                   }
                 : null,
             autofocus: autofocus,
-            contentPadding: EdgeInsets.zero);
+            // activeTrackColor: Colors.lightGreenAccent,
+            // activeColor: Colors.green,
+          );
+        });
+      case BoolWidget.CheckboxLeft:
+        return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+          return Row(children: [
+            Checkbox(
+                value: currentValue,
+                onChanged: editable
+                    ? (value) {
+                        setState(() {
+                          this.setProperty(source, value);
+                        });
+                      }
+                    : null,
+                autofocus: autofocus),
+            Text(label()),
+          ]);
+        });
+      default:
+        return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+          return CheckboxListTile(
+              title: Text(label()),
+              value: currentValue,
+              onChanged: editable
+                  ? (value) {
+                      setState(() {
+                        this.setProperty(source, value);
+                      });
+                    }
+                  : null,
+              autofocus: autofocus,
+              contentPadding: EdgeInsets.zero);
+        });
     }
   }
 }
