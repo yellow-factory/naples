@@ -113,6 +113,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
 
   void addStringProperty(FunctionOf<String> label, FunctionOf1<T, String> getProperty,
       {FunctionOf<String> hint,
+      int flex,
       bool autofocus = false,
       ActionOf2<T, String> setProperty,
       Predicate1<T> isRequired,
@@ -120,6 +121,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
       FunctionOf1<String, String> isValid}) {
     _add(StringViewModelProperty<T>(label, model, getProperty,
         hint: hint,
+        flex: flex,
         autofocus: autofocus,
         setProperty: setProperty,
         isRequired: isRequired,
@@ -129,6 +131,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
 
   void addIntProperty(FunctionOf<String> label, FunctionOf1<T, int> getProperty,
       {FunctionOf<String> hint,
+      int flex,
       bool autofocus = false,
       ActionOf2<T, int> setProperty,
       Predicate1<T> isRequired,
@@ -136,6 +139,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
       FunctionOf1<int, String> isValid}) {
     _add(IntViewModelProperty<T>(label, model, getProperty,
         hint: hint,
+        flex: flex,
         autofocus: autofocus,
         setProperty: setProperty,
         isRequired: isRequired,
@@ -145,6 +149,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
 
   void addBoolProperty(FunctionOf<String> label, FunctionOf1<T, bool> getProperty,
       {FunctionOf<String> hint,
+      int flex,
       bool autofocus = false,
       ActionOf2<T, bool> setProperty,
       Predicate1<T> isRequired,
@@ -152,6 +157,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
       FunctionOf1<bool, String> isValid}) {
     _add(BoolViewModelProperty<T>(label, model, getProperty,
         hint: hint,
+        flex: flex,
         autofocus: autofocus,
         setProperty: setProperty,
         isRequired: isRequired,
@@ -183,8 +189,9 @@ abstract class ViewModelProperty<T, U> {
   final FunctionOf<String> hint;
   final T source;
   final FunctionOf1<T, U> getProperty;
+  final int flex;
 
-  ViewModelProperty(this.label, this.source, this.getProperty, {this.hint});
+  ViewModelProperty(this.label, this.source, this.getProperty, {this.hint, this.flex = 1});
 
   Widget get widget;
 }
@@ -209,12 +216,13 @@ abstract class EditableViewModelProperty<T, U> extends ViewModelProperty<T, U> {
 
   EditableViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, U> getProperty,
       {FunctionOf<String> hint,
+      int flex,
       this.autofocus = false,
       this.setProperty,
       this.isEditable,
       this.isRequired,
       this.isValid})
-      : super(label, source, getProperty, hint: hint) {
+      : super(label, source, getProperty, hint: hint, flex: flex) {
     initialize();
   }
 
@@ -254,6 +262,7 @@ class StringViewModelProperty<T> extends EditableViewModelProperty<T, String> {
 
   StringViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, String> getProperty,
       {FunctionOf<String> hint,
+      int flex,
       bool autofocus,
       ActionOf2<T, String> setProperty,
       Predicate1<T> isEditable,
@@ -261,6 +270,7 @@ class StringViewModelProperty<T> extends EditableViewModelProperty<T, String> {
       FunctionOf1<String, String> isValid})
       : super(label, source, getProperty,
             hint: hint,
+            flex: flex,
             autofocus: autofocus,
             setProperty: setProperty,
             isEditable: isEditable,
@@ -297,6 +307,7 @@ class IntViewModelProperty<T> extends EditableViewModelProperty<T, int> {
 
   IntViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, int> getProperty,
       {FunctionOf<String> hint,
+      int flex,
       bool autofocus,
       ActionOf2<T, int> setProperty,
       Predicate1<T> isEditable,
@@ -304,6 +315,7 @@ class IntViewModelProperty<T> extends EditableViewModelProperty<T, int> {
       FunctionOf1<int, String> isValid})
       : super(label, source, getProperty,
             hint: hint,
+            flex: flex,
             autofocus: autofocus,
             setProperty: setProperty,
             isEditable: isEditable,
@@ -351,6 +363,7 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
 
   BoolViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, bool> getProperty,
       {FunctionOf<String> hint,
+      int flex,
       bool autofocus,
       ActionOf2<T, bool> setProperty,
       Predicate1<T> isEditable,
@@ -359,6 +372,7 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
       this.boolWidget = BoolWidget.CheckboxRight})
       : super(label, source, getProperty,
             hint: hint,
+            flex: flex,
             autofocus: autofocus,
             setProperty: setProperty,
             isEditable: isEditable,
