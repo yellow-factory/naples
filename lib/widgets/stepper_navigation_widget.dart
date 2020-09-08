@@ -28,9 +28,10 @@ class StepperNavigationWidget extends StatelessWidget {
             .toString()), //This is necessary to avoid an error changing the number of steps
         steps: [
           ...navigationModel.history.map((e) => Step(
-              title: Text(e.viewModel.title()),
-              content: e.viewModel.widget,
-              state: StepState.complete)),
+                title: Text(e.viewModel.title()),
+                content: e.viewModel.widget,
+                state: StepState.complete,
+              )),
           Step(
               title: Text(currentViewModel.title()),
               content: currentViewModel.widget,
@@ -41,6 +42,10 @@ class StepperNavigationWidget extends StatelessWidget {
         type: StepperType.vertical,
         onStepContinue: () => currentViewModel.nextStep(),
         onStepCancel: () => currentViewModel.previousStep(),
+        //TODO: execute arbitrary transitions when possible
+        //onStepTapped: (step) {
+        //  currentViewModel.gotoStep();
+        //},
         controlsBuilder: (BuildContext context,
             {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
           return Container(
