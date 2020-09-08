@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 class DynamicFormWidget extends StatelessWidget {
   final int columns;
-  DynamicFormWidget({Key key, this.columns = 2}) : super(key: key);
+  DynamicFormWidget({Key key, this.columns = 1}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

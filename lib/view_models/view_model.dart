@@ -337,54 +337,53 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
   Widget get widget {
     switch (boolWidget) {
       case BoolWidget.Switch:
-        return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
-          return SwitchListTile(
-            title: Text(label()),
-            value: currentValue,
-            onChanged: editable
-                ? (value) {
-                    setState(() {
-                      this.setProperty(source, value);
-                    });
-                  }
-                : null,
-            autofocus: autofocus,
-            // activeTrackColor: Colors.lightGreenAccent,
-            // activeColor: Colors.green,
-          );
-        });
+        return _getSwitch();
       case BoolWidget.CheckboxLeft:
-        return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
-          return Row(children: [
-            Checkbox(
-                value: currentValue,
-                onChanged: editable
-                    ? (value) {
-                        setState(() {
-                          this.setProperty(source, value);
-                        });
-                      }
-                    : null,
-                autofocus: autofocus),
-            Text(label()),
-          ]);
-        });
+        return _getCheckBoxListTile(ListTileControlAffinity.leading);
       default:
-        return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
-          return CheckboxListTile(
-              title: Text(label()),
-              value: currentValue,
-              onChanged: editable
-                  ? (value) {
-                      setState(() {
-                        this.setProperty(source, value);
-                      });
-                    }
-                  : null,
-              autofocus: autofocus,
-              contentPadding: EdgeInsets.zero);
-        });
+        return _getCheckBoxListTile(ListTileControlAffinity.trailing);
     }
+  }
+
+  Widget _getSwitch() {
+    return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+      return SwitchListTile(
+          title: Text(
+            label(),
+          ),
+          value: currentValue,
+          onChanged: editable
+              ? (value) {
+                  setState(() {
+                    this.setProperty(source, value);
+                  });
+                }
+              : null,
+          autofocus: autofocus,
+          contentPadding: EdgeInsets.zero
+          // activeTrackColor: Colors.lightGreenAccent,
+          // activeColor: Colors.green,
+
+          );
+    });
+  }
+
+  Widget _getCheckBoxListTile(ListTileControlAffinity controlAffinity) {
+    return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+      return CheckboxListTile(
+          title: Text(label()),
+          controlAffinity: controlAffinity,
+          value: currentValue,
+          onChanged: editable
+              ? (value) {
+                  setState(() {
+                    this.setProperty(source, value);
+                  });
+                }
+              : null,
+          autofocus: autofocus,
+          contentPadding: EdgeInsets.zero);
+    });
   }
 }
 
