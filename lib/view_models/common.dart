@@ -111,6 +111,25 @@ abstract class GetSetViewModel<T> extends ViewModel {
         isEditable: isEditable));
   }
 
+  void addSelectableProperty<U>(
+      FunctionOf<String> label, FunctionOf1<T, U> getProperty, FunctionOf<List<U>> listItems,
+      {FunctionOf<String> hint,
+      int flex,
+      bool autofocus = false,
+      ActionOf2<T, U> setProperty,
+      Predicate1<T> isRequired,
+      Predicate1<T> isEditable,
+      FunctionOf1<U, String> isValid}) {
+    _add(SelectViewModelProperty<T, U>(label, model, getProperty, listItems,
+        hint: hint,
+        flex: flex,
+        autofocus: autofocus,
+        setProperty: setProperty,
+        isRequired: isRequired,
+        isEditable: isEditable,
+        isValid: isValid));
+  }
+
   bool get valid {
     return properties.every((x) => x.valid);
   }

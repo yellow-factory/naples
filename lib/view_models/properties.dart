@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:yellow_naples/utils.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
+import 'package:dropdown_search/dropdown_search.dart';
 
 class StringViewModelProperty<T> extends EditableViewModelProperty<T, String> {
   final _controller = TextEditingController();
@@ -39,6 +40,7 @@ class StringViewModelProperty<T> extends EditableViewModelProperty<T, String> {
     return TextFormField(
       controller: _controller,
       decoration: InputDecoration(
+        //filled: true,
         hintText: hint != null ? hint() : null,
         labelText: label(),
       ),
@@ -252,6 +254,56 @@ class FileViewModelProperty<T> extends EditableViewModelProperty<T, List<int>> {
             ],
           )
         ]));
+  }
+}
+
+class SelectViewModelProperty<T, U> extends EditableViewModelProperty<T, U> {
+  U _value;
+  FunctionOf<List<U>> _listItems;
+
+  SelectViewModelProperty(
+      FunctionOf<String> label, T source, FunctionOf1<T, U> getProperty, this._listItems,
+      {FunctionOf<String> hint,
+      int flex,
+      bool autofocus,
+      ActionOf2<T, U> setProperty,
+      Predicate1<T> isEditable,
+      Predicate1<T> isRequired,
+      FunctionOf1<U, String> isValid})
+      : super(label, source, getProperty,
+            hint: hint,
+            flex: flex,
+            autofocus: autofocus,
+            setProperty: setProperty,
+            isEditable: isEditable,
+            isRequired: isRequired,
+            isValid: isValid);
+
+  @override
+  U get currentValue => _value;
+
+  @override
+  void initialize() {
+    _value = getProperty(source);
+  }
+
+  @override
+  Widget get widget {
+    return DropdownSearch<U>(
+      validator: (_) => validate(currentValue),
+      hint: hint(),
+      mode: Mode.MENU,
+      showSelectedItem: true,
+      items: _listItems(),
+      label: label(),
+      showClearButton: true,
+      onChanged: print,
+      //Per treure la decoració tipus outline...
+      // dropdownSearchDecoration: InputDecoration(
+      //     contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0), border: UnderlineInputBorder()),
+      //popupItemDisabled: (String s) => s.startsWith('I'),
+      selectedItem: currentValue,
+    );
   }
 }
 
