@@ -76,19 +76,20 @@ abstract class EditableViewModelProperty<T, U> extends ViewModelProperty<T, U> {
 
   bool isEmpty(U value) => value == null;
 
-  String validate(U value) {
+  String validate() {
     String result = '';
-    if (required && isEmpty(value)) result += 'Please enter some text';
+    if (required && isEmpty(currentValue)) result += 'Please enter some text';
     if (isValid != null) {
-      var valid = isValid(value);
+      var valid = isValid(currentValue);
       if (valid != null) result += valid;
     }
     if (result.isEmpty) return null;
     return result;
   }
 
-  U get currentValue;
-  bool get valid => validate(currentValue) == null;
+  U currentValue;
+
+  bool get valid => validate() == null;
   void update() {
     if (this.setProperty == null) throw Exception("setProperty not set");
     this.setProperty(source, currentValue);

@@ -1,13 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:yellow_naples/utils.dart';
+import 'package:yellow_naples/view_models/properties_widgets/checkbox_view_model_property_widget.dart';
+import 'package:yellow_naples/view_models/properties_widgets/switch_view_model_property_widget.dart';
+import 'package:yellow_naples/view_models/properties_widgets/text_view_model_property_widget.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 
-class StringViewModelProperty<T> extends EditableViewModelProperty<T, String> {
-  final _controller = TextEditingController();
+abstract class TextViewModelProperty<T, U> extends EditableViewModelProperty<T, U> {
+  final controller = TextEditingController();
 
+  TextViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, U> getProperty,
+      {FunctionOf<String> hint,
+      int flex,
+      bool autofocus,
+      ActionOf2<T, U> setProperty,
+      Predicate1<T> isEditable,
+      Predicate1<T> isRequired,
+      FunctionOf1<U, String> isValid})
+      : super(label, source, getProperty,
+            hint: hint,
+            flex: flex,
+            autofocus: autofocus,
+            setProperty: setProperty,
+            isEditable: isEditable,
+            isRequired: isRequired,
+            isValid: isValid);
+
+  @override
+  void initialize() {
+    controller.text = serialize(getProperty(source));
+  }
+
+  String serialize(U value) {
+    return value.toString();
+  }
+
+  U deserialize(String value);
+
+  @override
+  U get currentValue => deserialize(controller.text);
+
+  @override
+  set currentValue(U value) {
+    controller.text = serialize(value);
+  }
+}
+
+class StringViewModelProperty<T> extends TextViewModelProperty<T, String> {
   StringViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, String> getProperty,
       {FunctionOf<String> hint,
       int flex,
@@ -26,34 +66,16 @@ class StringViewModelProperty<T> extends EditableViewModelProperty<T, String> {
             isValid: isValid);
 
   @override
-  void initialize() {
-    _controller.text = getProperty(source);
-  }
-
-  @override
-  String get currentValue => _controller.text;
+  String deserialize(String value) => value;
 
   @override
   bool isEmpty(String value) => value == null || value.isEmpty;
 
-  Widget get widget {
-    return TextFormField(
-      controller: _controller,
-      decoration: InputDecoration(
-        //filled: true,
-        hintText: hint != null ? hint() : null,
-        labelText: label(),
-      ),
-      enabled: editable,
-      autofocus: autofocus,
-      validator: validate,
-    );
-  }
+  @override
+  Widget get widget => TextViewModelPropertyWidget(this);
 }
 
-class IntViewModelProperty<T> extends EditableViewModelProperty<T, int> {
-  final _controller = TextEditingController();
-
+class IntViewModelProperty<T> extends TextViewModelProperty<T, int> {
   IntViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, int> getProperty,
       {FunctionOf<String> hint,
       int flex,
@@ -72,43 +94,26 @@ class IntViewModelProperty<T> extends EditableViewModelProperty<T, int> {
             isValid: isValid);
 
   @override
-  void initialize() {
-    var value = this.getProperty(source) ?? 0;
-    _controller.text = value.toString();
-  }
-
-  @override
-  int get currentValue {
-    if (_controller.text == null) return 0;
-    if (_controller.text.isEmpty) return 0;
-    return int.parse(_controller.text);
+  int deserialize(String value) {
+    if (value == null) return 0;
+    if (value.isEmpty) return 0;
+    return int.parse(value);
   }
 
   @override
   bool isEmpty(int value) => value == null || value == 0;
 
   @override
-  Widget get widget {
-    return TextFormField(
-        controller: _controller,
-        decoration: InputDecoration(
-          hintText: hint != null ? hint() : null,
-          labelText: label(),
-        ),
-        enabled: editable,
-        autofocus: autofocus,
-        validator: (_) {
-          return validate(currentValue);
-        },
-        keyboardType: TextInputType.number,
-        inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly]);
-  }
+  Widget get widget =>
+      TextViewModelPropertyWidget(this, type: TextViewModelPropertyWidgetType.Number);
 }
 
-enum BoolWidget { Switch, CheckboxRight, CheckboxLeft }
+enum BoolWidgetType { Switch, Checkbox }
+enum BoolWidgetPosition { Leading, Trailing }
 
 class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
-  final BoolWidget boolWidget;
+  final BoolWidgetType widgetType;
+  final BoolWidgetPosition widgetPosition;
 
   BoolViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, bool> getProperty,
       {FunctionOf<String> hint,
@@ -118,7 +123,8 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
       Predicate1<T> isEditable,
       Predicate1<T> isRequired,
       FunctionOf1<bool, String> isValid,
-      this.boolWidget = BoolWidget.CheckboxRight})
+      this.widgetType = BoolWidgetType.Checkbox,
+      this.widgetPosition = BoolWidgetPosition.Trailing})
       : super(label, source, getProperty,
             hint: hint,
             flex: flex,
@@ -129,11 +135,8 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
             isValid: isValid);
 
   @override
-  void initialize() {}
-
-  @override
-  bool get currentValue {
-    return this.getProperty(source) ?? false;
+  void initialize() {
+    currentValue = this.getProperty(source) ?? false;
   }
 
   @override
@@ -141,55 +144,14 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
 
   @override
   Widget get widget {
-    switch (boolWidget) {
-      case BoolWidget.Switch:
-        return _getSwitch();
-      case BoolWidget.CheckboxLeft:
-        return _getCheckBoxListTile(ListTileControlAffinity.leading);
+    switch (widgetType) {
+      case BoolWidgetType.Switch:
+        return SwitchViewModelPropertyWidget(this);
+      case BoolWidgetType.Checkbox:
+        return CheckboxViewModelPropertyWidget(this);
       default:
-        return _getCheckBoxListTile(ListTileControlAffinity.trailing);
+        return CheckboxViewModelPropertyWidget(this);
     }
-  }
-
-  Widget _getSwitch() {
-    return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
-      return SwitchListTile(
-          title: Text(
-            label(),
-          ),
-          value: currentValue,
-          onChanged: editable
-              ? (value) {
-                  setState(() {
-                    this.setProperty(source, value);
-                  });
-                }
-              : null,
-          autofocus: autofocus,
-          contentPadding: EdgeInsets.zero
-          // activeTrackColor: Colors.lightGreenAccent,
-          // activeColor: Colors.green,
-
-          );
-    });
-  }
-
-  Widget _getCheckBoxListTile(ListTileControlAffinity controlAffinity) {
-    return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
-      return CheckboxListTile(
-          title: Text(label()),
-          controlAffinity: controlAffinity,
-          value: currentValue,
-          onChanged: editable
-              ? (value) {
-                  setState(() {
-                    this.setProperty(source, value);
-                  });
-                }
-              : null,
-          autofocus: autofocus,
-          contentPadding: EdgeInsets.zero);
-    });
   }
 }
 
@@ -290,7 +252,7 @@ class SelectViewModelProperty<T, U> extends EditableViewModelProperty<T, U> {
   @override
   Widget get widget {
     return DropdownSearch<U>(
-      validator: (_) => validate(currentValue),
+      validator: (_) => validate(),
       hint: hint(),
       mode: Mode.MENU,
       showSelectedItem: true,
