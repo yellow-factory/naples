@@ -1,5 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:yellow_naples/utils.dart';
+import 'package:yellow_naples/view_models/properties.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
 import 'package:yellow_naples/navigation/navigation.dart';
 import 'package:yellow_naples/widgets/list_widget.dart';
@@ -8,6 +10,125 @@ import 'package:yellow_naples/widgets/single_step_widget.dart';
 import 'package:yellow_naples/models.dart';
 
 import '../widgets/dynamic_form_widget.dart';
+
+abstract class GetSetViewModel<T> extends ViewModel {
+  final _properties = List<EditableViewModelProperty>();
+  T model;
+
+  Iterable<EditableViewModelProperty> get properties => _properties;
+
+  void _add(EditableViewModelProperty property) {
+    _properties.add(property);
+  }
+
+  @override
+  Future<void> init1(BuildContext context) async {
+    super.init1(context);
+    model = await get();
+    addProperties();
+  }
+
+  //TODO: No tinc clar si ha d'existir aquest mètode o simplement s'hauria de
+  //sobreescriure el init1
+
+  void addProperties() {
+    _properties.clear();
+    notifyListeners();
+  }
+
+  Future<T> get();
+  Future<void> set();
+
+  void addStringProperty(FunctionOf<String> label, FunctionOf1<T, String> getProperty,
+      {FunctionOf<String> hint,
+      int flex,
+      bool autofocus = false,
+      ActionOf2<T, String> setProperty,
+      Predicate1<T> isRequired,
+      Predicate1<T> isEditable,
+      FunctionOf1<String, String> isValid}) {
+    _add(StringViewModelProperty<T>(label, model, getProperty,
+        hint: hint,
+        flex: flex,
+        autofocus: autofocus,
+        setProperty: setProperty,
+        isRequired: isRequired,
+        isEditable: isEditable,
+        isValid: isValid));
+  }
+
+  void addIntProperty(FunctionOf<String> label, FunctionOf1<T, int> getProperty,
+      {FunctionOf<String> hint,
+      int flex,
+      bool autofocus = false,
+      ActionOf2<T, int> setProperty,
+      Predicate1<T> isRequired,
+      Predicate1<T> isEditable,
+      FunctionOf1<int, String> isValid}) {
+    _add(IntViewModelProperty<T>(label, model, getProperty,
+        hint: hint,
+        flex: flex,
+        autofocus: autofocus,
+        setProperty: setProperty,
+        isRequired: isRequired,
+        isEditable: isEditable,
+        isValid: isValid));
+  }
+
+  void addBoolProperty(FunctionOf<String> label, FunctionOf1<T, bool> getProperty,
+      {FunctionOf<String> hint,
+      int flex,
+      bool autofocus = false,
+      ActionOf2<T, bool> setProperty,
+      Predicate1<T> isRequired,
+      Predicate1<T> isEditable,
+      FunctionOf1<bool, String> isValid,
+      BoolWidget boolWidget}) {
+    _add(BoolViewModelProperty<T>(label, model, getProperty,
+        hint: hint,
+        flex: flex,
+        autofocus: autofocus,
+        setProperty: setProperty,
+        isRequired: isRequired,
+        isEditable: isEditable,
+        isValid: isValid,
+        boolWidget: boolWidget));
+  }
+
+  void addFileProperty(FunctionOf<String> label, FunctionOf1<T, List<int>> getProperty,
+      {FunctionOf<String> hint,
+      int flex,
+      bool autofocus = false,
+      ActionOf2<T, List<int>> setProperty,
+      Predicate1<T> isRequired,
+      Predicate1<T> isEditable}) {
+    _add(FileViewModelProperty<T>(label, model, getProperty,
+        hint: hint,
+        flex: flex,
+        autofocus: autofocus,
+        setProperty: setProperty,
+        isRequired: isRequired,
+        isEditable: isEditable));
+  }
+
+  bool get valid {
+    return properties.every((x) => x.valid);
+  }
+
+  void update() {
+    //Sends widgets info to model
+    properties.where((x) => x.editable).forEach((x) {
+      x.update();
+    });
+  }
+
+  void undo() {
+    //Sends model info to widgets, reverse of update
+    properties.where((x) => x.editable).forEach((x) {
+      x.undo();
+    });
+  }
+}
 
 mixin StepViewModelController<T> on GetSetViewModel<T> {
   NavigationModel get navigationModel => getProvided();
