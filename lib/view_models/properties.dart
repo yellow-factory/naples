@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:yellow_naples/utils.dart';
 import 'package:yellow_naples/view_models/properties_widgets/checkbox_view_model_property_widget.dart';
+import 'package:yellow_naples/view_models/properties_widgets/dropdown_view_model_property_widget.dart';
+import 'package:yellow_naples/view_models/properties_widgets/file_view_model_property_widget.dart';
 import 'package:yellow_naples/view_models/properties_widgets/switch_view_model_property_widget.dart';
 import 'package:yellow_naples/view_models/properties_widgets/text_view_model_property_widget.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 
 abstract class TextViewModelProperty<T, U> extends EditableViewModelProperty<T, U> {
   final controller = TextEditingController();
@@ -184,39 +185,7 @@ class FileViewModelProperty<T> extends EditableViewModelProperty<T, List<int>> {
 
   @override
   Widget get widget {
-    return Card(
-        margin: EdgeInsets.symmetric(horizontal: 0, vertical: 5),
-        child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          ListTile(
-            leading: Icon(Icons.attachment_outlined),
-            title: Text(label()),
-            subtitle: Text(hint()),
-          ),
-          ButtonBar(
-            children: <Widget>[
-              OutlineButton.icon(
-                icon: Icon(Icons.delete_outline),
-                onPressed: () {
-                  print("File deleted");
-                },
-                label: Text("Delete"),
-              ),
-              OutlineButton.icon(
-                  icon: Icon(Icons.cloud_upload_outlined),
-                  label: Text("Upload"),
-                  onPressed: () {
-                    print("File uploaded");
-                  }),
-              OutlineButton.icon(
-                icon: Icon(Icons.cloud_download_outlined),
-                label: Text("Download"),
-                onPressed: () {
-                  print("File downloaded");
-                },
-              ),
-            ],
-          )
-        ]));
+    return FileViewModelPropertyWidget(this);
   }
 }
 
@@ -224,10 +193,10 @@ class SelectViewModelProperty<T, U> extends EditableViewModelProperty<T, U> {
 //TODO: Hi hauria d'haver un paràmetre més perquè els items de la llista no tenen perquè ser de tipus U
 
   U _value;
-  FunctionOf<List<U>> _listItems;
+  FunctionOf<List<U>> listItems;
 
   SelectViewModelProperty(
-      FunctionOf<String> label, T source, FunctionOf1<T, U> getProperty, this._listItems,
+      FunctionOf<String> label, T source, FunctionOf1<T, U> getProperty, this.listItems,
       {FunctionOf<String> hint,
       int flex,
       bool autofocus,
@@ -254,21 +223,7 @@ class SelectViewModelProperty<T, U> extends EditableViewModelProperty<T, U> {
 
   @override
   Widget get widget {
-    return DropdownSearch<U>(
-      validator: (_) => validate(),
-      hint: hint(),
-      mode: Mode.MENU,
-      showSelectedItem: true,
-      items: _listItems(),
-      label: label(),
-      showClearButton: true,
-      onChanged: print,
-      //Per treure la decoració tipus outline...
-      // dropdownSearchDecoration: InputDecoration(
-      //     contentPadding: EdgeInsets.fromLTRB(0, 0, 0, 0), border: UnderlineInputBorder()),
-      //popupItemDisabled: (String s) => s.startsWith('I'),
-      selectedItem: currentValue,
-    );
+    return DropDownViewModelPropertyWidget<T, U>(this);
   }
 }
 
