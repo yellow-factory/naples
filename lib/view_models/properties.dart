@@ -33,6 +33,7 @@ abstract class TextViewModelProperty<T, U> extends EditableViewModelProperty<T, 
   }
 
   String serialize(U value) {
+    if (value == null) return '';
     return value.toString();
   }
 
@@ -220,6 +221,8 @@ class FileViewModelProperty<T> extends EditableViewModelProperty<T, List<int>> {
 }
 
 class SelectViewModelProperty<T, U> extends EditableViewModelProperty<T, U> {
+//TODO: Hi hauria d'haver un paràmetre més perquè els items de la llista no tenen perquè ser de tipus U
+
   U _value;
   FunctionOf<List<U>> _listItems;
 
