@@ -33,7 +33,6 @@ abstract class StandardListViewModel<T, U> extends ListViewModel<T> {
     //Executes navigation to the next view
     var transitioned = await navigationModel.transition(StandardFlow.Update);
     if (!transitioned) print('The transition has not been succesful!');
-    super.select(itemToSelect);
   }
 
   @override
@@ -50,7 +49,7 @@ abstract class StandardCreateViewModel<T, Create> extends SaveCancelViewModel<Cr
   Future<void> init1(BuildContext context) async {
     this.context = context;
     _createService = getProvided();
-    super.init1(context);
+    await super.init1(context);
   }
 
   @override
@@ -71,7 +70,7 @@ abstract class StandardUpdateViewModel<T, Get, Update> extends SaveCancelViewMod
   Future<void> init1(BuildContext context) async {
     this.context = context;
     _updateService = getProvided();
-    super.init1(context);
+    await super.init1(context);
   }
 
   @override

@@ -23,13 +23,10 @@ abstract class GetSetViewModel<T> extends ViewModel {
 
   @override
   Future<void> init1(BuildContext context) async {
-    super.init1(context);
+    await super.init1(context);
     model = await get();
     addProperties();
   }
-
-  //TODO: No tinc clar si ha d'existir aquest mètode o simplement s'hauria de
-  //sobreescriure el init1
 
   void addProperties() {
     _properties.clear();
@@ -223,7 +220,6 @@ abstract class ListViewModel<T> extends ViewModel with Refreshable {
   List<T> _items = List<T>();
   bool _filtered = false;
   String _filterValue = "";
-  T _selectedItem;
   bool loading = false;
 
   //Hi hauria d'haver una enumeració per saber si filtre per title, subtitle o tots dos
@@ -295,18 +291,7 @@ abstract class ListViewModel<T> extends ViewModel with Refreshable {
     return (x) => itemTitle(x).toLowerCase().startsWith(filterBy);
   }
 
-  T get selectedItem => _selectedItem;
-
-  Future<void> select(T itemToSelect) async {
-    _selectedItem = itemToSelect;
-    notifyListeners();
-  }
-
-  //TODO: S'ha de repensar si això encara fa falta, i si cal tenir el punter al item seleccionat o no cal...
-  void clearSelectedItem([bool notify = true]) {
-    _selectedItem = null;
-    if (notify) notifyListeners();
-  }
+  Future<void> select(T itemToSelect);
 
   Future<void> create();
 
