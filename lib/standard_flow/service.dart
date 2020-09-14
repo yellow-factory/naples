@@ -1,18 +1,18 @@
-mixin CreateStandardService<T, Create> {
+abstract class CreateStandardService<T, Create> {
   Future<Create> getCreate();
   Future<T> create(Create create);
 }
 
-mixin UpdateStandardService<T, Get, Update> {
+abstract class UpdateStandardService<T, Get, Update> {
   Future<Update> getUpdate(Get request);
   Future<T> update(Update update);
 }
 
-mixin GetStandardService<T, Get> {
+abstract class GetStandardService<T, Get> {
   Future<T> get(Get uid);
 }
 
-mixin ListStandardService<T> {
+abstract class ListStandardService<T> {
   Stream<T> list(); //Needs a param?
 }
 
