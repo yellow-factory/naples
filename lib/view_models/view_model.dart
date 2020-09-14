@@ -26,16 +26,22 @@ abstract class ViewModel extends ChangeNotifier with OneTimeInitializable1<Build
   Widget get widget;
 }
 
-abstract class ViewModelProperty<T, U> {
+abstract class LayoutMember {
+  final int flex;
+
+  LayoutMember({this.flex = 1});
+
+  Widget get widget;
+}
+
+abstract class ViewModelProperty<T, U> extends LayoutMember {
   final FunctionOf<String> label;
   final FunctionOf<String> hint;
   final T source;
   final FunctionOf1<T, U> getProperty;
-  final int flex;
 
-  ViewModelProperty(this.label, this.source, this.getProperty, {this.hint, this.flex = 1});
-
-  Widget get widget;
+  ViewModelProperty(this.label, this.source, this.getProperty, {this.hint, int flex = 1})
+      : super(flex: flex);
 }
 
 abstract class EditableViewModelProperty<T, U> extends ViewModelProperty<T, U> {

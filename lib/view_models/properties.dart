@@ -8,6 +8,29 @@ import 'package:yellow_naples/view_models/properties_widgets/switch_view_model_p
 import 'package:yellow_naples/view_models/properties_widgets/text_view_model_property_widget.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
 
+class CommentLayoutMember extends LayoutMember {
+  final FunctionOf<String> comment;
+  final FontStyle fontStyle;
+  final FontWeight fontWeight;
+  final TextAlign textAlign;
+  final double topPadding;
+  final double bottomPadding;
+
+  CommentLayoutMember(this.comment,
+      {this.fontStyle, this.textAlign, this.fontWeight, this.topPadding, this.bottomPadding});
+
+  @override
+  Widget get widget {
+    return Padding(
+        padding: EdgeInsets.only(top: topPadding ?? 0.0, bottom: bottomPadding ?? 0.0),
+        child: Text(
+          comment(),
+          style: TextStyle(fontStyle: fontStyle, fontWeight: fontWeight),
+          textAlign: textAlign,
+        ));
+  }
+}
+
 abstract class TextViewModelProperty<T, U> extends EditableViewModelProperty<T, U> {
   final controller = TextEditingController();
 

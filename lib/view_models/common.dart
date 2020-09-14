@@ -12,12 +12,12 @@ import 'package:yellow_naples/models.dart';
 import '../widgets/dynamic_form_widget.dart';
 
 abstract class GetSetViewModel<T> extends ViewModel {
-  final _properties = List<EditableViewModelProperty>();
+  final _properties = List<LayoutMember>();
   T model;
 
-  Iterable<EditableViewModelProperty> get properties => _properties;
+  Iterable<LayoutMember> get properties => _properties;
 
-  void _add(EditableViewModelProperty property) {
+  void _add(LayoutMember property) {
     _properties.add(property);
   }
 
@@ -35,6 +35,21 @@ abstract class GetSetViewModel<T> extends ViewModel {
 
   Future<T> get();
   Future<void> set();
+
+  void addComment(FunctionOf<String> comment,
+      {int flex,
+      FontStyle fontStyle,
+      FontWeight fontWeight,
+      TextAlign textAlign,
+      double topPadding,
+      double bottomPadding}) {
+    _add(CommentLayoutMember(comment,
+        fontStyle: fontStyle,
+        fontWeight: fontWeight,
+        textAlign: textAlign,
+        topPadding: topPadding,
+        bottomPadding: bottomPadding));
+  }
 
   void addStringProperty(FunctionOf<String> label, FunctionOf1<T, String> getProperty,
       {FunctionOf<String> hint,
@@ -127,20 +142,23 @@ abstract class GetSetViewModel<T> extends ViewModel {
         isValid: isValid));
   }
 
+  Iterable<EditableViewModelProperty> get editableProperties =>
+      properties.whereType<EditableViewModelProperty>();
+
   bool get valid {
-    return properties.every((x) => x.valid);
+    return editableProperties.every((x) => x.valid);
   }
 
   void update() {
     //Sends widgets info to model
-    properties.where((x) => x.editable).forEach((x) {
+    editableProperties.where((x) => x.editable).forEach((x) {
       x.update();
     });
   }
 
   void undo() {
     //Sends model info to widgets, reverse of update
-    properties.where((x) => x.editable).forEach((x) {
+    editableProperties.where((x) => x.editable).forEach((x) {
       x.undo();
     });
   }
