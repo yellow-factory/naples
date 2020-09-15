@@ -28,7 +28,7 @@ class CommentLayoutMember extends LayoutMember {
 
   @override
   Widget get widget {
-    //TODO: Cal separar el widget com en la resta de casos    
+    //TODO: Cal separar el widget com en la resta de casos
     return Padding(
         padding: EdgeInsets.only(top: topPadding ?? 0.0, bottom: bottomPadding ?? 0.0),
         child: Text(
@@ -244,14 +244,18 @@ class FileViewModelProperty<T> extends EditableViewModelProperty<T, List<int>> {
 
 enum SelectWidgetType { DropDown, Radio }
 
-class SelectViewModelProperty<T, U> extends EditableViewModelProperty<T, U> {
-//TODO: Hi hauria d'haver un paràmetre més perquè els items de la llista no tenen perquè ser de tipus U
-
+///T defines the type of the class being edited which has a property defined by this class
+///U defines the type of the property being edited which is a member of T
+///V defines the type of the list of items being exposed in the list of options
+///In some cases U and V may coincide
+class SelectViewModelProperty<T, U, V> extends EditableViewModelProperty<T, U> {
   SelectWidgetType widgetType = SelectWidgetType.DropDown;
-  FunctionOf<List<U>> listItems;
+  final FunctionOf<List<V>> listItems;
+  final FunctionOf1<V, U> valueMember; //Function to project U from V
+  final FunctionOf1<V, String> displayMember; //Function to display the member as String
 
-  SelectViewModelProperty(
-      FunctionOf<String> label, T source, FunctionOf1<T, U> getProperty, this.listItems,
+  SelectViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, U> getProperty,
+      this.listItems, this.valueMember, this.displayMember,
       {FunctionOf<String> hint,
       int flex,
       bool autofocus,
@@ -278,11 +282,11 @@ class SelectViewModelProperty<T, U> extends EditableViewModelProperty<T, U> {
   Widget get widget {
     switch (widgetType) {
       case SelectWidgetType.DropDown:
-        return DropDownViewModelPropertyWidget<T, U>(this);
+        return DropDownViewModelPropertyWidget<T, U, V>(this);
       case SelectWidgetType.Radio:
-        return RadioListViewModelPropertyWidget<T, U>(this);
+        return RadioListViewModelPropertyWidget<T, U, V>(this);
       default:
-        return DropDownViewModelPropertyWidget<T, U>(this);
+        return DropDownViewModelPropertyWidget<T, U, V>(this);
     }
   }
 }

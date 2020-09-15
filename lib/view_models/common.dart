@@ -128,8 +128,12 @@ abstract class GetSetViewModel<T> extends ViewModel {
         isEditable: isEditable));
   }
 
-  void addSelectableProperty<U>(
-      FunctionOf<String> label, FunctionOf1<T, U> getProperty, FunctionOf<List<U>> listItems,
+  void addSelectableProperty<U, V>(
+      FunctionOf<String> label,
+      FunctionOf1<T, U> getProperty,
+      FunctionOf<List<V>> listItems,
+      FunctionOf1<V, U> valueMember,
+      FunctionOf1<V, String> displayMember,
       {FunctionOf<String> hint,
       int flex,
       bool autofocus = false,
@@ -138,7 +142,8 @@ abstract class GetSetViewModel<T> extends ViewModel {
       Predicate1<T> isEditable,
       FunctionOf1<U, String> isValid,
       SelectWidgetType widgetType}) {
-    _add(SelectViewModelProperty<T, U>(label, model, getProperty, listItems,
+    _add(SelectViewModelProperty<T, U, V>(
+        label, model, getProperty, listItems, valueMember, displayMember,
         hint: hint,
         flex: flex,
         autofocus: autofocus,
