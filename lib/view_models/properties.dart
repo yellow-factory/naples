@@ -4,6 +4,7 @@ import 'package:yellow_naples/utils.dart';
 import 'package:yellow_naples/view_models/properties_widgets/checkbox_view_model_property_widget.dart';
 import 'package:yellow_naples/view_models/properties_widgets/dropdown_view_model_property_widget.dart';
 import 'package:yellow_naples/view_models/properties_widgets/file_view_model_property_widget.dart';
+import 'package:yellow_naples/view_models/properties_widgets/radio_list_view_model_property_widget.dart';
 import 'package:yellow_naples/view_models/properties_widgets/switch_view_model_property_widget.dart';
 import 'package:yellow_naples/view_models/properties_widgets/text_view_model_property_widget.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
@@ -17,10 +18,17 @@ class CommentLayoutMember extends LayoutMember {
   final double bottomPadding;
 
   CommentLayoutMember(this.comment,
-      {this.fontStyle, this.textAlign, this.fontWeight, this.topPadding, this.bottomPadding});
+      {int flex = 1,
+      this.fontStyle,
+      this.textAlign,
+      this.fontWeight,
+      this.topPadding,
+      this.bottomPadding})
+      : super(flex: flex);
 
   @override
   Widget get widget {
+    //TODO: Cal separar el widget com en la resta de casos    
     return Padding(
         padding: EdgeInsets.only(top: topPadding ?? 0.0, bottom: bottomPadding ?? 0.0),
         child: Text(
@@ -29,6 +37,24 @@ class CommentLayoutMember extends LayoutMember {
           textAlign: textAlign,
         ));
   }
+}
+
+class DividerLayoutMember extends LayoutMember {
+  DividerLayoutMember({int flex = 1}) : super(flex: flex);
+
+  @override
+  Widget get widget => Divider();
+
+//TODO: Cal separar el widget com en la resta de casos
+//TODO: Es podrien afegir algunes propietats per fer-lo més ric, com en el cas del CommentLayoutMember: topPadding, bottomPadding,etc.
+  // const Divider(
+  //           color: Colors.black,
+  //           height: 20,
+  //           thickness: 5,
+  //           indent: 20,
+  //           endIndent: 0,
+  //         ),
+
 }
 
 abstract class TextViewModelProperty<T, U> extends EditableViewModelProperty<T, U> {
@@ -212,10 +238,16 @@ class FileViewModelProperty<T> extends EditableViewModelProperty<T, List<int>> {
   }
 }
 
+//TODO: Crec que hi hauria d'haver un Select i un MultipleSelect per a casos de selecció múltiple
+//TODO: En el cas de MultipleSelect les opcions han de ser CheckBox, Chips o algun tipus de Dropdown...
+//TODO: Cal comprovar que tots aquests casos Select funcionen correctament per class i per enum amb multiidioma inclòs...
+
+enum SelectWidgetType { DropDown, Radio }
+
 class SelectViewModelProperty<T, U> extends EditableViewModelProperty<T, U> {
 //TODO: Hi hauria d'haver un paràmetre més perquè els items de la llista no tenen perquè ser de tipus U
 
-  U _value;
+  SelectWidgetType widgetType = SelectWidgetType.DropDown;
   FunctionOf<List<U>> listItems;
 
   SelectViewModelProperty(
@@ -226,7 +258,8 @@ class SelectViewModelProperty<T, U> extends EditableViewModelProperty<T, U> {
       ActionOf2<T, U> setProperty,
       Predicate1<T> isEditable,
       Predicate1<T> isRequired,
-      FunctionOf1<U, String> isValid})
+      FunctionOf1<U, String> isValid,
+      this.widgetType})
       : super(label, source, getProperty,
             hint: hint,
             flex: flex,
@@ -237,16 +270,20 @@ class SelectViewModelProperty<T, U> extends EditableViewModelProperty<T, U> {
             isValid: isValid);
 
   @override
-  U get currentValue => _value;
-
-  @override
   void initialize() {
-    _value = getProperty(source);
+    currentValue = getProperty(source);
   }
 
   @override
   Widget get widget {
-    return DropDownViewModelPropertyWidget<T, U>(this);
+    switch (widgetType) {
+      case SelectWidgetType.DropDown:
+        return DropDownViewModelPropertyWidget<T, U>(this);
+      case SelectWidgetType.Radio:
+        return RadioListViewModelPropertyWidget<T, U>(this);
+      default:
+        return DropDownViewModelPropertyWidget<T, U>(this);
+    }
   }
 }
 

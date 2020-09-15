@@ -36,6 +36,10 @@ abstract class GetSetViewModel<T> extends ViewModel {
   Future<T> get();
   Future<void> set();
 
+  void addDivider({int flex}) {
+    _add(DividerLayoutMember(flex: flex));
+  }
+
   void addComment(FunctionOf<String> comment,
       {int flex,
       FontStyle fontStyle,
@@ -44,6 +48,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
       double topPadding,
       double bottomPadding}) {
     _add(CommentLayoutMember(comment,
+        flex: flex,
         fontStyle: fontStyle,
         fontWeight: fontWeight,
         textAlign: textAlign,
@@ -131,7 +136,8 @@ abstract class GetSetViewModel<T> extends ViewModel {
       ActionOf2<T, U> setProperty,
       Predicate1<T> isRequired,
       Predicate1<T> isEditable,
-      FunctionOf1<U, String> isValid}) {
+      FunctionOf1<U, String> isValid,
+      SelectWidgetType widgetType}) {
     _add(SelectViewModelProperty<T, U>(label, model, getProperty, listItems,
         hint: hint,
         flex: flex,
@@ -139,7 +145,8 @@ abstract class GetSetViewModel<T> extends ViewModel {
         setProperty: setProperty,
         isRequired: isRequired,
         isEditable: isEditable,
-        isValid: isValid));
+        isValid: isValid,
+        widgetType: widgetType));
   }
 
   Iterable<EditableViewModelProperty> get editableProperties =>
