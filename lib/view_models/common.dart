@@ -100,7 +100,8 @@ abstract class GetSetViewModel<T> extends ViewModel {
       Predicate1<T> isRequired,
       Predicate1<T> isEditable,
       FunctionOf1<bool, String> isValid,
-      BoolWidgetType boolWidget}) {
+      BoolWidgetType boolWidget,
+      FunctionOf1<BoolValues, FunctionOf<String>> displayName}) {
     _add(BoolViewModelProperty<T>(label, model, getProperty,
         hint: hint,
         flex: flex,
@@ -109,7 +110,8 @@ abstract class GetSetViewModel<T> extends ViewModel {
         isRequired: isRequired,
         isEditable: isEditable,
         isValid: isValid,
-        widgetType: boolWidget));
+        widgetType: boolWidget,
+        displayName: displayName));
   }
 
   void addFileProperty(FunctionOf<String> label, FunctionOf1<T, List<int>> getProperty,
@@ -133,7 +135,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
       FunctionOf1<T, U> getProperty,
       FunctionOf<List<V>> listItems,
       FunctionOf1<V, U> valueMember,
-      FunctionOf1<V, String> displayMember,
+      FunctionOf1<V, FunctionOf<String>> displayMember,
       {FunctionOf<String> hint,
       int flex,
       bool autofocus = false,

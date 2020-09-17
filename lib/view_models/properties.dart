@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:yellow_naples/utils.dart';
@@ -159,12 +160,25 @@ class IntViewModelProperty<T> extends TextViewModelProperty<T, int> {
       TextViewModelPropertyWidget(this, type: TextViewModelPropertyWidgetType.Number);
 }
 
-enum BoolWidgetType { Switch, Checkbox }
+enum BoolWidgetType { Switch, Checkbox, Radio }
 enum BoolWidgetPosition { Leading, Trailing }
+enum BoolValues { True, False }
+
+extension BoolValuesExtension on BoolValues {
+  bool get boolValue {
+    if (this == BoolValues.True) return true;
+    return false;
+  }
+
+  String get displayName => describeEnum(this);
+}
+
+//TODO: El String de isValid hauria de ser una funció que retonés String per tal que fos localitzable
 
 class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
-  final BoolWidgetType widgetType;
-  final BoolWidgetPosition widgetPosition;
+  BoolWidgetType widgetType = BoolWidgetType.Checkbox;
+  BoolWidgetPosition widgetPosition = BoolWidgetPosition.Trailing;
+  FunctionOf1<BoolValues, FunctionOf<String>> displayName = (t) => () => t.displayName;
 
   BoolViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, bool> getProperty,
       {FunctionOf<String> hint,
@@ -174,8 +188,9 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
       Predicate1<T> isEditable,
       Predicate1<T> isRequired,
       FunctionOf1<bool, String> isValid,
-      this.widgetType = BoolWidgetType.Checkbox,
-      this.widgetPosition = BoolWidgetPosition.Trailing})
+      this.widgetType,
+      this.widgetPosition,
+      this.displayName})
       : super(label, source, getProperty,
             hint: hint,
             flex: flex,
@@ -193,6 +208,19 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
   @override
   bool isEmpty(bool value) => value == null;
 
+  SelectViewModelProperty<T, bool, BoolValues> toSelect() {
+    return SelectViewModelProperty<T, bool, BoolValues>(
+        label, source, this.getProperty, () => BoolValues.values, (t) => t.boolValue, displayName,
+        flex: flex,
+        autofocus: autofocus,
+        hint: hint,
+        isEditable: isEditable,
+        isRequired: isRequired,
+        isValid: isValid,
+        setProperty: setProperty,
+        widgetType: SelectWidgetType.Radio);
+  }
+
   @override
   Widget get widget {
     switch (widgetType) {
@@ -200,6 +228,8 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
         return SwitchViewModelPropertyWidget(this);
       case BoolWidgetType.Checkbox:
         return CheckboxViewModelPropertyWidget(this);
+      case BoolWidgetType.Radio:
+        return RadioListViewModelPropertyWidget(toSelect());
       default:
         return CheckboxViewModelPropertyWidget(this);
     }
@@ -252,7 +282,7 @@ class SelectViewModelProperty<T, U, V> extends EditableViewModelProperty<T, U> {
   SelectWidgetType widgetType = SelectWidgetType.DropDown;
   final FunctionOf<List<V>> listItems;
   final FunctionOf1<V, U> valueMember; //Function to project U from V
-  final FunctionOf1<V, String> displayMember; //Function to display the member as String
+  final FunctionOf1<V, FunctionOf<String>> displayMember; //Function to display the member as String
 
   SelectViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, U> getProperty,
       this.listItems, this.valueMember, this.displayMember,

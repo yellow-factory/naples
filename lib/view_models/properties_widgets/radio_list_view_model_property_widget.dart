@@ -16,7 +16,7 @@ class RadioListViewModelPropertyWidget<T, U, V> extends StatelessWidget {
         ListTile(title: Text(property.label()), subtitle: Text(property.hint())),
         for (var item in property.listItems())
           RadioListTile<U>(
-            title: Text(property.displayMember(item)),
+            title: Text(property.displayMember(item)()),
             value: property.valueMember(item),
             groupValue: property.currentValue,
             onChanged: property.editable
