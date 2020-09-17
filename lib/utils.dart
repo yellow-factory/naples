@@ -13,3 +13,9 @@ typedef R FunctionOf<R>();
 typedef R FunctionOf1<T, R>(T t);
 typedef R FunctionOf2<T1, T2, R>(T1 t1, T2 t2);
 typedef R FunctionOf3<T1, T2, T3, R>(T1 t1, T2 t2, T3 t3);
+
+//To be able to pass a primitive type as reference to a function
+class PrimitiveWrapper<T> {
+  T value;
+  PrimitiveWrapper(this.value);
+}
