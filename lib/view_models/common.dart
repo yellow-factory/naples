@@ -200,7 +200,7 @@ mixin StepViewModelController<T> on GetSetViewModel<T> {
 abstract class RawStepViewModel<T> extends GetSetViewModel<T> with StepViewModelController<T> {
   @override
   Widget get widget {
-    return ChangeNotifierProvider<GetSetViewModel>.value(value: this, child: DynamicFormWidget());
+    return DynamicFormWidget(<Expanded>[for (var p in properties) p.widgetAsExpanded()]);
   }
 }
 

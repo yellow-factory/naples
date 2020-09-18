@@ -9,18 +9,19 @@ class DynamicFormWidget extends StatelessWidget {
   int rows = 1;
   bool normalize = true;
   FunctionOf1<List<Expanded>, List<List<Widget>>> _distributeWidgets;
+  List<Expanded> children;
 
-  DynamicFormWidget({Key key}) : super(key: key) {
-    //Defaults to fix 1 column
-    columns = 1;
+  DynamicFormWidget(this.children, {Key key}) : super(key: key) {
     _distributeWidgets = _distributeLeftToRight;
   }
 
-  DynamicFormWidget.fixColumns({Key key, this.columns = 1, this.normalize}) : super(key: key) {
+  DynamicFormWidget.fixColumns(this.children, {Key key, this.columns = 1, this.normalize = true})
+      : super(key: key) {
     _distributeWidgets = _distributeLeftToRight;
   }
 
-  DynamicFormWidget.fixRows({Key key, this.rows = 1, this.normalize}) : super(key: key) {
+  DynamicFormWidget.fixRows(this.children, {Key key, this.rows = 1, this.normalize = true})
+      : super(key: key) {
     _distributeWidgets = _distributeTopToBottom;
   }
 
@@ -32,10 +33,10 @@ class DynamicFormWidget extends StatelessWidget {
 //TODO: Estudiar si ha de dependre de GetSetViewModel o ha de ser independent. Potser el mapeig de
 //widgets es podria fer al control que el conté i aquest es podria aprofitar per altres coses?
 
-    final getSetViewModel = context.watch<GetSetViewModel>();
-    final expandedWidgets =
-        getSetViewModel.properties.map((e) => _getExpanded(e.widget, e.flex)).toList();
-    final distributedWidgets = _distributeWidgets(expandedWidgets);
+    // final getSetViewModel = context.watch<GetSetViewModel>();
+    // final expandedWidgets =
+    //     getSetViewModel.properties.map((e) => _getExpanded(e.widget, e.flex)).toList();
+    final distributedWidgets = _distributeWidgets(children);
 
     //Return a Form with all the widgets
     var rows = distributedWidgets.map((e) => _getRow(e)).toList();
@@ -81,8 +82,6 @@ class DynamicFormWidget extends StatelessWidget {
     return widgetRows;
   }
 
-  //TODO: Normalization of the rows may be an optional?
-
   List<List<Widget>> _distributeTopToBottom(List<Expanded> widgets) {
     //In this case the number of rows is fixed...
 
@@ -91,8 +90,6 @@ class DynamicFormWidget extends StatelessWidget {
     var currentRow = PrimitiveWrapper<int>(0);
     var currentColumn = PrimitiveWrapper<int>(0);
     for (var widget in widgets) {
-      print('column: ${currentColumn.value}');
-      print('row: ${currentRow.value}');
       var row = _getNextRow(widgetRows, currentRow, currentColumn);
       row.add(widget);
     }
@@ -140,6 +137,7 @@ class DynamicFormWidget extends StatelessWidget {
       ? 0
       : widgets.map((e) => e.flex).reduce((value, element) => value + element);
 
+  //TODO: A extingir
   Expanded _getExpanded(Widget widget, int flex) {
     return Expanded(
         child: Container(child: widget, margin: EdgeInsets.symmetric(vertical: 2, horizontal: 3)),

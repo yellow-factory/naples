@@ -10,11 +10,11 @@ class SaveCancelWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var viewModel = context.watch<SaveCancelViewModel>();
+    final viewModel = context.watch<SaveCancelViewModel>();
 
     return BaseScaffoldWidget(
         child: Column(children: <Widget>[
-      DynamicFormWidget(),
+      DynamicFormWidget(<Expanded>[for (var p in viewModel.properties) p.widgetAsExpanded()]),
       ActionsWidget(actions: <ActionWrap>[
         ActionWrap(
           title: "Save",

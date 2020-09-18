@@ -32,6 +32,15 @@ abstract class LayoutMember {
   LayoutMember({this.flex = 1});
 
   Widget get widget;
+
+  //Wraps widget in a Container wrapped by an Expanded
+  Expanded widgetAsExpanded({double vertical = 2, double horizontal = 3}) {
+    return Expanded(
+        child: Container(
+            child: widget,
+            margin: EdgeInsets.symmetric(vertical: vertical, horizontal: horizontal)),
+        flex: flex ?? 1);
+  }
 }
 
 abstract class ViewModelProperty<T, U> extends LayoutMember {
