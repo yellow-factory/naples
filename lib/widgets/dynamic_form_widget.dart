@@ -1,125 +1,58 @@
 import 'package:flutter/material.dart';
 import 'package:yellow_naples/utils.dart';
-import 'package:yellow_naples/view_models/common.dart';
-import 'package:provider/provider.dart';
-import 'dart:math';
+import 'package:list_ext/list_ext.dart';
+
+enum DynamicFormDistribution { LeftToRight, TopToBottom }
 
 class DynamicFormWidget extends StatelessWidget {
-  int columns = 1;
-  int rows = 1;
-  bool normalize = true;
-  FunctionOf1<List<Expanded>, List<List<Widget>>> _distributeWidgets;
-  List<Expanded> children;
+  //Refers to columns when fixing columns (left to right distribution)
+  //and refers to rows when fixing rows (top to bottom distribution)
+  final int fixed;
+  final bool normalize;
+  final List<Expandable> children;
+  final DynamicFormDistribution distribution;
 
-  DynamicFormWidget(this.children, {Key key}) : super(key: key) {
-    _distributeWidgets = _distributeLeftToRight;
-  }
-
-  DynamicFormWidget.fixColumns(this.children, {Key key, this.columns = 1, this.normalize = true})
-      : super(key: key) {
-    _distributeWidgets = _distributeLeftToRight;
-  }
-
-  DynamicFormWidget.fixRows(this.children, {Key key, this.rows = 1, this.normalize = true})
-      : super(key: key) {
-    _distributeWidgets = _distributeTopToBottom;
-  }
+  DynamicFormWidget(this.children,
+      {Key key,
+      this.fixed = 1,
+      this.normalize = true,
+      this.distribution = DynamicFormDistribution.LeftToRight})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // var properties =
-    //     context.select<GetSetViewModel, Iterable<EditableViewModelProperty>>((x) => x.properties);
-
-//TODO: Estudiar si ha de dependre de GetSetViewModel o ha de ser independent. Potser el mapeig de
-//widgets es podria fer al control que el conté i aquest es podria aprofitar per altres coses?
-
-    // final getSetViewModel = context.watch<GetSetViewModel>();
-    // final expandedWidgets =
-    //     getSetViewModel.properties.map((e) => _getExpanded(e.widget, e.flex)).toList();
-    final distributedWidgets = _distributeWidgets(children);
-
-    //Return a Form with all the widgets
-    var rows = distributedWidgets.map((e) => _getRow(e)).toList();
-    return Form(
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: rows),
-      autovalidate: true,
-    );
+    return distribution == DynamicFormDistribution.LeftToRight
+        ? LeftToRightDynamicFormWidget(children, columns: fixed, normalize: normalize)
+        : TopToBottomDynamicFormWidget(children, rows: fixed, normalize: normalize);
   }
+}
 
-  List<List<Widget>> _distributeLeftToRight(List<Expanded> widgets) {
-    //The number of columns is fixed...
-    final widgetRows = <List<Expanded>>[List<Expanded>()]; //List of all rows, initialize first row
-    int currentRow = 0;
-    int flexOnRow = 0; //Sum flex of widgets on the current row
-    for (var widget in widgets) {
-      var row = widgetRows[currentRow];
-      if (flexOnRow + widget.flex < columns) {
-        //Adds the widget to the current row of widgets
-        row.add(widget);
-        flexOnRow += widget.flex;
-        continue;
-      }
-      if (flexOnRow + widget.flex == columns) {
-        row.add(widget);
-        //Initialize row values
-        flexOnRow = 0;
-        currentRow++;
-        widgetRows.add(List<Expanded>());
-        continue;
-      }
-      //If the new widget has a flex that overflows current row
-      if (flexOnRow + widget.flex > columns) {
-        currentRow++;
-        widgetRows.add(List<Expanded>());
-        widgetRows[currentRow].add(widget);
-        flexOnRow = widget.flex;
-      }
-    }
+class TopToBottomDynamicFormWidget extends StatelessWidget {
+  final int rows;
+  final List<Expandable> children;
+  final bool normalize;
 
-    //Normalize Rows
-    _normalizeRows(widgetRows);
+  TopToBottomDynamicFormWidget(this.children, {Key key, this.rows = 1, this.normalize = true})
+      : super(key: key);
 
-    return widgetRows;
-  }
-
-  List<List<Widget>> _distributeTopToBottom(List<Expanded> widgets) {
+  @override
+  Widget build(BuildContext context) {
     //In this case the number of rows is fixed...
-
     //List of all rows
-    final widgetRows = List<List<Expanded>>.generate(rows, (int index) => List<Expanded>());
+    final widgetRows = List<List<Expandable>>.generate(rows, (int index) => List<Expandable>());
     var currentRow = PrimitiveWrapper<int>(0);
     var currentColumn = PrimitiveWrapper<int>(0);
-    for (var widget in widgets) {
+    for (var w in children) {
       var row = _getNextRow(widgetRows, currentRow, currentColumn);
-      row.add(widget);
+      row.add(w);
     }
-
-    //Normalize Rows
-    _normalizeRows(widgetRows);
-
-    return widgetRows;
+    return ContainerDynamicFormWidget(widgetRows, normalize: normalize);
   }
 
-  void _normalizeRows(List<List<Expanded>> widgetRows) {
-    if (!normalize) return;
-    if (widgetRows.length == 0) return;
-    var maxFlex = widgetRows
-        .map((e) => _flexOnRow(e))
-        .reduce((value, element) => [value, element].fold(0, max));
-    for (var row in widgetRows) {
-      var flexOnRow = _flexOnRow(row);
-      while (flexOnRow < maxFlex) {
-        row.add(_getExpanded(Container(), 1));
-        flexOnRow++;
-      }
-    }
-  }
-
-  List<Expanded> _getNextRow(List<List<Expanded>> widgetRows, PrimitiveWrapper<int> currentRow,
+  List<Expandable> _getNextRow(List<List<Expandable>> widgetRows, PrimitiveWrapper<int> currentRow,
       PrimitiveWrapper<int> currentColumn) {
-    //If necessary returns to the first row and changes column
     if (currentRow.value >= rows) {
-      print("newcolumn");
+      //If necessary returns to the first row and changes column
       currentRow.value = 0;
       currentColumn.value++;
     }
@@ -133,22 +66,186 @@ class DynamicFormWidget extends StatelessWidget {
     return _getNextRow(widgetRows, currentRow, currentColumn);
   }
 
-  int _flexOnRow(List<Expanded> widgets) => widgets.length == 0
-      ? 0
-      : widgets.map((e) => e.flex).reduce((value, element) => value + element);
+  int _flexOnRow(List<Expandable> widgets) =>
+      widgets.length == 0 ? 0 : widgets.sumOf((element) => element.flex);
+}
 
-  //TODO: A extingir
-  Expanded _getExpanded(Widget widget, int flex) {
-    return Expanded(
-        child: Container(child: widget, margin: EdgeInsets.symmetric(vertical: 2, horizontal: 3)),
-        flex: flex ?? 1);
+class LeftToRightDynamicFormWidget extends StatelessWidget {
+  final int columns;
+  final List<Expandable> children;
+  final bool normalize;
+
+  LeftToRightDynamicFormWidget(this.children, {Key key, this.columns = 1, this.normalize = true})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    //The number of columns is fixed...
+    final widgetRows = <List<Expandable>>[
+      List<Expandable>()
+    ]; //List of all rows, initialize first row
+    int currentRow = 0;
+    int flexOnRow = 0; //Sum flex of widgets on the current row
+    for (var w in children) {
+      //It has to create an Expanded
+      w.flex = [w.flex, columns].min();
+      var row = widgetRows[currentRow];
+      if (flexOnRow + w.flex < columns) {
+        //Adds the widget to the current row of widgets
+        row.add(w);
+        flexOnRow += w.flex;
+        continue;
+      }
+      if (flexOnRow + w.flex == columns) {
+        row.add(w);
+        //Initialize row values
+        flexOnRow = 0;
+        currentRow++;
+        widgetRows.add(List<Expandable>());
+        continue;
+      }
+      //If the new widget has a flex that overflows current row
+      if (flexOnRow + w.flex > columns) {
+        currentRow++;
+        widgetRows.add(List<Expandable>());
+        widgetRows[currentRow].add(w);
+        flexOnRow = w.flex;
+      }
+    }
+    return ContainerDynamicFormWidget(widgetRows, normalize: normalize);
+  }
+}
+
+class ContainerDynamicFormWidget extends StatelessWidget {
+  final List<List<Expandable>> children;
+  final bool normalize;
+
+  ContainerDynamicFormWidget(this.children, {Key key, this.normalize = true}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    //Return a Form with all the widgets
+    return Form(
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: _getRows),
+      autovalidate: true,
+    );
   }
 
-  Row _getRow(List<Widget> widgets) {
+  int _flexOnRow(List<Expandable> liste) => liste.sumOf((e) => e.flex);
+
+  int get _maxFlex => children.map((c) => _flexOnRow(c)).max();
+
+  Row _getRow(List<Expandable> expandable) {
+    var expanded = List<Widget>();
+    for (var e in expandable) expanded.add(Expanded(child: e.child, flex: e.flex));
+    if (normalize) {
+      var flexOnRow = _flexOnRow(expandable);
+      for (int i = flexOnRow; i < _maxFlex; i++) {
+        expanded.add(Spacer());
+      }
+    }
     return Row(
-      children: widgets,
+      children: expanded,
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.baseline,
     );
   }
+
+  List<Row> get _getRows => children.where((e) => e.length > 0).map((e) => _getRow(e)).toList();
+}
+
+class DynamicFormPlaygroundWidget extends StatefulWidget {
+  final int fixed;
+  final bool normalize;
+  final List<Expandable> children;
+  final DynamicFormDistribution distribution;
+
+  DynamicFormPlaygroundWidget(this.children,
+      {Key key,
+      this.fixed = 1,
+      this.normalize = true,
+      this.distribution = DynamicFormDistribution.LeftToRight})
+      : super(key: key);
+
+  @override
+  _DynamicFormPlaygroundWidgetState createState() =>
+      _DynamicFormPlaygroundWidgetState(fixed, normalize, children, distribution);
+}
+
+class _DynamicFormPlaygroundWidgetState extends State<DynamicFormPlaygroundWidget> {
+  int fixed;
+  bool normalize;
+  List<Expandable> children;
+  DynamicFormDistribution distribution;
+  _DynamicFormPlaygroundWidgetState(this.fixed, this.normalize, this.children, this.distribution);
+
+  TextEditingController _controller;
+
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: fixed.toString());
+  }
+
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Card(
+            //margin: EdgeInsets.symmetric(vertical: 25, horizontal: 5),
+            child: Column(children: [
+          SwitchListTile(
+            title: Text("Normalize"),
+            subtitle: Text("Enforce the form layout to create empty spaces to keep proportions"),
+            value: normalize,
+            onChanged: (value) => setState(() => normalize = value),
+          ),
+          SwitchListTile(
+            title: Text("Top to bottom distribution"),
+            subtitle: Text(
+                "By default the distribution of the widgets is left to right, but you can opt in top to bottom"),
+            value: distribution != DynamicFormDistribution.LeftToRight,
+            onChanged: (value) => setState(() => value
+                ? distribution = DynamicFormDistribution.TopToBottom
+                : distribution = DynamicFormDistribution.LeftToRight),
+          ),
+          new ListTile(
+              title: Text("Fixed rows/columns"),
+              subtitle: Text("TODO: Hint of Fixed..."),
+              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              trailing: new Container(
+                  width: 50,
+                  height: 50,
+                  child: TextField(
+                    controller: _controller,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        print(value);
+                        if (value != null && value.isNotEmpty) fixed = int.parse(value);
+                      });
+                    },
+                  )))
+        ])),
+        DynamicFormWidget(
+          children,
+          fixed: fixed,
+          distribution: distribution,
+          normalize: normalize,
+        )
+      ],
+    );
+  }
+}
+
+class Expandable {
+  final Widget child;
+  int flex;
+  Expandable(this.child, this.flex);
 }

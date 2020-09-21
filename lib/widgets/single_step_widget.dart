@@ -10,11 +10,13 @@ class SingleStepWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var viewModel = context.watch<StepViewModelController>();
+    final viewModel = context.watch<StepViewModelController>();
 
     return BaseScaffoldWidget(
         child: Column(children: <Widget>[
-      DynamicFormWidget(<Expanded>[for (var p in viewModel.properties) p.widgetAsExpanded()]),
+      DynamicFormWidget(<Expandable>[
+        for (var p in viewModel.properties) Expandable(p.widgetInContainer(), p.flex ?? 1)
+      ]),
       ActionsWidget(actions: <ActionWrap>[
         ActionWrap(
           title: viewModel.hasNextStep ? "Continua" : "Finalitza",

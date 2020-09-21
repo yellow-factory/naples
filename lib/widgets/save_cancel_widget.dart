@@ -14,7 +14,9 @@ class SaveCancelWidget extends StatelessWidget {
 
     return BaseScaffoldWidget(
         child: Column(children: <Widget>[
-      DynamicFormWidget(<Expanded>[for (var p in viewModel.properties) p.widgetAsExpanded()]),
+      DynamicFormWidget(<Expandable>[
+        for (var p in viewModel.properties) Expandable(p.widgetInContainer(), p.flex ?? 1)
+      ]),
       ActionsWidget(actions: <ActionWrap>[
         ActionWrap(
           title: "Save",

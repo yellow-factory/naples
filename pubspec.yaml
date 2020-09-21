@@ -16,6 +16,7 @@ dependencies:
   intl: ^0.16.1
   intl_translation: ^0.17.10+1
   dropdown_search: ^0.4.4
+  list_ext: ^0.1.13
 
 dev_dependencies:
   flutter_test:

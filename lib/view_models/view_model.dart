@@ -33,13 +33,9 @@ abstract class LayoutMember {
 
   Widget get widget;
 
-  //Wraps widget in a Container wrapped by an Expanded
-  Expanded widgetAsExpanded({double vertical = 2, double horizontal = 3}) {
-    return Expanded(
-        child: Container(
-            child: widget,
-            margin: EdgeInsets.symmetric(vertical: vertical, horizontal: horizontal)),
-        flex: flex ?? 1);
+  Container widgetInContainer({double vertical: 2, double horizontal: 3}) {
+    return Container(
+        child: widget, margin: EdgeInsets.symmetric(vertical: vertical, horizontal: horizontal));
   }
 }
 

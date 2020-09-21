@@ -19,7 +19,7 @@ class CommentLayoutMember extends LayoutMember {
   final double bottomPadding;
 
   CommentLayoutMember(this.comment,
-      {int flex = 1,
+      {int flex = 99,
       this.fontStyle,
       this.textAlign,
       this.fontWeight,
@@ -41,7 +41,7 @@ class CommentLayoutMember extends LayoutMember {
 }
 
 class DividerLayoutMember extends LayoutMember {
-  DividerLayoutMember({int flex = 1}) : super(flex: flex);
+  DividerLayoutMember({int flex = 99}) : super(flex: flex);
 
   @override
   Widget get widget => Divider();

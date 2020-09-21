@@ -36,12 +36,12 @@ abstract class GetSetViewModel<T> extends ViewModel {
   Future<T> get();
   Future<void> set();
 
-  void addDivider({int flex}) {
+  void addDivider({int flex = 99}) {
     _add(DividerLayoutMember(flex: flex));
   }
 
   void addComment(FunctionOf<String> comment,
-      {int flex,
+      {int flex = 99,
       FontStyle fontStyle,
       FontWeight fontWeight,
       TextAlign textAlign,
@@ -200,7 +200,9 @@ mixin StepViewModelController<T> on GetSetViewModel<T> {
 abstract class RawStepViewModel<T> extends GetSetViewModel<T> with StepViewModelController<T> {
   @override
   Widget get widget {
-    return DynamicFormWidget(<Expanded>[for (var p in properties) p.widgetAsExpanded()]);
+    return DynamicFormWidget(<Expandable>[
+      for (var p in this.properties) Expandable(p.widgetInContainer(), p.flex ?? 1)
+    ]);
   }
 }
 
