@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:yellow_naples/utils.dart';
 import 'package:list_ext/list_ext.dart';
 
 enum DynamicFormDistribution { LeftToRight, TopToBottom }
@@ -8,6 +7,7 @@ class DynamicFormWidget extends StatelessWidget {
   //Refers to columns when fixing columns (left to right distribution)
   //and refers to rows when fixing rows (top to bottom distribution)
   final int fixed;
+  final int maxFlex;
   final bool normalize;
   final List<Expandable> children;
   final DynamicFormDistribution distribution;
@@ -15,6 +15,7 @@ class DynamicFormWidget extends StatelessWidget {
   DynamicFormWidget(this.children,
       {Key key,
       this.fixed = 1,
+      this.maxFlex = 99,
       this.normalize = true,
       this.distribution = DynamicFormDistribution.LeftToRight})
       : super(key: key);
@@ -22,60 +23,118 @@ class DynamicFormWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return distribution == DynamicFormDistribution.LeftToRight
-        ? LeftToRightDynamicFormWidget(children, columns: fixed, normalize: normalize)
-        : TopToBottomDynamicFormWidget(children, rows: fixed, normalize: normalize);
+        ? LeftToRightDynamicFormWidget(children,
+            fixedWidgetsPerRow: fixed, maxFlex: maxFlex, normalize: normalize)
+        : TopToBottomDynamicFormWidget(children,
+            fixedWidgetsPerColumn: fixed, maxFlex: maxFlex, normalize: normalize);
   }
 }
 
 class TopToBottomDynamicFormWidget extends StatelessWidget {
-  final int rows;
   final List<Expandable> children;
+  final int fixedWidgetsPerColumn;
   final bool normalize;
+  final int maxFlex;
 
-  TopToBottomDynamicFormWidget(this.children, {Key key, this.rows = 1, this.normalize = true})
+  TopToBottomDynamicFormWidget(this.children,
+      {Key key, this.fixedWidgetsPerColumn = 1, this.maxFlex = 1, this.normalize = true})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    //In this case the number of rows is fixed...
-    //List of all rows
+    //Calculates the minimum rows needed and the extra rows needed because of the columns constraint
     final widgetRows = List<List<Expandable>>.generate(rows, (int index) => List<Expandable>());
-    var currentRow = PrimitiveWrapper<int>(0);
-    var currentColumn = PrimitiveWrapper<int>(0);
+    final currentFlexOnRow = Map<int, int>();
+    var currentRow = 0;
+    var extraRowsUsed = 0;
+    //First initialize rows
+    for (int i = 0; i < rows; i++) {
+      currentFlexOnRow[i] = 0;
+    }
     for (var w in children) {
-      var row = _getNextRow(widgetRows, currentRow, currentColumn);
-      row.add(w);
+      var currentFlex = [w.flex, maxFlex].min();
+      var currentExpandable = new Expandable(w.child, currentFlex);
+      if (!_anyRowWithSpace(
+          currentFlexOnRow.entries
+              .where((element) => element.key < fixedWidgetsPerColumn + extraRowsUsed),
+          currentFlex,
+          maxFlex)) {
+        //Adds extra row
+        currentRow = fixedWidgetsPerColumn + extraRowsUsed;
+        extraRowsUsed++;
+      }
+      //Advances to the desired row
+      while (currentFlexOnRow[currentRow] + currentFlex > maxFlex) {
+        currentRow++;
+        if (currentRow >= fixedWidgetsPerColumn + extraRowsUsed) currentRow = 0;
+      }
+      //Counts the flex in the corresponding row
+      currentFlexOnRow[currentRow] += currentFlex;
+      widgetRows[currentRow].add(currentExpandable);
+      //Next row
+      currentRow++;
+      if (currentRow >= fixedWidgetsPerColumn + extraRowsUsed) currentRow = 0;
     }
     return ContainerDynamicFormWidget(widgetRows, normalize: normalize);
   }
 
-  List<Expandable> _getNextRow(List<List<Expandable>> widgetRows, PrimitiveWrapper<int> currentRow,
-      PrimitiveWrapper<int> currentColumn) {
-    if (currentRow.value >= rows) {
-      //If necessary returns to the first row and changes column
-      currentRow.value = 0;
-      currentColumn.value++;
-    }
-    var row = widgetRows[currentRow.value];
-    var flexOnRow = _flexOnRow(row);
-    ++currentRow.value;
-    if (flexOnRow <= currentColumn.value) {
-      return row;
-    }
+  int get rows => fixedWidgetsPerColumn + extraRows;
 
-    return _getNextRow(widgetRows, currentRow, currentColumn);
+  int get extraRows {
+    var extraRowsAdded = 0;
+    while (!_enoughRows(extraRowsAdded)) extraRowsAdded++;
+    return extraRowsAdded;
   }
 
-  int _flexOnRow(List<Expandable> widgets) =>
-      widgets.length == 0 ? 0 : widgets.sumOf((element) => element.flex);
+  bool _enoughRows(int extraRowsAdded) {
+    var currentRow = 0;
+    var extraRowsUsed = 0;
+    var totalRows = fixedWidgetsPerColumn + extraRowsAdded;
+    var currentFlexOnRow = Map<int, int>();
+    //First initialize rows
+    for (int i = 0; i < totalRows; i++) {
+      currentFlexOnRow[i] = 0;
+    }
+    for (var c in children) {
+      //Tops the flex value with the maxFlex
+      var currentFlex = [c.flex, maxFlex].min();
+      if (!_anyRowWithSpace(
+          currentFlexOnRow.entries
+              .where((element) => element.key < fixedWidgetsPerColumn + extraRowsUsed),
+          currentFlex,
+          maxFlex)) {
+        if (extraRowsUsed == extraRowsAdded) return false;
+        //Adds extra row
+        currentRow = fixedWidgetsPerColumn + extraRowsUsed;
+        extraRowsUsed++;
+      }
+      //Advances to the desired row
+      while (currentFlexOnRow[currentRow] + currentFlex > maxFlex) {
+        currentRow++;
+        if (currentRow >= fixedWidgetsPerColumn + extraRowsUsed) currentRow = 0;
+      }
+      //Counts the flex in the corresponding row
+      currentFlexOnRow[currentRow] += currentFlex;
+      //Next row
+      currentRow++;
+      if (currentRow >= fixedWidgetsPerColumn + extraRowsUsed) currentRow = 0;
+    }
+    return true;
+  }
+
+  bool _anyRowWithSpace(Iterable<MapEntry<int, int>> distributionMap, int flex, int maxFlex) {
+    return distributionMap.where((element) => element.value + flex <= maxFlex).length > 0;
+  }
 }
 
 class LeftToRightDynamicFormWidget extends StatelessWidget {
-  final int columns;
+  final int fixedWidgetsPerRow;
+  final int maxFlex;
   final List<Expandable> children;
   final bool normalize;
 
-  LeftToRightDynamicFormWidget(this.children, {Key key, this.columns = 1, this.normalize = true})
+  LeftToRightDynamicFormWidget(this.children,
+      {Key key, this.fixedWidgetsPerRow = 1, this.maxFlex = 99, this.normalize = true})
       : super(key: key);
 
   @override
@@ -86,31 +145,33 @@ class LeftToRightDynamicFormWidget extends StatelessWidget {
     ]; //List of all rows, initialize first row
     int currentRow = 0;
     int flexOnRow = 0; //Sum flex of widgets on the current row
+    int columnCount = 1;
     for (var w in children) {
-      //It has to create an Expanded
-      w.flex = [w.flex, columns].min();
+      var currentExpandable = new Expandable(w.child, [w.flex, maxFlex].min());
+      var currentFlex = flexOnRow + w.flex;
       var row = widgetRows[currentRow];
-      if (flexOnRow + w.flex < columns) {
+      if (currentFlex < maxFlex && columnCount < fixedWidgetsPerRow) {
         //Adds the widget to the current row of widgets
-        row.add(w);
-        flexOnRow += w.flex;
+        row.add(currentExpandable);
+        flexOnRow += currentExpandable.flex;
+        columnCount++;
         continue;
       }
-      if (flexOnRow + w.flex == columns) {
-        row.add(w);
+      if (currentFlex == maxFlex || columnCount == fixedWidgetsPerRow) {
+        row.add(currentExpandable);
         //Initialize row values
         flexOnRow = 0;
+        columnCount = 1;
         currentRow++;
         widgetRows.add(List<Expandable>());
         continue;
       }
       //If the new widget has a flex that overflows current row
-      if (flexOnRow + w.flex > columns) {
-        currentRow++;
-        widgetRows.add(List<Expandable>());
-        widgetRows[currentRow].add(w);
-        flexOnRow = w.flex;
-      }
+      currentRow++;
+      columnCount = 1;
+      widgetRows.add(List<Expandable>());
+      widgetRows[currentRow].add(currentExpandable);
+      flexOnRow = currentExpandable.flex;
     }
     return ContainerDynamicFormWidget(widgetRows, normalize: normalize);
   }
@@ -156,6 +217,7 @@ class ContainerDynamicFormWidget extends StatelessWidget {
 
 class DynamicFormPlaygroundWidget extends StatefulWidget {
   final int fixed;
+  final int maxFlex;
   final bool normalize;
   final List<Expandable> children;
   final DynamicFormDistribution distribution;
@@ -163,31 +225,38 @@ class DynamicFormPlaygroundWidget extends StatefulWidget {
   DynamicFormPlaygroundWidget(this.children,
       {Key key,
       this.fixed = 1,
+      this.maxFlex = 99,
       this.normalize = true,
       this.distribution = DynamicFormDistribution.LeftToRight})
       : super(key: key);
 
   @override
   _DynamicFormPlaygroundWidgetState createState() =>
-      _DynamicFormPlaygroundWidgetState(fixed, normalize, children, distribution);
+      _DynamicFormPlaygroundWidgetState(fixed, maxFlex, normalize, children, distribution);
 }
 
 class _DynamicFormPlaygroundWidgetState extends State<DynamicFormPlaygroundWidget> {
   int fixed;
+  int maxFlex;
   bool normalize;
   List<Expandable> children;
   DynamicFormDistribution distribution;
-  _DynamicFormPlaygroundWidgetState(this.fixed, this.normalize, this.children, this.distribution);
 
-  TextEditingController _controller;
+  _DynamicFormPlaygroundWidgetState(
+      this.fixed, this.maxFlex, this.normalize, this.children, this.distribution);
+
+  TextEditingController _fixedController;
+  TextEditingController _maxFlexController;
 
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: fixed.toString());
+    _fixedController = TextEditingController(text: fixed.toString());
+    _maxFlexController = TextEditingController(text: maxFlex.toString());
   }
 
   void dispose() {
-    _controller.dispose();
+    _fixedController.dispose();
+    _maxFlexController.dispose();
     super.dispose();
   }
 
@@ -196,7 +265,6 @@ class _DynamicFormPlaygroundWidgetState extends State<DynamicFormPlaygroundWidge
     return Column(
       children: [
         Card(
-            //margin: EdgeInsets.symmetric(vertical: 25, horizontal: 5),
             child: Column(children: [
           SwitchListTile(
             title: Text("Normalize"),
@@ -214,21 +282,42 @@ class _DynamicFormPlaygroundWidgetState extends State<DynamicFormPlaygroundWidge
                 : distribution = DynamicFormDistribution.LeftToRight),
           ),
           new ListTile(
-              title: Text("Fixed rows/columns"),
-              subtitle: Text("TODO: Hint of Fixed..."),
+              title: Text("Fixed widgets per row/column"),
+              subtitle: Text(
+                  "In left to right distribution: fixed widgets per row, in top to bottom distribution: fixed widgets per column"),
               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               trailing: new Container(
                   width: 50,
                   height: 50,
                   child: TextField(
-                    controller: _controller,
+                    controller: _fixedController,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                     ),
                     onChanged: (value) {
                       setState(() {
                         print(value);
-                        if (value != null && value.isNotEmpty) fixed = int.parse(value);
+                        if (int.tryParse(value) != null) fixed = [int.parse(value), 1].max();
+                      });
+                    },
+                  ))),
+          new ListTile(
+              title: Text("Max Flex"),
+              subtitle:
+                  Text("Max flex per row when summarizing the flex of the widgets in the row"),
+              contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              trailing: new Container(
+                  width: 50,
+                  height: 50,
+                  child: TextField(
+                    controller: _maxFlexController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        print(value);
+                        if (int.tryParse(value) != null) maxFlex = [int.parse(value), 1].max();
                       });
                     },
                   )))
@@ -236,6 +325,7 @@ class _DynamicFormPlaygroundWidgetState extends State<DynamicFormPlaygroundWidge
         DynamicFormWidget(
           children,
           fixed: fixed,
+          maxFlex: maxFlex,
           distribution: distribution,
           normalize: normalize,
         )
@@ -246,6 +336,6 @@ class _DynamicFormPlaygroundWidgetState extends State<DynamicFormPlaygroundWidge
 
 class Expandable {
   final Widget child;
-  int flex;
+  final int flex;
   Expandable(this.child, this.flex);
 }

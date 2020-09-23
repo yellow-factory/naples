@@ -4,6 +4,8 @@ import 'package:yellow_naples/utils.dart';
 import 'package:yellow_naples/view_models/properties.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
 import 'package:yellow_naples/navigation/navigation.dart';
+import 'package:yellow_naples/view_models/view_model.dart';
+import 'package:yellow_naples/view_models/view_model.dart';
 import 'package:yellow_naples/widgets/list_widget.dart';
 import 'package:yellow_naples/widgets/save_cancel_widget.dart';
 import 'package:yellow_naples/widgets/single_step_widget.dart';
@@ -200,9 +202,18 @@ mixin StepViewModelController<T> on GetSetViewModel<T> {
 abstract class RawStepViewModel<T> extends GetSetViewModel<T> with StepViewModelController<T> {
   @override
   Widget get widget {
-    return DynamicFormWidget(<Expandable>[
-      for (var p in this.properties) Expandable(p.widgetInContainer(), p.flex ?? 1)
-    ]);
+    return ChangeNotifierProvider<ViewModel>.value(
+        value: this,
+        builder: (context, child) {
+          context.watch<ViewModel>();
+          return DynamicFormWidget(<Expandable>[
+            for (var p in this.properties) Expandable(p.widgetInContainer(), p.flex ?? 1)
+          ]);
+        });
+
+    // return DynamicFormWidget(<Expandable>[
+    //   for (var p in this.properties) Expandable(p.widgetInContainer(), p.flex ?? 1)
+    // ]);
   }
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:yellow_naples/utils.dart';
 import 'package:yellow_naples/view_models/properties_widgets/checkbox_view_model_property_widget.dart';
 import 'package:yellow_naples/view_models/properties_widgets/dropdown_view_model_property_widget.dart';
@@ -225,13 +226,18 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
   Widget get widget {
     switch (widgetType) {
       case BoolWidgetType.Switch:
-        return SwitchViewModelPropertyWidget(this);
+        return ChangeNotifierProvider.value(
+            value: this, child: SwitchViewModelPropertyWidget(this));
       case BoolWidgetType.Checkbox:
-        return CheckboxViewModelPropertyWidget(this);
+        return ChangeNotifierProvider.value(
+            value: this, child: CheckboxViewModelPropertyWidget(this));
       case BoolWidgetType.Radio:
-        return RadioListViewModelPropertyWidget(toSelect());
+        var select = toSelect();
+        return ChangeNotifierProvider.value(
+            value: select, child: RadioListViewModelPropertyWidget<T, bool, BoolValues>());
       default:
-        return CheckboxViewModelPropertyWidget(this);
+        return ChangeNotifierProvider.value(
+            value: this, child: CheckboxViewModelPropertyWidget(this));
     }
   }
 }
@@ -314,7 +320,7 @@ class SelectViewModelProperty<T, U, V> extends EditableViewModelProperty<T, U> {
       case SelectWidgetType.DropDown:
         return DropDownViewModelPropertyWidget<T, U, V>(this);
       case SelectWidgetType.Radio:
-        return RadioListViewModelPropertyWidget<T, U, V>(this);
+        return RadioListViewModelPropertyWidget<T, U, V>();
       default:
         return DropDownViewModelPropertyWidget<T, U, V>(this);
     }

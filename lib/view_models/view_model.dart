@@ -26,7 +26,7 @@ abstract class ViewModel extends ChangeNotifier with OneTimeInitializable1<Build
   Widget get widget;
 }
 
-abstract class LayoutMember {
+abstract class LayoutMember extends ChangeNotifier {
   final int flex;
 
   LayoutMember({this.flex = 1});
@@ -104,6 +104,7 @@ abstract class EditableViewModelProperty<T, U> extends ViewModelProperty<T, U> {
   void update() {
     if (this.setProperty == null) throw Exception("setProperty not set");
     this.setProperty(source, currentValue);
+    notifyListeners();
   }
 
   void undo() {
