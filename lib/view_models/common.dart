@@ -42,6 +42,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
 
   void addComment(FunctionOf<String> comment,
       {int flex = 99,
+      Predicate1<T> isVisible,
       FontStyle fontStyle,
       FontWeight fontWeight,
       TextAlign textAlign,
@@ -53,7 +54,8 @@ abstract class GetSetViewModel<T> extends ViewModel {
         fontWeight: fontWeight,
         textAlign: textAlign,
         topPadding: topPadding,
-        bottomPadding: bottomPadding));
+        bottomPadding: bottomPadding,
+        isVisible: isVisible));
   }
 
   void addStringProperty(FunctionOf<String> label, FunctionOf1<T, String> getProperty,
@@ -61,6 +63,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
       int flex,
       bool autofocus = false,
       ActionOf2<T, String> setProperty,
+      Predicate1<T> isVisible,
       Predicate1<T> isRequired,
       Predicate1<T> isEditable,
       FunctionOf1<String, String> isValid}) {
@@ -69,6 +72,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
         flex: flex,
         autofocus: autofocus,
         setProperty: setProperty,
+        isVisible: isVisible,
         isRequired: isRequired,
         isEditable: isEditable,
         isValid: isValid));
@@ -79,6 +83,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
       int flex,
       bool autofocus = false,
       ActionOf2<T, int> setProperty,
+      Predicate1<T> isVisible,
       Predicate1<T> isRequired,
       Predicate1<T> isEditable,
       FunctionOf1<int, String> isValid}) {
@@ -87,6 +92,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
         flex: flex,
         autofocus: autofocus,
         setProperty: setProperty,
+        isVisible: isVisible,
         isRequired: isRequired,
         isEditable: isEditable,
         isValid: isValid));
@@ -97,6 +103,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
       int flex,
       bool autofocus = false,
       ActionOf2<T, bool> setProperty,
+      Predicate1<T> isVisible,
       Predicate1<T> isRequired,
       Predicate1<T> isEditable,
       FunctionOf1<bool, String> isValid,
@@ -107,6 +114,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
         flex: flex,
         autofocus: autofocus,
         setProperty: setProperty,
+        isVisible: isVisible,
         isRequired: isRequired,
         isEditable: isEditable,
         isValid: isValid,
@@ -119,6 +127,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
       int flex,
       bool autofocus = false,
       ActionOf2<T, List<int>> setProperty,
+      Predicate1<T> isVisible,
       Predicate1<T> isRequired,
       Predicate1<T> isEditable}) {
     _add(FileViewModelProperty<T>(this, label, model, getProperty,
@@ -126,6 +135,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
         flex: flex,
         autofocus: autofocus,
         setProperty: setProperty,
+        isVisible: isVisible,
         isRequired: isRequired,
         isEditable: isEditable));
   }
@@ -140,6 +150,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
       int flex,
       bool autofocus = false,
       ActionOf2<T, U> setProperty,
+      Predicate1<T> isVisible,
       Predicate1<T> isRequired,
       Predicate1<T> isEditable,
       FunctionOf1<U, String> isValid,
@@ -150,14 +161,20 @@ abstract class GetSetViewModel<T> extends ViewModel {
         flex: flex,
         autofocus: autofocus,
         setProperty: setProperty,
+        isVisible: isVisible,
         isRequired: isRequired,
         isEditable: isEditable,
         isValid: isValid,
         widgetType: widgetType));
   }
 
-  Iterable<EditableViewModelProperty> get editableProperties =>
-      properties.whereType<EditableViewModelProperty>();
+  Iterable<VisibleLayoutMember<T>> get visibleProperties => properties
+      .whereType<VisibleLayoutMember<T>>()
+      .where((element) => element.isVisible == null || element.isVisible(model));
+
+  Iterable<EditableViewModelProperty> get editableProperties => properties
+      .whereType<EditableViewModelProperty>()
+      .where((element) => element.isVisible == null || element.isEditable(model));
 
   bool get valid {
     return editableProperties.every((x) => x.valid);
