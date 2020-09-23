@@ -26,22 +26,4 @@ class TextViewModelPropertyWidget extends StatelessWidget {
         keyboardType: textInputType,
         inputFormatters: textInputFormatters);
   }
-
-  // TextInputType _getTextInputType() {
-  //   switch (type) {
-  //     case TextViewModelPropertyWidgetType.Number:
-  //       return TextInputType.number;
-  //     default:
-  //       return null;
-  //   }
-  // }
-
-  // List<TextInputFormatter> _getTextInputFormatters() {
-  //   switch (type) {
-  //     case TextViewModelPropertyWidgetType.Number:
-  //       return <TextInputFormatter>[FilteringTextInputFormatter.digitsOnly];
-  //     default:
-  //       return null;
-  //   }
-  // }
 }

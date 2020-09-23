@@ -18,6 +18,7 @@ class CheckboxViewModelPropertyWidget extends StatelessWidget {
               ? (value) {
                   setState(() {
                     property.currentValue = value;
+                    property.update();
                   });
                 }
               : null,
