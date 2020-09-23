@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:yellow_naples/view_models/properties.dart';
+import 'package:provider/provider.dart';
 
 class FileViewModelPropertyWidget extends StatelessWidget {
-  final FileViewModelProperty property;
-
-  FileViewModelPropertyWidget(this.property);
-
   @override
   Widget build(BuildContext context) {
+    final property = context.watch<FileViewModelProperty>();
     return Card(
         margin: EdgeInsets.symmetric(horizontal: 0, vertical: 5),
         child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[

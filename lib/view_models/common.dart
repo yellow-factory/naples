@@ -4,8 +4,6 @@ import 'package:yellow_naples/utils.dart';
 import 'package:yellow_naples/view_models/properties.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
 import 'package:yellow_naples/navigation/navigation.dart';
-import 'package:yellow_naples/view_models/view_model.dart';
-import 'package:yellow_naples/view_models/view_model.dart';
 import 'package:yellow_naples/widgets/list_widget.dart';
 import 'package:yellow_naples/widgets/save_cancel_widget.dart';
 import 'package:yellow_naples/widgets/single_step_widget.dart';
@@ -39,7 +37,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
   Future<void> set();
 
   void addDivider({int flex = 99}) {
-    _add(DividerLayoutMember(flex: flex));
+    _add(DividerLayoutMember(this, flex: flex));
   }
 
   void addComment(FunctionOf<String> comment,
@@ -49,7 +47,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
       TextAlign textAlign,
       double topPadding,
       double bottomPadding}) {
-    _add(CommentLayoutMember(comment,
+    _add(CommentLayoutMember(this, comment,
         flex: flex,
         fontStyle: fontStyle,
         fontWeight: fontWeight,
@@ -66,7 +64,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
       Predicate1<T> isRequired,
       Predicate1<T> isEditable,
       FunctionOf1<String, String> isValid}) {
-    _add(StringViewModelProperty<T>(label, model, getProperty,
+    _add(StringViewModelProperty<T>(this, label, model, getProperty,
         hint: hint,
         flex: flex,
         autofocus: autofocus,
@@ -84,7 +82,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
       Predicate1<T> isRequired,
       Predicate1<T> isEditable,
       FunctionOf1<int, String> isValid}) {
-    _add(IntViewModelProperty<T>(label, model, getProperty,
+    _add(IntViewModelProperty<T>(this, label, model, getProperty,
         hint: hint,
         flex: flex,
         autofocus: autofocus,
@@ -104,7 +102,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
       FunctionOf1<bool, String> isValid,
       BoolWidgetType boolWidget,
       FunctionOf1<BoolValues, FunctionOf<String>> displayName}) {
-    _add(BoolViewModelProperty<T>(label, model, getProperty,
+    _add(BoolViewModelProperty<T>(this, label, model, getProperty,
         hint: hint,
         flex: flex,
         autofocus: autofocus,
@@ -123,7 +121,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
       ActionOf2<T, List<int>> setProperty,
       Predicate1<T> isRequired,
       Predicate1<T> isEditable}) {
-    _add(FileViewModelProperty<T>(label, model, getProperty,
+    _add(FileViewModelProperty<T>(this, label, model, getProperty,
         hint: hint,
         flex: flex,
         autofocus: autofocus,
@@ -147,7 +145,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
       FunctionOf1<U, String> isValid,
       SelectWidgetType widgetType}) {
     _add(SelectViewModelProperty<T, U, V>(
-        label, model, getProperty, listItems, valueMember, displayMember,
+        this, label, model, getProperty, listItems, valueMember, displayMember,
         hint: hint,
         flex: flex,
         autofocus: autofocus,

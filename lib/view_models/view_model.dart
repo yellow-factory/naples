@@ -28,8 +28,9 @@ abstract class ViewModel extends ChangeNotifier with OneTimeInitializable1<Build
 
 abstract class LayoutMember extends ChangeNotifier {
   final int flex;
+  final ViewModel viewModel;
 
-  LayoutMember({this.flex = 1});
+  LayoutMember(this.viewModel, {this.flex = 1});
 
   Widget get widget;
 
@@ -45,8 +46,9 @@ abstract class ViewModelProperty<T, U> extends LayoutMember {
   final T source;
   final FunctionOf1<T, U> getProperty;
 
-  ViewModelProperty(this.label, this.source, this.getProperty, {this.hint, int flex = 1})
-      : super(flex: flex);
+  ViewModelProperty(ViewModel viewModel, this.label, this.source, this.getProperty,
+      {this.hint, int flex = 1})
+      : super(viewModel, flex: flex);
 }
 
 abstract class EditableViewModelProperty<T, U> extends ViewModelProperty<T, U> {
@@ -67,7 +69,8 @@ abstract class EditableViewModelProperty<T, U> extends ViewModelProperty<T, U> {
   final Predicate1<T> isEditable;
   final FunctionOf1<U, String> isValid;
 
-  EditableViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, U> getProperty,
+  EditableViewModelProperty(
+      ViewModel viewModel, FunctionOf<String> label, T source, FunctionOf1<T, U> getProperty,
       {FunctionOf<String> hint,
       int flex,
       this.autofocus = false,
@@ -75,7 +78,7 @@ abstract class EditableViewModelProperty<T, U> extends ViewModelProperty<T, U> {
       this.isEditable,
       this.isRequired,
       this.isValid})
-      : super(label, source, getProperty, hint: hint, flex: flex) {
+      : super(viewModel, label, source, getProperty, hint: hint, flex: flex) {
     initialize();
   }
 
@@ -104,7 +107,10 @@ abstract class EditableViewModelProperty<T, U> extends ViewModelProperty<T, U> {
   void update() {
     if (this.setProperty == null) throw Exception("setProperty not set");
     this.setProperty(source, currentValue);
+    //notifies the changes to the property because they may use the source
     notifyListeners();
+    //notifies the changes to the viewModel because they may use the source
+    viewModel.notifyListeners();
   }
 
   void undo() {

@@ -4,11 +4,13 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:yellow_naples/utils.dart';
 import 'package:yellow_naples/view_models/properties_widgets/checkbox_view_model_property_widget.dart';
+import 'package:yellow_naples/view_models/properties_widgets/comment_view_model_property_widget.dart';
 import 'package:yellow_naples/view_models/properties_widgets/dropdown_view_model_property_widget.dart';
 import 'package:yellow_naples/view_models/properties_widgets/file_view_model_property_widget.dart';
+import 'package:yellow_naples/view_models/properties_widgets/int_view_model_property_widget.dart';
 import 'package:yellow_naples/view_models/properties_widgets/radio_list_view_model_property_widget.dart';
+import 'package:yellow_naples/view_models/properties_widgets/string_view_model_property_widget.dart';
 import 'package:yellow_naples/view_models/properties_widgets/switch_view_model_property_widget.dart';
-import 'package:yellow_naples/view_models/properties_widgets/text_view_model_property_widget.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
 
 class CommentLayoutMember extends LayoutMember {
@@ -19,30 +21,23 @@ class CommentLayoutMember extends LayoutMember {
   final double topPadding;
   final double bottomPadding;
 
-  CommentLayoutMember(this.comment,
+  CommentLayoutMember(ViewModel viewModel, this.comment,
       {int flex = 99,
       this.fontStyle,
       this.textAlign,
       this.fontWeight,
       this.topPadding,
       this.bottomPadding})
-      : super(flex: flex);
+      : super(viewModel, flex: flex);
 
   @override
   Widget get widget {
-    //TODO: Cal separar el widget com en la resta de casos
-    return Padding(
-        padding: EdgeInsets.only(top: topPadding ?? 0.0, bottom: bottomPadding ?? 0.0),
-        child: Text(
-          comment(),
-          style: TextStyle(fontStyle: fontStyle, fontWeight: fontWeight),
-          textAlign: textAlign,
-        ));
+    return ChangeNotifierProvider.value(value: this, child: CommentViewModelPropertyWidget());
   }
 }
 
 class DividerLayoutMember extends LayoutMember {
-  DividerLayoutMember({int flex = 99}) : super(flex: flex);
+  DividerLayoutMember(ViewModel viewModel, {int flex = 99}) : super(viewModel, flex: flex);
 
   @override
   Widget get widget => Divider();
@@ -62,7 +57,8 @@ class DividerLayoutMember extends LayoutMember {
 abstract class TextViewModelProperty<T, U> extends EditableViewModelProperty<T, U> {
   final controller = TextEditingController();
 
-  TextViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, U> getProperty,
+  TextViewModelProperty(
+      ViewModel viewModel, FunctionOf<String> label, T source, FunctionOf1<T, U> getProperty,
       {FunctionOf<String> hint,
       int flex,
       bool autofocus,
@@ -70,7 +66,7 @@ abstract class TextViewModelProperty<T, U> extends EditableViewModelProperty<T, 
       Predicate1<T> isEditable,
       Predicate1<T> isRequired,
       FunctionOf1<U, String> isValid})
-      : super(label, source, getProperty,
+      : super(viewModel, label, source, getProperty,
             hint: hint,
             flex: flex,
             autofocus: autofocus,
@@ -101,7 +97,8 @@ abstract class TextViewModelProperty<T, U> extends EditableViewModelProperty<T, 
 }
 
 class StringViewModelProperty<T> extends TextViewModelProperty<T, String> {
-  StringViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, String> getProperty,
+  StringViewModelProperty(
+      ViewModel viewModel, FunctionOf<String> label, T source, FunctionOf1<T, String> getProperty,
       {FunctionOf<String> hint,
       int flex,
       bool autofocus,
@@ -109,7 +106,7 @@ class StringViewModelProperty<T> extends TextViewModelProperty<T, String> {
       Predicate1<T> isEditable,
       Predicate1<T> isRequired,
       FunctionOf1<String, String> isValid})
-      : super(label, source, getProperty,
+      : super(viewModel, label, source, getProperty,
             hint: hint,
             flex: flex,
             autofocus: autofocus,
@@ -125,11 +122,13 @@ class StringViewModelProperty<T> extends TextViewModelProperty<T, String> {
   bool isEmpty(String value) => value == null || value.isEmpty;
 
   @override
-  Widget get widget => TextViewModelPropertyWidget(this);
+  Widget get widget => ChangeNotifierProvider<StringViewModelProperty>.value(
+      value: this, child: StringViewModelPropertyWidget());
 }
 
 class IntViewModelProperty<T> extends TextViewModelProperty<T, int> {
-  IntViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, int> getProperty,
+  IntViewModelProperty(
+      ViewModel viewModel, FunctionOf<String> label, T source, FunctionOf1<T, int> getProperty,
       {FunctionOf<String> hint,
       int flex,
       bool autofocus,
@@ -137,7 +136,7 @@ class IntViewModelProperty<T> extends TextViewModelProperty<T, int> {
       Predicate1<T> isEditable,
       Predicate1<T> isRequired,
       FunctionOf1<int, String> isValid})
-      : super(label, source, getProperty,
+      : super(viewModel, label, source, getProperty,
             hint: hint,
             flex: flex,
             autofocus: autofocus,
@@ -157,8 +156,8 @@ class IntViewModelProperty<T> extends TextViewModelProperty<T, int> {
   bool isEmpty(int value) => value == null || value == 0;
 
   @override
-  Widget get widget =>
-      TextViewModelPropertyWidget(this, type: TextViewModelPropertyWidgetType.Number);
+  Widget get widget => ChangeNotifierProvider<IntViewModelProperty>.value(
+      value: this, child: IntViewModelPropertyWidget());
 }
 
 enum BoolWidgetType { Switch, Checkbox, Radio }
@@ -181,7 +180,8 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
   BoolWidgetPosition widgetPosition = BoolWidgetPosition.Trailing;
   FunctionOf1<BoolValues, FunctionOf<String>> displayName = (t) => () => t.displayName;
 
-  BoolViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, bool> getProperty,
+  BoolViewModelProperty(
+      ViewModel viewModel, FunctionOf<String> label, T source, FunctionOf1<T, bool> getProperty,
       {FunctionOf<String> hint,
       int flex,
       bool autofocus,
@@ -192,7 +192,7 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
       this.widgetType,
       this.widgetPosition,
       this.displayName})
-      : super(label, source, getProperty,
+      : super(viewModel, label, source, getProperty,
             hint: hint,
             flex: flex,
             autofocus: autofocus,
@@ -210,8 +210,8 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
   bool isEmpty(bool value) => value == null;
 
   SelectViewModelProperty<T, bool, BoolValues> toSelect() {
-    return SelectViewModelProperty<T, bool, BoolValues>(
-        label, source, this.getProperty, () => BoolValues.values, (t) => t.boolValue, displayName,
+    return SelectViewModelProperty<T, bool, BoolValues>(viewModel, label, source, this.getProperty,
+        () => BoolValues.values, (t) => t.boolValue, displayName,
         flex: flex,
         autofocus: autofocus,
         hint: hint,
@@ -226,18 +226,18 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
   Widget get widget {
     switch (widgetType) {
       case BoolWidgetType.Switch:
-        return ChangeNotifierProvider.value(
-            value: this, child: SwitchViewModelPropertyWidget(this));
+        return ChangeNotifierProvider<BoolViewModelProperty>.value(
+            value: this, child: SwitchViewModelPropertyWidget());
       case BoolWidgetType.Checkbox:
-        return ChangeNotifierProvider.value(
-            value: this, child: CheckboxViewModelPropertyWidget(this));
+        return ChangeNotifierProvider<BoolViewModelProperty>.value(
+            value: this, child: CheckboxViewModelPropertyWidget());
       case BoolWidgetType.Radio:
         var select = toSelect();
         return ChangeNotifierProvider.value(
             value: select, child: RadioListViewModelPropertyWidget<T, bool, BoolValues>());
       default:
-        return ChangeNotifierProvider.value(
-            value: this, child: CheckboxViewModelPropertyWidget(this));
+        return ChangeNotifierProvider<BoolViewModelProperty>.value(
+            value: this, child: CheckboxViewModelPropertyWidget());
     }
   }
 }
@@ -245,14 +245,15 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
 class FileViewModelProperty<T> extends EditableViewModelProperty<T, List<int>> {
   List<int> _value;
 
-  FileViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, List<int>> getProperty,
+  FileViewModelProperty(ViewModel viewModel, FunctionOf<String> label, T source,
+      FunctionOf1<T, List<int>> getProperty,
       {FunctionOf<String> hint,
       int flex,
       bool autofocus,
       ActionOf2<T, List<int>> setProperty,
       Predicate1<T> isEditable,
       Predicate1<T> isRequired})
-      : super(label, source, getProperty,
+      : super(viewModel, label, source, getProperty,
             hint: hint,
             flex: flex,
             autofocus: autofocus,
@@ -270,7 +271,8 @@ class FileViewModelProperty<T> extends EditableViewModelProperty<T, List<int>> {
 
   @override
   Widget get widget {
-    return FileViewModelPropertyWidget(this);
+    return ChangeNotifierProvider<FileViewModelProperty>.value(
+        value: this, child: FileViewModelPropertyWidget());
   }
 }
 
@@ -290,8 +292,8 @@ class SelectViewModelProperty<T, U, V> extends EditableViewModelProperty<T, U> {
   final FunctionOf1<V, U> valueMember; //Function to project U from V
   final FunctionOf1<V, FunctionOf<String>> displayMember; //Function to display the member as String
 
-  SelectViewModelProperty(FunctionOf<String> label, T source, FunctionOf1<T, U> getProperty,
-      this.listItems, this.valueMember, this.displayMember,
+  SelectViewModelProperty(ViewModel viewModel, FunctionOf<String> label, T source,
+      FunctionOf1<T, U> getProperty, this.listItems, this.valueMember, this.displayMember,
       {FunctionOf<String> hint,
       int flex,
       bool autofocus,
@@ -300,7 +302,7 @@ class SelectViewModelProperty<T, U, V> extends EditableViewModelProperty<T, U> {
       Predicate1<T> isRequired,
       FunctionOf1<U, String> isValid,
       this.widgetType})
-      : super(label, source, getProperty,
+      : super(viewModel, label, source, getProperty,
             hint: hint,
             flex: flex,
             autofocus: autofocus,
@@ -318,11 +320,14 @@ class SelectViewModelProperty<T, U, V> extends EditableViewModelProperty<T, U> {
   Widget get widget {
     switch (widgetType) {
       case SelectWidgetType.DropDown:
-        return DropDownViewModelPropertyWidget<T, U, V>(this);
+        return ChangeNotifierProvider<SelectViewModelProperty<T, U, V>>.value(
+            value: this, child: DropDownViewModelPropertyWidget<T, U, V>());
       case SelectWidgetType.Radio:
-        return RadioListViewModelPropertyWidget<T, U, V>();
+        return ChangeNotifierProvider<SelectViewModelProperty<T, U, V>>.value(
+            value: this, child: RadioListViewModelPropertyWidget<T, U, V>());
       default:
-        return DropDownViewModelPropertyWidget<T, U, V>(this);
+        return ChangeNotifierProvider<SelectViewModelProperty<T, U, V>>.value(
+            value: this, child: DropDownViewModelPropertyWidget<T, U, V>());
     }
   }
 }

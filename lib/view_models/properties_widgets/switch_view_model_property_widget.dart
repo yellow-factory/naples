@@ -1,18 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:yellow_naples/view_models/properties.dart';
+import 'package:provider/provider.dart';
 
 class SwitchViewModelPropertyWidget extends StatelessWidget {
-  final BoolViewModelProperty property;
-
-  SwitchViewModelPropertyWidget(this.property);
-
   @override
   Widget build(BuildContext context) {
+    final property = context.watch<BoolViewModelProperty>();
     return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
       return SwitchListTile(
           title: Text(property.label()),
-          controlAffinity: _controlAffinity,
+          controlAffinity: property.widgetPosition == BoolWidgetPosition.Leading
+              ? ListTileControlAffinity.leading
+              : ListTileControlAffinity.trailing,
           value: property.currentValue,
           onChanged: property.editable
               ? (value) {
@@ -29,9 +29,4 @@ class SwitchViewModelPropertyWidget extends StatelessWidget {
           );
     });
   }
-
-  ListTileControlAffinity get _controlAffinity =>
-      property.widgetPosition == BoolWidgetPosition.Leading
-          ? ListTileControlAffinity.leading
-          : ListTileControlAffinity.trailing;
 }

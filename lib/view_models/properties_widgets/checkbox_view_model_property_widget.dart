@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:yellow_naples/view_models/properties.dart';
+import 'package:provider/provider.dart';
 
 class CheckboxViewModelPropertyWidget extends StatelessWidget {
-  final BoolViewModelProperty property;
-
-  CheckboxViewModelPropertyWidget(this.property);
-
   @override
   Widget build(BuildContext context) {
+    final property = context.watch<BoolViewModelProperty>();
     return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
       return CheckboxListTile(
           title: Text(property.label()),
-          controlAffinity: _controlAffinity,
+          controlAffinity: property.widgetPosition == BoolWidgetPosition.Leading
+              ? ListTileControlAffinity.leading
+              : ListTileControlAffinity.trailing,
           value: property.currentValue,
           onChanged: property.editable
               ? (value) {
@@ -25,9 +25,4 @@ class CheckboxViewModelPropertyWidget extends StatelessWidget {
           contentPadding: EdgeInsets.zero);
     });
   }
-
-  ListTileControlAffinity get _controlAffinity =>
-      property.widgetPosition == BoolWidgetPosition.Leading
-          ? ListTileControlAffinity.leading
-          : ListTileControlAffinity.trailing;
 }

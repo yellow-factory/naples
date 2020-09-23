@@ -1,16 +1,14 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/widgets.dart';
 import 'package:yellow_naples/view_models/properties.dart';
+import 'package:provider/provider.dart';
 
 class DropDownViewModelPropertyWidget<T, U, V> extends StatelessWidget {
-  final SelectViewModelProperty<T, U, V> property;
-
-  DropDownViewModelPropertyWidget(this.property);
-
-//TODO: El DropdownSearch no s'adapta bé al que volem, n'hauríem de fer un propi
+//TODO: El DropdownSearch no s'adapta bé al que volem, n'hauríem de fer un propi?
 
   @override
   Widget build(BuildContext context) {
+    final property = context.watch<SelectViewModelProperty<T, U, V>>();
     return DropdownSearch<V>(
       validator: (_) => property.validate(),
       hint: property.hint(),
