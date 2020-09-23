@@ -13,7 +13,7 @@ import 'package:yellow_naples/view_models/properties_widgets/string_view_model_p
 import 'package:yellow_naples/view_models/properties_widgets/switch_view_model_property_widget.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
 
-class CommentLayoutMember extends LayoutMember {
+class CommentLayoutMember<T> extends VisibleLayoutMember<T> {
   final FunctionOf<String> comment;
   final FontStyle fontStyle;
   final FontWeight fontWeight;
@@ -21,18 +21,20 @@ class CommentLayoutMember extends LayoutMember {
   final double topPadding;
   final double bottomPadding;
 
-  CommentLayoutMember(ViewModel viewModel, this.comment,
+  CommentLayoutMember(ViewModel viewModel, T source, this.comment,
       {int flex = 99,
+      Predicate1<T> isVisible,
       this.fontStyle,
       this.textAlign,
       this.fontWeight,
       this.topPadding,
       this.bottomPadding})
-      : super(viewModel, flex: flex);
+      : super(viewModel, source, flex: flex, isVisible: isVisible);
 
   @override
   Widget get widget {
-    return ChangeNotifierProvider.value(value: this, child: CommentViewModelPropertyWidget());
+    return ChangeNotifierProvider<CommentLayoutMember>.value(
+        value: this, child: CommentViewModelPropertyWidget());
   }
 }
 
@@ -63,6 +65,7 @@ abstract class TextViewModelProperty<T, U> extends EditableViewModelProperty<T, 
       int flex,
       bool autofocus,
       ActionOf2<T, U> setProperty,
+      Predicate1<T> isVisible,
       Predicate1<T> isEditable,
       Predicate1<T> isRequired,
       FunctionOf1<U, String> isValid})
@@ -71,6 +74,7 @@ abstract class TextViewModelProperty<T, U> extends EditableViewModelProperty<T, 
             flex: flex,
             autofocus: autofocus,
             setProperty: setProperty,
+            isVisible: isVisible,
             isEditable: isEditable,
             isRequired: isRequired,
             isValid: isValid);
@@ -103,6 +107,7 @@ class StringViewModelProperty<T> extends TextViewModelProperty<T, String> {
       int flex,
       bool autofocus,
       ActionOf2<T, String> setProperty,
+      Predicate1<T> isVisible,
       Predicate1<T> isEditable,
       Predicate1<T> isRequired,
       FunctionOf1<String, String> isValid})
@@ -111,6 +116,7 @@ class StringViewModelProperty<T> extends TextViewModelProperty<T, String> {
             flex: flex,
             autofocus: autofocus,
             setProperty: setProperty,
+            isVisible: isVisible,
             isEditable: isEditable,
             isRequired: isRequired,
             isValid: isValid);
@@ -133,6 +139,7 @@ class IntViewModelProperty<T> extends TextViewModelProperty<T, int> {
       int flex,
       bool autofocus,
       ActionOf2<T, int> setProperty,
+      Predicate1<T> isVisible,
       Predicate1<T> isEditable,
       Predicate1<T> isRequired,
       FunctionOf1<int, String> isValid})
@@ -141,6 +148,7 @@ class IntViewModelProperty<T> extends TextViewModelProperty<T, int> {
             flex: flex,
             autofocus: autofocus,
             setProperty: setProperty,
+            isVisible: isVisible,
             isEditable: isEditable,
             isRequired: isRequired,
             isValid: isValid);
@@ -186,6 +194,7 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
       int flex,
       bool autofocus,
       ActionOf2<T, bool> setProperty,
+      Predicate1<T> isVisible,
       Predicate1<T> isEditable,
       Predicate1<T> isRequired,
       FunctionOf1<bool, String> isValid,
@@ -197,6 +206,7 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
             flex: flex,
             autofocus: autofocus,
             setProperty: setProperty,
+            isVisible: isVisible,
             isEditable: isEditable,
             isRequired: isRequired,
             isValid: isValid);
@@ -251,6 +261,7 @@ class FileViewModelProperty<T> extends EditableViewModelProperty<T, List<int>> {
       int flex,
       bool autofocus,
       ActionOf2<T, List<int>> setProperty,
+      Predicate1<T> isVisible,
       Predicate1<T> isEditable,
       Predicate1<T> isRequired})
       : super(viewModel, label, source, getProperty,
@@ -258,6 +269,7 @@ class FileViewModelProperty<T> extends EditableViewModelProperty<T, List<int>> {
             flex: flex,
             autofocus: autofocus,
             setProperty: setProperty,
+            isVisible: isVisible,
             isEditable: isEditable,
             isRequired: isRequired);
 
@@ -298,6 +310,7 @@ class SelectViewModelProperty<T, U, V> extends EditableViewModelProperty<T, U> {
       int flex,
       bool autofocus,
       ActionOf2<T, U> setProperty,
+      Predicate1<T> isVisible,
       Predicate1<T> isEditable,
       Predicate1<T> isRequired,
       FunctionOf1<U, String> isValid,
@@ -307,6 +320,7 @@ class SelectViewModelProperty<T, U, V> extends EditableViewModelProperty<T, U> {
             flex: flex,
             autofocus: autofocus,
             setProperty: setProperty,
+            isVisible: isVisible,
             isEditable: isEditable,
             isRequired: isRequired,
             isValid: isValid);

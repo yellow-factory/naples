@@ -40,20 +40,26 @@ abstract class LayoutMember extends ChangeNotifier {
   }
 }
 
-abstract class ViewModelProperty<T, U> extends LayoutMember {
+abstract class VisibleLayoutMember<T> extends LayoutMember {
+  final T source;
+  final Predicate1<T> isVisible;
+  VisibleLayoutMember(ViewModel viewModel, this.source, {int flex = 1, this.isVisible})
+      : super(viewModel, flex: flex);
+}
+
+abstract class ViewModelProperty<T, U> extends VisibleLayoutMember<T> {
   final FunctionOf<String> label;
   final FunctionOf<String> hint;
-  final T source;
   final FunctionOf1<T, U> getProperty;
 
-  ViewModelProperty(ViewModel viewModel, this.label, this.source, this.getProperty,
-      {this.hint, int flex = 1})
-      : super(viewModel, flex: flex);
+  ViewModelProperty(ViewModel viewModel, this.label, T source, this.getProperty,
+      {this.hint, int flex = 1, Predicate1<T> isVisible})
+      : super(viewModel, source, flex: flex, isVisible: isVisible);
 }
 
 abstract class EditableViewModelProperty<T, U> extends ViewModelProperty<T, U> {
   //Pel que fa al control TextEditingController, té dues propietats: enabled i readonly,
-  //que semblaria que fan coses similars i antagoniques però no es comporten del tot igual
+  //que semblaria que fan coses similars i antagòniques però no es comporten del tot igual
   //Mentre enabled=false no permet el focus al control readonly=true sí que ho permet
   //Tant enabled=false com readonly=true bloquegen l'escriptura en general, però amb readonly=true
   //algunes coses com copiar, retallar o suprimir cap a la dreta estan permeses en aquesta versió (potser és un bug)
@@ -75,10 +81,11 @@ abstract class EditableViewModelProperty<T, U> extends ViewModelProperty<T, U> {
       int flex,
       this.autofocus = false,
       this.setProperty,
+      Predicate1<T> isVisible,
       this.isEditable,
       this.isRequired,
       this.isValid})
-      : super(viewModel, label, source, getProperty, hint: hint, flex: flex) {
+      : super(viewModel, label, source, getProperty, hint: hint, flex: flex, isVisible: isVisible) {
     initialize();
   }
 

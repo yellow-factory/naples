@@ -47,7 +47,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
       TextAlign textAlign,
       double topPadding,
       double bottomPadding}) {
-    _add(CommentLayoutMember(this, comment,
+    _add(CommentLayoutMember(this, model, comment,
         flex: flex,
         fontStyle: fontStyle,
         fontWeight: fontWeight,
