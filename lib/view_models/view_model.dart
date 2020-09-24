@@ -34,10 +34,6 @@ abstract class LayoutMember extends ChangeNotifier {
 
   Widget get widget;
 
-  Container widgetInContainer({double vertical: 2, double horizontal: 3}) {
-    return Container(
-        child: widget, margin: EdgeInsets.symmetric(vertical: vertical, horizontal: horizontal));
-  }
 }
 
 abstract class VisibleLayoutMember<T> extends LayoutMember {

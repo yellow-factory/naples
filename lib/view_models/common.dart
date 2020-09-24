@@ -217,18 +217,7 @@ mixin StepViewModelController<T> on GetSetViewModel<T> {
 abstract class RawStepViewModel<T> extends GetSetViewModel<T> with StepViewModelController<T> {
   @override
   Widget get widget {
-    return ChangeNotifierProvider<ViewModel>.value(
-        value: this,
-        builder: (context, child) {
-          context.watch<ViewModel>();
-          return DynamicFormWidget(<Expandable>[
-            for (var p in this.properties) Expandable(p.widgetInContainer(), p.flex ?? 1)
-          ]);
-        });
-
-    // return DynamicFormWidget(<Expandable>[
-    //   for (var p in this.properties) Expandable(p.widgetInContainer(), p.flex ?? 1)
-    // ]);
+    return ChangeNotifierProvider<GetSetViewModel>.value(value: this, child: DynamicFormWidget());
   }
 }
 

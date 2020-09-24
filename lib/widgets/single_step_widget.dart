@@ -14,9 +14,7 @@ class SingleStepWidget extends StatelessWidget {
 
     return BaseScaffoldWidget(
         child: Column(children: <Widget>[
-      DynamicFormWidget(<Expandable>[
-        for (var p in viewModel.properties) Expandable(p.widgetInContainer(), p.flex ?? 1)
-      ]),
+      ChangeNotifierProvider<GetSetViewModel>.value(value: viewModel, child: DynamicFormWidget()),
       ActionsWidget(actions: <ActionWrap>[
         ActionWrap(
           title: viewModel.hasNextStep ? "Continua" : "Finalitza",
