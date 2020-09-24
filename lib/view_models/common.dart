@@ -183,7 +183,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
   void update() {
     //Sends widgets info to model
     editableProperties.where((x) => x.editable).forEach((x) {
-      x.update();
+      if (x.valid) x.update();
     });
   }
 

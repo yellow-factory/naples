@@ -57,7 +57,7 @@ class DividerLayoutMember extends LayoutMember {
 }
 
 abstract class TextViewModelProperty<T, U> extends EditableViewModelProperty<T, U> {
-  final controller = TextEditingController();
+  String _value;
 
   TextViewModelProperty(
       ViewModel viewModel, FunctionOf<String> label, T source, FunctionOf1<T, U> getProperty,
@@ -81,7 +81,7 @@ abstract class TextViewModelProperty<T, U> extends EditableViewModelProperty<T, 
 
   @override
   void initialize() {
-    controller.text = serialize(getProperty(source));
+    _value = serialize(getProperty(source));
   }
 
   String serialize(U value) {
@@ -92,11 +92,11 @@ abstract class TextViewModelProperty<T, U> extends EditableViewModelProperty<T, 
   U deserialize(String value);
 
   @override
-  U get currentValue => deserialize(controller.text);
+  U get currentValue => deserialize(_value);
 
   @override
   set currentValue(U value) {
-    controller.text = serialize(value);
+    _value = serialize(value);
   }
 }
 

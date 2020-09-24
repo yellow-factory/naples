@@ -4,8 +4,6 @@ import 'package:list_ext/list_ext.dart';
 enum DynamicFormDistribution { LeftToRight, TopToBottom }
 
 class DynamicFormWidget extends StatelessWidget {
-  //Refers to columns when fixing columns (left to right distribution)
-  //and refers to rows when fixing rows (top to bottom distribution)
   final int fixed;
   final int maxFlex;
   final bool normalize;
