@@ -24,7 +24,7 @@ class DynamicFormWidget extends StatelessWidget {
     var viewModel = context.watch<GetSetViewModel>();
     return Form(
       child: DistributionWidget(<Expandable>[
-        for (var p in viewModel.visibleProperties)
+        for (var p in viewModel.visibleMembers)
           Expandable(
               childPadding == null ? p.widget : Container(child: p.widget, padding: childPadding),
               p.flex ?? 1)

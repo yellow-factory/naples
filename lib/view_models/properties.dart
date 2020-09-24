@@ -13,7 +13,7 @@ import 'package:yellow_naples/view_models/properties_widgets/string_view_model_p
 import 'package:yellow_naples/view_models/properties_widgets/switch_view_model_property_widget.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
 
-class CommentLayoutMember<T> extends VisibleLayoutMember<T> {
+class CommentLayoutMember<T> extends IsVisibleMember<T> {
   final FunctionOf<String> comment;
   final FontStyle fontStyle;
   final FontWeight fontWeight;
@@ -56,7 +56,7 @@ class DividerLayoutMember extends LayoutMember {
 
 }
 
-abstract class TextViewModelProperty<T, U> extends EditableViewModelProperty<T, U> {
+abstract class TextViewModelProperty<T, U> extends ViewModelProperty<T, U> {
   String _value;
 
   TextViewModelProperty(
@@ -69,7 +69,8 @@ abstract class TextViewModelProperty<T, U> extends EditableViewModelProperty<T, 
       Predicate1<T> isEditable,
       Predicate1<T> isRequired,
       FunctionOf1<U, String> isValid})
-      : super(viewModel, label, source, getProperty,
+      : super(viewModel, source, getProperty,
+            label: label,
             hint: hint,
             flex: flex,
             autofocus: autofocus,
@@ -183,7 +184,7 @@ extension BoolValuesExtension on BoolValues {
 
 //TODO: El String de isValid hauria de ser una funció que retonés String per tal que fos localitzable
 
-class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
+class BoolViewModelProperty<T> extends ViewModelProperty<T, bool> {
   BoolWidgetType widgetType = BoolWidgetType.Checkbox;
   BoolWidgetPosition widgetPosition = BoolWidgetPosition.Trailing;
   FunctionOf1<BoolValues, FunctionOf<String>> displayName = (t) => () => t.displayName;
@@ -201,7 +202,8 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
       this.widgetType,
       this.widgetPosition,
       this.displayName})
-      : super(viewModel, label, source, getProperty,
+      : super(viewModel, source, getProperty,
+            label: label,
             hint: hint,
             flex: flex,
             autofocus: autofocus,
@@ -252,7 +254,7 @@ class BoolViewModelProperty<T> extends EditableViewModelProperty<T, bool> {
   }
 }
 
-class FileViewModelProperty<T> extends EditableViewModelProperty<T, List<int>> {
+class FileViewModelProperty<T> extends ViewModelProperty<T, List<int>> {
   List<int> _value;
 
   FileViewModelProperty(ViewModel viewModel, FunctionOf<String> label, T source,
@@ -264,7 +266,8 @@ class FileViewModelProperty<T> extends EditableViewModelProperty<T, List<int>> {
       Predicate1<T> isVisible,
       Predicate1<T> isEditable,
       Predicate1<T> isRequired})
-      : super(viewModel, label, source, getProperty,
+      : super(viewModel, source, getProperty,
+            label: label,
             hint: hint,
             flex: flex,
             autofocus: autofocus,
@@ -298,7 +301,7 @@ enum SelectWidgetType { DropDown, Radio }
 ///U defines the type of the property being edited which is a member of T
 ///V defines the type of the list of items being exposed in the list of options
 ///In some cases U and V may coincide
-class SelectViewModelProperty<T, U, V> extends EditableViewModelProperty<T, U> {
+class SelectViewModelProperty<T, U, V> extends ViewModelProperty<T, U> {
   SelectWidgetType widgetType = SelectWidgetType.DropDown;
   final FunctionOf<List<V>> listItems;
   final FunctionOf1<V, U> valueMember; //Function to project U from V
@@ -315,7 +318,8 @@ class SelectViewModelProperty<T, U, V> extends EditableViewModelProperty<T, U> {
       Predicate1<T> isRequired,
       FunctionOf1<U, String> isValid,
       this.widgetType})
-      : super(viewModel, label, source, getProperty,
+      : super(viewModel, source, getProperty,
+            label: label,
             hint: hint,
             flex: flex,
             autofocus: autofocus,

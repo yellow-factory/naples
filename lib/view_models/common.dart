@@ -12,24 +12,24 @@ import 'package:yellow_naples/models.dart';
 import '../widgets/dynamic_form_widget.dart';
 
 abstract class GetSetViewModel<T> extends ViewModel {
-  final _properties = List<LayoutMember>();
+  final _layoutMembers = List<LayoutMember>();
   T model;
 
-  Iterable<LayoutMember> get properties => _properties;
+  Iterable<LayoutMember> get layoutMembers => _layoutMembers;
 
   void _add(LayoutMember property) {
-    _properties.add(property);
+    _layoutMembers.add(property);
   }
 
   @override
   Future<void> init1(BuildContext context) async {
     await super.init1(context);
     model = await get();
-    addProperties();
+    addLayoutMembers();
   }
 
-  void addProperties() {
-    _properties.clear();
+  void addLayoutMembers() {
+    _layoutMembers.clear();
     notifyListeners();
   }
 
@@ -58,8 +58,9 @@ abstract class GetSetViewModel<T> extends ViewModel {
         isVisible: isVisible));
   }
 
-  void addStringProperty(FunctionOf<String> label, FunctionOf1<T, String> getProperty,
-      {FunctionOf<String> hint,
+  void addStringProperty(FunctionOf1<T, String> getProperty,
+      {FunctionOf<String> label,
+      FunctionOf<String> hint,
       int flex,
       bool autofocus = false,
       ActionOf2<T, String> setProperty,
@@ -78,8 +79,9 @@ abstract class GetSetViewModel<T> extends ViewModel {
         isValid: isValid));
   }
 
-  void addIntProperty(FunctionOf<String> label, FunctionOf1<T, int> getProperty,
-      {FunctionOf<String> hint,
+  void addIntProperty(FunctionOf1<T, int> getProperty,
+      {FunctionOf<String> label,
+      FunctionOf<String> hint,
       int flex,
       bool autofocus = false,
       ActionOf2<T, int> setProperty,
@@ -98,8 +100,9 @@ abstract class GetSetViewModel<T> extends ViewModel {
         isValid: isValid));
   }
 
-  void addBoolProperty(FunctionOf<String> label, FunctionOf1<T, bool> getProperty,
-      {FunctionOf<String> hint,
+  void addBoolProperty(FunctionOf1<T, bool> getProperty,
+      {FunctionOf<String> label,
+      FunctionOf<String> hint,
       int flex,
       bool autofocus = false,
       ActionOf2<T, bool> setProperty,
@@ -122,8 +125,9 @@ abstract class GetSetViewModel<T> extends ViewModel {
         displayName: displayName));
   }
 
-  void addFileProperty(FunctionOf<String> label, FunctionOf1<T, List<int>> getProperty,
-      {FunctionOf<String> hint,
+  void addFileProperty(FunctionOf1<T, List<int>> getProperty,
+      {FunctionOf<String> label,
+      FunctionOf<String> hint,
       int flex,
       bool autofocus = false,
       ActionOf2<T, List<int>> setProperty,
@@ -140,13 +144,10 @@ abstract class GetSetViewModel<T> extends ViewModel {
         isEditable: isEditable));
   }
 
-  void addSelectableProperty<U, V>(
-      FunctionOf<String> label,
-      FunctionOf1<T, U> getProperty,
-      FunctionOf<List<V>> listItems,
-      FunctionOf1<V, U> valueMember,
-      FunctionOf1<V, FunctionOf<String>> displayMember,
-      {FunctionOf<String> hint,
+  void addSelectableProperty<U, V>(FunctionOf1<T, U> getProperty, FunctionOf<List<V>> listItems,
+      FunctionOf1<V, U> valueMember, FunctionOf1<V, FunctionOf<String>> displayMember,
+      {FunctionOf<String> label,
+      FunctionOf<String> hint,
       int flex,
       bool autofocus = false,
       ActionOf2<T, U> setProperty,
@@ -168,28 +169,30 @@ abstract class GetSetViewModel<T> extends ViewModel {
         widgetType: widgetType));
   }
 
-  Iterable<VisibleLayoutMember<T>> get visibleProperties => properties
-      .whereType<VisibleLayoutMember<T>>()
+  Iterable<IsVisibleMember<T>> get visibleMembers => layoutMembers
+      .whereType<IsVisibleMember<T>>()
       .where((element) => element.isVisible == null || element.isVisible(model));
 
-  Iterable<EditableViewModelProperty> get editableProperties => properties
-      .whereType<EditableViewModelProperty>()
+  Iterable<IsEditableMember<T>> get editableMembers => layoutMembers
+      .whereType<IsEditableMember<T>>()
       .where((element) => element.isVisible == null || element.isEditable(model));
 
+  Iterable<ViewModelProperty> get properties => layoutMembers.whereType<ViewModelProperty>();
+
   bool get valid {
-    return editableProperties.every((x) => x.valid);
+    return properties.every((x) => x.valid);
   }
 
   void update() {
     //Sends widgets info to model
-    editableProperties.where((x) => x.editable).forEach((x) {
+    properties.where((x) => x.editable).forEach((x) {
       if (x.valid) x.update();
     });
   }
 
   void undo() {
     //Sends model info to widgets, reverse of update
-    editableProperties.where((x) => x.editable).forEach((x) {
+    properties.where((x) => x.editable).forEach((x) {
       x.undo();
     });
   }

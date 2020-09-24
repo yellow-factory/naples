@@ -33,27 +33,23 @@ abstract class LayoutMember extends ChangeNotifier {
   LayoutMember(this.viewModel, {this.flex = 1});
 
   Widget get widget;
-
 }
 
-abstract class VisibleLayoutMember<T> extends LayoutMember {
+abstract class IsVisibleMember<T> extends LayoutMember {
   final T source;
   final Predicate1<T> isVisible;
-  VisibleLayoutMember(ViewModel viewModel, this.source, {int flex = 1, this.isVisible})
+  IsVisibleMember(ViewModel viewModel, this.source, {int flex = 1, this.isVisible})
       : super(viewModel, flex: flex);
 }
 
-abstract class ViewModelProperty<T, U> extends VisibleLayoutMember<T> {
-  final FunctionOf<String> label;
-  final FunctionOf<String> hint;
-  final FunctionOf1<T, U> getProperty;
-
-  ViewModelProperty(ViewModel viewModel, this.label, T source, this.getProperty,
-      {this.hint, int flex = 1, Predicate1<T> isVisible})
-      : super(viewModel, source, flex: flex, isVisible: isVisible);
+abstract class IsEditableMember<T> extends IsVisibleMember<T> {
+  final Predicate1<T> isEditable;
+  IsEditableMember(ViewModel viewModel, T source,
+      {int flex = 1, Predicate1<T> isVisible, this.isEditable})
+      : super(viewModel, source, isVisible: isVisible, flex: flex);
 }
 
-abstract class EditableViewModelProperty<T, U> extends ViewModelProperty<T, U> {
+abstract class ViewModelProperty<T, U> extends IsEditableMember<T> {
   //Pel que fa al control TextEditingController, té dues propietats: enabled i readonly,
   //que semblaria que fan coses similars i antagòniques però no es comporten del tot igual
   //Mentre enabled=false no permet el focus al control readonly=true sí que ho permet
@@ -65,15 +61,18 @@ abstract class EditableViewModelProperty<T, U> extends ViewModelProperty<T, U> {
   //Es podria fer servir el onSave per realitzar el setProperty, però no estic segur si és la millor opció
   //https://forum.freecodecamp.org/t/how-to-validate-forms-and-user-input-the-easy-way-using-flutter/190377
 
+  final FunctionOf<String> label;
+  final FunctionOf<String> hint;
+  final FunctionOf1<T, U> getProperty;
   final bool autofocus;
   final ActionOf2<T, U> setProperty;
   final Predicate1<T> isRequired;
   final Predicate1<T> isEditable;
   final FunctionOf1<U, String> isValid;
 
-  EditableViewModelProperty(
-      ViewModel viewModel, FunctionOf<String> label, T source, FunctionOf1<T, U> getProperty,
-      {FunctionOf<String> hint,
+  ViewModelProperty(ViewModel viewModel, T source, this.getProperty,
+      {this.label,
+      this.hint,
       int flex,
       this.autofocus = false,
       this.setProperty,
@@ -81,7 +80,7 @@ abstract class EditableViewModelProperty<T, U> extends ViewModelProperty<T, U> {
       this.isEditable,
       this.isRequired,
       this.isValid})
-      : super(viewModel, label, source, getProperty, hint: hint, flex: flex, isVisible: isVisible) {
+      : super(viewModel, source, flex: flex, isVisible: isVisible) {
     initialize();
   }
 
