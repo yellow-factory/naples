@@ -15,7 +15,6 @@ dependencies:
   font_awesome_flutter: ^8.8.1
   intl: ^0.16.1
   intl_translation: ^0.17.10+1
-  dropdown_search: ^0.4.4
   list_ext: ^0.1.13
 
 dev_dependencies:
