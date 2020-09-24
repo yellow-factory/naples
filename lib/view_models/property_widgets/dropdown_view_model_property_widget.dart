@@ -15,6 +15,7 @@ class DropDownViewModelPropertyWidget<T, U, V> extends StatelessWidget {
         )
     ];
     return DropdownButtonFormField<U>(
+      key: UniqueKey(),
       items: items,
       value: property.currentValue,
       onChanged: (value) {

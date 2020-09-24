@@ -8,12 +8,14 @@ class CommentViewModelPropertyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final property = context.watch<CommentLayoutMember>();
     return Padding(
-        padding:
-            EdgeInsets.only(top: property.topPadding ?? 0.0, bottom: property.bottomPadding ?? 0.0),
-        child: Text(
-          property.comment(),
-          style: TextStyle(fontStyle: property.fontStyle, fontWeight: property.fontWeight),
-          textAlign: property.textAlign,
-        ));
+      key: UniqueKey(),
+      padding:
+          EdgeInsets.only(top: property.topPadding ?? 0.0, bottom: property.bottomPadding ?? 0.0),
+      child: Text(
+        property.comment(),
+        style: TextStyle(fontStyle: property.fontStyle, fontWeight: property.fontWeight),
+        textAlign: property.textAlign,
+      ),
+    );
   }
 }

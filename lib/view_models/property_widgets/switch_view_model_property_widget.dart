@@ -9,6 +9,7 @@ class SwitchViewModelPropertyWidget extends StatelessWidget {
     final property = context.watch<BoolViewModelProperty>();
     return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
       return SwitchListTile(
+          key: UniqueKey(),
           title: Text(property.label()),
           controlAffinity: property.widgetPosition == BoolWidgetPosition.Leading
               ? ListTileControlAffinity.leading

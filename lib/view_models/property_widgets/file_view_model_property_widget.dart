@@ -8,6 +8,7 @@ class FileViewModelPropertyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final property = context.watch<FileViewModelProperty>();
     return Card(
+        key: UniqueKey(),
         margin: EdgeInsets.symmetric(horizontal: 0, vertical: 5),
         child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
           ListTile(

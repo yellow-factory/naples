@@ -14,6 +14,7 @@ class TextViewModelPropertyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final property = context.watch<TextViewModelProperty>();
     return TextFormField(
+      key: UniqueKey(),
       initialValue: property.currentValue,
       decoration: InputDecoration(
         //filled: true,
@@ -25,6 +26,7 @@ class TextViewModelPropertyWidget extends StatelessWidget {
       validator: (_) => property.validate(),
       keyboardType: textInputType,
       inputFormatters: textInputFormatters,
+      autovalidate: true,
       onChanged: (value) {
         property.currentValue = value;
         property.update();
