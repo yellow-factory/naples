@@ -66,7 +66,6 @@ abstract class ViewModelProperty<T, U> extends IsEditableMember<T> {
   final FunctionOf1<T, U> getProperty;
   final bool autofocus;
   final ActionOf2<T, U> setProperty;
-  final Predicate1<T> isRequired;
   final Predicate1<T> isEditable;
   final FunctionOf1<U, String> isValid;
 
@@ -78,7 +77,6 @@ abstract class ViewModelProperty<T, U> extends IsEditableMember<T> {
       this.setProperty,
       Predicate1<T> isVisible,
       this.isEditable,
-      this.isRequired,
       this.isValid})
       : super(viewModel, source, flex: flex, isVisible: isVisible) {
     initialize();
@@ -88,20 +86,7 @@ abstract class ViewModelProperty<T, U> extends IsEditableMember<T> {
 
   bool get editable => isEditable != null ? isEditable(source) : this.setProperty != null;
 
-  bool get required => isRequired != null ? isRequired(source) : false;
-
-  bool isEmpty(U value) => value == null;
-
-  String validate() {
-    String result = '';
-    if (required && isEmpty(currentValue)) result += 'Please enter some text';
-    if (isValid != null) {
-      var valid = isValid(currentValue);
-      if (valid != null) result += valid;
-    }
-    if (result.isEmpty) return null;
-    return result;
-  }
+  String validate() => isValid != null ? isValid(currentValue) : null;
 
   U currentValue;
 

@@ -67,7 +67,6 @@ abstract class TextViewModelProperty<T, U> extends ViewModelProperty<T, U> {
       ActionOf2<T, U> setProperty,
       Predicate1<T> isVisible,
       Predicate1<T> isEditable,
-      Predicate1<T> isRequired,
       FunctionOf1<U, String> isValid})
       : super(viewModel, source, getProperty,
             label: label,
@@ -77,7 +76,6 @@ abstract class TextViewModelProperty<T, U> extends ViewModelProperty<T, U> {
             setProperty: setProperty,
             isVisible: isVisible,
             isEditable: isEditable,
-            isRequired: isRequired,
             isValid: isValid);
 
   @override
@@ -110,7 +108,6 @@ class StringViewModelProperty<T> extends TextViewModelProperty<T, String> {
       ActionOf2<T, String> setProperty,
       Predicate1<T> isVisible,
       Predicate1<T> isEditable,
-      Predicate1<T> isRequired,
       FunctionOf1<String, String> isValid})
       : super(viewModel, label, source, getProperty,
             hint: hint,
@@ -119,14 +116,10 @@ class StringViewModelProperty<T> extends TextViewModelProperty<T, String> {
             setProperty: setProperty,
             isVisible: isVisible,
             isEditable: isEditable,
-            isRequired: isRequired,
             isValid: isValid);
 
   @override
   String deserialize(String value) => value;
-
-  @override
-  bool isEmpty(String value) => value == null || value.isEmpty;
 
   @override
   Widget get widget => ChangeNotifierProvider<StringViewModelProperty>.value(
@@ -135,24 +128,30 @@ class StringViewModelProperty<T> extends TextViewModelProperty<T, String> {
 
 class IntViewModelProperty<T> extends TextViewModelProperty<T, int> {
   IntViewModelProperty(
-      ViewModel viewModel, FunctionOf<String> label, T source, FunctionOf1<T, int> getProperty,
-      {FunctionOf<String> hint,
-      int flex,
-      bool autofocus,
-      ActionOf2<T, int> setProperty,
-      Predicate1<T> isVisible,
-      Predicate1<T> isEditable,
-      Predicate1<T> isRequired,
-      FunctionOf1<int, String> isValid})
-      : super(viewModel, label, source, getProperty,
-            hint: hint,
-            flex: flex,
-            autofocus: autofocus,
-            setProperty: setProperty,
-            isVisible: isVisible,
-            isEditable: isEditable,
-            isRequired: isRequired,
-            isValid: isValid);
+    ViewModel viewModel,
+    FunctionOf<String> label,
+    T source,
+    FunctionOf1<T, int> getProperty, {
+    FunctionOf<String> hint,
+    int flex,
+    bool autofocus,
+    ActionOf2<T, int> setProperty,
+    Predicate1<T> isVisible,
+    Predicate1<T> isEditable,
+    FunctionOf1<int, String> isValid,
+  }) : super(
+          viewModel,
+          label,
+          source,
+          getProperty,
+          hint: hint,
+          flex: flex,
+          autofocus: autofocus,
+          setProperty: setProperty,
+          isVisible: isVisible,
+          isEditable: isEditable,
+          isValid: isValid,
+        );
 
   @override
   int deserialize(String value) {
@@ -160,9 +159,6 @@ class IntViewModelProperty<T> extends TextViewModelProperty<T, int> {
     if (value.isEmpty) return 0;
     return int.parse(value);
   }
-
-  @override
-  bool isEmpty(int value) => value == null || value == 0;
 
   @override
   Widget get widget => ChangeNotifierProvider<IntViewModelProperty>.value(
@@ -190,48 +186,56 @@ class BoolViewModelProperty<T> extends ViewModelProperty<T, bool> {
   FunctionOf1<BoolValues, FunctionOf<String>> displayName = (t) => () => t.displayName;
 
   BoolViewModelProperty(
-      ViewModel viewModel, FunctionOf<String> label, T source, FunctionOf1<T, bool> getProperty,
-      {FunctionOf<String> hint,
-      int flex,
-      bool autofocus,
-      ActionOf2<T, bool> setProperty,
-      Predicate1<T> isVisible,
-      Predicate1<T> isEditable,
-      Predicate1<T> isRequired,
-      FunctionOf1<bool, String> isValid,
-      this.widgetType,
-      this.widgetPosition,
-      this.displayName})
-      : super(viewModel, source, getProperty,
-            label: label,
-            hint: hint,
-            flex: flex,
-            autofocus: autofocus,
-            setProperty: setProperty,
-            isVisible: isVisible,
-            isEditable: isEditable,
-            isRequired: isRequired,
-            isValid: isValid);
+    ViewModel viewModel,
+    FunctionOf<String> label,
+    T source,
+    FunctionOf1<T, bool> getProperty, {
+    FunctionOf<String> hint,
+    int flex,
+    bool autofocus,
+    ActionOf2<T, bool> setProperty,
+    Predicate1<T> isVisible,
+    Predicate1<T> isEditable,
+    FunctionOf1<bool, String> isValid,
+    this.widgetType,
+    this.widgetPosition,
+    this.displayName,
+  }) : super(
+          viewModel,
+          source,
+          getProperty,
+          label: label,
+          hint: hint,
+          flex: flex,
+          autofocus: autofocus,
+          setProperty: setProperty,
+          isVisible: isVisible,
+          isEditable: isEditable,
+          isValid: isValid,
+        );
 
   @override
   void initialize() {
     currentValue = this.getProperty(source) ?? false;
   }
 
-  @override
-  bool isEmpty(bool value) => value == null;
-
   SelectViewModelProperty<T, bool, BoolValues> toSelect() {
-    return SelectViewModelProperty<T, bool, BoolValues>(viewModel, label, source, this.getProperty,
-        () => BoolValues.values, (t) => t.boolValue, displayName,
-        flex: flex,
-        autofocus: autofocus,
-        hint: hint,
-        isEditable: isEditable,
-        isRequired: isRequired,
-        isValid: isValid,
-        setProperty: setProperty,
-        widgetType: SelectWidgetType.Radio);
+    return SelectViewModelProperty<T, bool, BoolValues>(
+      viewModel,
+      label,
+      source,
+      this.getProperty,
+      () => BoolValues.values,
+      (t) => t.boolValue,
+      displayName,
+      flex: flex,
+      autofocus: autofocus,
+      hint: hint,
+      isEditable: isEditable,
+      isValid: isValid,
+      setProperty: setProperty,
+      widgetType: SelectWidgetType.Radio,
+    );
   }
 
   @override
@@ -257,24 +261,30 @@ class BoolViewModelProperty<T> extends ViewModelProperty<T, bool> {
 class FileViewModelProperty<T> extends ViewModelProperty<T, List<int>> {
   List<int> _value;
 
-  FileViewModelProperty(ViewModel viewModel, FunctionOf<String> label, T source,
-      FunctionOf1<T, List<int>> getProperty,
-      {FunctionOf<String> hint,
-      int flex,
-      bool autofocus,
-      ActionOf2<T, List<int>> setProperty,
-      Predicate1<T> isVisible,
-      Predicate1<T> isEditable,
-      Predicate1<T> isRequired})
-      : super(viewModel, source, getProperty,
-            label: label,
-            hint: hint,
-            flex: flex,
-            autofocus: autofocus,
-            setProperty: setProperty,
-            isVisible: isVisible,
-            isEditable: isEditable,
-            isRequired: isRequired);
+  FileViewModelProperty(
+    ViewModel viewModel,
+    FunctionOf<String> label,
+    T source,
+    FunctionOf1<T, List<int>> getProperty, {
+    FunctionOf<String> hint,
+    int flex,
+    bool autofocus,
+    ActionOf2<T, List<int>> setProperty,
+    Predicate1<T> isVisible,
+    Predicate1<T> isEditable,
+    Predicate1<T> isRequired,
+  }) : super(
+          viewModel,
+          source,
+          getProperty,
+          label: label,
+          hint: hint,
+          flex: flex,
+          autofocus: autofocus,
+          setProperty: setProperty,
+          isVisible: isVisible,
+          isEditable: isEditable,
+        );
 
   @override
   List<int> get currentValue => _value;
@@ -307,27 +317,35 @@ class SelectViewModelProperty<T, U, V> extends ViewModelProperty<T, U> {
   final FunctionOf1<V, U> valueMember; //Function to project U from V
   final FunctionOf1<V, FunctionOf<String>> displayMember; //Function to display the member as String
 
-  SelectViewModelProperty(ViewModel viewModel, FunctionOf<String> label, T source,
-      FunctionOf1<T, U> getProperty, this.listItems, this.valueMember, this.displayMember,
-      {FunctionOf<String> hint,
-      int flex,
-      bool autofocus,
-      ActionOf2<T, U> setProperty,
-      Predicate1<T> isVisible,
-      Predicate1<T> isEditable,
-      Predicate1<T> isRequired,
-      FunctionOf1<U, String> isValid,
-      this.widgetType})
-      : super(viewModel, source, getProperty,
-            label: label,
-            hint: hint,
-            flex: flex,
-            autofocus: autofocus,
-            setProperty: setProperty,
-            isVisible: isVisible,
-            isEditable: isEditable,
-            isRequired: isRequired,
-            isValid: isValid);
+  SelectViewModelProperty(
+    ViewModel viewModel,
+    FunctionOf<String> label,
+    T source,
+    FunctionOf1<T, U> getProperty,
+    this.listItems,
+    this.valueMember,
+    this.displayMember, {
+    FunctionOf<String> hint,
+    int flex,
+    bool autofocus,
+    ActionOf2<T, U> setProperty,
+    Predicate1<T> isVisible,
+    Predicate1<T> isEditable,
+    FunctionOf1<U, String> isValid,
+    this.widgetType,
+  }) : super(
+          viewModel,
+          source,
+          getProperty,
+          label: label,
+          hint: hint,
+          flex: flex,
+          autofocus: autofocus,
+          setProperty: setProperty,
+          isVisible: isVisible,
+          isEditable: isEditable,
+          isValid: isValid,
+        );
 
   @override
   void initialize() {

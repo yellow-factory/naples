@@ -37,136 +37,174 @@ abstract class GetSetViewModel<T> extends ViewModel {
   Future<void> set();
 
   void addDivider({int flex = 99}) {
-    _add(DividerLayoutMember(this, flex: flex));
+    _add(DividerLayoutMember(
+      this,
+      flex: flex,
+    ));
   }
 
-  void addComment(FunctionOf<String> comment,
-      {int flex = 99,
-      Predicate1<T> isVisible,
-      FontStyle fontStyle,
-      FontWeight fontWeight,
-      TextAlign textAlign,
-      double topPadding,
-      double bottomPadding}) {
-    _add(CommentLayoutMember(this, model, comment,
-        flex: flex,
-        fontStyle: fontStyle,
-        fontWeight: fontWeight,
-        textAlign: textAlign,
-        topPadding: topPadding,
-        bottomPadding: bottomPadding,
-        isVisible: isVisible));
+  void addComment(
+    FunctionOf<String> comment, {
+    int flex = 99,
+    Predicate1<T> isVisible,
+    FontStyle fontStyle,
+    FontWeight fontWeight,
+    TextAlign textAlign,
+    double topPadding,
+    double bottomPadding,
+  }) {
+    _add(CommentLayoutMember(
+      this,
+      model,
+      comment,
+      flex: flex,
+      fontStyle: fontStyle,
+      fontWeight: fontWeight,
+      textAlign: textAlign,
+      topPadding: topPadding,
+      bottomPadding: bottomPadding,
+      isVisible: isVisible,
+    ));
   }
 
-  void addStringProperty(FunctionOf1<T, String> getProperty,
-      {FunctionOf<String> label,
-      FunctionOf<String> hint,
-      int flex,
-      bool autofocus = false,
-      ActionOf2<T, String> setProperty,
-      Predicate1<T> isVisible,
-      Predicate1<T> isRequired,
-      Predicate1<T> isEditable,
-      FunctionOf1<String, String> isValid}) {
-    _add(StringViewModelProperty<T>(this, label, model, getProperty,
-        hint: hint,
-        flex: flex,
-        autofocus: autofocus,
-        setProperty: setProperty,
-        isVisible: isVisible,
-        isRequired: isRequired,
-        isEditable: isEditable,
-        isValid: isValid));
+  void addStringProperty(
+    FunctionOf1<T, String> getProperty, {
+    FunctionOf<String> label,
+    FunctionOf<String> hint,
+    int flex,
+    bool autofocus = false,
+    ActionOf2<T, String> setProperty,
+    Predicate1<T> isVisible,
+    Predicate1<T> isEditable,
+    FunctionOf1<String, String> isValid,
+  }) {
+    _add(StringViewModelProperty<T>(
+      this,
+      label,
+      model,
+      getProperty,
+      hint: hint,
+      flex: flex,
+      autofocus: autofocus,
+      setProperty: setProperty,
+      isVisible: isVisible,
+      isEditable: isEditable,
+      isValid: isValid,
+    ));
   }
 
-  void addIntProperty(FunctionOf1<T, int> getProperty,
-      {FunctionOf<String> label,
-      FunctionOf<String> hint,
-      int flex,
-      bool autofocus = false,
-      ActionOf2<T, int> setProperty,
-      Predicate1<T> isVisible,
-      Predicate1<T> isRequired,
-      Predicate1<T> isEditable,
-      FunctionOf1<int, String> isValid}) {
-    _add(IntViewModelProperty<T>(this, label, model, getProperty,
-        hint: hint,
-        flex: flex,
-        autofocus: autofocus,
-        setProperty: setProperty,
-        isVisible: isVisible,
-        isRequired: isRequired,
-        isEditable: isEditable,
-        isValid: isValid));
+  void addIntProperty(
+    FunctionOf1<T, int> getProperty, {
+    FunctionOf<String> label,
+    FunctionOf<String> hint,
+    int flex,
+    bool autofocus = false,
+    ActionOf2<T, int> setProperty,
+    Predicate1<T> isVisible,
+    Predicate1<T> isEditable,
+    FunctionOf1<int, String> isValid,
+  }) {
+    _add(IntViewModelProperty<T>(
+      this,
+      label,
+      model,
+      getProperty,
+      hint: hint,
+      flex: flex,
+      autofocus: autofocus,
+      setProperty: setProperty,
+      isVisible: isVisible,
+      isEditable: isEditable,
+      isValid: isValid,
+    ));
   }
 
-  void addBoolProperty(FunctionOf1<T, bool> getProperty,
-      {FunctionOf<String> label,
-      FunctionOf<String> hint,
-      int flex,
-      bool autofocus = false,
-      ActionOf2<T, bool> setProperty,
-      Predicate1<T> isVisible,
-      Predicate1<T> isRequired,
-      Predicate1<T> isEditable,
-      FunctionOf1<bool, String> isValid,
-      BoolWidgetType boolWidget,
-      FunctionOf1<BoolValues, FunctionOf<String>> displayName}) {
-    _add(BoolViewModelProperty<T>(this, label, model, getProperty,
-        hint: hint,
-        flex: flex,
-        autofocus: autofocus,
-        setProperty: setProperty,
-        isVisible: isVisible,
-        isRequired: isRequired,
-        isEditable: isEditable,
-        isValid: isValid,
-        widgetType: boolWidget,
-        displayName: displayName));
+  void addBoolProperty(
+    FunctionOf1<T, bool> getProperty, {
+    FunctionOf<String> label,
+    FunctionOf<String> hint,
+    int flex,
+    bool autofocus = false,
+    ActionOf2<T, bool> setProperty,
+    Predicate1<T> isVisible,
+    Predicate1<T> isEditable,
+    FunctionOf1<bool, String> isValid,
+    BoolWidgetType boolWidget,
+    FunctionOf1<BoolValues, FunctionOf<String>> displayName,
+  }) {
+    _add(BoolViewModelProperty<T>(
+      this,
+      label,
+      model,
+      getProperty,
+      hint: hint,
+      flex: flex,
+      autofocus: autofocus,
+      setProperty: setProperty,
+      isVisible: isVisible,
+      isEditable: isEditable,
+      isValid: isValid,
+      widgetType: boolWidget,
+      displayName: displayName,
+    ));
   }
 
-  void addFileProperty(FunctionOf1<T, List<int>> getProperty,
-      {FunctionOf<String> label,
-      FunctionOf<String> hint,
-      int flex,
-      bool autofocus = false,
-      ActionOf2<T, List<int>> setProperty,
-      Predicate1<T> isVisible,
-      Predicate1<T> isRequired,
-      Predicate1<T> isEditable}) {
-    _add(FileViewModelProperty<T>(this, label, model, getProperty,
-        hint: hint,
-        flex: flex,
-        autofocus: autofocus,
-        setProperty: setProperty,
-        isVisible: isVisible,
-        isRequired: isRequired,
-        isEditable: isEditable));
+  void addFileProperty(
+    FunctionOf1<T, List<int>> getProperty, {
+    FunctionOf<String> label,
+    FunctionOf<String> hint,
+    int flex,
+    bool autofocus = false,
+    ActionOf2<T, List<int>> setProperty,
+    Predicate1<T> isVisible,
+    Predicate1<T> isEditable,
+  }) {
+    _add(FileViewModelProperty<T>(
+      this,
+      label,
+      model,
+      getProperty,
+      hint: hint,
+      flex: flex,
+      autofocus: autofocus,
+      setProperty: setProperty,
+      isVisible: isVisible,
+      isEditable: isEditable,
+    ));
   }
 
-  void addSelectableProperty<U, V>(FunctionOf1<T, U> getProperty, FunctionOf<List<V>> listItems,
-      FunctionOf1<V, U> valueMember, FunctionOf1<V, FunctionOf<String>> displayMember,
-      {FunctionOf<String> label,
-      FunctionOf<String> hint,
-      int flex,
-      bool autofocus = false,
-      ActionOf2<T, U> setProperty,
-      Predicate1<T> isVisible,
-      Predicate1<T> isRequired,
-      Predicate1<T> isEditable,
-      FunctionOf1<U, String> isValid,
-      SelectWidgetType widgetType}) {
+  void addSelectableProperty<U, V>(
+    FunctionOf1<T, U> getProperty,
+    FunctionOf<List<V>> listItems,
+    FunctionOf1<V, U> valueMember,
+    FunctionOf1<V, FunctionOf<String>> displayMember, {
+    FunctionOf<String> label,
+    FunctionOf<String> hint,
+    int flex,
+    bool autofocus = false,
+    ActionOf2<T, U> setProperty,
+    Predicate1<T> isVisible,
+    Predicate1<T> isEditable,
+    FunctionOf1<U, String> isValid,
+    SelectWidgetType widgetType,
+  }) {
     _add(SelectViewModelProperty<T, U, V>(
-        this, label, model, getProperty, listItems, valueMember, displayMember,
-        hint: hint,
-        flex: flex,
-        autofocus: autofocus,
-        setProperty: setProperty,
-        isVisible: isVisible,
-        isRequired: isRequired,
-        isEditable: isEditable,
-        isValid: isValid,
-        widgetType: widgetType));
+      this,
+      label,
+      model,
+      getProperty,
+      listItems,
+      valueMember,
+      displayMember,
+      hint: hint,
+      flex: flex,
+      autofocus: autofocus,
+      setProperty: setProperty,
+      isVisible: isVisible,
+      isEditable: isEditable,
+      isValid: isValid,
+      widgetType: widgetType,
+    ));
   }
 
   Iterable<IsVisibleMember<T>> get visibleMembers => layoutMembers

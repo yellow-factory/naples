@@ -26,7 +26,7 @@ class TextViewModelPropertyWidget extends StatelessWidget {
       validator: (_) => property.validate(),
       keyboardType: textInputType,
       inputFormatters: textInputFormatters,
-      autovalidate: true,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       onChanged: (value) {
         property.currentValue = value;
         property.update();
