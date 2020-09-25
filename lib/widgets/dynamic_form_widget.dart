@@ -23,6 +23,7 @@ class DynamicFormWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     var viewModel = context.watch<GetSetViewModel>();
     return Form(
+      //key: GlobalKey(),
       child: DistributionWidget(
         <Expandable>[
           for (var p in viewModel.visibleMembers)

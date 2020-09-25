@@ -26,8 +26,11 @@ class TextViewModelPropertyWidget extends StatelessWidget {
       validator: (_) => property.validate(),
       keyboardType: textInputType,
       inputFormatters: textInputFormatters,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
+      //TODO: hauria de ser onUserInteraction, però no acaba de funcionar perquè no manté l'estat...
+      //autovalidateMode: AutovalidateMode.onUserInteraction,
+      autovalidateMode: AutovalidateMode.always,
       onChanged: (value) {
+        Form.of(context).validate();
         property.currentValue = value;
         property.update();
         //TODO: Quan es fa l'update es passa el valor al model, i no sé si en tots
