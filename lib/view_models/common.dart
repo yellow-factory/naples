@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:yellow_naples/utils.dart';
-import 'package:yellow_naples/view_models/properties.dart';
+import 'package:yellow_naples/view_models/properties/properties.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
 import 'package:yellow_naples/navigation/navigation.dart';
 import 'package:yellow_naples/widgets/list_widget.dart';

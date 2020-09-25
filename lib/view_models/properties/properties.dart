@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:yellow_naples/utils.dart';
-import 'package:yellow_naples/view_models/property_widgets/checkbox_view_model_property_widget.dart';
-import 'package:yellow_naples/view_models/property_widgets/comment_view_model_property_widget.dart';
-import 'package:yellow_naples/view_models/property_widgets/dropdown_view_model_property_widget.dart';
-import 'package:yellow_naples/view_models/property_widgets/file_view_model_property_widget.dart';
-import 'package:yellow_naples/view_models/property_widgets/int_view_model_property_widget.dart';
-import 'package:yellow_naples/view_models/property_widgets/radio_list_view_model_property_widget.dart';
-import 'package:yellow_naples/view_models/property_widgets/string_view_model_property_widget.dart';
-import 'package:yellow_naples/view_models/property_widgets/switch_view_model_property_widget.dart';
+import 'package:yellow_naples/view_models/properties/widgets/checkbox_view_model_property_widget.dart';
+import 'package:yellow_naples/view_models/properties/widgets/comment_view_model_property_widget.dart';
+import 'package:yellow_naples/view_models/properties/widgets/dropdown_view_model_property_widget.dart';
+import 'package:yellow_naples/view_models/properties/widgets/file_view_model_property_widget.dart';
+import 'package:yellow_naples/view_models/properties/widgets/int_view_model_property_widget.dart';
+import 'package:yellow_naples/view_models/properties/widgets/radio_list_view_model_property_widget.dart';
+import 'package:yellow_naples/view_models/properties/widgets/string_view_model_property_widget.dart';
+import 'package:yellow_naples/view_models/properties/widgets/switch_view_model_property_widget.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
 
 class CommentLayoutMember<T> extends IsVisibleMember<T> {
