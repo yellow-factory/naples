@@ -21,7 +21,7 @@ class _TextViewModelPropertyWidgetState extends State<TextViewModelPropertyWidge
     final formFieldKey = GlobalObjectKey(property);
     return TextFormField(
       key: formFieldKey,
-      initialValue: property.currentValue,
+      initialValue: property.serializedValue,
       decoration: InputDecoration(
         //filled: true,
         hintText: property.hint != null ? property.hint() : null,
@@ -39,7 +39,7 @@ class _TextViewModelPropertyWidgetState extends State<TextViewModelPropertyWidge
       // minLines: 1,
       // maxLines: 3,
       onChanged: (value) {
-        property.currentValue = value;
+        property.serializedValue = value;
         property.update();
       },
     );

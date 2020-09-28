@@ -57,7 +57,6 @@ class DividerLayoutMember<T> extends IsVisibleMember<T> {
 }
 
 abstract class TextViewModelProperty<T, U> extends ViewModelProperty<T, U> {
-  String _value;
   final bool obscureText;
   final int maxLength;
 
@@ -89,23 +88,15 @@ abstract class TextViewModelProperty<T, U> extends ViewModelProperty<T, U> {
 
   @override
   void initialize() {
-    _value = serialize(getProperty(source));
+    currentValue = getProperty(source);
   }
 
-  String serialize(U value) {
-    if (value == null) return '';
-    return value.toString();
+  String get serializedValue {
+    if (currentValue == null) return '';
+    return currentValue.toString();
   }
 
-  U deserialize(String value);
-
-  @override
-  U get currentValue => deserialize(_value);
-
-  @override
-  set currentValue(U value) {
-    _value = serialize(value);
-  }
+  set serializedValue(String value);
 }
 
 class StringViewModelProperty<T> extends TextViewModelProperty<T, String> {
@@ -138,7 +129,7 @@ class StringViewModelProperty<T> extends TextViewModelProperty<T, String> {
         );
 
   @override
-  String deserialize(String value) => value;
+  set serializedValue(String value) => currentValue = value;
 
   @override
   Widget get widget => ChangeNotifierProvider<StringViewModelProperty>.value(
@@ -175,10 +166,9 @@ class IntViewModelProperty<T> extends TextViewModelProperty<T, int> {
         );
 
   @override
-  int deserialize(String value) {
-    if (value == null) return 0;
-    if (value.isEmpty) return 0;
-    return int.parse(value);
+  set serializedValue(String value) {
+    if (value == null || value.isEmpty) currentValue = 0;
+    currentValue = int.parse(value);
   }
 
   @override
@@ -212,7 +202,7 @@ class BoolViewModelProperty<T> extends ViewModelProperty<T, bool> {
     FunctionOf<String> label,
     FunctionOf<String> hint,
     int flex,
-    bool autofocus,
+    bool autofocus = false,
     ActionOf2<T, bool> setProperty,
     Predicate1<T> isVisible,
     Predicate1<T> isEditable,
@@ -285,7 +275,7 @@ class FileViewModelProperty<T> extends ViewModelProperty<T, List<int>> {
     FunctionOf<String> label,
     FunctionOf<String> hint,
     int flex,
-    bool autofocus,
+    bool autofocus = false,
     ActionOf2<T, List<int>> setProperty,
     Predicate1<T> isVisible,
     Predicate1<T> isEditable,
@@ -342,7 +332,7 @@ class SelectViewModelProperty<T, U, V> extends ViewModelProperty<T, U> {
     FunctionOf<String> label,
     FunctionOf<String> hint,
     int flex,
-    bool autofocus,
+    bool autofocus = false,
     ActionOf2<T, U> setProperty,
     Predicate1<T> isVisible,
     Predicate1<T> isEditable,
