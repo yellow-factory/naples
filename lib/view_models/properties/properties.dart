@@ -21,7 +21,7 @@ class CommentLayoutMember<T> extends IsVisibleMember<T> {
   final double topPadding;
   final double bottomPadding;
 
-  CommentLayoutMember(ViewModel viewModel, T source, this.comment,
+  CommentLayoutMember(this.comment,
       {int flex = 99,
       Predicate1<T> isVisible,
       this.fontStyle,
@@ -29,7 +29,7 @@ class CommentLayoutMember<T> extends IsVisibleMember<T> {
       this.fontWeight,
       this.topPadding,
       this.bottomPadding})
-      : super(viewModel, source, flex: flex, isVisible: isVisible);
+      : super(flex: flex, isVisible: isVisible);
 
   @override
   Widget get widget {
@@ -38,8 +38,8 @@ class CommentLayoutMember<T> extends IsVisibleMember<T> {
   }
 }
 
-class DividerLayoutMember extends LayoutMember {
-  DividerLayoutMember(ViewModel viewModel, {int flex = 99}) : super(viewModel, flex: flex);
+class DividerLayoutMember<T> extends IsVisibleMember<T> {
+  DividerLayoutMember({int flex = 99}) : super(flex: flex);
 
   @override
   Widget get widget => Divider();
@@ -62,13 +62,12 @@ abstract class TextViewModelProperty<T, U> extends ViewModelProperty<T, U> {
   final int maxLength;
 
   TextViewModelProperty(
-    ViewModel viewModel,
-    FunctionOf<String> label,
     T source,
     FunctionOf1<T, U> getProperty, {
+    FunctionOf<String> label,
     FunctionOf<String> hint,
-    int flex,
-    bool autofocus,
+    int flex = 1,
+    bool autofocus = false,
     ActionOf2<T, U> setProperty,
     Predicate1<T> isVisible,
     Predicate1<T> isEditable,
@@ -76,7 +75,6 @@ abstract class TextViewModelProperty<T, U> extends ViewModelProperty<T, U> {
     this.obscureText: false,
     this.maxLength,
   }) : super(
-          viewModel,
           source,
           getProperty,
           label: label,
@@ -112,13 +110,12 @@ abstract class TextViewModelProperty<T, U> extends ViewModelProperty<T, U> {
 
 class StringViewModelProperty<T> extends TextViewModelProperty<T, String> {
   StringViewModelProperty(
-    ViewModel viewModel,
-    FunctionOf<String> label,
     T source,
     FunctionOf1<T, String> getProperty, {
+    FunctionOf<String> label,
     FunctionOf<String> hint,
-    int flex,
-    bool autofocus,
+    int flex = 1,
+    bool autofocus = false,
     ActionOf2<T, String> setProperty,
     Predicate1<T> isVisible,
     Predicate1<T> isEditable,
@@ -126,10 +123,9 @@ class StringViewModelProperty<T> extends TextViewModelProperty<T, String> {
     bool obscureText = false,
     int maxLength,
   }) : super(
-          viewModel,
-          label,
           source,
           getProperty,
+          label: label,
           hint: hint,
           flex: flex,
           autofocus: autofocus,
@@ -151,13 +147,12 @@ class StringViewModelProperty<T> extends TextViewModelProperty<T, String> {
 
 class IntViewModelProperty<T> extends TextViewModelProperty<T, int> {
   IntViewModelProperty(
-    ViewModel viewModel,
-    FunctionOf<String> label,
     T source,
     FunctionOf1<T, int> getProperty, {
+    FunctionOf<String> label,
     FunctionOf<String> hint,
-    int flex,
-    bool autofocus,
+    int flex = 1,
+    bool autofocus = false,
     ActionOf2<T, int> setProperty,
     Predicate1<T> isVisible,
     Predicate1<T> isEditable,
@@ -165,10 +160,9 @@ class IntViewModelProperty<T> extends TextViewModelProperty<T, int> {
     bool obscureText = false,
     int maxLength,
   }) : super(
-          viewModel,
-          label,
           source,
           getProperty,
+          label: label,
           hint: hint,
           flex: flex,
           autofocus: autofocus,
@@ -205,7 +199,7 @@ extension BoolValuesExtension on BoolValues {
   String get displayName => describeEnum(this);
 }
 
-//TODO: El String de isValid hauria de ser una funció que retonés String per tal que fos localitzable
+//TODO: El String de isValid hauria de ser una funció que retornés String per tal que fos localitzable
 
 class BoolViewModelProperty<T> extends ViewModelProperty<T, bool> {
   BoolWidgetType widgetType = BoolWidgetType.Checkbox;
@@ -213,10 +207,9 @@ class BoolViewModelProperty<T> extends ViewModelProperty<T, bool> {
   FunctionOf1<BoolValues, FunctionOf<String>> displayName = (t) => () => t.displayName;
 
   BoolViewModelProperty(
-    ViewModel viewModel,
-    FunctionOf<String> label,
     T source,
     FunctionOf1<T, bool> getProperty, {
+    FunctionOf<String> label,
     FunctionOf<String> hint,
     int flex,
     bool autofocus,
@@ -228,7 +221,6 @@ class BoolViewModelProperty<T> extends ViewModelProperty<T, bool> {
     this.widgetPosition,
     this.displayName,
   }) : super(
-          viewModel,
           source,
           getProperty,
           label: label,
@@ -248,16 +240,15 @@ class BoolViewModelProperty<T> extends ViewModelProperty<T, bool> {
 
   SelectViewModelProperty<T, bool, BoolValues> toSelect() {
     return SelectViewModelProperty<T, bool, BoolValues>(
-      viewModel,
-      label,
       source,
       this.getProperty,
       () => BoolValues.values,
       (t) => t.boolValue,
       displayName,
       flex: flex,
-      autofocus: autofocus,
+      label: label,
       hint: hint,
+      autofocus: autofocus,
       isEditable: isEditable,
       isValid: isValid,
       setProperty: setProperty,
@@ -289,10 +280,9 @@ class FileViewModelProperty<T> extends ViewModelProperty<T, List<int>> {
   List<int> _value;
 
   FileViewModelProperty(
-    ViewModel viewModel,
-    FunctionOf<String> label,
     T source,
     FunctionOf1<T, List<int>> getProperty, {
+    FunctionOf<String> label,
     FunctionOf<String> hint,
     int flex,
     bool autofocus,
@@ -301,7 +291,6 @@ class FileViewModelProperty<T> extends ViewModelProperty<T, List<int>> {
     Predicate1<T> isEditable,
     Predicate1<T> isRequired,
   }) : super(
-          viewModel,
           source,
           getProperty,
           label: label,
@@ -345,13 +334,12 @@ class SelectViewModelProperty<T, U, V> extends ViewModelProperty<T, U> {
   final FunctionOf1<V, FunctionOf<String>> displayMember; //Function to display the member as String
 
   SelectViewModelProperty(
-    ViewModel viewModel,
-    FunctionOf<String> label,
     T source,
     FunctionOf1<T, U> getProperty,
     this.listItems,
     this.valueMember,
     this.displayMember, {
+    FunctionOf<String> label,
     FunctionOf<String> hint,
     int flex,
     bool autofocus,
@@ -361,7 +349,6 @@ class SelectViewModelProperty<T, U, V> extends ViewModelProperty<T, U> {
     FunctionOf1<U, String> isValid,
     this.widgetType,
   }) : super(
-          viewModel,
           source,
           getProperty,
           label: label,

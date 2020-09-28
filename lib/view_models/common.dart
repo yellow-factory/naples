@@ -1,7 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:yellow_naples/utils.dart';
-import 'package:yellow_naples/view_models/properties/properties.dart';
 import 'package:yellow_naples/view_models/view_model.dart';
 import 'package:yellow_naples/navigation/navigation.dart';
 import 'package:yellow_naples/widgets/list_widget.dart';
@@ -11,14 +10,27 @@ import 'package:yellow_naples/models.dart';
 
 import '../widgets/dynamic_form_widget.dart';
 
-abstract class GetSetViewModel<T> extends ViewModel {
+abstract class GetSetViewModel<T> extends ViewModelOf<T> {
   final _layoutMembers = List<LayoutMember>();
-  T model;
+
+  GetSetViewModel() : super();
 
   Iterable<LayoutMember> get layoutMembers => _layoutMembers;
 
-  void _add(LayoutMember property) {
-    _layoutMembers.add(property);
+  void add(LayoutMember member) {
+    _layoutMembers.add(member);
+    //If the member notify changes the viewModel container should also notify changes
+    member.addListener(() {
+      notifyListeners();
+    });
+  }
+
+  void addMultiple(List<LayoutMember> members) {
+    members.forEach(
+      (element) {
+        add(element);
+      },
+    );
   }
 
   @override
@@ -28,15 +40,19 @@ abstract class GetSetViewModel<T> extends ViewModel {
     addLayoutMembers();
   }
 
+  @nonVirtual
   void addLayoutMembers() {
     _layoutMembers.clear();
+    addingLayoutMembers();
     notifyListeners();
   }
+
+  void addingLayoutMembers();
 
   Future<T> get();
   Future<void> set();
 
-  void addDivider({int flex = 99}) {
+/*   void addDivider({int flex = 99}) {
     _add(DividerLayoutMember(
       this,
       flex: flex,
@@ -210,7 +226,7 @@ abstract class GetSetViewModel<T> extends ViewModel {
       widgetType: widgetType,
     ));
   }
-
+ */
   Iterable<IsVisibleMember<T>> get visibleMembers => layoutMembers
       .whereType<IsVisibleMember<T>>()
       .where((element) => element.isVisible == null || element.isVisible(model));

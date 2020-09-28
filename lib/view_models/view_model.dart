@@ -26,27 +26,28 @@ abstract class ViewModel extends ChangeNotifier with OneTimeInitializable1<Build
   Widget get widget;
 }
 
-abstract class LayoutMember extends ChangeNotifier {
-  final int flex;
-  final ViewModel viewModel;
+abstract class ViewModelOf<T> extends ViewModel {
+  T model;
+  ViewModelOf();
+}
 
-  LayoutMember(this.viewModel, {this.flex = 1});
+abstract class LayoutMember<T> extends ChangeNotifier {
+  final int flex;
+  
+  LayoutMember({this.flex = 1});
 
   Widget get widget;
 }
 
 abstract class IsVisibleMember<T> extends LayoutMember {
-  final T source;
   final Predicate1<T> isVisible;
-  IsVisibleMember(ViewModel viewModel, this.source, {int flex = 1, this.isVisible})
-      : super(viewModel, flex: flex);
+  IsVisibleMember({int flex = 1, this.isVisible}) : super(flex: flex);
 }
 
 abstract class IsEditableMember<T> extends IsVisibleMember<T> {
   final Predicate1<T> isEditable;
-  IsEditableMember(ViewModel viewModel, T source,
-      {int flex = 1, Predicate1<T> isVisible, this.isEditable})
-      : super(viewModel, source, isVisible: isVisible, flex: flex);
+  IsEditableMember({int flex = 1, Predicate1<T> isVisible, this.isEditable})
+      : super(isVisible: isVisible, flex: flex);
 }
 
 abstract class ViewModelProperty<T, U> extends IsEditableMember<T> {
@@ -61,6 +62,7 @@ abstract class ViewModelProperty<T, U> extends IsEditableMember<T> {
   //Es podria fer servir el onSave per realitzar el setProperty, però no estic segur si és la millor opció
   //https://forum.freecodecamp.org/t/how-to-validate-forms-and-user-input-the-easy-way-using-flutter/190377
 
+  final T source;
   final FunctionOf<String> label;
   final FunctionOf<String> hint;
   final FunctionOf1<T, U> getProperty;
@@ -69,7 +71,7 @@ abstract class ViewModelProperty<T, U> extends IsEditableMember<T> {
   final Predicate1<T> isEditable;
   final FunctionOf1<U, String> isValid;
 
-  ViewModelProperty(ViewModel viewModel, T source, this.getProperty,
+  ViewModelProperty(this.source, this.getProperty,
       {this.label,
       this.hint,
       int flex,
@@ -78,7 +80,7 @@ abstract class ViewModelProperty<T, U> extends IsEditableMember<T> {
       Predicate1<T> isVisible,
       this.isEditable,
       this.isValid})
-      : super(viewModel, source, flex: flex, isVisible: isVisible) {
+      : super(flex: flex, isVisible: isVisible) {
     initialize();
   }
 
@@ -96,8 +98,6 @@ abstract class ViewModelProperty<T, U> extends IsEditableMember<T> {
     this.setProperty(source, currentValue);
     //notifies the changes to the property because they may use the source
     notifyListeners();
-    //notifies the changes to the viewModel because they may use the source
-    viewModel.notifyListeners();
   }
 
   void undo() {
