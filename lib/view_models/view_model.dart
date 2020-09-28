@@ -17,7 +17,7 @@ abstract class ViewModel extends ChangeNotifier with OneTimeInitializable1<Build
 
   T getProvided<T>() => Provider.of<T>(context, listen: false);
 
-  FunctionOf<String> get title;
+  String get title;
 
   /// El NavigationWidget enregistra un provider de tipus ViewModel que el
   /// widget que es retorni aquí pot recuperar. Tot i així si es vol utilitzar

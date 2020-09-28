@@ -28,12 +28,12 @@ class StepperNavigationWidget extends StatelessWidget {
             .toString()), //This is necessary to avoid an error changing the number of steps
         steps: [
           ...navigationModel.history.map((e) => Step(
-                title: Text(e.viewModel.title()),
+                title: Text(e.viewModel.title),
                 content: e.viewModel.widget,
                 state: StepState.complete,
               )),
           Step(
-              title: Text(currentViewModel.title()),
+              title: Text(currentViewModel.title),
               content: currentViewModel.widget,
               isActive: true,
               state: StepState.editing),

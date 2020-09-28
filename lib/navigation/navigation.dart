@@ -169,7 +169,7 @@ abstract class NavigationModel<T> extends ChangeNotifier
         //the context must have access to the NavigationModel
         initialize1(context);
         return ChangeNotifierProvider(
-            create: (_) => TitleModel(currentStateViewModel.viewModel.title),
+            create: (_) => TitleModel(() => currentStateViewModel.viewModel.title),
             child: NavigationWidget());
       },
     );
