@@ -7,8 +7,7 @@ import 'package:naples/widgets/list_widget.dart';
 import 'package:naples/widgets/save_cancel_widget.dart';
 import 'package:naples/widgets/single_step_widget.dart';
 import 'package:naples/models.dart';
-
-import '../widgets/dynamic_form_widget.dart';
+import 'package:naples/widgets/dynamic_form_widget.dart';
 
 abstract class GetSetViewModel<T> extends ViewModelOf<T> {
   final _layoutMembers = List<LayoutMember>();

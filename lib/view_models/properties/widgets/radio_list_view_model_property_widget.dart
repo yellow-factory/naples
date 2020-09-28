@@ -23,7 +23,7 @@ class RadioListViewModelPropertyWidget<T, U, V> extends StatelessWidget {
                   ? (U value) {
                       setState(() {
                         property.currentValue = value;
-                        property.update();
+                        if (property.valid) property.update();
                       });
                     }
                   : null,

@@ -40,7 +40,7 @@ class _TextViewModelPropertyWidgetState extends State<TextViewModelPropertyWidge
       // maxLines: 3,
       onChanged: (value) {
         property.serializedValue = value;
-        property.update();
+        if (property.valid) property.update();
       },
     );
   }

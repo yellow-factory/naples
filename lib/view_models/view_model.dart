@@ -18,11 +18,6 @@ abstract class ViewModel extends ChangeNotifier with OneTimeInitializable1<Build
   T getProvided<T>() => Provider.of<T>(context, listen: false);
 
   String get title;
-
-  /// El NavigationWidget enregistra un provider de tipus ViewModel que el
-  /// widget que es retorni aquí pot recuperar. Tot i així si es vol utilitzar
-  /// una subclasse de ViewModel, serà necessària enregistrar-la i passar-la de
-  /// nou amb el widget.
   Widget get widget;
 }
 
@@ -94,6 +89,7 @@ abstract class ViewModelProperty<T, U> extends IsEditableMember<T> {
 
   bool get valid => validate() == null;
   void update() {
+    if (!valid) throw Exception("Cannot update an invalid property");
     if (this.setProperty == null) throw Exception("setProperty not set");
     this.setProperty(source, currentValue);
     //notifies the changes to the property because they may use the source

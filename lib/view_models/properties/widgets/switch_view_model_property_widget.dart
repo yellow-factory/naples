@@ -19,7 +19,7 @@ class SwitchViewModelPropertyWidget extends StatelessWidget {
               ? (value) {
                   setState(() {
                     property.currentValue = value;
-                    property.update();
+                    if (property.valid) property.update();
                   });
                 }
               : null,
