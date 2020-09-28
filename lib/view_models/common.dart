@@ -77,6 +77,8 @@ abstract class GetSetViewModel<T> extends ViewModel {
     Predicate1<T> isVisible,
     Predicate1<T> isEditable,
     FunctionOf1<String, String> isValid,
+    bool obscureText = false,
+    int maxLength,
   }) {
     _add(StringViewModelProperty<T>(
       this,
@@ -90,6 +92,8 @@ abstract class GetSetViewModel<T> extends ViewModel {
       isVisible: isVisible,
       isEditable: isEditable,
       isValid: isValid,
+      obscureText: obscureText,
+      maxLength: maxLength,
     ));
   }
 

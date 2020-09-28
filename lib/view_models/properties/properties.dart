@@ -58,25 +58,36 @@ class DividerLayoutMember extends LayoutMember {
 
 abstract class TextViewModelProperty<T, U> extends ViewModelProperty<T, U> {
   String _value;
+  final bool obscureText;
+  final int maxLength;
 
   TextViewModelProperty(
-      ViewModel viewModel, FunctionOf<String> label, T source, FunctionOf1<T, U> getProperty,
-      {FunctionOf<String> hint,
-      int flex,
-      bool autofocus,
-      ActionOf2<T, U> setProperty,
-      Predicate1<T> isVisible,
-      Predicate1<T> isEditable,
-      FunctionOf1<U, String> isValid})
-      : super(viewModel, source, getProperty,
-            label: label,
-            hint: hint,
-            flex: flex,
-            autofocus: autofocus,
-            setProperty: setProperty,
-            isVisible: isVisible,
-            isEditable: isEditable,
-            isValid: isValid);
+    ViewModel viewModel,
+    FunctionOf<String> label,
+    T source,
+    FunctionOf1<T, U> getProperty, {
+    FunctionOf<String> hint,
+    int flex,
+    bool autofocus,
+    ActionOf2<T, U> setProperty,
+    Predicate1<T> isVisible,
+    Predicate1<T> isEditable,
+    FunctionOf1<U, String> isValid,
+    this.obscureText: false,
+    this.maxLength,
+  }) : super(
+          viewModel,
+          source,
+          getProperty,
+          label: label,
+          hint: hint,
+          flex: flex,
+          autofocus: autofocus,
+          setProperty: setProperty,
+          isVisible: isVisible,
+          isEditable: isEditable,
+          isValid: isValid,
+        );
 
   @override
   void initialize() {
@@ -101,22 +112,34 @@ abstract class TextViewModelProperty<T, U> extends ViewModelProperty<T, U> {
 
 class StringViewModelProperty<T> extends TextViewModelProperty<T, String> {
   StringViewModelProperty(
-      ViewModel viewModel, FunctionOf<String> label, T source, FunctionOf1<T, String> getProperty,
-      {FunctionOf<String> hint,
-      int flex,
-      bool autofocus,
-      ActionOf2<T, String> setProperty,
-      Predicate1<T> isVisible,
-      Predicate1<T> isEditable,
-      FunctionOf1<String, String> isValid})
-      : super(viewModel, label, source, getProperty,
-            hint: hint,
-            flex: flex,
-            autofocus: autofocus,
-            setProperty: setProperty,
-            isVisible: isVisible,
-            isEditable: isEditable,
-            isValid: isValid);
+    ViewModel viewModel,
+    FunctionOf<String> label,
+    T source,
+    FunctionOf1<T, String> getProperty, {
+    FunctionOf<String> hint,
+    int flex,
+    bool autofocus,
+    ActionOf2<T, String> setProperty,
+    Predicate1<T> isVisible,
+    Predicate1<T> isEditable,
+    FunctionOf1<String, String> isValid,
+    bool obscureText = false,
+    int maxLength,
+  }) : super(
+          viewModel,
+          label,
+          source,
+          getProperty,
+          hint: hint,
+          flex: flex,
+          autofocus: autofocus,
+          setProperty: setProperty,
+          isVisible: isVisible,
+          isEditable: isEditable,
+          isValid: isValid,
+          obscureText: obscureText,
+          maxLength: maxLength,
+        );
 
   @override
   String deserialize(String value) => value;
@@ -139,6 +162,8 @@ class IntViewModelProperty<T> extends TextViewModelProperty<T, int> {
     Predicate1<T> isVisible,
     Predicate1<T> isEditable,
     FunctionOf1<int, String> isValid,
+    bool obscureText = false,
+    int maxLength,
   }) : super(
           viewModel,
           label,
@@ -151,6 +176,8 @@ class IntViewModelProperty<T> extends TextViewModelProperty<T, int> {
           isVisible: isVisible,
           isEditable: isEditable,
           isValid: isValid,
+          obscureText: obscureText,
+          maxLength: maxLength,
         );
 
   @override

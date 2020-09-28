@@ -4,17 +4,23 @@ import 'package:flutter/services.dart';
 import 'package:yellow_naples/view_models/properties/properties.dart';
 import 'package:provider/provider.dart';
 
-class TextViewModelPropertyWidget extends StatelessWidget {
+class TextViewModelPropertyWidget extends StatefulWidget {
   final TextInputType textInputType;
   final List<TextInputFormatter> textInputFormatters;
 
   TextViewModelPropertyWidget({this.textInputType, this.textInputFormatters});
 
   @override
+  _TextViewModelPropertyWidgetState createState() => _TextViewModelPropertyWidgetState();
+}
+
+class _TextViewModelPropertyWidgetState extends State<TextViewModelPropertyWidget> {
+  @override
   Widget build(BuildContext context) {
     final property = context.watch<TextViewModelProperty>();
+    final formFieldKey = GlobalObjectKey(property);
     return TextFormField(
-      key: UniqueKey(),
+      key: formFieldKey,
       initialValue: property.currentValue,
       decoration: InputDecoration(
         //filled: true,
@@ -24,19 +30,17 @@ class TextViewModelPropertyWidget extends StatelessWidget {
       enabled: property.editable,
       autofocus: property.autofocus,
       validator: (_) => property.validate(),
-      keyboardType: textInputType,
-      inputFormatters: textInputFormatters,
-      //TODO: hauria de ser onUserInteraction, però no acaba de funcionar perquè no manté l'estat...
-      //autovalidateMode: AutovalidateMode.onUserInteraction,
-      autovalidateMode: AutovalidateMode.always,
+      keyboardType: widget.textInputType,
+      inputFormatters: widget.textInputFormatters,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      obscureText: property.obscureText,
+      maxLength: property.maxLength,
+      
+      // minLines: 1,
+      // maxLines: 3,
       onChanged: (value) {
-        Form.of(context).validate();
         property.currentValue = value;
         property.update();
-        //TODO: Quan es fa l'update es passa el valor al model, i no sé si en tots
-        //els casos és el que volem, potser podríem tenir una opció (autoupdate)
-        //si no ho fem, els visibles, editables, etc. no s'actualitzaran correctament,
-        //però no sé quan és el millor moment, si quan es fa el canvi o quan es fa l'update explícit de la viewmodel
       },
     );
   }

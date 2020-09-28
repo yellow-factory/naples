@@ -3,7 +3,7 @@ import 'package:yellow_naples/view_models/common.dart';
 import 'package:yellow_naples/widgets/distribution_widget.dart';
 import 'package:provider/provider.dart';
 
-class DynamicFormWidget extends StatelessWidget {
+class DynamicFormWidget extends StatefulWidget {
   final int fixed;
   final int maxFlex;
   final bool normalize;
@@ -20,28 +20,33 @@ class DynamicFormWidget extends StatelessWidget {
       : super(key: key);
 
   @override
+  _DynamicFormWidgetState createState() => _DynamicFormWidgetState();
+}
+
+class _DynamicFormWidgetState extends State<DynamicFormWidget> {
+  final _formKey = GlobalKey<FormState>();
+  @override
   Widget build(BuildContext context) {
     var viewModel = context.watch<GetSetViewModel>();
     return Form(
-      //key: GlobalKey(),
+      key: _formKey,
       child: DistributionWidget(
         <Expandable>[
           for (var p in viewModel.visibleMembers)
             Expandable(
-                childPadding == null
+                widget.childPadding == null
                     ? p.widget
                     : Container(
                         child: p.widget,
-                        padding: childPadding,
+                        padding: widget.childPadding,
                       ),
                 p.flex ?? 1)
         ],
-        distribution: distribution,
-        fixed: fixed,
-        maxFlex: maxFlex,
-        normalize: normalize,
+        distribution: widget.distribution,
+        fixed: widget.fixed,
+        maxFlex: widget.maxFlex,
+        normalize: widget.normalize,
       ),
-      autovalidateMode: AutovalidateMode.always,
     );
   }
 }
