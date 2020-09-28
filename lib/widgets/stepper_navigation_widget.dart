@@ -1,9 +1,9 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:yellow_naples/view_models/common.dart';
-import 'package:yellow_naples/view_models/view_model.dart';
+import 'package:naples/view_models/common.dart';
+import 'package:naples/view_models/view_model.dart';
 import 'package:provider/provider.dart';
-import 'package:yellow_naples/navigation/navigation.dart';
+import 'package:naples/navigation/navigation.dart';
 import 'actions_widget.dart';
 
 /// This widget depends on these providers:

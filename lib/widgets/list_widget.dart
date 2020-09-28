@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:yellow_naples/view_models/common.dart';
+import 'package:naples/view_models/common.dart';
 import './refresh_list_button_widget.dart';
 import './filter_list_button_widget.dart';
 import './filter_list_widget.dart';

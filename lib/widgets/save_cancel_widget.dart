@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:yellow_naples/view_models/common.dart';
+import 'package:naples/view_models/common.dart';
 import 'actions_widget.dart';
 import 'base_scaffold_widget.dart';
 import 'dynamic_form_widget.dart';

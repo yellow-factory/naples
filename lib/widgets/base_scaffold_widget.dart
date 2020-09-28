@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:yellow_naples/widgets/title_widget.dart';
+import 'package:naples/widgets/title_widget.dart';
 import './snack_widget.dart';
 
 class BaseScaffoldWidget extends StatelessWidget {

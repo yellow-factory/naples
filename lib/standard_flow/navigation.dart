@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:yellow_naples/navigation/navigation.dart';
-import 'package:yellow_naples/utils.dart';
-import 'package:yellow_naples/view_models/view_model.dart';
+import 'package:naples/navigation/navigation.dart';
+import 'package:naples/utils.dart';
+import 'package:naples/view_models/view_model.dart';
 
 //Possible transition states
 enum StandardFlow { List, Create, Update }
@@ -23,6 +23,7 @@ class ListCreateUpdateStandardNavigationModel<T> extends NavigationModel<Standar
   Widget get widget {
     return
         //The Navigation flow in this case needs a param to navigate from list to edit
-        ChangeNotifierProvider<ValueNotifier<T>>(create: (_) => ValueNotifier<T>(null), child: super.widget);
+        ChangeNotifierProvider<ValueNotifier<T>>(
+            create: (_) => ValueNotifier<T>(null), child: super.widget);
   }
 }

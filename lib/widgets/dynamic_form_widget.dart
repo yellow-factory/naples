@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:yellow_naples/view_models/common.dart';
-import 'package:yellow_naples/widgets/distribution_widget.dart';
+import 'package:naples/view_models/common.dart';
+import 'package:naples/widgets/distribution_widget.dart';
 import 'package:provider/provider.dart';
 
 class DynamicFormWidget extends StatefulWidget {

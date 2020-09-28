@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
-import 'package:yellow_naples/models.dart';
+import 'package:naples/models.dart';
 
 class SnackModelWidget extends StatelessWidget {
   final Widget child;

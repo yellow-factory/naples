@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
-import 'package:yellow_naples/utils.dart';
+import 'package:naples/utils.dart';
 
 class SnackModel extends ChangeNotifier {
   String _message;

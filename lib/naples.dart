@@ -1,3 +1,3 @@
-library yellow_naples;
+library naples;
 
 //TODO: falta especificar bé la library

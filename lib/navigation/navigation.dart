@@ -1,15 +1,15 @@
-library yellow_naples;
+library naples;
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:yellow_naples/initialize.dart';
-import 'package:yellow_naples/models.dart';
-import 'package:yellow_naples/utils.dart';
-import 'package:yellow_naples/view_models/view_model.dart';
+import 'package:naples/initialize.dart';
+import 'package:naples/models.dart';
+import 'package:naples/utils.dart';
+import 'package:naples/view_models/view_model.dart';
 import 'package:meta/meta.dart';
 import 'dart:collection';
-import 'package:yellow_naples/widgets/navigation_widget.dart';
-import 'package:yellow_naples/widgets/stepper_navigation_widget.dart';
+import 'package:naples/widgets/navigation_widget.dart';
+import 'package:naples/widgets/stepper_navigation_widget.dart';
 
 class Transition<T> {
   final T beginningState;

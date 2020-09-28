@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
-import 'package:yellow_naples/view_models/view_model.dart';
-import 'package:yellow_naples/navigation/navigation.dart';
-import 'package:yellow_naples/widgets/list_widget.dart';
-import 'package:yellow_naples/widgets/save_cancel_widget.dart';
-import 'package:yellow_naples/widgets/single_step_widget.dart';
-import 'package:yellow_naples/models.dart';
+import 'package:naples/view_models/view_model.dart';
+import 'package:naples/navigation/navigation.dart';
+import 'package:naples/widgets/list_widget.dart';
+import 'package:naples/widgets/save_cancel_widget.dart';
+import 'package:naples/widgets/single_step_widget.dart';
+import 'package:naples/models.dart';
 
 import '../widgets/dynamic_form_widget.dart';
 

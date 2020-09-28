@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:yellow_naples/models.dart';
+import 'package:naples/models.dart';
 import 'package:provider/provider.dart';
-import 'package:yellow_naples/utils.dart';
+import 'package:naples/utils.dart';
 
 class LanguageButtonWidget extends StatelessWidget {
   final String culture;

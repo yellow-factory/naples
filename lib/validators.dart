@@ -1,4 +1,4 @@
-import 'package:yellow_naples/utils.dart';
+import 'package:naples/utils.dart';
 
 class Validator<T> {
   final _validators = List<FunctionOf1<T, String>>();

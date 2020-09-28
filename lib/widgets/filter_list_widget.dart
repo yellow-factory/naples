@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:yellow_naples/view_models/common.dart';
+import 'package:naples/view_models/common.dart';
 
 class FilterListWidget extends StatefulWidget {
   FilterListWidget({Key key}) : super(key: key);

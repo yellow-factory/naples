@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:yellow_naples/view_models/common.dart';
-import 'package:yellow_naples/widgets/actions_widget.dart';
-import 'package:yellow_naples/widgets/base_scaffold_widget.dart';
-import 'package:yellow_naples/widgets/dynamic_form_widget.dart';
+import 'package:naples/view_models/common.dart';
+import 'package:naples/widgets/actions_widget.dart';
+import 'package:naples/widgets/base_scaffold_widget.dart';
+import 'package:naples/widgets/dynamic_form_widget.dart';
 import 'package:provider/provider.dart';
 
 class SingleStepWidget extends StatelessWidget {

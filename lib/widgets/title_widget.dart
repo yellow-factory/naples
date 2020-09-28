@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:yellow_naples/models.dart';
+import 'package:naples/models.dart';
 
 class TitleWidget extends StatelessWidget {
   TitleWidget({Key key}) : super(key: key);

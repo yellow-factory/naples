@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
-import 'package:yellow_naples/navigation/navigation.dart';
-import 'package:yellow_naples/standard_flow/service.dart';
-import 'package:yellow_naples/utils.dart';
-import 'package:yellow_naples/view_models/common.dart';
+import 'package:naples/navigation/navigation.dart';
+import 'package:naples/standard_flow/service.dart';
+import 'package:naples/utils.dart';
+import 'package:naples/view_models/common.dart';
 import 'navigation.dart';
 
 //T is the type of the model in the list

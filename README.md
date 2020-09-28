@@ -1,4 +1,4 @@
-# yellow_naples
+# naples
 
 A new Flutter package project.
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:yellow_naples/initialize.dart';
-import 'package:yellow_naples/utils.dart';
+import 'package:naples/initialize.dart';
+import 'package:naples/utils.dart';
 
 abstract class Refreshable implements Initialized {
   Future<void> refresh();
@@ -33,7 +33,7 @@ abstract class ViewModelOf<T> extends ViewModel {
 
 abstract class LayoutMember<T> extends ChangeNotifier {
   final int flex;
-  
+
   LayoutMember({this.flex = 1});
 
   Widget get widget;
