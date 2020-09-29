@@ -35,13 +35,13 @@ abstract class LayoutMember<T> extends ChangeNotifier {
 }
 
 abstract class IsVisibleMember<T> extends LayoutMember {
-  final Predicate1<T> isVisible;
+  final PredicateOf1<T> isVisible;
   IsVisibleMember({int flex = 1, this.isVisible}) : super(flex: flex);
 }
 
 abstract class IsEditableMember<T> extends IsVisibleMember<T> {
-  final Predicate1<T> isEditable;
-  IsEditableMember({int flex = 1, Predicate1<T> isVisible, this.isEditable})
+  final PredicateOf1<T> isEditable;
+  IsEditableMember({int flex = 1, PredicateOf1<T> isVisible, this.isEditable})
       : super(isVisible: isVisible, flex: flex);
 }
 
@@ -63,7 +63,7 @@ abstract class ViewModelProperty<T, U> extends IsEditableMember<T> {
   final FunctionOf1<T, U> getProperty;
   final bool autofocus;
   final ActionOf2<T, U> setProperty;
-  final Predicate1<T> isEditable;
+  final PredicateOf1<T> isEditable;
   final FunctionOf1<U, String> isValid;
 
   ViewModelProperty(this.source, this.getProperty,
@@ -72,7 +72,7 @@ abstract class ViewModelProperty<T, U> extends IsEditableMember<T> {
       int flex,
       this.autofocus = false,
       this.setProperty,
-      Predicate1<T> isVisible,
+      PredicateOf1<T> isVisible,
       this.isEditable,
       this.isValid})
       : super(flex: flex, isVisible: isVisible) {

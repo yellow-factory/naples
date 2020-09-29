@@ -3,7 +3,7 @@ import 'package:naples/utils.dart';
 class Validator<T> {
   final _validators = List<FunctionOf1<T, String>>();
 
-  void add(Predicate1<T> isValid, String error) {
+  void add(PredicateOf1<T> isValid, String error) {
     _validators.add((T t) => isValid(t) ? error : null);
   }
 
