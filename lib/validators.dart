@@ -1,10 +1,13 @@
 import 'package:naples/utils.dart';
 
+//TODO: Localize Validators
+//TODO: Make tests of validators
+
 class Validator<T> {
   final _validators = List<FunctionOf1<T, String>>();
 
-  void add(PredicateOf1<T> isValid, String error) {
-    _validators.add((T t) => isValid(t) ? error : null);
+  void add(PredicateOf1<T> isNotValid, String error) {
+    _validators.add((T t) => isNotValid(t) ? error : null);
   }
 
   FunctionOf1<T, String> get value {
@@ -46,5 +49,32 @@ class StringValidator extends Validator<String> {
       multiLine: multiLine,
     );
     add((t) => !regExp.hasMatch(t), 'Is not matching the regular expression: $expression');
+  }
+}
+
+class NumberValidator extends Validator<num> {
+  @override
+  void required() {
+    add((t) => t == null || t == 0, 'Please enter some number different than zero');
+  }
+
+  void positive() {
+    add((t) => t == null || t < 0, 'Please enter a positive number');
+  }
+
+  void negative() {
+    add((t) => t == null || t > 0, 'Please enter a negative number');
+  }
+
+  void max(int max) {
+    add((t) => t != null && t > max, 'Please enter a number lower than $max');
+  }
+
+  void min(int min) {
+    add((t) => t != null && t < min, 'Please enter a number greater than $max');
+  }
+
+  void range(int min, int max) {
+    add((t) => t != null && t > min && t < max, 'Please enter a number between $min and $max');
   }
 }
