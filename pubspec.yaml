@@ -16,6 +16,7 @@ dependencies:
   intl: ^0.16.1
   intl_translation: ^0.17.10+1
   list_ext: ^0.1.13
+  date_time_picker: ^1.0.2
 
 dev_dependencies:
   flutter_test:

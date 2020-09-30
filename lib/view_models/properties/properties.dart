@@ -383,3 +383,45 @@ class SelectViewModelProperty<T, U, V> extends ViewModelProperty<T, U> {
 //       //i un botó per tal que pugui fer el showDateTimePicker i es pugui canviar...
 
 //TODO: Cal implementar el combo i el lookup, em podria guiar per la implementació ja existent a IAS-Docència
+
+class DateTimeViewModelProperty<T> extends TextViewModelProperty<T, DateTime> {
+  DateTimeViewModelProperty(
+    T source,
+    FunctionOf1<T, DateTime> getProperty, {
+    FunctionOf<String> label,
+    FunctionOf<String> hint,
+    int flex = 1,
+    bool autofocus = false,
+    ActionOf2<T, DateTime> setProperty,
+    PredicateOf1<T> isVisible,
+    PredicateOf1<T> isEditable,
+    FunctionOf1<DateTime, String> isValid,
+  }) : super(
+          source,
+          getProperty,
+          label: label,
+          hint: hint,
+          flex: flex,
+          autofocus: autofocus,
+          setProperty: setProperty,
+          isVisible: isVisible,
+          isEditable: isEditable,
+          isValid: isValid,
+        );
+
+  @override
+  set serializedValue(String value) {
+    if (value == null || value.isEmpty) {
+      currentValue = null;
+      return;
+    }
+    print("DateTime: $value");
+    currentValue = DateTime.parse(value);
+    print(
+        "DateTime parsed: $currentValue ${currentValue.isUtc} ${currentValue.timeZoneName} ${currentValue.timeZoneOffset}");
+  }
+
+  @override
+  Widget get widget => ChangeNotifierProvider<DateTimeViewModelProperty>.value(
+      value: this, child: DateTimeViewModelPropertyWidget());
+}
