@@ -11,6 +11,7 @@ import 'package:naples/view_models/properties/widgets/int_view_model_property_wi
 import 'package:naples/view_models/properties/widgets/radio_list_view_model_property_widget.dart';
 import 'package:naples/view_models/properties/widgets/string_view_model_property_widget.dart';
 import 'package:naples/view_models/properties/widgets/switch_view_model_property_widget.dart';
+import 'package:naples/view_models/properties/widgets/datetime_view_model_property_widget.dart';
 import 'package:naples/view_models/view_model.dart';
 
 class CommentLayoutMember<T> extends IsVisibleMember<T> {
