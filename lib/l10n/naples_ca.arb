@@ -1,13 +1,54 @@
 {
   "@@locale": "ca",
 
-  "helloNaples": "Hola Nápols!",
-  "@helloNaples": {
-    "description": "The conventional newborn programmer greeting"
+  "required": "El camp és obligatori.",
+  "@required": {
+    "description": "Validator<T>.required"
   },
   
-  "helloNaples2": "Hola Nápols 2!",
-  "@helloNaples2": {
-    "description": "The conventional newborn programmer greeting"
-  }
+  "stringRequired": "Introdueix un text.",
+  "@stringRequired": {
+    "description": "StringValidator.required"
+  },
+
+  "stringMaxLength": "La llargada del text no pot ser major de {max} caràcters.",
+  "@stringMaxLength": {
+    "description": "StringValidator.maxLength",
+    "placeholders": {
+      "max": {
+        "type": "int",
+        "format": "compact",
+        "example": "8"
+      }
+    }
+  },
+
+  "stringMinLength": "La llargada del text no pot ser menor de {min} caràcters.",
+  "@stringMinLength": {
+    "description": "StringValidator.minLength",
+    "placeholders": {
+      "min": {
+        "type": "int",
+        "format": "compact",
+        "example": "8"
+      }
+    }
+  },
+
+  "stringRegularExpression": "El text no segueix l'expressió regular: $expression",
+  "@stringRegularExpression": {
+    "description": "StringValidator.regularExpression",
+    "placeholders": {
+      "expression": {
+        "type": "String",
+        "example": "[0-9]+"
+      }
+    }
+  },
+
+  "numberRequired": "Introdueix un número diferent de zero.",
+  "@numberRequired": {
+    "description": "NumberValidator.required"
+  }  
+
 }

@@ -1,8 +1,53 @@
 {
   "@@locale": "en",
 
-  "helloNaples": "Hello Nápoles!",
-  "@helloNaples": {
-    "description": "The conventional newborn programmer greeting"
-  }
+  "required": "Please enter some text",
+  "@required": {
+    "description": "Validator<T>.required"
+  },
+  
+  "stringRequired": "Please enter some text",
+  "@stringRequired": {
+    "description": "StringValidator.required"
+  },
+
+  "stringMaxLength": "Max length cannot be greater than {max}",
+  "@stringMaxLength": {
+    "description": "StringValidator.maxLength",
+    "placeholders": {
+      "max": {
+        "type": "int",
+        "format": "compact",
+        "example": "8"
+      }
+    }
+  },
+
+  "stringMinLength": "Minimum length cannot be lower than $min",
+  "@stringMinLength": {
+    "description": "StringValidator.minLength",
+    "placeholders": {
+      "min": {
+        "type": "int",
+        "format": "compact",
+        "example": "8"
+      }
+    }
+  },
+
+  "stringRegularExpression": "Is not matching the regular expression: $expression",
+  "@stringRegularExpression": {
+    "description": "StringValidator.regularExpression",
+    "placeholders": {
+      "expression": {
+        "type": "String",
+        "example": "[0-9]+"
+      }
+    }
+  },
+
+  "numberRequired": "Please enter some number different than zero",
+  "@numberRequired": {
+    "description": "NumberValidator.required"
+  }  
 }

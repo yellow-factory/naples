@@ -98,8 +98,23 @@ abstract class NaplesLocalizations {
     Locale('es')
   ];
 
-  // The conventional newborn programmer greeting
-  String get helloNaples;
+  // Validator<T>.required
+  String get required;
+
+  // StringValidator.required
+  String get stringRequired;
+
+  // StringValidator.maxLength
+  String stringMaxLength(int max);
+
+  // StringValidator.minLength
+  String stringMinLength(int min);
+
+  // StringValidator.regularExpression
+  String stringRegularExpression(String expression);
+
+  // NumberValidator.required
+  String get numberRequired;
 }
 
 class _NaplesLocalizationsDelegate extends LocalizationsDelegate<NaplesLocalizations> {
