@@ -98,23 +98,38 @@ abstract class NaplesLocalizations {
     Locale('es')
   ];
 
-  // Validator<T>.required
-  String get required;
+  // NumberValidator.max
+  String get numberMax;
 
-  // StringValidator.required
-  String get stringRequired;
+  // NumberValidator.min
+  String get numberMin;
 
-  // StringValidator.maxLength
-  String stringMaxLength(int max);
+  // NumberValidator.negative
+  String get numberNegative;
 
-  // StringValidator.minLength
-  String stringMinLength(int min);
+  // NumberValidator.positive
+  String get numberPositive;
 
-  // StringValidator.regularExpression
-  String stringRegularExpression(String expression);
+  // NumberValidator.range
+  String numberRange(Object min, Object max);
 
   // NumberValidator.required
   String get numberRequired;
+
+  // Validator<T>.required
+  String get required;
+
+  // StringValidator.maxLength
+  String stringMaxLength(Object max);
+
+  // StringValidator.minLength
+  String stringMinLength(Object min);
+
+  // StringValidator.regularExpression
+  String stringRegularExpression(Object expression);
+
+  // StringValidator.required
+  String get stringRequired;
 }
 
 class _NaplesLocalizationsDelegate extends LocalizationsDelegate<NaplesLocalizations> {

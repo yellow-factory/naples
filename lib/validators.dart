@@ -84,8 +84,8 @@ class NumberValidator extends Validator<num> {
   void required() {
     add(
       (t) => t == null || t == 0,
-      () => 'Please enter some number different than zero',
-    );
+      () => NaplesLocalizations.of(context).numberRequired,
+    ); //'Please enter some number different than zero',
   }
 
   void positive() {
@@ -112,7 +112,7 @@ class NumberValidator extends Validator<num> {
   void min(int min) {
     add(
       (t) => t != null && t < min,
-      () => 'Please enter a number greater than $max',
+      () => 'Please enter a number greater than $min',
     );
   }
 

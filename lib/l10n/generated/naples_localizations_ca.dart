@@ -10,38 +10,43 @@ class NaplesLocalizationsCa extends NaplesLocalizations {
   NaplesLocalizationsCa([String locale = 'ca']) : super(locale);
 
   @override
-  String get required => 'El camp és obligatori.';
+  String get numberMax => 'Introdueix un nombre inferior a {max}.';
 
   @override
-  String get stringRequired => 'Introdueix un text.';
+  String get numberMin => 'Introdueix un nombre major de {min}.';
 
   @override
-  String stringMaxLength(int max) {
-    final intl.NumberFormat maxNumberFormat = intl.NumberFormat.compact(
-      locale: localeName,
-      
-    );
-    final String maxString = maxNumberFormat.format(max);
-
-    return 'La llargada del text no pot ser major de ${maxString} caràcters.';
-  }
+  String get numberNegative => 'Introdueix un nombre negatiu.';
 
   @override
-  String stringMinLength(int min) {
-    final intl.NumberFormat minNumberFormat = intl.NumberFormat.compact(
-      locale: localeName,
-      
-    );
-    final String minString = minNumberFormat.format(min);
-
-    return 'La llargada del text no pot ser menor de ${minString} caràcters.';
-  }
+  String get numberPositive => 'Introdueix un nombre positiu.';
 
   @override
-  String stringRegularExpression(String expression) {
-    return 'El text no segueix l\'expressió regular: \$expression';
+  String numberRange(Object min, Object max) {
+    return 'Introdueix un nombre entre ${min} i ${max}.';
   }
 
   @override
   String get numberRequired => 'Introdueix un número diferent de zero.';
+
+  @override
+  String get required => 'El camp és obligatori.';
+
+  @override
+  String stringMaxLength(Object max) {
+    return 'La llargada del text no pot ser major de ${max} caràcters.';
+  }
+
+  @override
+  String stringMinLength(Object min) {
+    return 'La llargada del text no pot ser menor de ${min} caràcters.';
+  }
+
+  @override
+  String stringRegularExpression(Object expression) {
+    return 'El text no segueix l\'expressió regular: \$expression';
+  }
+
+  @override
+  String get stringRequired => 'Introdueix un text.';
 }

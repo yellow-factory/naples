@@ -13,7 +13,7 @@ To generate the files needed for Localization:
 ````
 gen-l10n 
     --arb-dir=lib/l10n 
-    --template-arb-file=naples_en.arb 
+    --template-arb-file=intl_en.arb 
     --output-localization-file=naples_localizations.dart 
     --output-class=NaplesLocalizations 
     --no-synthetic-package 
