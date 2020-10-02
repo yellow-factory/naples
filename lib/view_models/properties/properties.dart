@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:naples/utils.dart';
 import 'package:naples/view_models/properties/widgets/checkbox_view_model_property_widget.dart';
@@ -73,7 +74,7 @@ abstract class TextViewModelProperty<T, U> extends ViewModelProperty<T, U> {
     PredicateOf1<T> isEditable,
     FunctionOf1<U, String> isValid,
     this.obscureText: false,
-    this.maxLength,
+    this.maxLength = -1,
   }) : super(
           source,
           getProperty,
@@ -386,6 +387,8 @@ class SelectViewModelProperty<T, U, V> extends ViewModelProperty<T, U> {
 //TODO: Cal implementar el combo i el lookup, em podria guiar per la implementació ja existent a IAS-Docència
 
 class DateTimeViewModelProperty<T> extends TextViewModelProperty<T, DateTime> {
+  final String dateFormat;
+
   DateTimeViewModelProperty(
     T source,
     FunctionOf1<T, DateTime> getProperty, {
@@ -397,6 +400,7 @@ class DateTimeViewModelProperty<T> extends TextViewModelProperty<T, DateTime> {
     PredicateOf1<T> isVisible,
     PredicateOf1<T> isEditable,
     FunctionOf1<DateTime, String> isValid,
+    this.dateFormat = "dd/MM/yyyy HH:mm",
   }) : super(
           source,
           getProperty,
@@ -412,15 +416,17 @@ class DateTimeViewModelProperty<T> extends TextViewModelProperty<T, DateTime> {
 
   @override
   set serializedValue(String value) {
-    if (value == null || value.isEmpty) {
-      currentValue = null;
-      return;
-    }
-    print("DateTime: $value");
-    currentValue = DateTime.parse(value);
-    print(
-        "DateTime parsed: $currentValue ${currentValue.isUtc} ${currentValue.timeZoneName} ${currentValue.timeZoneOffset}");
+    currentValue = DateTime.tryParse(value);
   }
+
+  @override
+  String get serializedValue {
+    if (currentValue == null) return '';
+    return DateFormat(dateFormat).format(currentValue);
+  }
+
+  @override
+  int get maxLength => (dateFormat ?? '').length;
 
   @override
   Widget get widget => ChangeNotifierProvider<DateTimeViewModelProperty>.value(

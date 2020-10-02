@@ -25,16 +25,19 @@ class _TextViewModelPropertyWidgetState extends State<TextViewModelPropertyWidge
       decoration: InputDecoration(
         //filled: true,
         hintText: property.hint != null ? property.hint() : null,
-        labelText: property.label(),
+        labelText: property.label != null ? property.label() : null,
       ),
       enabled: property.editable,
       autofocus: property.autofocus,
       validator: (_) => property.validate(),
       keyboardType: widget.textInputType,
-      inputFormatters: widget.textInputFormatters,
+      inputFormatters: [
+        if (widget.textInputFormatters != null) ...widget.textInputFormatters,
+        LengthLimitingTextInputFormatter(property.maxLength),
+      ],
       autovalidateMode: AutovalidateMode.onUserInteraction,
       obscureText: property.obscureText,
-      maxLength: property.maxLength,
+      //maxLength: property.maxLength,
 
       // minLines: 1,
       // maxLines: 3,
