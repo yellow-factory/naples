@@ -1,0 +1,13 @@
+{
+  "@@locale": "ca",
+
+  "helloNaples": "Hola Nápols!",
+  "@helloNaples": {
+    "description": "The conventional newborn programmer greeting"
+  },
+  
+  "helloNaples2": "Hola Nápols 2!",
+  "@helloNaples2": {
+    "description": "The conventional newborn programmer greeting"
+  }
+}

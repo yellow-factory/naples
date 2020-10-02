@@ -1,0 +1,8 @@
+{
+  "@@locale": "en",
+
+  "helloNaples": "Hello Nápoles!",
+  "@helloNaples": {
+    "description": "The conventional newborn programmer greeting"
+  }
+}
