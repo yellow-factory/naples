@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:naples/utils.dart';
 import 'package:naples/view_models/properties/widgets/checkbox_view_model_property_widget.dart';
@@ -11,6 +12,7 @@ import 'package:naples/view_models/properties/widgets/int_view_model_property_wi
 import 'package:naples/view_models/properties/widgets/radio_list_view_model_property_widget.dart';
 import 'package:naples/view_models/properties/widgets/string_view_model_property_widget.dart';
 import 'package:naples/view_models/properties/widgets/switch_view_model_property_widget.dart';
+import 'package:naples/view_models/properties/widgets/datetime_view_model_property_widget.dart';
 import 'package:naples/view_models/view_model.dart';
 
 class CommentLayoutMember<T> extends IsVisibleMember<T> {
@@ -72,7 +74,7 @@ abstract class TextViewModelProperty<T, U> extends ViewModelProperty<T, U> {
     PredicateOf1<T> isEditable,
     FunctionOf1<U, String> isValid,
     this.obscureText: false,
-    this.maxLength,
+    this.maxLength = -1,
   }) : super(
           source,
           getProperty,
@@ -383,3 +385,50 @@ class SelectViewModelProperty<T, U, V> extends ViewModelProperty<T, U> {
 //       //i un botó per tal que pugui fer el showDateTimePicker i es pugui canviar...
 
 //TODO: Cal implementar el combo i el lookup, em podria guiar per la implementació ja existent a IAS-Docència
+
+class DateTimeViewModelProperty<T> extends TextViewModelProperty<T, DateTime> {
+  final String dateFormat;
+
+  DateTimeViewModelProperty(
+    T source,
+    FunctionOf1<T, DateTime> getProperty, {
+    FunctionOf<String> label,
+    FunctionOf<String> hint,
+    int flex = 1,
+    bool autofocus = false,
+    ActionOf2<T, DateTime> setProperty,
+    PredicateOf1<T> isVisible,
+    PredicateOf1<T> isEditable,
+    FunctionOf1<DateTime, String> isValid,
+    this.dateFormat = "dd/MM/yyyy HH:mm",
+  }) : super(
+          source,
+          getProperty,
+          label: label,
+          hint: hint,
+          flex: flex,
+          autofocus: autofocus,
+          setProperty: setProperty,
+          isVisible: isVisible,
+          isEditable: isEditable,
+          isValid: isValid,
+        );
+
+  @override
+  set serializedValue(String value) {
+    currentValue = DateTime.tryParse(value);
+  }
+
+  @override
+  String get serializedValue {
+    if (currentValue == null) return '';
+    return DateFormat(dateFormat).format(currentValue);
+  }
+
+  @override
+  int get maxLength => (dateFormat ?? '').length;
+
+  @override
+  Widget get widget => ChangeNotifierProvider<DateTimeViewModelProperty>.value(
+      value: this, child: DateTimeViewModelPropertyWidget());
+}
