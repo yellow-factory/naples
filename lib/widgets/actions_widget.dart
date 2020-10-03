@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 class ActionWrap {
   final String title;
   final Function action;
-  ActionWrap({this.title, this.action});
+  final bool primary;
+  ActionWrap(this.title, {this.action, this.primary = false});
 }
 
 class ActionsWidget extends StatelessWidget {
@@ -17,7 +18,9 @@ class ActionsWidget extends StatelessWidget {
       children: [
         for (var a in actions.reversed)
           RaisedButton(
-            child: Text(a.title),
+            child: Text(a.title.toUpperCase()),
+            color: a.primary ? Theme.of(context).primaryColor : Theme.of(context).buttonColor,
+            padding: EdgeInsets.all(15),
             onPressed: () {
               if (a.action != null) a.action();
             },

@@ -1,0 +1,60 @@
+{
+  "@@locale": "es",
+  "numberMax": "Introduce un número inferior a {max}",
+  "@numberMax": {
+    "description": "NumberValidator.max"
+  },
+  "numberMin": "Introduce un número superior a {min}.",
+  "@numberMin": {
+    "description": "NumberValidator.min"
+  },
+  "numberNegative": "Introduce un número negativo.",
+  "@numberNegative": {
+    "description": "NumberValidator.negative"
+  },
+  "numberPositive": "Introduce un número positivo.",
+  "@numberPositive": {
+    "description": "NumberValidator.positive"
+  },
+  "numberRange": "Introduce un número entre {min} i {max}.",
+  "@numberRange": {
+    "description": "NumberValidator.range",
+    "placeholders": {
+      "min": {},
+      "max": {}
+    }
+  },
+  "numberRequired": "Introduce un número diferente de cero.",
+  "@numberRequired": {
+    "description": "NumberValidator.required"
+  },
+  "required": "El campo es obligatorio.",
+  "@required": {
+    "description": "Validator<T>.required"
+  },
+  "stringMaxLength": "El texto no puede tener más de {max} carácteres.",
+  "@stringMaxLength": {
+    "description": "StringValidator.maxLength",
+    "placeholders": {
+      "max": {}
+    }
+  },
+  "stringMinLength": "El texto no puede tener menos de {min} carácteres.",
+  "@stringMinLength": {
+    "description": "StringValidator.minLength",
+    "placeholders": {
+      "min": {}
+    }
+  },
+  "stringRegularExpression": "El texto no cumple con la expresión regular {expression}.",
+  "@stringRegularExpression": {
+    "description": "StringValidator.regularExpression",
+    "placeholders": {
+      "expression": {}
+    }
+  },
+  "stringRequired": "Introduce un texto.",
+  "@stringRequired": {
+    "description": "StringValidator.required"
+  }
+}

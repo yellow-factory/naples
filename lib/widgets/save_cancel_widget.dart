@@ -16,11 +16,12 @@ class SaveCancelWidget extends StatelessWidget {
       ChangeNotifierProvider<GetSetViewModel>.value(value: viewModel, child: DynamicFormWidget()),
       ActionsWidget(actions: <ActionWrap>[
         ActionWrap(
-          title: "Save",
+          "Save",
           action: () async => viewModel.save(),
+          primary: true,
         ),
         ActionWrap(
-          title: "Cancel",
+          "Cancel",
           action: () async => viewModel.cancel(),
         ),
       ]),
