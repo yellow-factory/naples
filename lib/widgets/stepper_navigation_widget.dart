@@ -23,47 +23,50 @@ class StepperNavigationWidget extends StatelessWidget {
     context.watch<ViewModel>() as RawStepViewModel;
 
     var w = Stepper(
-        key: Key(Random.secure()
-            .nextDouble()
-            .toString()), //This is necessary to avoid an error changing the number of steps
-        steps: [
-          ...navigationModel.history.map((e) => Step(
-                title: Text(e.viewModel.title),
-                content: e.viewModel.widget,
-                state: StepState.complete,
-              )),
-          Step(
-              title: Text(currentViewModel.title),
-              content: currentViewModel.widget,
-              isActive: true,
-              state: StepState.editing),
-        ],
-        currentStep: navigationModel.history.length,
-        type: StepperType.vertical,
-        onStepContinue: () => currentViewModel.nextStep(),
-        onStepCancel: () => currentViewModel.previousStep(),
-        //TODO: execute arbitrary transitions when possible
-        //onStepTapped: (step) {
-        //  currentViewModel.gotoStep();
-        //},
-        controlsBuilder: (BuildContext context,
-            {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
-          return Container(
-              margin: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-              child: ActionsWidget(
-                actions: <ActionWrap>[
+      key: Key(Random.secure()
+          .nextDouble()
+          .toString()), //This is necessary to avoid an error changing the number of steps
+      steps: [
+        ...navigationModel.history.map((e) => Step(
+              title: Text(e.viewModel.title),
+              content: e.viewModel.widget,
+              state: StepState.complete,
+            )),
+        Step(
+            title: Text(currentViewModel.title),
+            content: currentViewModel.widget,
+            isActive: true,
+            state: StepState.editing),
+      ],
+      currentStep: navigationModel.history.length,
+      type: StepperType.vertical,
+      onStepContinue: () => currentViewModel.nextStep(),
+      onStepCancel: () => currentViewModel.previousStep(),
+
+      //TODO: execute arbitrary transitions when possible
+      //onStepTapped: (step) {
+      //  currentViewModel.gotoStep();
+      //},
+      controlsBuilder: (BuildContext context,
+          {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
+        return Container(
+            margin: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+            child: ActionsWidget(
+              actions: <ActionWrap>[
+                ActionWrap(
+                  currentViewModel.hasNextStep ? "Continua" : "Finalitza",
+                  action: () => onStepContinue(),
+                  primary: true,
+                ),
+                if (currentViewModel.hasPreviousStep)
                   ActionWrap(
-                    title: currentViewModel.hasNextStep ? "Continua" : "Finalitza",
-                    action: () => onStepContinue(),
+                    "Torna",
+                    action: () => onStepCancel(),
                   ),
-                  if (currentViewModel.hasPreviousStep)
-                    ActionWrap(
-                      title: "Torna",
-                      action: () => onStepCancel(),
-                    ),
-                ],
-              ));
-        });
+              ],
+            ));
+      },
+    );
 
     //Registers the new ViewModel in order to lookup for changes
     return ChangeNotifierProvider<ViewModel>.value(value: currentViewModel, child: w);

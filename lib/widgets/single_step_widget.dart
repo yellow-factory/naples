@@ -17,12 +17,13 @@ class SingleStepWidget extends StatelessWidget {
       ChangeNotifierProvider<GetSetViewModel>.value(value: viewModel, child: DynamicFormWidget()),
       ActionsWidget(actions: <ActionWrap>[
         ActionWrap(
-          title: viewModel.hasNextStep ? "Continua" : "Finalitza",
+          viewModel.hasNextStep ? "Continua" : "Finalitza",
           action: () async => await viewModel.nextStep(),
+          primary: true,
         ),
         if (viewModel.hasPreviousStep)
           ActionWrap(
-            title: "Torna",
+            "Torna",
             action: () async => await viewModel.previousStep(),
           ),
       ]),
