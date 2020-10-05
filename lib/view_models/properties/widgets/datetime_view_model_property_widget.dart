@@ -23,11 +23,10 @@ class _DateTimeViewModelPropertyWidgetState extends State<DateTimeViewModelPrope
   void didChangeDependencies() {
     super.didChangeDependencies();
     var property = context.read<DateTimeViewModelProperty>();
-    var locale = Localizations.localeOf(context);
     if (property.dateFormat == null)
-      _dateFormat = DateFormat.yMd(locale.toString());
+      _dateFormat = DateFormat.yMd(); 
     else
-      _dateFormat = DateFormat(property.dateFormat.pattern, locale.toString());
+      _dateFormat = DateFormat(property.dateFormat.pattern);
     _controller.text = _setValue(property);
   }
 
@@ -78,11 +77,9 @@ class _DateTimeViewModelPropertyWidgetState extends State<DateTimeViewModelPrope
   }
 
   Future<DateTime> _showDatePicker(DateTime date, DateTime firstDate, DateTime lastDate) async {
-    final locale = Localizations.localeOf(context);
     final picked = await showDatePicker(
       context: context,
       initialDate: date,
-      locale: locale,
       firstDate: firstDate,
       lastDate: lastDate,
     );
@@ -94,17 +91,9 @@ class _DateTimeViewModelPropertyWidgetState extends State<DateTimeViewModelPrope
 
   Future<DateTime> _showTimePicker(DateTime date) async {
     final TimeOfDay time = TimeOfDay.fromDateTime(date);
-    final locale = Localizations.localeOf(context);
     final picked = await showTimePicker(
       context: context,
       initialTime: time,
-      builder: (context, child) {
-        return Localizations.override(
-          context: context,
-          locale: locale,
-          child: child,
-        );
-      },
     );
     if (picked != null && picked != time) {
       return DateTime(date.year, date.month, date.day, picked.hour, picked.minute);

@@ -16,7 +16,7 @@ class StepperNavigationWidget extends StatelessWidget {
 
     //Tracks the current viewmodel of the NavigationModel that must be of RawStepViewModel
     var currentViewModel =
-        context.select<NavigationModel, ViewModel>((nm) => nm.currentStateViewModel.viewModel)
+        context.select<NavigationModel, ViewModel>((nm) => nm.currentStateViewModel?.viewModel)
             as RawStepViewModel;
 
     //Whenever ViewModel changes the widget must be rebuild
