@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
-import 'package:naples/view_models/properties/widgets/datetime_view_model_property_widget2.dart';
 import 'package:provider/provider.dart';
 import 'package:naples/utils.dart';
 import 'package:naples/view_models/properties/widgets/checkbox_view_model_property_widget.dart';
@@ -387,22 +386,26 @@ class SelectViewModelProperty<T, U, V> extends ViewModelProperty<T, U> {
 
 //TODO: Cal implementar el combo i el lookup, em podria guiar per la implementació ja existent a IAS-Docència
 
-class DateTimeViewModelProperty<T> extends TextViewModelProperty<T, DateTime> {
-  final String dateFormat;
+class DateTimeViewModelProperty<T> extends ViewModelProperty<T, DateTime> {
+  final DateFormat dateFormat;
+  final bool onlyDate;
+  final DateTime firstDate;
+  final DateTime lastDate;
 
-  DateTimeViewModelProperty(
-    T source,
-    FunctionOf1<T, DateTime> getProperty, {
-    FunctionOf<String> label,
-    FunctionOf<String> hint,
-    int flex = 1,
-    bool autofocus = false,
-    ActionOf2<T, DateTime> setProperty,
-    PredicateOf1<T> isVisible,
-    PredicateOf1<T> isEditable,
-    FunctionOf1<DateTime, String> isValid,
-    this.dateFormat = "dd/MM/yyyy HH:mm",
-  }) : super(
+  DateTimeViewModelProperty(T source, FunctionOf1<T, DateTime> getProperty,
+      {FunctionOf<String> label,
+      FunctionOf<String> hint,
+      int flex = 1,
+      bool autofocus = false,
+      ActionOf2<T, DateTime> setProperty,
+      PredicateOf1<T> isVisible,
+      PredicateOf1<T> isEditable,
+      FunctionOf1<DateTime, String> isValid,
+      this.dateFormat,
+      this.onlyDate = false,
+      this.firstDate,
+      this.lastDate})
+      : super(
           source,
           getProperty,
           label: label,
@@ -416,20 +419,11 @@ class DateTimeViewModelProperty<T> extends TextViewModelProperty<T, DateTime> {
         );
 
   @override
-  set serializedValue(String value) {
-    currentValue = DateTime.tryParse(value);
-  }
-
-  @override
-  String get serializedValue {
-    if (currentValue == null) return '';
-    return DateFormat(dateFormat).format(currentValue);
-  }
-
-  @override
-  int get maxLength => (dateFormat ?? '').length;
-
-  @override
   Widget get widget => ChangeNotifierProvider<DateTimeViewModelProperty>.value(
-      value: this, child: DateTimeViewModelPropertyWidget2());
+      value: this, child: DateTimeViewModelPropertyWidget());
+
+  @override
+  void initialize() {
+    currentValue = getProperty(source);
+  }
 }

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 import 'package:naples/view_models/properties/properties.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
-import 'package:intl/intl.dart';
 
 class DateTimeViewModelPropertyWidget extends StatefulWidget {
   @override
@@ -11,19 +10,29 @@ class DateTimeViewModelPropertyWidget extends StatefulWidget {
 }
 
 class _DateTimeViewModelPropertyWidgetState extends State<DateTimeViewModelPropertyWidget> {
-  _DateTimeTextController _dateTimecontroller;
+  TextEditingController _controller;
+  DateFormat _dateFormat;
 
   @override
   void initState() {
     super.initState();
-    final property = context.read<DateTimeViewModelProperty>();
-    _dateTimecontroller =
-        _DateTimeTextController(DateFormat(property.dateFormat), text: property.serializedValue);
+    _controller = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    var property = context.read<DateTimeViewModelProperty>();
+    var locale = Localizations.localeOf(context);
+    if (property.dateFormat == null)
+      _dateFormat = DateFormat.yMd(locale.toString());
+    else
+      _dateFormat = DateFormat(property.dateFormat.pattern, locale.toString());
+    _controller.text = _setValue(property);
   }
 
   @override
   void dispose() {
-    _dateTimecontroller.dispose();
     super.dispose();
   }
 
@@ -32,11 +41,9 @@ class _DateTimeViewModelPropertyWidgetState extends State<DateTimeViewModelPrope
     final property = context.watch<DateTimeViewModelProperty>();
     final formFieldKey = GlobalObjectKey(property);
 
-    //TODO: Es podria millorar el inputFormatters deduïnt la llista de caràcters admesos...
-
     return TextFormField(
       key: formFieldKey,
-      controller: _dateTimecontroller,
+      controller: _controller,
       decoration: InputDecoration(
         hintText: property.hint != null ? property.hint() : null,
         labelText: property.label != null ? property.label() : null,
@@ -44,49 +51,40 @@ class _DateTimeViewModelPropertyWidgetState extends State<DateTimeViewModelPrope
           icon: Icon(Icons.calendar_today_outlined),
           onPressed: () async {
             var date = property.currentValue ?? DateTime.now();
-            date = await _showDatePicker(date) ?? date;
-            date = await _showTimePicker(date) ?? date;
+            date = await _showDatePicker(
+                  date,
+                  property.firstDate ?? DateTime(1900),
+                  property.lastDate ?? DateTime(2100),
+                ) ??
+                date;
+            if (!property.onlyDate) date = await _showTimePicker(date) ?? date;
             property.currentValue = date;
             if (property.valid) property.update();
-            _dateTimecontroller.text = property.serializedValue;
-            //TODO: Test cases of only date or only time..., not show dialog in all the cases...
+            _controller.text = _setValue(property);
           },
         ),
       ),
-      keyboardType: TextInputType.datetime,
-      inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp('[0-9/: ]')),
-        LengthLimitingTextInputFormatter(property.maxLength),
-      ],
       autofocus: property.autofocus,
+      readOnly: true,
+      enableInteractiveSelection: false,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: (_) => property.validate(),
-      onChanged: (value) {
-        if (value.length < property.dateFormat.length) return;
-        var date = _tryParse(DateFormat(property.dateFormat), value);
-        if (date == null) return;
-        property.currentValue = date;
-        if (property.valid) property.update();
-      },
-      obscureText: property.obscureText,
     );
   }
 
-  DateTime _tryParse(DateFormat dateFormat, String dateTime) {
-    try {
-      return dateFormat.parse(dateTime);
-    } catch (e) {
-      return null;
-    }
+  String _setValue(DateTimeViewModelProperty property) {
+    if (property.currentValue == null) return null;
+    return _dateFormat.format(property.currentValue);
   }
 
-  Future<DateTime> _showDatePicker(DateTime date) async {
+  Future<DateTime> _showDatePicker(DateTime date, DateTime firstDate, DateTime lastDate) async {
+    final locale = Localizations.localeOf(context);
     final picked = await showDatePicker(
       context: context,
       initialDate: date,
-      //locale: Locale("en"), //Cal passar-li el que toca
-      firstDate: DateTime(1900), //TODO
-      lastDate: DateTime(2100), //TODO
+      locale: locale,
+      firstDate: firstDate,
+      lastDate: lastDate,
     );
     if (picked != null && picked != date) {
       return picked;
@@ -96,84 +94,21 @@ class _DateTimeViewModelPropertyWidgetState extends State<DateTimeViewModelPrope
 
   Future<DateTime> _showTimePicker(DateTime date) async {
     final TimeOfDay time = TimeOfDay.fromDateTime(date);
+    final locale = Localizations.localeOf(context);
     final picked = await showTimePicker(
       context: context,
       initialTime: time,
+      builder: (context, child) {
+        return Localizations.override(
+          context: context,
+          locale: locale,
+          child: child,
+        );
+      },
     );
     if (picked != null && picked != time) {
       return DateTime(date.year, date.month, date.day, picked.hour, picked.minute);
     }
     return null;
-  }
-}
-
-class _DateTimeTextController extends TextEditingController {
-  final DateFormat format;
-  String _lastText;
-  _DateTimeTextController(this.format, {String text}) : super(text: text) {
-    _lastText = text;
-    selection = TextSelection.fromPosition(TextPosition(offset: _textLength));
-    this.addListener(onChanged);
-  }
-
-  void onChanged() {
-    if (text == null || text.isEmpty) return;
-    if (_lastTextLength > _textLength) {
-      _lastText = text;
-      return;
-    }
-    var newText = _newText();
-    if (newText != text) _changeText(newText);
-  }
-
-  int get _lastTextLength => (_lastText ?? '').length;
-  int get _textLength => (text ?? '').length;
-
-  void _changeText(String newText) {
-    scheduleMicrotask(() {
-      value = TextEditingValue(
-        text: newText,
-        selection: TextSelection.fromPosition(
-          TextPosition(offset: newText.length),
-        ),
-      );
-      _lastText = newText;
-    });
-  }
-
-  String _newText() {
-    var length = _textLength;
-    var workingText = text;
-    var formatPart = getFormatPart(length);
-
-    //Only if the last digit is different than 0 tries to validate the date
-    if (text.characters.last != '0') {
-      if (_tryParse(formatPart, workingText) == null) return _lastText;
-    }
-
-    //Tries to increment the text with the values of the pattern if match a valid date
-    while (format.pattern.length > workingText.length) {
-      formatPart = getFormatPart(++length);
-      var dateTime = _tryParse(formatPart, workingText);
-      if (dateTime == null) break;
-      var newText = formatPart.format(dateTime);
-      //If the new character is digit is not what we want...
-      if (format.digitMatcher.hasMatch(newText.substring(length - 1, length))) break;
-      workingText = newText;
-    }
-    return workingText;
-  }
-
-  DateFormat getFormatPart(int length) {
-    var patternPart = format.pattern.substring(0, length);
-    return DateFormat(patternPart);
-  }
-
-  DateTime _tryParse(DateFormat dateFormat, String dateTime) {
-    try {
-      return dateFormat.parseLoose(dateTime);
-    } catch (e) {
-      return null;
-    }
   }
 }
