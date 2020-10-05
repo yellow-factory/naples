@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:naples/view_models/properties/widgets/datetime_view_model_property_widget2.dart';
 import 'package:provider/provider.dart';
 import 'package:naples/utils.dart';
 import 'package:naples/view_models/properties/widgets/checkbox_view_model_property_widget.dart';
@@ -430,5 +431,5 @@ class DateTimeViewModelProperty<T> extends TextViewModelProperty<T, DateTime> {
 
   @override
   Widget get widget => ChangeNotifierProvider<DateTimeViewModelProperty>.value(
-      value: this, child: DateTimeViewModelPropertyWidget());
+      value: this, child: DateTimeViewModelPropertyWidget2());
 }

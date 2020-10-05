@@ -32,7 +32,6 @@ class _DateTimeViewModelPropertyWidgetState extends State<DateTimeViewModelPrope
     final property = context.watch<DateTimeViewModelProperty>();
     final formFieldKey = GlobalObjectKey(property);
 
-    //TODO: Falta resoldre un detall. Quan passes el maxlength encara que no es veu per pantalla continua comptant caràcters...
     //TODO: Es podria millorar el inputFormatters deduïnt la llista de caràcters admesos...
 
     return TextFormField(
@@ -59,30 +58,35 @@ class _DateTimeViewModelPropertyWidgetState extends State<DateTimeViewModelPrope
         FilteringTextInputFormatter.allow(RegExp('[0-9/: ]')),
         LengthLimitingTextInputFormatter(property.maxLength),
       ],
-
-      //If we prefer we can enforce the maxlength with a counter...
-      // maxLength: property.dateFormat.length,
-      // maxLengthEnforced: true,
-
-      //TODO: Fer opció a textviewmodelproperty per ensenyar o no el counter, quan maxlength > 0
-
       autofocus: property.autofocus,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       validator: (_) => property.validate(),
       onChanged: (value) {
-        property.serializedValue = value;
+        if (value.length < property.dateFormat.length) return;
+        var date = _tryParse(DateFormat(property.dateFormat), value);
+        if (date == null) return;
+        property.currentValue = date;
         if (property.valid) property.update();
       },
       obscureText: property.obscureText,
     );
   }
 
+  DateTime _tryParse(DateFormat dateFormat, String dateTime) {
+    try {
+      return dateFormat.parse(dateTime);
+    } catch (e) {
+      return null;
+    }
+  }
+
   Future<DateTime> _showDatePicker(DateTime date) async {
     final picked = await showDatePicker(
       context: context,
       initialDate: date,
-      firstDate: DateTime(2015, 1),
-      lastDate: DateTime(2100),
+      //locale: Locale("en"), //Cal passar-li el que toca
+      firstDate: DateTime(1900), //TODO
+      lastDate: DateTime(2100), //TODO
     );
     if (picked != null && picked != date) {
       return picked;
@@ -108,6 +112,7 @@ class _DateTimeTextController extends TextEditingController {
   String _lastText;
   _DateTimeTextController(this.format, {String text}) : super(text: text) {
     _lastText = text;
+    selection = TextSelection.fromPosition(TextPosition(offset: _textLength));
     this.addListener(onChanged);
   }
 
@@ -117,9 +122,8 @@ class _DateTimeTextController extends TextEditingController {
       _lastText = text;
       return;
     }
-    var workingText = _newText();
-    if (workingText != text) _changeText(workingText);
-    _lastText = workingText;
+    var newText = _newText();
+    if (newText != text) _changeText(newText);
   }
 
   int get _lastTextLength => (_lastText ?? '').length;
@@ -133,23 +137,23 @@ class _DateTimeTextController extends TextEditingController {
           TextPosition(offset: newText.length),
         ),
       );
+      _lastText = newText;
     });
   }
 
   String _newText() {
-    var length = text.length;
+    var length = _textLength;
     var workingText = text;
-    //Cal una funció isDateTimeValid???
-    var patternPart = format.pattern.substring(0, length);
-    var formatPart = DateFormat(patternPart);
-    //Si l'últim dígit és un 0 no s'hauria de validar, però sinó potser sí que es pot fer...
+    var formatPart = getFormatPart(length);
+
+    //Only if the last digit is different than 0 tries to validate the date
     if (text.characters.last != '0') {
       if (_tryParse(formatPart, workingText) == null) return _lastText;
     }
 
+    //Tries to increment the text with the values of the pattern if match a valid date
     while (format.pattern.length > workingText.length) {
-      patternPart = format.pattern.substring(0, ++length);
-      formatPart = DateFormat(patternPart);
+      formatPart = getFormatPart(++length);
       var dateTime = _tryParse(formatPart, workingText);
       if (dateTime == null) break;
       var newText = formatPart.format(dateTime);
@@ -158,6 +162,11 @@ class _DateTimeTextController extends TextEditingController {
       workingText = newText;
     }
     return workingText;
+  }
+
+  DateFormat getFormatPart(int length) {
+    var patternPart = format.pattern.substring(0, length);
+    return DateFormat(patternPart);
   }
 
   DateTime _tryParse(DateFormat dateFormat, String dateTime) {
