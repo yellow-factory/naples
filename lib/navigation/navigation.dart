@@ -1,5 +1,7 @@
 library naples;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:naples/initialize.dart';
@@ -44,7 +46,6 @@ abstract class NavigationModel<T> extends ChangeNotifier
   List<Transition<T>> _transitions = List<Transition<T>>();
   StateViewModel<T> _currentStateViewModel;
   final ListQueue<StateViewModel<T>> _history = ListQueue<StateViewModel<T>>();
-  //final bool _lazyViewInitialization;
 
   NavigationModel(this._defaultState, this._defaultCreateViewModelFunction);
 
@@ -194,7 +195,8 @@ abstract class StepsNavigationModel<T> extends NavigationModel<T> {
         ChangeNotifierProvider<TitleModel>(create: (_) => TitleModel(this.title)),
       ],
       builder: (context, child) {
-        initialize1(context);
+        //I have to schedule the initialization because provoque a new build of StepperNavigationWidget
+        scheduleMicrotask(() => initialize1(context));
         return ChangeNotifierProvider<ViewModel>(
             create: (_) => currentStateViewModel.viewModel, child: StepperNavigationWidget());
       },

@@ -1,5 +1,4 @@
 import 'package:flutter/widgets.dart';
-import 'package:intl/intl.dart';
 import 'package:naples/utils.dart';
 
 class SnackModel extends ChangeNotifier {
@@ -17,15 +16,7 @@ class SnackModel extends ChangeNotifier {
   }
 }
 
-class CurrentLanguageModel extends ValueNotifier<String> {
-  CurrentLanguageModel(String value) : super(value);
 
-  @override
-  set value(String newValue) {
-    Intl.defaultLocale = newValue;
-    super.value = newValue;
-  }
-}
 
 class TitleModel extends ValueNotifier<FunctionOf<String>> {
   TitleModel(FunctionOf<String> value) : super(value);
