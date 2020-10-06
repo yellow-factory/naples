@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:mustache_template/mustache.dart';
+import 'package:naples/view_models/properties/widgets/markdown_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:naples/utils.dart';
 import 'package:naples/view_models/properties/widgets/checkbox_view_model_property_widget.dart';
@@ -14,6 +16,7 @@ import 'package:naples/view_models/properties/widgets/string_view_model_property
 import 'package:naples/view_models/properties/widgets/switch_view_model_property_widget.dart';
 import 'package:naples/view_models/properties/widgets/datetime_view_model_property_widget.dart';
 import 'package:naples/view_models/view_model.dart';
+import 'dart:convert';
 
 class CommentLayoutMember<T> extends IsVisibleMember<T> {
   final FunctionOf<String> comment;
@@ -36,12 +39,20 @@ class CommentLayoutMember<T> extends IsVisibleMember<T> {
   @override
   Widget get widget {
     return ChangeNotifierProvider<CommentLayoutMember>.value(
-        value: this, child: CommentViewModelPropertyWidget());
+      value: this,
+      child: CommentViewModelPropertyWidget(),
+    );
   }
 }
 
 class DividerLayoutMember<T> extends IsVisibleMember<T> {
-  DividerLayoutMember({int flex = 99}) : super(flex: flex);
+  DividerLayoutMember({
+    int flex = 99,
+    PredicateOf1<T> isVisible,
+  }) : super(
+          flex: flex,
+          isVisible: isVisible,
+        );
 
   @override
   Widget get widget => Divider();
@@ -56,6 +67,50 @@ class DividerLayoutMember<T> extends IsVisibleMember<T> {
   //           endIndent: 0,
   //         ),
 
+}
+
+class MarkdownLayoutMember<T> extends IsVisibleMember<T> {
+  final String markdown;
+
+  MarkdownLayoutMember(
+    this.markdown, {
+    int flex = 99,
+    PredicateOf1<T> isVisible,
+  }) : super(
+          flex: flex,
+          isVisible: isVisible,
+        );
+
+  @override
+  Widget get widget {
+    return ChangeNotifierProvider<MarkdownLayoutMember>.value(
+      value: this,
+      child: MarkdownWidget(),
+    );
+  }
+}
+
+class MustacheMarkdownLayoutMember<T> extends MarkdownLayoutMember<T> {
+  final T source;
+
+  MustacheMarkdownLayoutMember(
+    this.source,
+    String template, {
+    int flex = 99,
+    PredicateOf1<T> isVisible,
+  }) : super(
+          template,
+          flex: flex,
+          isVisible: isVisible,
+        );
+
+  @override
+  String get markdown {
+    var template = new Template(super.markdown);
+    var transSource = json.decode(json.encode(source));
+    var output = template.renderString(transSource);
+    return output;
+  }
 }
 
 abstract class TextViewModelProperty<T, U> extends ViewModelProperty<T, U> {
