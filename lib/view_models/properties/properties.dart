@@ -313,9 +313,8 @@ class BoolViewModelProperty<T> extends ViewModelProperty<T, bool> {
         return ChangeNotifierProvider<BoolViewModelProperty>.value(
             value: this, child: CheckboxViewModelPropertyWidget());
       case BoolWidgetType.Radio:
-        var select = toSelect();
         return ChangeNotifierProvider.value(
-            value: select, child: RadioListViewModelPropertyWidget<T, bool, BoolValues>());
+            value: toSelect(), child: RadioListViewModelPropertyWidget<T, bool, BoolValues>());
       default:
         return ChangeNotifierProvider<BoolViewModelProperty>.value(
             value: this, child: CheckboxViewModelPropertyWidget());
