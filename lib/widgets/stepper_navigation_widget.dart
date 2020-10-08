@@ -27,9 +27,7 @@ class StepperNavigationWidget extends StatelessWidget {
     context.watch<ViewModel>() as RawStepViewModel;
 
     var w = Stepper(
-      key: Key(Random.secure()
-          .nextDouble()
-          .toString()), //This is necessary to avoid an error changing the number of steps
+      key: UniqueKey(),
       steps: [
         ...navigationModel.history.map((e) => Step(
               title: Text(e.viewModel.title),
