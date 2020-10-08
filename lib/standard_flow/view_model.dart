@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:naples/navigation/navigation.dart';
 import 'package:naples/standard_flow/service.dart';
-import 'package:naples/utils.dart';
+import 'package:navy/navy.dart';
 import 'package:naples/view_models/common.dart';
 import 'navigation.dart';
 

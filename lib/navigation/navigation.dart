@@ -4,9 +4,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:naples/initialize.dart';
 import 'package:naples/models.dart';
-import 'package:naples/utils.dart';
+import 'package:navy/navy.dart';
 import 'package:naples/view_models/view_model.dart';
 import 'package:meta/meta.dart';
 import 'dart:collection';

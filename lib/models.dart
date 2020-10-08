@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:naples/utils.dart';
+import 'package:navy/navy.dart';
 
 class SnackModel extends ChangeNotifier {
   String _message;
@@ -15,8 +15,6 @@ class SnackModel extends ChangeNotifier {
     _message = null;
   }
 }
-
-
 
 class TitleModel extends ValueNotifier<FunctionOf<String>> {
   TitleModel(FunctionOf<String> value) : super(value);

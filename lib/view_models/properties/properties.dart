@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:mustache_template/mustache.dart';
 import 'package:naples/view_models/properties/widgets/markdown_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:naples/utils.dart';
+import 'package:navy/navy.dart';
 import 'package:naples/view_models/properties/widgets/checkbox_view_model_property_widget.dart';
 import 'package:naples/view_models/properties/widgets/comment_view_model_property_widget.dart';
 import 'package:naples/view_models/properties/widgets/dropdown_view_model_property_widget.dart';

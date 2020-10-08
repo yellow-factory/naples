@@ -1,0 +1,7 @@
+{
+  "@@locale": "es",
+  "numberMax": "Introduce un número inferior a {max}",
+  "@numberMax": {
+    "description": "NumberValidator.max"
+  }
+}

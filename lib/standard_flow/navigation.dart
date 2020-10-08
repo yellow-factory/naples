@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:naples/navigation/navigation.dart';
-import 'package:naples/utils.dart';
+import 'package:navy/navy.dart';
 import 'package:naples/view_models/view_model.dart';
 
 //Possible transition states

@@ -1,8 +1,8 @@
-arb-dir: lib/l10n
+arb-dir: l10n
 template-arb-file: intl_en.arb
 output-localization-file: naples_localizations.dart
 output-class: NaplesLocalizations
 #These properties are not working, but invoking gen_l10n works:
-#flutter gen-l10n --arb-dir=lib/l10n --template-arb-file=naples_en.arb --output-localization-file=naples_localizations.dart --output-class=NaplesLocalizations --no-synthetic-package --output-dir=lib/l10n/generated
+#flutter gen-l10n --arb-dir=l10n --template-arb-file=intl_en.arb --output-localization-file=naples_localizations.dart --output-class=NaplesLocalizations --no-synthetic-package --output-dir=lib/src/generated/l10n
 synthetic-package: false
-output-dir: lib/l10n/generated
+output-dir: lib/src/generated/l10n

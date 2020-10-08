@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:naples/initialize.dart';
-import 'package:naples/utils.dart';
+import 'package:navy/navy.dart';
 
 abstract class Refreshable implements Initialized {
   Future<void> refresh();

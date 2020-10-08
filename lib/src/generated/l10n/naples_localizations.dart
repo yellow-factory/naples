@@ -19,7 +19,7 @@ import 'naples_localizations_es.dart';
 /// supportedLocales list. For example:
 ///
 /// ```
-/// import 'generated/naples_localizations.dart';
+/// import 'l10n/naples_localizations.dart';
 ///
 /// return MaterialApp(
 ///   localizationsDelegates: NaplesLocalizations.localizationsDelegates,
@@ -100,36 +100,6 @@ abstract class NaplesLocalizations {
 
   // NumberValidator.max
   String get numberMax;
-
-  // NumberValidator.min
-  String get numberMin;
-
-  // NumberValidator.negative
-  String get numberNegative;
-
-  // NumberValidator.positive
-  String get numberPositive;
-
-  // NumberValidator.range
-  String numberRange(Object min, Object max);
-
-  // NumberValidator.required
-  String get numberRequired;
-
-  // Validator<T>.required
-  String get required;
-
-  // StringValidator.maxLength
-  String stringMaxLength(Object max);
-
-  // StringValidator.minLength
-  String stringMinLength(Object min);
-
-  // StringValidator.regularExpression
-  String stringRegularExpression(Object expression);
-
-  // StringValidator.required
-  String get stringRequired;
 }
 
 class _NaplesLocalizationsDelegate extends LocalizationsDelegate<NaplesLocalizations> {

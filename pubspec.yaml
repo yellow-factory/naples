@@ -22,6 +22,16 @@ dependencies:
   flutter_markdown: ^0.4.4
   mustache_template: ^1.0.0+1
   markdown: ^2.1.8
+  crimson:
+    git: https://github.com/yellow-factory/crimson.git
+  navy:   
+    git: https://github.com/yellow-factory/navy.git
+
+dependency_overrides:
+  crimson:
+    path: ../../crimson
+  navy:
+    path: ../../navy
 
 dev_dependencies:
   flutter_test:
