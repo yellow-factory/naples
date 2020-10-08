@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:mustache_template/mustache.dart';
 import 'package:naples/view_models/properties/widgets/markdown_widget.dart';
+import 'package:naples/view_models/properties/widgets/sized_markdown_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/view_models/properties/widgets/checkbox_view_model_property_widget.dart';
@@ -71,11 +72,15 @@ class DividerLayoutMember<T> extends IsVisibleMember<T> {
 
 class MarkdownLayoutMember<T> extends IsVisibleMember<T> {
   final String markdown;
+  final double width;
+  final double height;
 
   MarkdownLayoutMember(
     this.markdown, {
     int flex = 99,
     PredicateOf1<T> isVisible,
+    this.width,
+    this.height,
   }) : super(
           flex: flex,
           isVisible: isVisible,
@@ -85,7 +90,7 @@ class MarkdownLayoutMember<T> extends IsVisibleMember<T> {
   Widget get widget {
     return ChangeNotifierProvider<MarkdownLayoutMember>.value(
       value: this,
-      child: MarkdownWidget(),
+      child: width == null && height == null ? MarkdownWidget() : SizedMarkdownWidget(),
     );
   }
 }
@@ -98,10 +103,14 @@ class MustacheMarkdownLayoutMember<T> extends MarkdownLayoutMember<T> {
     String template, {
     int flex = 99,
     PredicateOf1<T> isVisible,
+    double width,
+    double height,
   }) : super(
           template,
           flex: flex,
           isVisible: isVisible,
+          width: width,
+          height: height,
         );
 
   @override
