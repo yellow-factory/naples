@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:naples/naples.dart';
 import 'package:naples/view_models/common.dart';
 import 'package:naples/view_models/view_model.dart';
 import 'package:provider/provider.dart';
@@ -57,13 +58,15 @@ class StepperNavigationWidget extends StatelessWidget {
             child: ActionsWidget(
               actions: <ActionWrap>[
                 ActionWrap(
-                  currentViewModel.hasNextStep ? "Continua" : "Finalitza",
+                  currentViewModel.hasNextStep
+                      ? NaplesLocalizations.of(context).continua
+                      : NaplesLocalizations.of(context).finalitza,
                   action: () => onStepContinue(),
                   primary: true,
                 ),
                 if (currentViewModel.hasPreviousStep)
                   ActionWrap(
-                    "Torna",
+                    NaplesLocalizations.of(context).torna,
                     action: () => onStepCancel(),
                   ),
               ],

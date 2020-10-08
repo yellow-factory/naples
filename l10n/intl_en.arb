@@ -1,7 +1,15 @@
 {
   "@@locale": "en",
-  "numberMax": "Please enter a number lower than {max}",
-  "@numberMax": {
-    "description": "NumberValidator.max"
-  }
+  "continua": "Next",
+  "@continua": {
+    "description": "To go to the next step"
+  },
+  "torna": "Previous",
+  "@torna": {
+    "description": "To go to the previous step"
+  },
+  "finalitza": "Finalize",
+  "@finalitza": {
+    "description": "To end the sequence of steps"
+  }        
 }

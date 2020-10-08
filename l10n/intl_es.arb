@@ -1,7 +1,15 @@
 {
   "@@locale": "es",
-  "numberMax": "Introduce un número inferior a {max}",
-  "@numberMax": {
-    "description": "NumberValidator.max"
-  }
+  "continua": "Siguiente",
+  "@continua": {
+    "description": "Para ir a la siguiente pantalla"
+  },
+  "torna": "Anterior",
+  "@torna": {
+    "description": "Para ir a la pantalla anterior"
+  },
+  "finalitza": "Finaliza",
+  "@finalitza": {
+    "description": "Para finalizar la secuencia de pasos"
+  }    
 }

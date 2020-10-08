@@ -10,5 +10,11 @@ class NaplesLocalizationsEs extends NaplesLocalizations {
   NaplesLocalizationsEs([String locale = 'es']) : super(locale);
 
   @override
-  String get numberMax => 'Introduce un número inferior a {max}';
+  String get continua => 'Siguiente';
+
+  @override
+  String get torna => 'Anterior';
+
+  @override
+  String get finalitza => 'Finaliza';
 }

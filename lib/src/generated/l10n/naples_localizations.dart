@@ -98,8 +98,14 @@ abstract class NaplesLocalizations {
     Locale('es')
   ];
 
-  // NumberValidator.max
-  String get numberMax;
+  // To go to the next step
+  String get continua;
+
+  // To go to the previous step
+  String get torna;
+
+  // To end the sequence of steps
+  String get finalitza;
 }
 
 class _NaplesLocalizationsDelegate extends LocalizationsDelegate<NaplesLocalizations> {
