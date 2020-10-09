@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:naples/view_models/view_model.dart';
+import 'package:naples/src/view_models/view_model.dart';
 import 'package:provider/provider.dart';
-import 'package:naples/navigation/navigation.dart';
+import 'package:naples/src/navigation/navigation.dart';
 
 /// This widget depends on these providers:
 /// - NavigationModel
