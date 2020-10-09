@@ -10,13 +10,13 @@ import 'package:naples/models.dart';
 import 'package:naples/widgets/dynamic_form_widget.dart';
 
 abstract class GetSetViewModel<T> extends ViewModelOf<T> {
-  final _layoutMembers = List<LayoutMember>();
+  final _layoutMembers = List<ViewProperty>();
 
   GetSetViewModel() : super();
 
-  Iterable<LayoutMember> get layoutMembers => _layoutMembers;
+  Iterable<ViewProperty> get layoutMembers => _layoutMembers;
 
-  void add(LayoutMember member) {
+  void add(ViewProperty member) {
     _layoutMembers.add(member);
     //If the member notify changes the viewModel container should also notify changes
     member.addListener(() {
@@ -24,7 +24,7 @@ abstract class GetSetViewModel<T> extends ViewModelOf<T> {
     });
   }
 
-  void addMultiple(List<LayoutMember> members) {
+  void addMultiple(List<ViewProperty> members) {
     members.forEach(
       (element) {
         add(element);
@@ -51,15 +51,15 @@ abstract class GetSetViewModel<T> extends ViewModelOf<T> {
   Future<T> get();
   Future<void> set();
 
-  Iterable<IsVisibleMember> get visibleMembers => layoutMembers
-      .whereType<IsVisibleMember>()
+  Iterable<ViewProperty> get visibleMembers => layoutMembers
+      .whereType<ViewProperty>()
       .where((element) => element.isVisible == null || element.isVisible());
 
-  Iterable<IsEditableMember> get editableMembers => layoutMembers
-      .whereType<IsEditableMember>()
+  Iterable<ModelProperty> get editableMembers => layoutMembers
+      .whereType<ModelProperty>()
       .where((element) => element.isVisible == null || element.isEditable());
 
-  Iterable<ViewModelProperty> get properties => layoutMembers.whereType<ViewModelProperty>();
+  Iterable<ModelProperty> get properties => layoutMembers.whereType<ModelProperty>();
 
   bool get valid {
     return properties.every((x) => x.valid);

@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 class SwitchViewModelPropertyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final property = context.watch<BoolViewModelProperty>();
+    final property = context.watch<BoolProperty>();
     return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
       return SwitchListTile(
           key: UniqueKey(),

@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 class DropDownViewModelPropertyWidget<U, V> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final property = context.watch<SelectViewModelProperty<U, V>>();
+    final property = context.watch<SelectProperty<U, V>>();
     var items = <DropdownMenuItem<U>>[
       for (var item in property.listItems())
         DropdownMenuItem<U>(

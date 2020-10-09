@@ -17,7 +17,7 @@ class TextViewModelPropertyWidget extends StatefulWidget {
 class _TextViewModelPropertyWidgetState extends State<TextViewModelPropertyWidget> {
   @override
   Widget build(BuildContext context) {
-    final property = context.watch<TextViewModelProperty>();
+    final property = context.watch<TextProperty>();
     final formFieldKey = GlobalObjectKey(property);
     return TextFormField(
       key: formFieldKey,

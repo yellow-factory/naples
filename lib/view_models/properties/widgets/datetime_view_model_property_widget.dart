@@ -22,7 +22,7 @@ class _DateTimeViewModelPropertyWidgetState extends State<DateTimeViewModelPrope
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    var property = context.read<DateTimeViewModelProperty>();
+    var property = context.read<DateTimeProperty>();
     if (property.dateFormat == null)
       _dateFormat = DateFormat.yMd(); 
     else
@@ -37,7 +37,7 @@ class _DateTimeViewModelPropertyWidgetState extends State<DateTimeViewModelPrope
 
   @override
   Widget build(BuildContext context) {
-    final property = context.watch<DateTimeViewModelProperty>();
+    final property = context.watch<DateTimeProperty>();
     final formFieldKey = GlobalObjectKey(property);
 
     return TextFormField(
@@ -71,7 +71,7 @@ class _DateTimeViewModelPropertyWidgetState extends State<DateTimeViewModelPrope
     );
   }
 
-  String _setValue(DateTimeViewModelProperty property) {
+  String _setValue(DateTimeProperty property) {
     if (property.currentValue == null) return null;
     return _dateFormat.format(property.currentValue);
   }

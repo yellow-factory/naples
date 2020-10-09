@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 class CommentViewModelPropertyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final property = context.watch<CommentLayoutMember>();
+    final property = context.watch<CommentProperty>();
     return Padding(
       key: UniqueKey(),
       padding:

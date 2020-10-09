@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 class FileViewModelPropertyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final property = context.watch<FileViewModelProperty>();
+    final property = context.watch<FileProperty>();
     return Card(
         key: UniqueKey(),
         margin: EdgeInsets.symmetric(horizontal: 0, vertical: 5),

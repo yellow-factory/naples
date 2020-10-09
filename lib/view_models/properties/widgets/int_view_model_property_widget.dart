@@ -8,8 +8,8 @@ import 'text_view_model_property_widget.dart';
 class IntViewModelPropertyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final property = context.watch<IntViewModelProperty>();
-    return ChangeNotifierProvider<TextViewModelProperty>.value(
+    final property = context.watch<IntProperty>();
+    return ChangeNotifierProvider<TextProperty>.value(
         value: property,
         child: TextViewModelPropertyWidget(
             textInputType: TextInputType.number,

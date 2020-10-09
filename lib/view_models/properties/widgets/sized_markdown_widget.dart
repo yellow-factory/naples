@@ -8,12 +8,12 @@ import 'package:markdown/markdown.dart' as md;
 class SizedMarkdownWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final property = context.watch<MarkdownLayoutMember>();
+    final property = context.watch<MarkdownProperty>();
     return SizedBox(
         height: property.height,
         width: property.width,
         child: fmd.Markdown(
-          data: property.markdown,
+          data: property.markdown(),
           extensionSet: md.ExtensionSet.gitHubWeb,
         ));
   }

@@ -8,7 +8,7 @@ class RadioListViewModelPropertyWidget<U, V> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final property = context.watch<SelectViewModelProperty<U, V>>();
+    final property = context.watch<SelectProperty<U, V>>();
     return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
       return Column(
         key: UniqueKey(),

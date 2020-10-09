@@ -19,7 +19,7 @@ import 'package:naples/view_models/properties/widgets/datetime_view_model_proper
 import 'package:naples/view_models/view_model.dart';
 import 'dart:convert';
 
-class CommentLayoutMember extends IsVisibleMember {
+class CommentProperty extends ViewProperty {
   final FunctionOf0<String> comment;
   final FontStyle fontStyle;
   final FontWeight fontWeight;
@@ -27,7 +27,7 @@ class CommentLayoutMember extends IsVisibleMember {
   final double topPadding;
   final double bottomPadding;
 
-  CommentLayoutMember(this.comment,
+  CommentProperty(this.comment,
       {int flex = 99,
       PredicateOf0 isVisible,
       this.fontStyle,
@@ -39,15 +39,15 @@ class CommentLayoutMember extends IsVisibleMember {
 
   @override
   Widget get widget {
-    return ChangeNotifierProvider<CommentLayoutMember>.value(
+    return ChangeNotifierProvider<CommentProperty>.value(
       value: this,
       child: CommentViewModelPropertyWidget(),
     );
   }
 }
 
-class DividerLayoutMember extends IsVisibleMember {
-  DividerLayoutMember({
+class DividerProperty extends ViewProperty {
+  DividerProperty({
     int flex = 99,
     PredicateOf0 isVisible,
   }) : super(
@@ -70,12 +70,12 @@ class DividerLayoutMember extends IsVisibleMember {
 
 }
 
-class MarkdownLayoutMember extends IsVisibleMember {
-  final String markdown;
+class MarkdownProperty extends ViewProperty {
+  final FunctionOf0<String> markdown;
   final double width;
   final double height;
 
-  MarkdownLayoutMember(
+  MarkdownProperty(
     this.markdown, {
     int flex = 99,
     PredicateOf0 isVisible,
@@ -88,19 +88,19 @@ class MarkdownLayoutMember extends IsVisibleMember {
 
   @override
   Widget get widget {
-    return ChangeNotifierProvider<MarkdownLayoutMember>.value(
+    return ChangeNotifierProvider<MarkdownProperty>.value(
       value: this,
       child: width == null && height == null ? MarkdownWidget() : SizedMarkdownWidget(),
     );
   }
 }
 
-class MustacheMarkdownLayoutMember<T> extends MarkdownLayoutMember {
+class MustacheMarkdownProperty<T> extends MarkdownProperty {
   final T source;
 
-  MustacheMarkdownLayoutMember(
+  MustacheMarkdownProperty(
     this.source,
-    String template, {
+    FunctionOf0 template, {
     int flex = 99,
     PredicateOf0 isVisible,
     double width,
@@ -114,19 +114,19 @@ class MustacheMarkdownLayoutMember<T> extends MarkdownLayoutMember {
         );
 
   @override
-  String get markdown {
-    var template = new Template(super.markdown);
+  FunctionOf0<String> get markdown {
+    var template = new Template(super.markdown());
     var transSource = json.decode(json.encode(source));
     var output = template.renderString(transSource);
-    return output;
+    return () => output;
   }
 }
 
-abstract class TextViewModelProperty<U> extends ViewModelProperty<U> {
+abstract class TextProperty<U> extends ModelProperty<U> {
   final bool obscureText;
   final int maxLength;
 
-  TextViewModelProperty(
+  TextProperty(
     FunctionOf0<U> getProperty, {
     FunctionOf0<String> label,
     FunctionOf0<String> hint,
@@ -163,8 +163,8 @@ abstract class TextViewModelProperty<U> extends ViewModelProperty<U> {
   set serializedValue(String value);
 }
 
-class StringViewModelProperty extends TextViewModelProperty<String> {
-  StringViewModelProperty(
+class StringProperty extends TextProperty<String> {
+  StringProperty(
     FunctionOf0<String> getProperty, {
     FunctionOf0<String> label,
     FunctionOf0<String> hint,
@@ -194,12 +194,12 @@ class StringViewModelProperty extends TextViewModelProperty<String> {
   set serializedValue(String value) => currentValue = value;
 
   @override
-  Widget get widget => ChangeNotifierProvider<StringViewModelProperty>.value(
+  Widget get widget => ChangeNotifierProvider<StringProperty>.value(
       value: this, child: StringViewModelPropertyWidget());
 }
 
-class IntViewModelProperty extends TextViewModelProperty<int> {
-  IntViewModelProperty(
+class IntProperty extends TextProperty<int> {
+  IntProperty(
     FunctionOf0<int> getProperty, {
     FunctionOf0<String> label,
     FunctionOf0<String> hint,
@@ -232,8 +232,8 @@ class IntViewModelProperty extends TextViewModelProperty<int> {
   }
 
   @override
-  Widget get widget => ChangeNotifierProvider<IntViewModelProperty>.value(
-      value: this, child: IntViewModelPropertyWidget());
+  Widget get widget =>
+      ChangeNotifierProvider<IntProperty>.value(value: this, child: IntViewModelPropertyWidget());
 }
 
 enum BoolWidgetType { Switch, Checkbox, Radio }
@@ -249,14 +249,12 @@ extension BoolValuesExtension on BoolValues {
   String get displayName => describeEnum(this);
 }
 
-//TODO: El String de isValid hauria de ser una funció que retornés String per tal que fos localitzable
-
-class BoolViewModelProperty extends ViewModelProperty<bool> {
+class BoolProperty extends ModelProperty<bool> {
   BoolWidgetType widgetType = BoolWidgetType.Checkbox;
   BoolWidgetPosition widgetPosition = BoolWidgetPosition.Trailing;
   FunctionOf1<BoolValues, FunctionOf0<String>> displayName = (t) => () => t.displayName;
 
-  BoolViewModelProperty(
+  BoolProperty(
     FunctionOf0<bool> getProperty, {
     FunctionOf0<String> label,
     FunctionOf0<String> hint,
@@ -286,8 +284,8 @@ class BoolViewModelProperty extends ViewModelProperty<bool> {
     currentValue = this.getProperty() ?? false;
   }
 
-  SelectViewModelProperty<bool, BoolValues> toSelect() {
-    return SelectViewModelProperty<bool, BoolValues>(
+  SelectProperty<bool, BoolValues> toSelect() {
+    return SelectProperty<bool, BoolValues>(
       this.getProperty,
       () => BoolValues.values,
       (t) => t.boolValue,
@@ -307,25 +305,25 @@ class BoolViewModelProperty extends ViewModelProperty<bool> {
   Widget get widget {
     switch (widgetType) {
       case BoolWidgetType.Switch:
-        return ChangeNotifierProvider<BoolViewModelProperty>.value(
+        return ChangeNotifierProvider<BoolProperty>.value(
             value: this, child: SwitchViewModelPropertyWidget());
       case BoolWidgetType.Checkbox:
-        return ChangeNotifierProvider<BoolViewModelProperty>.value(
+        return ChangeNotifierProvider<BoolProperty>.value(
             value: this, child: CheckboxViewModelPropertyWidget());
       case BoolWidgetType.Radio:
         return ChangeNotifierProvider.value(
             value: toSelect(), child: RadioListViewModelPropertyWidget<bool, BoolValues>());
       default:
-        return ChangeNotifierProvider<BoolViewModelProperty>.value(
+        return ChangeNotifierProvider<BoolProperty>.value(
             value: this, child: CheckboxViewModelPropertyWidget());
     }
   }
 }
 
-class FileViewModelProperty extends ViewModelProperty<List<int>> {
+class FileProperty extends ModelProperty<List<int>> {
   List<int> _value;
 
-  FileViewModelProperty(
+  FileProperty(
     FunctionOf0<List<int>> getProperty, {
     FunctionOf0<String> label,
     FunctionOf0<String> hint,
@@ -355,7 +353,7 @@ class FileViewModelProperty extends ViewModelProperty<List<int>> {
 
   @override
   Widget get widget {
-    return ChangeNotifierProvider<FileViewModelProperty>.value(
+    return ChangeNotifierProvider<FileProperty>.value(
         value: this, child: FileViewModelPropertyWidget());
   }
 }
@@ -366,18 +364,17 @@ class FileViewModelProperty extends ViewModelProperty<List<int>> {
 
 enum SelectWidgetType { DropDown, Radio }
 
-///T defines the type of the class being edited which has a property defined by this class
 ///U defines the type of the property being edited which is a member of T
 ///V defines the type of the list of items being exposed in the list of options
 ///In some cases U and V may coincide
-class SelectViewModelProperty<U, V> extends ViewModelProperty<U> {
+class SelectProperty<U, V> extends ModelProperty<U> {
   SelectWidgetType widgetType = SelectWidgetType.DropDown;
   final FunctionOf0<List<V>> listItems;
   final FunctionOf1<V, U> valueMember; //Function to project U from V
   final FunctionOf1<V, FunctionOf0<String>>
       displayMember; //Function to display the member as String
 
-  SelectViewModelProperty(
+  SelectProperty(
     FunctionOf0<U> getProperty,
     this.listItems,
     this.valueMember,
@@ -412,37 +409,25 @@ class SelectViewModelProperty<U, V> extends ViewModelProperty<U> {
   Widget get widget {
     switch (widgetType) {
       case SelectWidgetType.DropDown:
-        return ChangeNotifierProvider<SelectViewModelProperty<U, V>>.value(
+        return ChangeNotifierProvider<SelectProperty<U, V>>.value(
             value: this, child: DropDownViewModelPropertyWidget<U, V>());
       case SelectWidgetType.Radio:
-        return ChangeNotifierProvider<SelectViewModelProperty<U, V>>.value(
+        return ChangeNotifierProvider<SelectProperty<U, V>>.value(
             value: this, child: RadioListViewModelPropertyWidget<U, V>());
       default:
-        return ChangeNotifierProvider<SelectViewModelProperty<U, V>>.value(
+        return ChangeNotifierProvider<SelectProperty<U, V>>.value(
             value: this, child: DropDownViewModelPropertyWidget<U, V>());
     }
   }
 }
 
-//TODO: Falten la resta de tipus: "double", "DateTime", etc.
-//       case "double":
-//         //En el cas de double i DateTime hauré de fer servir:
-//         //https://pub.dev/documentation/intl/latest/intl/NumberFormat-class.html
-//         //https://pub.dev/documentation/intl/latest/intl/DateFormat-class.html
-//         //https://pub.dev/packages/intl
-//         break;
-//       //En el cas del DateTime, es pot mostrar el tostring en text en el locale que toqui
-//       //i un botó per tal que pugui fer el showDateTimePicker i es pugui canviar...
-
-//TODO: Cal implementar el combo i el lookup, em podria guiar per la implementació ja existent a IAS-Docència
-
-class DateTimeViewModelProperty extends ViewModelProperty<DateTime> {
+class DateTimeProperty extends ModelProperty<DateTime> {
   final DateFormat dateFormat;
   final bool onlyDate;
   final DateTime firstDate;
   final DateTime lastDate;
 
-  DateTimeViewModelProperty(
+  DateTimeProperty(
     FunctionOf0<DateTime> getProperty, {
     FunctionOf0<String> label,
     FunctionOf0<String> hint,
@@ -469,7 +454,7 @@ class DateTimeViewModelProperty extends ViewModelProperty<DateTime> {
         );
 
   @override
-  Widget get widget => ChangeNotifierProvider<DateTimeViewModelProperty>.value(
+  Widget get widget => ChangeNotifierProvider<DateTimeProperty>.value(
       value: this, child: DateTimeViewModelPropertyWidget());
 
   @override
@@ -477,3 +462,13 @@ class DateTimeViewModelProperty extends ViewModelProperty<DateTime> {
     currentValue = getProperty();
   }
 }
+
+//TODO: Falten la resta de tipus: "double", etc.
+//       case "double":
+//         //En el cas de double i DateTime hauré de fer servir:
+//         //https://pub.dev/documentation/intl/latest/intl/NumberFormat-class.html
+//         //https://pub.dev/documentation/intl/latest/intl/DateFormat-class.html
+//         //https://pub.dev/packages/intl
+//         break;
+
+//TODO: Cal implementar el combo i el lookup

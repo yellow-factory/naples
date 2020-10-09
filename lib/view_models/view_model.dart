@@ -25,34 +25,16 @@ abstract class ViewModelOf<T> extends ViewModel {
   ViewModelOf();
 }
 
-abstract class LayoutMember extends ChangeNotifier {
+abstract class ViewProperty extends ChangeNotifier {
   final int flex;
+  final PredicateOf0 isVisible;
 
-  LayoutMember({this.flex = 1});
+  ViewProperty({this.flex = 1, this.isVisible});
 
   Widget get widget;
 }
 
-abstract class IsVisibleMember extends LayoutMember {
-  final PredicateOf0 isVisible;
-  IsVisibleMember({int flex = 1, this.isVisible}) : super(flex: flex);
-}
-
-abstract class IsEditableMember extends IsVisibleMember {
-  final PredicateOf0 isEditable;
-  IsEditableMember({int flex = 1, PredicateOf0 isVisible, this.isEditable})
-      : super(isVisible: isVisible, flex: flex);
-}
-
-abstract class ViewModelProperty<U> extends IsEditableMember {
-  //Pel que fa al control TextEditingController, té dues propietats: enabled i readonly,
-  //que semblaria que fan coses similars i antagòniques però no es comporten del tot igual
-  //Mentre enabled=false no permet el focus al control readonly=true sí que ho permet
-  //Tant enabled=false com readonly=true bloquegen l'escriptura en general, però amb readonly=true
-  //algunes coses com copiar, retallar o suprimir cap a la dreta estan permeses en aquesta versió (potser és un bug)
-  //En el nostre cas crec que no cal fer la distinció, per això tractarem simplement la propietat editable
-  //Pel que fa al control farem servir normalment enabled i no farem servir readonly
-
+abstract class ModelProperty<U> extends ViewProperty {
   //Es podria fer servir el onSave per realitzar el setProperty, però no estic segur si és la millor opció
   //https://forum.freecodecamp.org/t/how-to-validate-forms-and-user-input-the-easy-way-using-flutter/190377
 
@@ -64,7 +46,7 @@ abstract class ViewModelProperty<U> extends IsEditableMember {
   final PredicateOf0 isEditable;
   final FunctionOf1<U, String> isValid;
 
-  ViewModelProperty(this.getProperty,
+  ModelProperty(this.getProperty,
       {this.label,
       this.hint,
       int flex,
