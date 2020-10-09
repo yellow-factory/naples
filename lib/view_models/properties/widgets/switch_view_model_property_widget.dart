@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:naples/view_models/properties/properties.dart';
+import 'package:naples/view_models/properties/bool_property.dart';
 import 'package:provider/provider.dart';
 
 class SwitchViewModelPropertyWidget extends StatelessWidget {

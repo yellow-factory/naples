@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:naples/view_models/properties/properties.dart';
+import 'package:naples/view_models/properties/text_property.dart';
 import 'package:provider/provider.dart';
 
 class TextViewModelPropertyWidget extends StatefulWidget {

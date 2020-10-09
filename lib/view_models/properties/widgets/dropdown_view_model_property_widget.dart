@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:naples/view_models/properties/properties.dart';
+import 'package:naples/view_models/properties/select_property.dart';
 import 'package:provider/provider.dart';
 
 class DropDownViewModelPropertyWidget<U, V> extends StatelessWidget {
