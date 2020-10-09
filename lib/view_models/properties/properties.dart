@@ -19,8 +19,8 @@ import 'package:naples/view_models/properties/widgets/datetime_view_model_proper
 import 'package:naples/view_models/view_model.dart';
 import 'dart:convert';
 
-class CommentLayoutMember<T> extends IsVisibleMember<T> {
-  final FunctionOf<String> comment;
+class CommentLayoutMember extends IsVisibleMember {
+  final FunctionOf0<String> comment;
   final FontStyle fontStyle;
   final FontWeight fontWeight;
   final TextAlign textAlign;
@@ -29,7 +29,7 @@ class CommentLayoutMember<T> extends IsVisibleMember<T> {
 
   CommentLayoutMember(this.comment,
       {int flex = 99,
-      PredicateOf1<T> isVisible,
+      PredicateOf0 isVisible,
       this.fontStyle,
       this.textAlign,
       this.fontWeight,
@@ -46,10 +46,10 @@ class CommentLayoutMember<T> extends IsVisibleMember<T> {
   }
 }
 
-class DividerLayoutMember<T> extends IsVisibleMember<T> {
+class DividerLayoutMember extends IsVisibleMember {
   DividerLayoutMember({
     int flex = 99,
-    PredicateOf1<T> isVisible,
+    PredicateOf0 isVisible,
   }) : super(
           flex: flex,
           isVisible: isVisible,
@@ -70,7 +70,7 @@ class DividerLayoutMember<T> extends IsVisibleMember<T> {
 
 }
 
-class MarkdownLayoutMember<T> extends IsVisibleMember<T> {
+class MarkdownLayoutMember extends IsVisibleMember {
   final String markdown;
   final double width;
   final double height;
@@ -78,7 +78,7 @@ class MarkdownLayoutMember<T> extends IsVisibleMember<T> {
   MarkdownLayoutMember(
     this.markdown, {
     int flex = 99,
-    PredicateOf1<T> isVisible,
+    PredicateOf0 isVisible,
     this.width,
     this.height,
   }) : super(
@@ -95,14 +95,14 @@ class MarkdownLayoutMember<T> extends IsVisibleMember<T> {
   }
 }
 
-class MustacheMarkdownLayoutMember<T> extends MarkdownLayoutMember<T> {
+class MustacheMarkdownLayoutMember<T> extends MarkdownLayoutMember {
   final T source;
 
   MustacheMarkdownLayoutMember(
     this.source,
     String template, {
     int flex = 99,
-    PredicateOf1<T> isVisible,
+    PredicateOf0 isVisible,
     double width,
     double height,
   }) : super(
@@ -122,25 +122,23 @@ class MustacheMarkdownLayoutMember<T> extends MarkdownLayoutMember<T> {
   }
 }
 
-abstract class TextViewModelProperty<T, U> extends ViewModelProperty<T, U> {
+abstract class TextViewModelProperty<U> extends ViewModelProperty<U> {
   final bool obscureText;
   final int maxLength;
 
   TextViewModelProperty(
-    T source,
-    FunctionOf1<T, U> getProperty, {
-    FunctionOf<String> label,
-    FunctionOf<String> hint,
+    FunctionOf0<U> getProperty, {
+    FunctionOf0<String> label,
+    FunctionOf0<String> hint,
     int flex = 1,
     bool autofocus = false,
-    ActionOf2<T, U> setProperty,
-    PredicateOf1<T> isVisible,
-    PredicateOf1<T> isEditable,
+    ActionOf1<U> setProperty,
+    PredicateOf0 isVisible,
+    PredicateOf0 isEditable,
     FunctionOf1<U, String> isValid,
     this.obscureText: false,
     this.maxLength = -1,
   }) : super(
-          source,
           getProperty,
           label: label,
           hint: hint,
@@ -154,7 +152,7 @@ abstract class TextViewModelProperty<T, U> extends ViewModelProperty<T, U> {
 
   @override
   void initialize() {
-    currentValue = getProperty(source);
+    currentValue = getProperty();
   }
 
   String get serializedValue {
@@ -165,22 +163,20 @@ abstract class TextViewModelProperty<T, U> extends ViewModelProperty<T, U> {
   set serializedValue(String value);
 }
 
-class StringViewModelProperty<T> extends TextViewModelProperty<T, String> {
+class StringViewModelProperty extends TextViewModelProperty<String> {
   StringViewModelProperty(
-    T source,
-    FunctionOf1<T, String> getProperty, {
-    FunctionOf<String> label,
-    FunctionOf<String> hint,
+    FunctionOf0<String> getProperty, {
+    FunctionOf0<String> label,
+    FunctionOf0<String> hint,
     int flex = 1,
     bool autofocus = false,
-    ActionOf2<T, String> setProperty,
-    PredicateOf1<T> isVisible,
-    PredicateOf1<T> isEditable,
+    ActionOf1<String> setProperty,
+    PredicateOf0 isVisible,
+    PredicateOf0 isEditable,
     FunctionOf1<String, String> isValid,
     bool obscureText = false,
     int maxLength,
   }) : super(
-          source,
           getProperty,
           label: label,
           hint: hint,
@@ -202,22 +198,20 @@ class StringViewModelProperty<T> extends TextViewModelProperty<T, String> {
       value: this, child: StringViewModelPropertyWidget());
 }
 
-class IntViewModelProperty<T> extends TextViewModelProperty<T, int> {
+class IntViewModelProperty extends TextViewModelProperty<int> {
   IntViewModelProperty(
-    T source,
-    FunctionOf1<T, int> getProperty, {
-    FunctionOf<String> label,
-    FunctionOf<String> hint,
+    FunctionOf0<int> getProperty, {
+    FunctionOf0<String> label,
+    FunctionOf0<String> hint,
     int flex = 1,
     bool autofocus = false,
-    ActionOf2<T, int> setProperty,
-    PredicateOf1<T> isVisible,
-    PredicateOf1<T> isEditable,
+    ActionOf1<int> setProperty,
+    PredicateOf0 isVisible,
+    PredicateOf0 isEditable,
     FunctionOf1<int, String> isValid,
     bool obscureText = false,
     int maxLength,
   }) : super(
-          source,
           getProperty,
           label: label,
           hint: hint,
@@ -257,27 +251,25 @@ extension BoolValuesExtension on BoolValues {
 
 //TODO: El String de isValid hauria de ser una funció que retornés String per tal que fos localitzable
 
-class BoolViewModelProperty<T> extends ViewModelProperty<T, bool> {
+class BoolViewModelProperty extends ViewModelProperty<bool> {
   BoolWidgetType widgetType = BoolWidgetType.Checkbox;
   BoolWidgetPosition widgetPosition = BoolWidgetPosition.Trailing;
-  FunctionOf1<BoolValues, FunctionOf<String>> displayName = (t) => () => t.displayName;
+  FunctionOf1<BoolValues, FunctionOf0<String>> displayName = (t) => () => t.displayName;
 
   BoolViewModelProperty(
-    T source,
-    FunctionOf1<T, bool> getProperty, {
-    FunctionOf<String> label,
-    FunctionOf<String> hint,
+    FunctionOf0<bool> getProperty, {
+    FunctionOf0<String> label,
+    FunctionOf0<String> hint,
     int flex,
     bool autofocus = false,
-    ActionOf2<T, bool> setProperty,
-    PredicateOf1<T> isVisible,
-    PredicateOf1<T> isEditable,
+    ActionOf1<bool> setProperty,
+    PredicateOf0 isVisible,
+    PredicateOf0 isEditable,
     FunctionOf1<bool, String> isValid,
     this.widgetType,
     this.widgetPosition,
     this.displayName,
   }) : super(
-          source,
           getProperty,
           label: label,
           hint: hint,
@@ -291,12 +283,11 @@ class BoolViewModelProperty<T> extends ViewModelProperty<T, bool> {
 
   @override
   void initialize() {
-    currentValue = this.getProperty(source) ?? false;
+    currentValue = this.getProperty() ?? false;
   }
 
-  SelectViewModelProperty<T, bool, BoolValues> toSelect() {
-    return SelectViewModelProperty<T, bool, BoolValues>(
-      source,
+  SelectViewModelProperty<bool, BoolValues> toSelect() {
+    return SelectViewModelProperty<bool, BoolValues>(
       this.getProperty,
       () => BoolValues.values,
       (t) => t.boolValue,
@@ -323,7 +314,7 @@ class BoolViewModelProperty<T> extends ViewModelProperty<T, bool> {
             value: this, child: CheckboxViewModelPropertyWidget());
       case BoolWidgetType.Radio:
         return ChangeNotifierProvider.value(
-            value: toSelect(), child: RadioListViewModelPropertyWidget<T, bool, BoolValues>());
+            value: toSelect(), child: RadioListViewModelPropertyWidget<bool, BoolValues>());
       default:
         return ChangeNotifierProvider<BoolViewModelProperty>.value(
             value: this, child: CheckboxViewModelPropertyWidget());
@@ -331,22 +322,19 @@ class BoolViewModelProperty<T> extends ViewModelProperty<T, bool> {
   }
 }
 
-class FileViewModelProperty<T> extends ViewModelProperty<T, List<int>> {
+class FileViewModelProperty extends ViewModelProperty<List<int>> {
   List<int> _value;
 
   FileViewModelProperty(
-    T source,
-    FunctionOf1<T, List<int>> getProperty, {
-    FunctionOf<String> label,
-    FunctionOf<String> hint,
+    FunctionOf0<List<int>> getProperty, {
+    FunctionOf0<String> label,
+    FunctionOf0<String> hint,
     int flex,
     bool autofocus = false,
-    ActionOf2<T, List<int>> setProperty,
-    PredicateOf1<T> isVisible,
-    PredicateOf1<T> isEditable,
-    PredicateOf1<T> isRequired,
+    ActionOf1<List<int>> setProperty,
+    PredicateOf0 isVisible,
+    PredicateOf0 isEditable,
   }) : super(
-          source,
           getProperty,
           label: label,
           hint: hint,
@@ -362,7 +350,7 @@ class FileViewModelProperty<T> extends ViewModelProperty<T, List<int>> {
 
   @override
   void initialize() {
-    _value = getProperty(source);
+    _value = getProperty();
   }
 
   @override
@@ -382,29 +370,28 @@ enum SelectWidgetType { DropDown, Radio }
 ///U defines the type of the property being edited which is a member of T
 ///V defines the type of the list of items being exposed in the list of options
 ///In some cases U and V may coincide
-class SelectViewModelProperty<T, U, V> extends ViewModelProperty<T, U> {
+class SelectViewModelProperty<U, V> extends ViewModelProperty<U> {
   SelectWidgetType widgetType = SelectWidgetType.DropDown;
-  final FunctionOf<List<V>> listItems;
+  final FunctionOf0<List<V>> listItems;
   final FunctionOf1<V, U> valueMember; //Function to project U from V
-  final FunctionOf1<V, FunctionOf<String>> displayMember; //Function to display the member as String
+  final FunctionOf1<V, FunctionOf0<String>>
+      displayMember; //Function to display the member as String
 
   SelectViewModelProperty(
-    T source,
-    FunctionOf1<T, U> getProperty,
+    FunctionOf0<U> getProperty,
     this.listItems,
     this.valueMember,
     this.displayMember, {
-    FunctionOf<String> label,
-    FunctionOf<String> hint,
+    FunctionOf0<String> label,
+    FunctionOf0<String> hint,
     int flex,
     bool autofocus = false,
-    ActionOf2<T, U> setProperty,
-    PredicateOf1<T> isVisible,
-    PredicateOf1<T> isEditable,
+    ActionOf1<U> setProperty,
+    PredicateOf0 isVisible,
+    PredicateOf0 isEditable,
     FunctionOf1<U, String> isValid,
     this.widgetType,
   }) : super(
-          source,
           getProperty,
           label: label,
           hint: hint,
@@ -418,21 +405,21 @@ class SelectViewModelProperty<T, U, V> extends ViewModelProperty<T, U> {
 
   @override
   void initialize() {
-    currentValue = getProperty(source);
+    currentValue = getProperty();
   }
 
   @override
   Widget get widget {
     switch (widgetType) {
       case SelectWidgetType.DropDown:
-        return ChangeNotifierProvider<SelectViewModelProperty<T, U, V>>.value(
-            value: this, child: DropDownViewModelPropertyWidget<T, U, V>());
+        return ChangeNotifierProvider<SelectViewModelProperty<U, V>>.value(
+            value: this, child: DropDownViewModelPropertyWidget<U, V>());
       case SelectWidgetType.Radio:
-        return ChangeNotifierProvider<SelectViewModelProperty<T, U, V>>.value(
-            value: this, child: RadioListViewModelPropertyWidget<T, U, V>());
+        return ChangeNotifierProvider<SelectViewModelProperty<U, V>>.value(
+            value: this, child: RadioListViewModelPropertyWidget<U, V>());
       default:
-        return ChangeNotifierProvider<SelectViewModelProperty<T, U, V>>.value(
-            value: this, child: DropDownViewModelPropertyWidget<T, U, V>());
+        return ChangeNotifierProvider<SelectViewModelProperty<U, V>>.value(
+            value: this, child: DropDownViewModelPropertyWidget<U, V>());
     }
   }
 }
@@ -449,27 +436,27 @@ class SelectViewModelProperty<T, U, V> extends ViewModelProperty<T, U> {
 
 //TODO: Cal implementar el combo i el lookup, em podria guiar per la implementació ja existent a IAS-Docència
 
-class DateTimeViewModelProperty<T> extends ViewModelProperty<T, DateTime> {
+class DateTimeViewModelProperty extends ViewModelProperty<DateTime> {
   final DateFormat dateFormat;
   final bool onlyDate;
   final DateTime firstDate;
   final DateTime lastDate;
 
-  DateTimeViewModelProperty(T source, FunctionOf1<T, DateTime> getProperty,
-      {FunctionOf<String> label,
-      FunctionOf<String> hint,
-      int flex = 1,
-      bool autofocus = false,
-      ActionOf2<T, DateTime> setProperty,
-      PredicateOf1<T> isVisible,
-      PredicateOf1<T> isEditable,
-      FunctionOf1<DateTime, String> isValid,
-      this.dateFormat,
-      this.onlyDate = false,
-      this.firstDate,
-      this.lastDate})
-      : super(
-          source,
+  DateTimeViewModelProperty(
+    FunctionOf0<DateTime> getProperty, {
+    FunctionOf0<String> label,
+    FunctionOf0<String> hint,
+    int flex = 1,
+    bool autofocus = false,
+    ActionOf1<DateTime> setProperty,
+    PredicateOf0 isVisible,
+    PredicateOf0 isEditable,
+    FunctionOf1<DateTime, String> isValid,
+    this.dateFormat,
+    this.onlyDate = false,
+    this.firstDate,
+    this.lastDate,
+  }) : super(
           getProperty,
           label: label,
           hint: hint,
@@ -487,6 +474,6 @@ class DateTimeViewModelProperty<T> extends ViewModelProperty<T, DateTime> {
 
   @override
   void initialize() {
-    currentValue = getProperty(source);
+    currentValue = getProperty();
   }
 }

@@ -51,13 +51,13 @@ abstract class GetSetViewModel<T> extends ViewModelOf<T> {
   Future<T> get();
   Future<void> set();
 
-  Iterable<IsVisibleMember<T>> get visibleMembers => layoutMembers
-      .whereType<IsVisibleMember<T>>()
-      .where((element) => element.isVisible == null || element.isVisible(model));
+  Iterable<IsVisibleMember> get visibleMembers => layoutMembers
+      .whereType<IsVisibleMember>()
+      .where((element) => element.isVisible == null || element.isVisible());
 
-  Iterable<IsEditableMember<T>> get editableMembers => layoutMembers
-      .whereType<IsEditableMember<T>>()
-      .where((element) => element.isVisible == null || element.isEditable(model));
+  Iterable<IsEditableMember> get editableMembers => layoutMembers
+      .whereType<IsEditableMember>()
+      .where((element) => element.isVisible == null || element.isEditable());
 
   Iterable<ViewModelProperty> get properties => layoutMembers.whereType<ViewModelProperty>();
 

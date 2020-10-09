@@ -16,7 +16,7 @@ class Transition<T> {
   final T beginningState;
   final T endingState;
   final bool allowBack;
-  final FunctionOf<ViewModel> _createViewModelFunction;
+  final FunctionOf0<ViewModel> _createViewModelFunction;
 
   Transition(this.beginningState, this.endingState, this._createViewModelFunction, this.allowBack);
 
@@ -41,7 +41,7 @@ abstract class NavigationModel<T> extends ChangeNotifier
         OneTimeInitializable2<BuildContext, StateViewModel<T>> {
   BuildContext context;
   T _defaultState;
-  FunctionOf<ViewModel> _defaultCreateViewModelFunction;
+  FunctionOf0<ViewModel> _defaultCreateViewModelFunction;
   List<Transition<T>> _transitions = List<Transition<T>>();
   StateViewModel<T> _currentStateViewModel;
   final ListQueue<StateViewModel<T>> _history = ListQueue<StateViewModel<T>>();
@@ -62,7 +62,7 @@ abstract class NavigationModel<T> extends ChangeNotifier
   }
 
   @protected
-  void addTransition(T beginningState, T endingState, FunctionOf<ViewModel> viewModelTransform,
+  void addTransition(T beginningState, T endingState, FunctionOf0<ViewModel> viewModelTransform,
       {bool allowBack = true}) {
     var transitionModel = Transition<T>(beginningState, endingState, viewModelTransform, allowBack);
     addTransitionModel(transitionModel);
@@ -177,9 +177,9 @@ abstract class NavigationModel<T> extends ChangeNotifier
 }
 
 abstract class StepsNavigationModel<T> extends NavigationModel<T> {
-  final FunctionOf<String> title;
+  final FunctionOf0<String> title;
 
-  StepsNavigationModel(T defaultState, FunctionOf<ViewModel> defaultCreateViewModelFunction,
+  StepsNavigationModel(T defaultState, FunctionOf0<ViewModel> defaultCreateViewModelFunction,
       {this.title})
       : super(defaultState, defaultCreateViewModelFunction);
 

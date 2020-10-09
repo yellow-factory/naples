@@ -3,12 +3,12 @@ import 'package:flutter/widgets.dart';
 import 'package:naples/view_models/properties/properties.dart';
 import 'package:provider/provider.dart';
 
-class RadioListViewModelPropertyWidget<T, U, V> extends StatelessWidget {
+class RadioListViewModelPropertyWidget<U, V> extends StatelessWidget {
   //TODO: isValid is not being validated
 
   @override
   Widget build(BuildContext context) {
-    final property = context.watch<SelectViewModelProperty<T, U, V>>();
+    final property = context.watch<SelectViewModelProperty<U, V>>();
     return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
       return Column(
         key: UniqueKey(),

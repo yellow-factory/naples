@@ -3,10 +3,10 @@ import 'package:flutter/widgets.dart';
 import 'package:naples/view_models/properties/properties.dart';
 import 'package:provider/provider.dart';
 
-class DropDownViewModelPropertyWidget<T, U, V> extends StatelessWidget {
+class DropDownViewModelPropertyWidget<U, V> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final property = context.watch<SelectViewModelProperty<T, U, V>>();
+    final property = context.watch<SelectViewModelProperty<U, V>>();
     var items = <DropdownMenuItem<U>>[
       for (var item in property.listItems())
         DropdownMenuItem<U>(

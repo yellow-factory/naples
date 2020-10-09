@@ -27,12 +27,6 @@ dependencies:
   navy:   
     git: https://github.com/yellow-factory/navy.git
 
-dependency_overrides:
-  crimson:
-    path: ../../crimson
-  navy:
-    path: ../../navy
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

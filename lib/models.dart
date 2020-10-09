@@ -16,6 +16,6 @@ class SnackModel extends ChangeNotifier {
   }
 }
 
-class TitleModel extends ValueNotifier<FunctionOf<String>> {
-  TitleModel(FunctionOf<String> value) : super(value);
+class TitleModel extends ValueNotifier<FunctionOf0<String>> {
+  TitleModel(FunctionOf0<String> value) : super(value);
 }
