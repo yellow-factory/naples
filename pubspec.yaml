@@ -37,7 +37,7 @@ dev_dependencies:
 # The following section is specific to Flutter.
 flutter: 
   # Adds code generation (synthetic package) support 
-  generate: true
+  generate: false
 
 #flutter_intl:
 #  enabled: true
