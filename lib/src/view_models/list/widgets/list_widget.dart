@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:naples/src/view_models/list/list_view_model.dart';
 import 'package:naples/widgets/base_scaffold_widget.dart';
-import 'package:naples/widgets/snack_widget.dart';
 import 'refresh_button_widget.dart';
 import 'dynamic_list_widget.dart';
 import 'package:provider/provider.dart';
@@ -14,10 +13,9 @@ class ListWidget<T> extends StatelessWidget {
     var viewModel = context.watch<ListViewModel<T>>();
 
     return BaseScaffoldWidget(
-      child: SnackModelWidget(
-          child: Column(
+      child: Column(
         children: <Widget>[Expanded(child: DynamicListWidget<T>())],
-      )),
+      ),
       actions: <Widget>[
         RefreshButtonWidget(),
       ],
