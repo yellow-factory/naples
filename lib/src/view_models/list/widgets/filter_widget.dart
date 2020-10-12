@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:naples/src/view_models/list/list_view_model.dart';
+import 'package:naples/src/view_models/list/filtered_view_model.dart';
 import 'package:provider/provider.dart';
 
-class FilterListWidget extends StatefulWidget {
-  FilterListWidget({Key key}) : super(key: key);
+class FilterWidget extends StatefulWidget {
+  FilterWidget({Key key}) : super(key: key);
 
   @override
-  _FilterListWidgetState createState() => _FilterListWidgetState();
+  _FilterWidgetState createState() => _FilterWidgetState();
 }
 
-class _FilterListWidgetState extends State<FilterListWidget> {
+class _FilterWidgetState<T> extends State<FilterWidget> {
   final _searchController = TextEditingController();
 
   @override
@@ -19,7 +19,7 @@ class _FilterListWidgetState extends State<FilterListWidget> {
   }
 
   void _callFilter() {
-    context.read<ListViewModel>().filterValue = _searchController.text;
+    context.read<FilteredViewModel>().filterValue = _searchController.text;
   }
 
   @override
@@ -32,7 +32,7 @@ class _FilterListWidgetState extends State<FilterListWidget> {
   Widget build(BuildContext context) {
     //TODO: Estaria bé que al fer escape marxés el Filtre
 
-    return context.select<ListViewModel, bool>((vm) => vm.filtered)
+    return context.select<FilteredViewModel, bool>((vm) => vm.filtered)
         ? Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Card(

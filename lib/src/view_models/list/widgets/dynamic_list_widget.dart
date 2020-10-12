@@ -3,7 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:naples/src/view_models/list/list_view_model.dart';
 import 'package:provider/provider.dart';
 
-class DynamicListWidget extends StatelessWidget {
+class DynamicListWidget<T> extends StatelessWidget {
   DynamicListWidget({Key key}) : super(key: key);
 
   final ScrollController _scrollController = ScrollController();
@@ -21,7 +21,7 @@ class DynamicListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var viewModel = context.watch<ListViewModel>();
+    var viewModel = context.watch<ListViewModel<T>>();
     return Column(children: <Widget>[
       if (viewModel.loading) Container(child: LinearProgressIndicator()),
       Expanded(

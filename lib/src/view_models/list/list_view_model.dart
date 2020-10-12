@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:naples/src/view_models/list/widgets/list_widget.dart';
+import 'package:navy/navy.dart';
 import 'package:provider/provider.dart';
 import 'package:naples/src/view_models/view_model.dart';
 
@@ -9,15 +10,25 @@ import 'package:naples/src/view_models/view_model.dart';
 
 //T tipus de dades de la llista
 abstract class ListViewModel<T> extends ViewModel with Refreshable {
-  List<T> _items = List<T>();
-  bool _filtered = false;
-  String _filterValue = "";
+  final List<T> _items = List<T>();
+  //final FunctionOf0<Stream<T>> getStream;
+  final FunctionOf1<T, String> itemTitle;
+  final FunctionOf1<T, String> itemSubtitle;
+  //final ActionOf1<T> select;
+  //final Function create;
   bool loading = false;
 
-  //Hi hauria d'haver una enumeració per saber si filtre per title, subtitle o tots dos
-  //Hi hauria d'haver una enumeració per saber com fer el tipus d'enumeració: StartsWith, contains...
+  ListViewModel(
+    this.itemTitle, {
+    //this.getStream,
+    this.itemSubtitle,
+    //this.select,
+    //this.create,
+  });
 
   Stream<T> getStream();
+  Future<void> select(T itemToSelect);
+  Future<void> create();
 
   Future<void> load() async {
     try {
@@ -31,6 +42,8 @@ abstract class ListViewModel<T> extends ViewModel with Refreshable {
       loading = false;
     }
   }
+
+  List<T> get items => _items;
 
   void addItem(T item) {
     _items.add(item);
@@ -50,45 +63,11 @@ abstract class ListViewModel<T> extends ViewModel with Refreshable {
 
   Future<void> refresh() async {
     clearItems();
-    if (filtered)
-      togleFiltered(); //Si està filtrat el traiem, perquè sinó potser no es veurà l'element nou o actualitzat
     return load();
   }
 
-  // TODO: Hauríem de diferenciar entre ListViewModel i TableViewModel, perquè el List ha de definir title i subtitle, i el table no
-  // però tots dos tenen en comú el list()
-
-  String itemTitle(T t);
-  String itemSubtitle(T t);
-
-  get filtered => _filtered;
-  void togleFiltered() {
-    _filtered = !_filtered;
-    notifyListeners();
-  }
-
-  get filterValue => _filterValue;
-  set filterValue(String value) {
-    _filterValue = value;
-    notifyListeners();
-  }
-
-  List<T> get _filteredItems => _items.where(_filterPredicate).toList();
-
-  List<T> get items => filtered ? _filteredItems : _items;
-
-  bool Function(T) get _filterPredicate {
-    var filterBy = _filterValue.toLowerCase().trim();
-    if ((!_filtered) || filterBy.isEmpty) return (x) => true;
-    return (x) => itemTitle(x).toLowerCase().startsWith(filterBy);
-  }
-
-  Future<void> select(T itemToSelect);
-
-  Future<void> create();
-
   @override
   Widget get widget {
-    return ChangeNotifierProvider<ListViewModel>.value(value: this, child: ListWidget());
+    return ChangeNotifierProvider<ListViewModel<T>>.value(value: this, child: ListWidget<T>());
   }
 }

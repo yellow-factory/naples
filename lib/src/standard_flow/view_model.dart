@@ -2,17 +2,24 @@ import 'package:flutter/widgets.dart';
 import 'package:naples/src/navigation/navigation.dart';
 import 'package:naples/src/standard_flow/service.dart';
 import 'package:naples/src/view_models/edit/save_view_model.dart';
-import 'package:naples/src/view_models/list/list_view_model.dart';
+import 'package:naples/src/view_models/list/filtered_view_model.dart';
 import 'package:navy/navy.dart';
 import 'navigation.dart';
 
 //T is the type of the model in the list
 //U is the type of the model that is the key to select
-abstract class StandardListViewModel<T, U> extends ListViewModel<T> {
+abstract class StandardListViewModel<T, U> extends FilteredViewModel<T> {
   final FunctionOf1<T, U> keySelector;
   ListStandardService<T> _listService;
 
-  StandardListViewModel(this.keySelector);
+  StandardListViewModel(
+    this.keySelector,
+    FunctionOf1<T, String> itemTitle, {
+    FunctionOf1<T, String> itemSubtitle,
+  }) : super(
+          itemTitle,
+          itemSubtitle: itemSubtitle,
+        );
 
   @override
   Future<void> init1(BuildContext context) async {
