@@ -14,6 +14,7 @@ export 'package:naples/src/view_models/edit/properties/comment_property.dart';
 export 'package:naples/src/view_models/edit/properties/divider_property.dart';
 export 'package:naples/src/view_models/edit/properties/markdown_property.dart';
 export 'package:naples/src/view_models/edit/properties/mustache_property.dart';
+export 'package:naples/src/view_models/edit/properties/container_property.dart';
 
 export 'package:naples/src/view_models/edit/widgets/dynamic_form_widget.dart';
 export 'package:naples/src/view_models/edit/widgets/save_cancel_widget.dart';

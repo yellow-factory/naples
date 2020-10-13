@@ -41,7 +41,10 @@ class DynamicListWidget<T> extends StatelessWidget {
                       leading: FaIcon(FontAwesomeIcons.table, size: 50.0),
                       trailing: Icon(Icons.more_vert),
                       onTap: () {
-                        viewModel.select(model);
+                        if (viewModel is SelectController<T>) {
+                          var viewModelWithSelect = viewModel as SelectController<T>;
+                          viewModelWithSelect.select(model);
+                        }
                       },
                     ));
                   })))
