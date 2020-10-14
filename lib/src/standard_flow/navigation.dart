@@ -9,21 +9,29 @@ enum StandardFlow { List, Create, Update }
 
 // T is the type of the param used to navigate from list to update
 class ListCreateUpdateStandardNavigationModel<T> extends NavigationModel<StandardFlow> {
-  final FunctionOf0<ViewModel> _createCreateViewModel;
-  final FunctionOf0<ViewModel> _createUpdateViewModel;
+  final FunctionOf1<NavigationModel<StandardFlow>, ViewModel> _createCreateViewModel;
+  final FunctionOf1<NavigationModel<StandardFlow>, ViewModel> _createUpdateViewModel;
 
-  ListCreateUpdateStandardNavigationModel(FunctionOf0<ViewModel> createListViewModel,
-      this._createCreateViewModel, this._createUpdateViewModel)
-      : super(StandardFlow.List, createListViewModel) {
+  ListCreateUpdateStandardNavigationModel(
+    BuildContext context,
+    FunctionOf1<NavigationModel<StandardFlow>, ViewModel> createListViewModel,
+    this._createCreateViewModel,
+    this._createUpdateViewModel,
+  ) : super(
+          context,
+          StandardFlow.List,
+          createListViewModel,
+        ) {
     addTransition(StandardFlow.List, StandardFlow.Create, _createCreateViewModel);
     addTransition(StandardFlow.List, StandardFlow.Update, _createUpdateViewModel);
   }
 
   @override
   Widget get widget {
-    return
-        //The Navigation flow in this case needs a param to navigate from list to edit
-        ChangeNotifierProvider<ValueNotifier<T>>(
-            create: (_) => ValueNotifier<T>(null), child: super.widget);
+    //The Navigation flow in this case needs a param to navigate from list to edit
+    return ChangeNotifierProvider<ValueNotifier<T>>(
+      create: (_) => ValueNotifier<T>(null),
+      child: super.widget,
+    );
   }
 }

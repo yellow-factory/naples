@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:navy/navy.dart';
 
-abstract class Refreshable implements Initialized {
+abstract class Refreshable {
   Future<void> refresh();
 }
 
-abstract class ViewModel extends ChangeNotifier with OneTimeInitializable1<BuildContext> {
+abstract class ViewModel extends ChangeNotifier {
+  //with OneTimeInitializable1<BuildContext> {
   BuildContext context;
 
-  @override
-  Future<void> init1(BuildContext context) async {
-    this.context = context;
-  }
+  ViewModel(this.context);
+
+  // @override
+  // Future<void> init1(BuildContext context) async {
+  //   this.context = context;
+  // }
 
   T getProvided<T>() => Provider.of<T>(context, listen: false);
 
@@ -22,6 +24,5 @@ abstract class ViewModel extends ChangeNotifier with OneTimeInitializable1<Build
 
 abstract class ViewModelOf<T> extends ViewModel {
   T model;
-  ViewModelOf();
+  ViewModelOf(BuildContext context) : super(context);
 }
-

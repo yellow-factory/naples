@@ -25,6 +25,8 @@ mixin StepViewModelController<T> on EditViewModel<T> {
 }
 
 abstract class RawStepViewModel<T> extends EditViewModel<T> with StepViewModelController<T> {
+  RawStepViewModel(BuildContext context) : super(context);
+
   @override
   Widget get widget {
     return ChangeNotifierProvider<EditViewModel>.value(value: this, child: DynamicFormWidget());
@@ -32,6 +34,8 @@ abstract class RawStepViewModel<T> extends EditViewModel<T> with StepViewModelCo
 }
 
 abstract class SingleStepViewModel<T> extends EditViewModel<T> with StepViewModelController<T> {
+  SingleStepViewModel(BuildContext context) : super(context);
+
   @override
   Widget get widget {
     return ChangeNotifierProvider<StepViewModelController>.value(

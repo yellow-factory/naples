@@ -19,18 +19,19 @@ mixin CreateController {
 //T tipus de dades de la llista
 abstract class ListViewModel<T> extends ViewModel with Refreshable {
   final List<T> _items = List<T>();
-  //final FunctionOf0<Stream<T>> getStream;
+  final FunctionOf0<Stream<T>> getStream;
   final FunctionOf1<T, String> itemTitle;
   final FunctionOf1<T, String> itemSubtitle;
   bool loading = false;
 
   ListViewModel(
+    BuildContext context,
+    this.getStream,
     this.itemTitle, {
-    //this.getStream,
     this.itemSubtitle,
-  });
-
-  Stream<T> getStream();
+  }) : super(context) {
+    load();
+  }
 
   Future<void> load() async {
     try {
@@ -57,12 +58,6 @@ abstract class ListViewModel<T> extends ViewModel with Refreshable {
     notifyListeners();
   }
 
-  @override
-  Future<void> init1(BuildContext context) async {
-    await super.init1(context);
-    await load();
-  }
-
   Future<void> refresh() async {
     clearItems();
     return load();
@@ -71,6 +66,8 @@ abstract class ListViewModel<T> extends ViewModel with Refreshable {
   @override
   Widget get widget {
     return ChangeNotifierProvider<ListViewModel<T>>.value(
-        value: this, child: DynamicListWidget<T>());
+      value: this,
+      child: DynamicListWidget<T>(),
+    );
   }
 }

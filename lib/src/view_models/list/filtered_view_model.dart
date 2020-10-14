@@ -9,9 +9,13 @@ abstract class FilteredViewModel<T> extends ListViewModel<T> {
   String _filterValue = "";
 
   FilteredViewModel(
+    BuildContext context,
+    FunctionOf0<Stream<T>> getStream,
     FunctionOf1<T, String> itemTitle, {
     FunctionOf1<T, String> itemSubtitle,
   }) : super(
+          context,
+          getStream,
           itemTitle,
           itemSubtitle: itemSubtitle,
         );

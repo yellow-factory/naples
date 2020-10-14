@@ -9,14 +9,12 @@ class NavigationWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var navigationModel = Provider.of<NavigationModel>(context, listen: false);
+    if (navigationModel.currentStateViewModel == null) return Container();
     var currentViewModel =
         context.select<NavigationModel, ViewModel>((nm) => nm.currentStateViewModel.viewModel);
 
     //Creates a key from the enum of the NavigationFlow, needed for the AnimationSwitcher to work
-    var k = 0;
-    k = navigationModel.currentStateViewModel?.state?.index as int ?? 0;
-
-    //TODO: Maybe the behaviour of stepping back can be configured on the NavigationModel
+    var k = navigationModel.currentStateViewModel?.state?.index as int ?? 0;
 
     return WillPopScope(
         onWillPop: () async {

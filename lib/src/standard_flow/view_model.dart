@@ -12,28 +12,22 @@ import 'navigation.dart';
 abstract class StandardListViewModel<T, U> extends FilteredViewModel<T>
     with CreateController, SelectController<T> {
   final FunctionOf1<T, U> keySelector;
-  ListStandardService<T> _listService;
+  final ListStandardService<T> listService;
+  final NavigationModel<StandardFlow> navigationModel;
 
   StandardListViewModel(
+    BuildContext context,
+    this.listService,
+    this.navigationModel,
     this.keySelector,
     FunctionOf1<T, String> itemTitle, {
     FunctionOf1<T, String> itemSubtitle,
   }) : super(
+          context,
+          listService.list,
           itemTitle,
           itemSubtitle: itemSubtitle,
         );
-
-  @override
-  Future<void> init1(BuildContext context) async {
-    this.context = context;
-    _listService = getProvided();
-    super.init1(context);
-  }
-
-  @override
-  Stream<T> getStream() => _listService.list();
-
-  NavigationModel<StandardFlow> get navigationModel => getProvided();
 
   @override
   Future<void> select(T itemToSelect) async {
@@ -53,44 +47,48 @@ abstract class StandardListViewModel<T, U> extends FilteredViewModel<T>
 }
 
 abstract class StandardCreateViewModel<T, Create> extends SaveCancelViewModel<Create> {
-  CreateStandardService<T, Create> _createService;
+  final CreateStandardService<T, Create> createService;
 
-  @override
-  Future<void> init1(BuildContext context) async {
-    this.context = context;
-    _createService = getProvided();
-    await super.init1(context);
-  }
+  StandardCreateViewModel(
+    BuildContext context,
+    NavigationModel<StandardFlow> navigationModel,
+    this.createService,
+  ) : super(
+          context,
+          navigationModel,
+        );
 
   @override
   Future<Create> get() async {
-    return await _createService.getCreate();
+    return await createService.getCreate();
   }
 
   @override
   Future<void> set() async {
-    await _createService.create(model);
+    await createService.create(model);
   }
 }
 
 abstract class StandardUpdateViewModel<T, Get, Update> extends SaveCancelViewModel<Update> {
-  UpdateStandardService<T, Get, Update> _updateService;
+  final UpdateStandardService<T, Get, Update> updateService;
 
-  @override
-  Future<void> init1(BuildContext context) async {
-    this.context = context;
-    _updateService = getProvided();
-    await super.init1(context);
-  }
+  StandardUpdateViewModel(
+    BuildContext context,
+    NavigationModel<StandardFlow> navigationModel,
+    this.updateService,
+  ) : super(
+          context,
+          navigationModel,
+        );
 
   @override
   Future<Update> get() async {
     final ValueNotifier<Get> param = getProvided();
-    return await _updateService.getUpdate(param.value);
+    return await updateService.getUpdate(param.value);
   }
 
   @override
   Future<void> set() async {
-    await _updateService.update(this.model);
+    await updateService.update(this.model);
   }
 }

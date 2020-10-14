@@ -6,8 +6,10 @@ import 'package:naples/src/navigation/navigation.dart';
 import 'package:naples/models.dart';
 
 abstract class SaveCancelViewModel<T> extends EditViewModel<T> {
-  NavigationModel get navigationModel => getProvided();
+  final NavigationModel navigationModel;
   SnackModel get snackModel => getProvided();
+
+  SaveCancelViewModel(BuildContext context, this.navigationModel) : super(context);
 
   Future<void> cancel() async {
     var back = await navigationModel.back();

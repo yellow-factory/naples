@@ -7,7 +7,9 @@ import 'package:naples/src/view_models/edit/properties/model_property.dart';
 abstract class EditViewModel<T> extends ViewModelOf<T> {
   final _layoutMembers = List<ViewProperty>();
 
-  EditViewModel() : super();
+  EditViewModel(BuildContext context) : super(context) {
+    initialize();
+  }
 
   Iterable<ViewProperty> get layoutMembers => _layoutMembers;
 
@@ -27,12 +29,17 @@ abstract class EditViewModel<T> extends ViewModelOf<T> {
     );
   }
 
-  @override
-  Future<void> init1(BuildContext context) async {
-    await super.init1(context);
+  Future<void> initialize() async {
     model = await get();
     addLayoutMembers();
   }
+
+  // @override
+  // Future<void> init1(BuildContext context) async {
+  //   await super.init1(context);
+  //   model = await get();
+  //   addLayoutMembers();
+  // }
 
   @nonVirtual
   void addLayoutMembers() {

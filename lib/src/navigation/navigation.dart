@@ -12,14 +12,13 @@ class Transition<T> {
   final T beginningState;
   final T endingState;
   final bool allowBack;
-  final FunctionOf0<ViewModel> _createViewModelFunction;
+  final FunctionOf1<NavigationModel<T>, ViewModel> _createViewModelFunction;
 
   Transition(this.beginningState, this.endingState, this._createViewModelFunction, this.allowBack);
 
-  Future<StateViewModel<T>> createStateViewModel(BuildContext context) async {
-    var viewModel = _createViewModelFunction();
+  Future<StateViewModel<T>> createStateViewModel(NavigationModel<T> navigationModel) async {
+    var viewModel = _createViewModelFunction(navigationModel);
     if (viewModel == null) throw new Exception("ViewModel is null");
-    await viewModel.initialize1(context);
     return StateViewModel<T>(endingState, viewModel);
   }
 }
@@ -32,33 +31,28 @@ class StateViewModel<T> {
 
 //T és el tipus que diferencia cadascun dels estats i per tant ViewModels diferents que hi pot haver
 abstract class NavigationModel<T> extends ChangeNotifier
-    with
-        OneTimeInitializable1<BuildContext>,
-        OneTimeInitializable2<BuildContext, StateViewModel<T>> {
-  BuildContext context;
-  T _defaultState;
-  FunctionOf0<ViewModel> _defaultCreateViewModelFunction;
-  List<Transition<T>> _transitions = List<Transition<T>>();
-  StateViewModel<T> _currentStateViewModel;
+{
+  final BuildContext context;
+  final T _defaultState;
+  final FunctionOf1<NavigationModel<T>, ViewModel> _defaultCreateViewModelFunction;
+  final List<Transition<T>> _transitions = List<Transition<T>>();
   final ListQueue<StateViewModel<T>> _history = ListQueue<StateViewModel<T>>();
+  StateViewModel<T> _currentStateViewModel;
 
-  NavigationModel(this._defaultState, this._defaultCreateViewModelFunction);
+  NavigationModel(this.context, this._defaultState, this._defaultCreateViewModelFunction) {
+    initialize();
+  }
 
-  Future<void> init2(BuildContext context, StateViewModel<T> stateViewModel) async {
-    this.context = context;
+  void initialize() {
+    final viewModel = _defaultCreateViewModelFunction(this);
+    if (viewModel == null) throw new Exception("ViewModel is null");
+    final stateViewModel = StateViewModel<T>(_defaultState, viewModel);
     _updateCurrentStateViewModel(stateViewModel);
   }
 
-  Future<void> init1(BuildContext context) async {
-    final viewModel = _defaultCreateViewModelFunction();
-    if (viewModel == null) throw new Exception("ViewModel is null");
-    viewModel.initialize1(context);
-    final stateViewModel = StateViewModel<T>(_defaultState, viewModel);
-    initialize2(context, stateViewModel);
-  }
-
   @protected
-  void addTransition(T beginningState, T endingState, FunctionOf0<ViewModel> viewModelTransform,
+  void addTransition(T beginningState, T endingState,
+      FunctionOf1<NavigationModel<T>, ViewModel> viewModelTransform,
       {bool allowBack = true}) {
     var transitionModel = Transition<T>(beginningState, endingState, viewModelTransform, allowBack);
     addTransitionModel(transitionModel);
@@ -101,7 +95,7 @@ abstract class NavigationModel<T> extends ChangeNotifier
     }
 
     //Creates and initialize the ViewModel
-    var newStateViewModel = await transition.createStateViewModel(context);
+    var newStateViewModel = await transition.createStateViewModel(this);
 
     _updateCurrentStateViewModel(newStateViewModel);
 
@@ -160,10 +154,6 @@ abstract class NavigationModel<T> extends ChangeNotifier
         ChangeNotifierProvider<NavigationModel>.value(value: this),
       ],
       builder: (context, child) {
-        //NavigationModel must be initialized with the context with access to
-        //the NavigationModel because when generating the initial view
-        //the context must have access to the NavigationModel
-        initialize1(context);
         return ChangeNotifierProvider(
             create: (_) => TitleModel(() => currentStateViewModel.viewModel.title),
             child: NavigationWidget());
