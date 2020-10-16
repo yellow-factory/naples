@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:naples/src/view_models/list/list_view_model.dart';
-import 'package:naples/src/view_models/view_model.dart';
+import 'package:naples/src/view_models/list/widgets/async_action_icon_button.dart';
 import 'package:naples/widgets/base_scaffold_widget.dart';
-import 'refresh_button_widget.dart';
 import 'dynamic_list_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +18,11 @@ class ListWidget<T> extends StatelessWidget {
         children: <Widget>[Expanded(child: DynamicListWidget<T>())],
       ),
       actions: <Widget>[
-        RefreshButtonWidget(),
+        AsyncActionIconButton(
+          Icons.refresh,
+          viewModel.refresh,
+          message: (c) => "Refreshed!!",
+        ),
       ],
       floatingAction: viewModelWithCreate == null
           ? null

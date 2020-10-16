@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:naples/src/view_models/list/filtered_view_model.dart';
 import 'package:naples/src/view_models/list/list_view_model.dart';
+import 'package:naples/src/view_models/list/widgets/async_action_icon_button.dart';
 import 'package:naples/widgets/base_scaffold_widget.dart';
-import 'refresh_button_widget.dart';
-import 'filter_button_widget.dart';
 import 'filter_widget.dart';
 import 'dynamic_list_widget.dart';
 import 'package:provider/provider.dart';
@@ -21,8 +20,15 @@ class FilteredWidget<T> extends StatelessWidget {
         children: <Widget>[FilterWidget(), Expanded(child: DynamicListWidget<T>())],
       ),
       actions: <Widget>[
-        FilterButtonWidget(),
-        RefreshButtonWidget(),
+        AsyncActionIconButton(
+          Icons.filter_list,
+          viewModel.togleFiltered,
+        ),
+        AsyncActionIconButton(
+          Icons.refresh,
+          viewModel.refresh,
+          message: (c) => "Refreshed!!",
+        ),
       ],
       floatingAction: viewModelWithCreate == null
           ? null

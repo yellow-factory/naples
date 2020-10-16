@@ -32,7 +32,7 @@ abstract class FilteredViewModel<T> extends ListViewModel<T> {
   }
 
   get filtered => _filtered;
-  void togleFiltered() {
+  Future<void> togleFiltered() async {
     _filtered = !_filtered;
     notifyListeners();
   }
