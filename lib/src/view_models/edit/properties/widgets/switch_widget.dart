@@ -10,7 +10,7 @@ class SwitchViewModelPropertyWidget extends StatelessWidget {
     return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
       return SwitchListTile(
           key: UniqueKey(),
-          title: Text(property.label()),
+          title: Text(property.label(context)),
           controlAffinity: property.widgetPosition == BoolWidgetPosition.Leading
               ? ListTileControlAffinity.leading
               : ListTileControlAffinity.trailing,
@@ -19,7 +19,7 @@ class SwitchViewModelPropertyWidget extends StatelessWidget {
               ? (value) {
                   setState(() {
                     property.currentValue = value;
-                    if (property.valid) property.update();
+                    if (property.validate(context) == null) property.update(context);
                   });
                 }
               : null,

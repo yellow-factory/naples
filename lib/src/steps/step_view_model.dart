@@ -11,8 +11,8 @@ mixin StepViewModelController<T> on EditViewModel<T> {
   bool get hasNextStep => navigationModel.canGoForward;
 
   Future<void> nextStep() async {
-    if (!valid) return;
-    update(); //Sends changes from widgets to the model
+    // if (!valid) return;
+    // update(context); //Sends changes from widgets to the model
     await set(); //Sends changes from model to the backend
     await navigationModel.forward();
   }

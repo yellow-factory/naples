@@ -13,14 +13,14 @@ class DateTimeProperty extends ModelProperty<DateTime> {
 
   DateTimeProperty(
     FunctionOf0<DateTime> getProperty, {
-    FunctionOf0<String> label,
-    FunctionOf0<String> hint,
+    FunctionOf1<BuildContext, String> label,
+    FunctionOf1<BuildContext, String> hint,
     int flex = 1,
     bool autofocus = false,
     ActionOf1<DateTime> setProperty,
     PredicateOf0 isVisible,
     PredicateOf0 isEditable,
-    FunctionOf1<DateTime, String> isValid,
+    FunctionOf2<BuildContext, DateTime, String> isValid,
     this.dateFormat,
     this.onlyDate = false,
     this.firstDate,

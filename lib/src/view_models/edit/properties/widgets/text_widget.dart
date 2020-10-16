@@ -23,12 +23,12 @@ class _TextViewModelPropertyWidgetState extends State<TextViewModelPropertyWidge
       initialValue: property.serializedValue,
       decoration: InputDecoration(
         //filled: true,
-        hintText: property.hint != null ? property.hint() : null,
-        labelText: property.label != null ? property.label() : null,
+        hintText: property.hint != null ? property.hint(context) : null,
+        labelText: property.label != null ? property.label(context) : null,
       ),
       enabled: property.editable,
       autofocus: property.autofocus,
-      validator: (_) => property.validate(),
+      validator: (_) => property.validate(context),
       keyboardType: widget.textInputType,
       inputFormatters: [
         if (widget.textInputFormatters != null) ...widget.textInputFormatters,
@@ -42,7 +42,7 @@ class _TextViewModelPropertyWidgetState extends State<TextViewModelPropertyWidge
       // maxLines: 3,
       onChanged: (value) {
         property.serializedValue = value;
-        if (property.valid) property.update();
+        if (property.validate(context) == null) property.update(context);
       },
     );
   }

@@ -63,14 +63,14 @@ abstract class EditViewModel<T> extends ViewModelOf<T> {
 
   Iterable<ModelProperty> get properties => layoutMembers.whereType<ModelProperty>();
 
-  bool get valid {
-    return properties.every((x) => x.valid);
-  }
+  // bool get valid {
+  //   return properties.every((x) => x.validate());
+  // }
 
-  void update() {
+  void update(BuildContext context) {
     //Sends widgets info to model
     properties.where((x) => x.editable).forEach((x) {
-      if (x.valid) x.update();
+      if (x.validate(context)!=null) x.update(context);
     });
   }
 

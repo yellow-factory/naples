@@ -17,8 +17,8 @@ abstract class SaveCancelViewModel<T> extends EditViewModel<T> {
   }
 
   Future<void> save() async {
-    if (!valid) return;
-    update(); //Send the changes of the controls to the viewmodel
+    // if (!valid) return;
+    // update(); //Send the changes of the controls to the viewmodel
     await set(); //Send the changes to the backend
     await navigationModel.back(); //Returns to the previous view
     snackModel.message = "Saved!"; //Sends a snack message

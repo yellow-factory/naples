@@ -28,14 +28,14 @@ class BoolProperty extends ModelProperty<bool> {
 
   BoolProperty(
     FunctionOf0<bool> getProperty, {
-    FunctionOf0<String> label,
-    FunctionOf0<String> hint,
+    FunctionOf1<BuildContext, String> label,
+    FunctionOf1<BuildContext, String> hint,
     int flex,
     bool autofocus = false,
     ActionOf1<bool> setProperty,
     PredicateOf0 isVisible,
     PredicateOf0 isEditable,
-    FunctionOf1<bool, String> isValid,
+    FunctionOf2<BuildContext, bool, String> isValid,
     this.widgetType,
     this.widgetPosition,
     this.displayName,

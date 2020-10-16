@@ -7,14 +7,14 @@ import 'package:provider/provider.dart';
 class StringProperty extends TextProperty<String> {
   StringProperty(
     FunctionOf0<String> getProperty, {
-    FunctionOf0<String> label,
-    FunctionOf0<String> hint,
+    FunctionOf1<BuildContext, String> label,
+    FunctionOf1<BuildContext, String> hint,
     int flex = 1,
     bool autofocus = false,
     ActionOf1<String> setProperty,
     PredicateOf0 isVisible,
     PredicateOf0 isEditable,
-    FunctionOf1<String, String> isValid,
+    FunctionOf2<BuildContext, String, String> isValid,
     bool obscureText = false,
     int maxLength,
   }) : super(

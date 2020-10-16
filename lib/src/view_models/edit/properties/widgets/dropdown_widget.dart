@@ -20,7 +20,7 @@ class DropDownViewModelPropertyWidget<U, V> extends StatelessWidget {
       value: property.currentValue,
       onChanged: (value) {
         property.currentValue = value;
-        if (property.valid) property.update();
+        if (property.validate(context) == null) property.update(context);
       },
     );
   }

@@ -13,8 +13,8 @@ class FileViewModelPropertyWidget extends StatelessWidget {
         child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
           ListTile(
             leading: Icon(Icons.attachment_outlined),
-            title: Text(property.label()),
-            subtitle: Text(property.hint()),
+            title: Text(property.label(context)),
+            subtitle: Text(property.hint(context)),
           ),
           ButtonBar(
             children: <Widget>[
