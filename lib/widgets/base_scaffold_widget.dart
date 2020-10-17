@@ -8,9 +8,13 @@ class BaseScaffoldWidget extends StatelessWidget {
   final FloatingActionButton floatingAction;
   final double padding;
 
-  BaseScaffoldWidget(
-      {@required this.child, this.actions, this.floatingAction, this.padding = 16, Key key})
-      : super(key: key);
+  BaseScaffoldWidget({
+    @required this.child,
+    this.actions,
+    this.floatingAction,
+    this.padding = 16,
+    Key key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
