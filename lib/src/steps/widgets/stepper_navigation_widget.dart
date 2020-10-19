@@ -21,10 +21,10 @@ class StepperNavigationWidget extends StatelessWidget {
 
     if (currentStateViewModel == null || currentStateViewModel.viewModel == null)
       return Container();
-    var currentViewModel = currentStateViewModel.viewModel as RawStepViewModel;
+    var currentViewModel = currentStateViewModel.viewModel;
 
     //Whenever ViewModel changes the widget must be rebuild
-    context.watch<ViewModel>() as RawStepViewModel;
+    context.watch<ViewModel>();
 
     var w = Stepper(
       key: UniqueKey(),
@@ -42,8 +42,8 @@ class StepperNavigationWidget extends StatelessWidget {
       ],
       currentStep: navigationModel.history.length,
       type: StepperType.vertical,
-      onStepContinue: () => currentViewModel.nextStep(),
-      onStepCancel: () => currentViewModel.previousStep(),
+      onStepContinue: () => navigationModel.forward(),
+      onStepCancel: () => navigationModel.back(),
 
       //TODO: execute arbitrary transitions when possible
       //onStepTapped: (step) {
@@ -56,13 +56,13 @@ class StepperNavigationWidget extends StatelessWidget {
             child: ActionsWidget(
               actions: <ActionWrap>[
                 ActionWrap(
-                  currentViewModel.hasNextStep
+                  navigationModel.canGoForward
                       ? NaplesLocalizations.of(context).continua
                       : NaplesLocalizations.of(context).finalitza,
                   action: () => onStepContinue(),
                   primary: true,
                 ),
-                if (currentViewModel.hasPreviousStep)
+                if (navigationModel.canGoBack)
                   ActionWrap(
                     NaplesLocalizations.of(context).torna,
                     action: () => onStepCancel(),

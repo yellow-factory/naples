@@ -42,43 +42,45 @@ class ListViewModel<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BaseScaffoldWidget(
-      child: ListLoader<T>(
-        key: _listLoaderKey,
-        getStream: getStream,
-        builder: (items, loading) => Column(
-          children: <Widget>[
-            if (loading) Container(child: LinearProgressIndicator()),
-            Expanded(
-              child: BaseListViewModel<T>(
-                items,
-                itemTitle,
-                itemSubtitle: itemSubtitle,
-                select: select,
+    return ListLoader<T>(
+      key: _listLoaderKey,
+      getStream: getStream,
+      builder: (items, loading) {
+        return BaseScaffoldWidget(
+          child: Column(
+            children: <Widget>[
+              if (loading) Container(child: LinearProgressIndicator()),
+              Expanded(
+                child: DynamicList<T>(
+                  items,
+                  itemTitle,
+                  itemSubtitle: itemSubtitle,
+                  select: select,
+                ),
               ),
+            ],
+          ),
+          actions: <Widget>[
+            AsyncActionIconButton(
+              Icons.refresh,
+              () async {
+                await _listLoaderKey.currentState.refresh();
+              },
+              message: (c) => "Refreshed!!",
             ),
           ],
-        ),
-      ),
-      actions: <Widget>[
-        AsyncActionIconButton(
-          Icons.refresh,
-          () async {
-            await _listLoaderKey.currentState.refresh();
-          },
-          message: (c) => "Refreshed!!",
-        ),
-      ],
-      floatingAction: create == null
-          ? null
-          : FloatingActionButton(
-              onPressed: () async {
-                await create();
-              },
-              tooltip: 'New model', //TODO: Això s'hauria de parametritzar, i l'icona també?
-              child: Icon(Icons.add),
-            ),
-      padding: 0,
+          floatingAction: create == null
+              ? null
+              : FloatingActionButton(
+                  onPressed: () async {
+                    await create();
+                  },
+                  tooltip: 'New model', //TODO: Això s'hauria de parametritzar, i l'icona també?
+                  child: Icon(Icons.add),
+                ),
+          padding: 0,
+        );
+      },
     );
   }
 }

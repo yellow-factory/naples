@@ -16,21 +16,30 @@ class DistributionWidget extends StatelessWidget {
   final List<Expandable> children;
   final DistributionType distribution;
 
-  DistributionWidget(this.children,
-      {Key key,
-      this.fixed = 1,
-      this.maxFlex = 1,
-      this.normalize = true,
-      this.distribution = DistributionType.LeftToRight})
-      : super(key: key);
+  DistributionWidget(
+    this.children, {
+    Key key,
+    this.fixed,
+    this.maxFlex,
+    this.normalize,
+    this.distribution = DistributionType.LeftToRight,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return distribution == DistributionType.LeftToRight
-        ? LeftToRightDistributionWidget(children,
-            fixedWidgetsPerRow: fixed, maxFlex: maxFlex, normalize: normalize)
-        : TopToBottomDistributionWidget(children,
-            fixedWidgetsPerColumn: fixed, maxFlex: maxFlex, normalize: normalize);
+        ? LeftToRightDistributionWidget(
+            children,
+            fixedWidgetsPerRow: fixed ?? 1,
+            maxFlex: maxFlex ?? 1,
+            normalize: normalize ?? true,
+          )
+        : TopToBottomDistributionWidget(
+            children,
+            fixedWidgetsPerColumn: fixed ?? 1,
+            maxFlex: maxFlex ?? 1,
+            normalize: normalize ?? true,
+          );
   }
 }
 

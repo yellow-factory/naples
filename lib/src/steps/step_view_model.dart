@@ -1,44 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:naples/src/navigation/navigation.dart';
 import 'package:naples/src/view_models/edit/edit_view_model.dart';
-import 'package:naples/src/view_models/edit/widgets/dynamic_form_widget.dart';
-import 'package:naples/src/steps/widgets/single_step_widget.dart';
+import 'package:naples/src/view_models/edit/dynamic_form.dart';
 import 'package:provider/provider.dart';
 
-mixin StepViewModelController<T> on EditViewModel<T> {
-  NavigationModel get navigationModel => getProvided();
+//Tot això ja no té sentit
 
-  bool get hasNextStep => navigationModel.canGoForward;
+// mixin StepViewModelController<T> on EditViewModel<T> {
+//   NavigationModel get navigationModel => getProvided();
 
-  Future<void> nextStep() async {
-    // if (!valid) return;
-    // update(context); //Sends changes from widgets to the model
-    await set(); //Sends changes from model to the backend
-    await navigationModel.forward();
-  }
+//   bool get hasNextStep => navigationModel.canGoForward;
 
-  bool get hasPreviousStep => navigationModel.canGoBack;
+//   Future<void> nextStep() async {
+//     // if (!valid) return;
+//     // update(context); //Sends changes from widgets to the model
+//     await set(); //Sends changes from model to the backend
+//     await navigationModel.forward();
+//   }
 
-  Future<void> previousStep() async {
-    await navigationModel.back();
-  }
-}
+//   bool get hasPreviousStep => navigationModel.canGoBack;
 
-abstract class RawStepViewModel<T> extends EditViewModel<T> with StepViewModelController<T> {
-  RawStepViewModel(BuildContext context) : super(context);
+//   Future<void> previousStep() async {
+//     await navigationModel.back();
+//   }
+// }
 
-  @override
-  Widget get widget {
-    return ChangeNotifierProvider<EditViewModel>.value(value: this, child: DynamicFormWidget());
-  }
-}
+// class RawStepViewModel<T> extends StatelessWidget {
+//   NavigationModel get navigationModel => getProvided();
 
-abstract class SingleStepViewModel<T> extends EditViewModel<T> with StepViewModelController<T> {
-  SingleStepViewModel(BuildContext context) : super(context);
+//   RawStepViewModel() : super();
 
-  @override
-  Widget get widget {
-    return ChangeNotifierProvider<StepViewModelController>.value(
-        value: this, child: SingleStepWidget());
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+    
+
+//   }
+// }
+
+

@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:navy/navy.dart';
 
 //T tipus de dades de la llista
-class BaseListViewModel<T> extends StatelessWidget {
+class DynamicList<T> extends StatelessWidget {
   final List<T> items;
   final FunctionOf1<T, String> itemTitle;
   final FunctionOf1<T, String> itemSubtitle;
@@ -20,7 +20,7 @@ class BaseListViewModel<T> extends StatelessWidget {
 //-https://www.codingame.com/playgrounds/5363/paging-with-entity-framework-core
 //-https://www.sqlshack.com/pagination-in-sql-server/
 
-  BaseListViewModel(
+  DynamicList(
     this.items,
     this.itemTitle, {
     this.itemSubtitle,

@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:naples/src/view_models/edit/edit_view_model.dart';
+import 'package:naples/src/view_models/edit/properties/view_property.dart';
 import 'package:naples/widgets/distribution_widget.dart';
-import 'package:provider/provider.dart';
 
-class DynamicFormWidget extends StatefulWidget {
+class DynamicForm extends StatefulWidget {
+  final Iterable<ViewProperty> children;
   final int fixed;
   final int maxFlex;
   final bool normalize;
   final DistributionType distribution;
   final EdgeInsetsGeometry childPadding;
 
-  DynamicFormWidget(
+  DynamicForm(
       {Key key,
+      this.children,
       this.fixed = 1,
       this.maxFlex = 1,
       this.normalize = true,
@@ -20,19 +21,19 @@ class DynamicFormWidget extends StatefulWidget {
       : super(key: key);
 
   @override
-  _DynamicFormWidgetState createState() => _DynamicFormWidgetState();
+  _DynamicFormState createState() => _DynamicFormState();
 }
 
-class _DynamicFormWidgetState extends State<DynamicFormWidget> {
+class _DynamicFormState extends State<DynamicForm> {
   final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
-    var viewModel = context.watch<EditViewModel>();
     return Form(
       key: _formKey,
       child: DistributionWidget(
         <Expandable>[
-          for (var p in viewModel.visibleProperties)
+          for (var p in widget.children)
             Expandable(
                 widget.childPadding == null
                     ? p.widget

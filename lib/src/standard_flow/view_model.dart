@@ -1,8 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/widgets.dart';
 import 'package:naples/src/navigation/navigation.dart';
 import 'package:naples/src/standard_flow/service.dart';
+import 'package:naples/src/view_models/edit/properties/view_property.dart';
 import 'package:naples/src/view_models/edit/save_view_model.dart';
 import 'package:naples/src/view_models/list/filtered_view_model.dart';
+import 'package:naples/widgets/distribution_widget.dart';
 import 'package:navy/navy.dart';
 import 'navigation.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +19,7 @@ class StandardListViewModel<T, U> extends StatelessWidget {
   final NavigationModel<StandardFlow> navigationModel;
   final FunctionOf1<T, String> itemTitle;
   final FunctionOf1<T, String> itemSubtitle;
-  final FunctionOf2<BuildContext, int, String> title;
+  final FunctionOf1<int, String> title;
 
   StandardListViewModel(
     this.listService,
@@ -30,6 +34,7 @@ class StandardListViewModel<T, U> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FilteredViewModel(
+      title: title,
       getStream: listService.list,
       itemTitle: itemTitle,
       itemSubtitle: itemSubtitle,
@@ -50,49 +55,79 @@ class StandardListViewModel<T, U> extends StatelessWidget {
   }
 }
 
-abstract class StandardCreateViewModel<T, Create> extends SaveCancelViewModel<Create> {
+class StandardCreateViewModel<T, Create> extends StatelessWidget {
   final CreateStandardService<T, Create> createService;
+  final FunctionOf1<Create, String> title;
+  final FunctionOf1<Create, Iterable<ViewProperty>> getLayoutMembers;
+  final int fixed;
+  final int maxFlex;
+  final bool normalize;
+  final DistributionType distribution;
+  final NavigationModel<StandardFlow> navigationModel;
 
-  StandardCreateViewModel(
-    BuildContext context,
-    NavigationModel<StandardFlow> navigationModel,
+  StandardCreateViewModel({
+    this.navigationModel,
     this.createService,
-  ) : super(
-          context,
-          navigationModel,
-        );
+    this.title,
+    this.getLayoutMembers,
+    this.fixed,
+    this.maxFlex,
+    this.normalize,
+    this.distribution,
+    Key key,
+  }) : super(key: key);
 
-  @override
-  Future<Create> get() async {
-    return await createService.getCreate();
-  }
-
-  @override
-  Future<void> set() async {
-    await createService.create(model);
+  Widget build(BuildContext context) {
+    return SaveCancelViewModel<Create>(
+      get: createService.getCreate,
+      set: createService.create,
+      getLayoutMembers: getLayoutMembers,
+      fixed: fixed,
+      maxFlex: maxFlex,
+      normalize: normalize,
+      distribution: distribution,
+      navigationModel: navigationModel,
+    );
   }
 }
 
-abstract class StandardUpdateViewModel<T, Get, Update> extends SaveCancelViewModel<Update> {
+class StandardUpdateViewModel<T, Get, Update> extends StatelessWidget {
   final UpdateStandardService<T, Get, Update> updateService;
+  final FunctionOf1<Update, String> title;
+  final FunctionOf1<Update, Iterable<ViewProperty>> getLayoutMembers;
+  final int fixed;
+  final int maxFlex;
+  final bool normalize;
+  final DistributionType distribution;
+  final NavigationModel<StandardFlow> navigationModel;
 
-  StandardUpdateViewModel(
-    BuildContext context,
-    NavigationModel<StandardFlow> navigationModel,
+  StandardUpdateViewModel({
+    this.navigationModel,
     this.updateService,
-  ) : super(
-          context,
-          navigationModel,
-        );
+    this.title,
+    this.getLayoutMembers,
+    this.fixed,
+    this.maxFlex,
+    this.normalize,
+    this.distribution,
+    Key key,
+  }) : super(key: key);
 
   @override
-  Future<Update> get() async {
-    final ValueNotifier<Get> param = getProvided();
-    return await updateService.getUpdate(param.value);
-  }
-
-  @override
-  Future<void> set() async {
-    await updateService.update(this.model);
+  Widget build(BuildContext context) {
+    return SaveCancelViewModel<Update>(
+      title: title,
+      get: () async {
+        final ValueNotifier<Get> param = Provider.of<ValueNotifier<Get>>(context);
+        return await updateService.getUpdate(param.value);
+      },
+      set: updateService.update,
+      getLayoutMembers: getLayoutMembers,
+      fixed: fixed,
+      maxFlex: maxFlex,
+      normalize: normalize,
+      distribution: distribution,
+      navigationModel: navigationModel,
+    );
   }
 }

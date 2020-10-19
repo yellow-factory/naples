@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:naples/widgets/title_widget.dart';
+import 'package:navy/navy.dart';
 import './snack_widget.dart';
 
 class BaseScaffoldWidget extends StatelessWidget {
   final Widget child;
+  final String title;
   final List<Widget> actions;
   final FloatingActionButton floatingAction;
   final double padding;
 
   BaseScaffoldWidget({
     @required this.child,
+    this.title,
     this.actions,
     this.floatingAction,
     this.padding = 16,
@@ -20,7 +22,7 @@ class BaseScaffoldWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: TitleWidget(),
+        title: title == null ? null : Text(title),
         actions: actions,
       ),
       body: Padding(
