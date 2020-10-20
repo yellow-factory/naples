@@ -80,7 +80,9 @@ class StandardCreateViewModel<T, Create> extends StatelessWidget {
   Widget build(BuildContext context) {
     return SaveCancelViewModel<Create>(
       get: createService.getCreate,
-      set: createService.create,
+      set: (m) async {
+        await createService.create(m);
+      },
       getLayoutMembers: getLayoutMembers,
       fixed: fixed,
       maxFlex: maxFlex,
@@ -121,7 +123,9 @@ class StandardUpdateViewModel<T, Get, Update> extends StatelessWidget {
         final ValueNotifier<Get> param = Provider.of<ValueNotifier<Get>>(context);
         return await updateService.getUpdate(param.value);
       },
-      set: updateService.update,
+      set: (m) async {
+        await updateService.update(m);
+      },
       getLayoutMembers: getLayoutMembers,
       fixed: fixed,
       maxFlex: maxFlex,

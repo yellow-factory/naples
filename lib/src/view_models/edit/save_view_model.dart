@@ -11,7 +11,7 @@ import 'package:navy/navy.dart';
 import 'package:naples/src/navigation/navigation.dart';
 import 'package:provider/provider.dart';
 
-class SaveCancelViewModel<T> extends StatefulWidget {
+class SaveCancelViewModel<T> extends StatelessWidget {
   final FunctionOf0<Future<T>> get;
   final FunctionOf1<T, Future<void>> set;
   final FunctionOf1<T, String> title;
@@ -35,25 +35,19 @@ class SaveCancelViewModel<T> extends StatefulWidget {
     Key key,
   }) : super(key: key);
 
-  @override
-  _SaveCancelViewModelState<T> createState() => _SaveCancelViewModelState<T>();
-}
-
-class _SaveCancelViewModelState<T> extends State<SaveCancelViewModel<T>> {
   Future<void> cancel() async {
-    var back = await widget.navigationModel.back();
+    var back = await navigationModel.back();
     print('Invoking back, result: $back');
   }
 
   Future<void> save(BuildContext context, T item) async {
-    await widget.set(item); //Send the changes to the backend
-    await widget.navigationModel.back(); //Returns to the previous view
+    await set(item); //Send the changes to the backend
+    await navigationModel.back(); //Returns to the previous view
     var snackModel = context.read<SnackModel>();
     snackModel.message = "Saved!"; //Sends a snack message
   }
 
-  Iterable<ViewProperty> visibleProperties(T t) => widget
-      .getLayoutMembers(t)
+  Iterable<ViewProperty> visibleProperties(T t) => getLayoutMembers(t)
       .whereType<ViewProperty>()
       .where((element) => element.isVisible == null || element.isVisible());
 
@@ -64,19 +58,19 @@ class _SaveCancelViewModelState<T> extends State<SaveCancelViewModel<T>> {
   @override
   Widget build(BuildContext context) {
     return GetLoader<T>(
-      get: widget.get,
+      get: get,
       builder: (item, loading) {
         final properties = visibleProperties(item);
         return BaseScaffoldWidget(
-          title: widget.title == null ? null : widget.title(item),
+          title: title == null ? null : title(item),
           child: Column(
             children: <Widget>[
               DynamicForm(
-                fixed: widget.fixed,
+                fixed: fixed,
                 children: properties,
-                maxFlex: widget.maxFlex,
-                normalize: widget.normalize,
-                distribution: widget.distribution,
+                maxFlex: maxFlex,
+                normalize: normalize,
+                distribution: distribution,
               ),
               ActionsWidget(
                 actions: <ActionWrap>[

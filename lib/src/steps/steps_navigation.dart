@@ -1,16 +1,11 @@
-//import 'dart:async';
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:naples/src/navigation/navigation.dart';
-import 'package:naples/src/steps/widgets/stepper_navigation_widget.dart';
-import 'package:provider/provider.dart';
-import 'package:naples/models.dart';
 import 'package:navy/navy.dart';
 
 abstract class StepsNavigationModel<T> extends NavigationModel<T> {
-  final FunctionOf0<String> title;
+  final FunctionOf1<BuildContext, String> title;
 
   StepsNavigationModel(
-    T defaultState,
     FunctionOf1<NavigationModel<T>, StateViewModel<T>> defaultCreateViewModelFunction, {
     this.title,
   }) : super(

@@ -20,7 +20,7 @@ class Transition<T> {
 
 class StateViewModel<T> extends StatelessWidget {
   final T state;
-  final String title;
+  final FunctionOf1<BuildContext, String> title;
   final FunctionOf1<BuildContext, Widget> builder;
   StateViewModel(
     this.state,

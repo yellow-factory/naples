@@ -23,12 +23,13 @@ class StepperNavigationWidget extends StatelessWidget {
       key: UniqueKey(),
       steps: [
         ...navigationModel.history.map((e) => Step(
-              title: e == null ? null : Text(e.title),
+              title: e == null ? null : Text(e.title(context)),
               content: e.builder(context),
               state: StepState.complete,
             )),
         Step(
-            title: currentStateViewModel == null ? null : Text(currentStateViewModel.title),
+            title:
+                currentStateViewModel == null ? null : Text(currentStateViewModel.title(context)),
             content: currentStateViewModel.builder(context),
             isActive: true,
             state: StepState.editing),
