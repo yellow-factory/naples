@@ -26,14 +26,14 @@ class SelectProperty<U, V> extends ModelProperty<U> {
     this.listItems,
     this.valueMember,
     this.displayMember, {
-    FunctionOf1<BuildContext, String> label,
-    FunctionOf1<BuildContext, String> hint,
+    FunctionOf0<String> label,
+    FunctionOf0<String> hint,
     int flex,
     bool autofocus = false,
     ActionOf1<U> setProperty,
     PredicateOf0 isVisible,
     PredicateOf0 isEditable,
-    FunctionOf2<BuildContext, U, String> isValid,
+    FunctionOf1<U, String> isValid,
     this.widgetType,
   }) : super(
           getProperty,

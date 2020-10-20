@@ -44,8 +44,8 @@ class _DateTimeViewModelPropertyWidgetState extends State<DateTimeViewModelPrope
       key: formFieldKey,
       controller: _controller,
       decoration: InputDecoration(
-        hintText: property.hint != null ? property.hint(context) : null,
-        labelText: property.label != null ? property.label(context) : null,
+        hintText: property.hint != null ? property.hint() : null,
+        labelText: property.label != null ? property.label() : null,
         suffixIcon: IconButton(
           icon: Icon(Icons.calendar_today_outlined),
           onPressed: () async {
@@ -58,7 +58,7 @@ class _DateTimeViewModelPropertyWidgetState extends State<DateTimeViewModelPrope
                 date;
             if (!property.onlyDate) date = await _showTimePicker(date) ?? date;
             property.currentValue = date;
-            if (property.validate(context) == null) property.update(context);
+            if (property.validate() == null) property.update();
             _controller.text = _setValue(property);
           },
         ),
@@ -67,7 +67,7 @@ class _DateTimeViewModelPropertyWidgetState extends State<DateTimeViewModelPrope
       readOnly: true,
       enableInteractiveSelection: false,
       autovalidateMode: AutovalidateMode.onUserInteraction,
-      validator: (_) => property.validate(context),
+      validator: (_) => property.validate(),
     );
   }
 

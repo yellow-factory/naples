@@ -9,7 +9,7 @@ class CheckboxViewModelPropertyWidget extends StatelessWidget {
     final property = context.watch<BoolProperty>();
     return StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
       return CheckboxListTile(
-        title: Text(property.label(context)),
+        title: Text(property.label()),
         controlAffinity: property.widgetPosition == BoolWidgetPosition.Leading
             ? ListTileControlAffinity.leading
             : ListTileControlAffinity.trailing,
@@ -18,7 +18,7 @@ class CheckboxViewModelPropertyWidget extends StatelessWidget {
             ? (value) {
                 setState(() {
                   property.currentValue = value;
-                  if (property.validate(context) == null) property.update(context);
+                  if (property.validate() == null) property.update();
                 });
               }
             : null,

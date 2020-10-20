@@ -21,9 +21,11 @@ class ActionsWidget extends StatelessWidget {
             child: Text(a.title.toUpperCase()),
             color: a.primary ? Theme.of(context).primaryColor : Theme.of(context).buttonColor,
             padding: EdgeInsets.all(15),
-            onPressed: () {
-              if (a.action != null) a.action();
-            },
+            onPressed: a.action == null
+                ? null
+                : () {
+                    a.action();
+                  },
           ),
       ],
     );

@@ -1,4 +1,3 @@
-import 'package:flutter/widgets.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/view_models/edit/properties/model_property.dart';
 
@@ -8,14 +7,14 @@ abstract class TextProperty<U> extends ModelProperty<U> {
 
   TextProperty(
     FunctionOf0<U> getProperty, {
-    FunctionOf1<BuildContext, String> label,
-    FunctionOf1<BuildContext, String> hint,
+    FunctionOf0<String> label,
+    FunctionOf0<String> hint,
     int flex = 1,
     bool autofocus = false,
     ActionOf1<U> setProperty,
     PredicateOf0 isVisible,
     PredicateOf0 isEditable,
-    FunctionOf2<BuildContext, U, String> isValid,
+    FunctionOf1<U, String> isValid,
     this.obscureText: false,
     this.maxLength = -1,
   }) : super(

@@ -13,7 +13,7 @@ class RadioListViewModelPropertyWidget<U, V> extends StatelessWidget {
       return Column(
         key: UniqueKey(),
         children: <Widget>[
-          ListTile(title: Text(property.label(context)), subtitle: Text(property.hint(context))),
+          ListTile(title: Text(property.label()), subtitle: Text(property.hint())),
           for (var item in property.listItems())
             RadioListTile<U>(
               title: Text(property.displayMember(item)()),
@@ -23,7 +23,7 @@ class RadioListViewModelPropertyWidget<U, V> extends StatelessWidget {
                   ? (U value) {
                       setState(() {
                         property.currentValue = value;
-                        if (property.validate(context) == null) property.update(context);
+                        if (property.validate() == null) property.update();
                       });
                     }
                   : null,

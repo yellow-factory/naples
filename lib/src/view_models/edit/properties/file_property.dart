@@ -9,8 +9,8 @@ class FileProperty extends ModelProperty<List<int>> {
 
   FileProperty(
     FunctionOf0<List<int>> getProperty, {
-    FunctionOf1<BuildContext, String> label,
-    FunctionOf1<BuildContext, String> hint,
+    FunctionOf0<String> label,
+    FunctionOf0<String> hint,
     int flex,
     bool autofocus = false,
     ActionOf1<List<int>> setProperty,
