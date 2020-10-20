@@ -6,9 +6,11 @@ import 'package:navy/navy.dart';
 import 'package:provider/provider.dart';
 
 class ContainerProperty extends ViewProperty {
-  final ViewModel container;
+  final FunctionOf1<BuildContext, String> label;
+  final Widget container;
 
   ContainerProperty(
+    this.label,
     this.container, {
     int flex = 1,
     PredicateOf0 isVisible,

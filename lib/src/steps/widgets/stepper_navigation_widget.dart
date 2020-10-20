@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:naples/naples.dart';
-import 'package:naples/src/steps/step_view_model.dart';
 import 'package:naples/src/steps/steps_navigation.dart';
-import 'package:naples/src/view_models/view_model.dart';
 import 'package:naples/widgets/actions_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:naples/src/navigation/navigation.dart';
@@ -19,24 +17,19 @@ class StepperNavigationWidget extends StatelessWidget {
     var currentStateViewModel =
         context.select<NavigationModel, StateViewModel>((nm) => nm.currentStateViewModel);
 
-    if (currentStateViewModel == null || currentStateViewModel.viewModel == null)
-      return Container();
-    var currentViewModel = currentStateViewModel.viewModel;
+    if (currentStateViewModel == null) return Container();
 
-    //Whenever ViewModel changes the widget must be rebuild
-    context.watch<ViewModel>();
-
-    var w = Stepper(
+    return Stepper(
       key: UniqueKey(),
       steps: [
         ...navigationModel.history.map((e) => Step(
-              title: Text(e.viewModel.title),
-              content: e.viewModel.widget,
+              title: e == null ? null : Text(e.title),
+              content: e.builder(context),
               state: StepState.complete,
             )),
         Step(
-            title: Text(currentViewModel.title),
-            content: currentViewModel.widget,
+            title: currentStateViewModel == null ? null : Text(currentStateViewModel.title),
+            content: currentStateViewModel.builder(context),
             isActive: true,
             state: StepState.editing),
       ],
@@ -71,8 +64,5 @@ class StepperNavigationWidget extends StatelessWidget {
             ));
       },
     );
-
-    //Registers the new ViewModel in order to lookup for changes
-    return ChangeNotifierProvider<ViewModel>.value(value: currentViewModel, child: w);
   }
 }

@@ -11,7 +11,7 @@ class ContainerPropertyWidget extends StatelessWidget {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(property.container.title),
+          Text(property.label(context)),
           IconButton(
             icon: Icon(Icons.add),
             onPressed: () {},
@@ -26,7 +26,7 @@ class ContainerPropertyWidget extends StatelessWidget {
       // ),
       backgroundColor: Colors.grey[200],
       children: [
-        SizedBox(height: 400, child: property.container.widget),
+        SizedBox(height: 400, child: property.container),
       ],
     );
   }

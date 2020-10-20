@@ -1,59 +1,67 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:naples/models.dart';
 import 'package:navy/navy.dart';
-import 'package:naples/src/view_models/view_model.dart';
 import 'package:meta/meta.dart';
 import 'dart:collection';
-import 'package:naples/widgets/navigation_widget.dart';
 
 class Transition<T> {
   final T beginningState;
   final T endingState;
   final bool allowBack;
-  final FunctionOf1<NavigationModel<T>, ViewModel> _createViewModelFunction;
+  final FunctionOf1<NavigationModel<T>, StateViewModel<T>> _createViewModelFunction;
 
   Transition(this.beginningState, this.endingState, this._createViewModelFunction, this.allowBack);
 
   Future<StateViewModel<T>> createStateViewModel(NavigationModel<T> navigationModel) async {
-    var viewModel = _createViewModelFunction(navigationModel);
-    if (viewModel == null) throw new Exception("ViewModel is null");
-    return StateViewModel<T>(endingState, viewModel);
+    return _createViewModelFunction(navigationModel);
   }
 }
 
-class StateViewModel<T> {
+class StateViewModel<T> extends StatelessWidget {
   final T state;
-  final ViewModel viewModel;
-  StateViewModel(this.state, this.viewModel);
+  final String title;
+  final FunctionOf1<BuildContext, Widget> builder;
+  StateViewModel(
+    this.state,
+    this.builder, {
+    this.title,
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return builder(context);
+  }
 }
 
-//T és el tipus que diferencia cadascun dels estats i per tant ViewModels diferents que hi pot haver
-abstract class NavigationModel<T> extends ChangeNotifier
-{
-  final BuildContext context;
-  final T _defaultState;
-  final FunctionOf1<NavigationModel<T>, ViewModel> _defaultCreateViewModelFunction;
+class NavigationModel<T> extends ChangeNotifier {
+  final FunctionOf1<NavigationModel<T>, StateViewModel<T>> _defaultCreateViewModelFunction;
   final List<Transition<T>> _transitions = List<Transition<T>>();
   final ListQueue<StateViewModel<T>> _history = ListQueue<StateViewModel<T>>();
   StateViewModel<T> _currentStateViewModel;
 
-  NavigationModel(this.context, this._defaultState, this._defaultCreateViewModelFunction) {
+  NavigationModel(this._defaultCreateViewModelFunction) {
     initialize();
   }
 
   void initialize() {
-    final viewModel = _defaultCreateViewModelFunction(this);
-    if (viewModel == null) throw new Exception("ViewModel is null");
-    final stateViewModel = StateViewModel<T>(_defaultState, viewModel);
+    final stateViewModel = _defaultCreateViewModelFunction(this);
     _updateCurrentStateViewModel(stateViewModel);
   }
 
+  void _updateCurrentStateViewModel(StateViewModel<T> stateViewModel) {
+    _currentStateViewModel = stateViewModel;
+    notifyListeners();
+  }
+
   @protected
-  void addTransition(T beginningState, T endingState,
-      FunctionOf1<NavigationModel<T>, ViewModel> viewModelTransform,
-      {bool allowBack = true}) {
+  void addTransition(
+    T beginningState,
+    T endingState,
+    FunctionOf1<NavigationModel<T>, StateViewModel<T>> viewModelTransform, {
+    bool allowBack = true,
+  }) {
     var transitionModel = Transition<T>(beginningState, endingState, viewModelTransform, allowBack);
     addTransitionModel(transitionModel);
   }
@@ -96,15 +104,9 @@ abstract class NavigationModel<T> extends ChangeNotifier
 
     //Creates and initialize the ViewModel
     var newStateViewModel = await transition.createStateViewModel(this);
-
     _updateCurrentStateViewModel(newStateViewModel);
 
     return true;
-  }
-
-  void _updateCurrentStateViewModel(StateViewModel<T> stateViewModel) {
-    _currentStateViewModel = stateViewModel;
-    notifyListeners();
   }
 
   bool get canGoBack => _history.isNotEmpty;
@@ -113,16 +115,7 @@ abstract class NavigationModel<T> extends ChangeNotifier
     if (!canGoBack) return false;
 
     //Get the last item in history
-    final last = _history.last;
-    ViewModel lastvm = last.viewModel;
-
-    //Refresh the ViewModel if implements Refreshable
-    if (lastvm is Refreshable) {
-      var rvm = lastvm as Refreshable;
-      rvm.refresh(); //Can be awaited but it locks the screen
-    }
-
-    _updateCurrentStateViewModel(last);
+    _updateCurrentStateViewModel(_history.last);
 
     //Removes the last from the history
     _history.removeLast();
@@ -146,18 +139,37 @@ abstract class NavigationModel<T> extends ChangeNotifier
 
     return _executeTransition(t);
   }
+}
 
-  Widget get widget {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<NavigationModel<T>>.value(value: this),
-        ChangeNotifierProvider<NavigationModel>.value(value: this),
-      ],
-      builder: (context, child) {
-        return ChangeNotifierProvider(
-            create: (_) => TitleModel(() => currentStateViewModel.viewModel.title),
-            child: NavigationWidget());
-      },
-    );
+class NavigationWidget<T> extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    var navigationModel = context.watch<NavigationModel<T>>();
+    var currentStateViewModel = navigationModel.currentStateViewModel;
+
+    if (currentStateViewModel == null) return Container();
+
+    return WillPopScope(
+        onWillPop: () async {
+          try {
+            var isBack = await navigationModel.back();
+            if (isBack) return false;
+            return true;
+          } catch (e) {
+            return false;
+          }
+        },
+        child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return SlideTransition(
+                  child: child,
+                  position: Tween<Offset>(begin: const Offset(-1, 0), end: Offset.zero)
+                      .animate(CurvedAnimation(curve: Curves.decelerate, parent: animation)));
+            },
+            child: Container(
+              key: ObjectKey(currentStateViewModel),
+              child: currentStateViewModel.builder(context),
+            )));
   }
 }
