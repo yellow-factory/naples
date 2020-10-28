@@ -3,10 +3,10 @@ import 'package:naples/navigation.dart';
 import 'package:naples/src/view_models/edit/dynamic_form.dart';
 import 'package:naples/src/view_models/edit/get_loader.dart';
 import 'package:naples/src/view_models/edit/properties/model_property.dart';
-import 'package:naples/src/view_models/edit/properties/view_property.dart';
 import 'package:naples/widgets/actions_widget.dart';
 import 'package:naples/widgets/base_scaffold_widget.dart';
 import 'package:naples/widgets/distribution_widget.dart';
+import 'package:naples/widgets/expandable.dart';
 import 'package:navy/navy.dart';
 
 class SingleStepViewModel<T> extends StatelessWidget {
@@ -14,7 +14,7 @@ class SingleStepViewModel<T> extends StatelessWidget {
   final FunctionOf0<Future<T>> get;
   final FunctionOf0<Future<void>> set;
   final FunctionOf1<T, String> title;
-  final FunctionOf1<T, Iterable<ViewProperty>> getLayoutMembers;
+  final FunctionOf1<T, Iterable<Expandable>> getLayoutMembers;
   final int fixed;
   final int maxFlex;
   final bool normalize;
@@ -33,12 +33,13 @@ class SingleStepViewModel<T> extends StatelessWidget {
     Key key,
   }) : super(key: key);
 
-  Iterable<ViewProperty> visibleProperties(T t) => getLayoutMembers(t)
-      .whereType<ViewProperty>()
-      .where((element) => element.isVisible == null || element.isVisible());
+  // Iterable<VProperty> visibleProperties(T t) => getLayoutMembers(t)
+  //     .whereType<ViewProperty>()
+  //     .where((element) => element.isVisible == null || element.isVisible());
 
-  bool valid(Iterable<ViewProperty> properties) {
-    return properties.whereType<ModelProperty>().every((element) => element.validate() == null);
+  bool valid(Iterable<ModelProperty> properties) {
+    return true;
+    //return properties.whereType<ModelProperty>().every((element) => element.validate() == null);
   }
 
   @override
@@ -46,7 +47,7 @@ class SingleStepViewModel<T> extends StatelessWidget {
     return GetLoader<T>(
       get: get,
       builder: (item, loading) {
-        final properties = visibleProperties(item);
+        final properties = getLayoutMembers(item);
         return BaseScaffoldWidget(
             title: title(item),
             child: Column(children: <Widget>[

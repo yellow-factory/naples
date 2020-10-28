@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:naples/widgets/actions_widget.dart';
+import 'package:naples/widgets/base_scaffold_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:navy/navy.dart';
 import 'package:meta/meta.dart';
@@ -9,12 +11,12 @@ class Transition<T> {
   final T beginningState;
   final T endingState;
   final bool allowBack;
-  final FunctionOf1<NavigationModel<T>, StateViewModel<T>> _createViewModelFunction;
+  final FunctionOf0<StateViewModel<T>> _createViewModelFunction;
 
   Transition(this.beginningState, this.endingState, this._createViewModelFunction, this.allowBack);
 
-  Future<StateViewModel<T>> createStateViewModel(NavigationModel<T> navigationModel) async {
-    return _createViewModelFunction(navigationModel);
+  Future<StateViewModel<T>> createStateViewModel() async {
+    return _createViewModelFunction();
   }
 }
 
@@ -36,7 +38,7 @@ class StateViewModel<T> extends StatelessWidget {
 }
 
 class NavigationModel<T> extends ChangeNotifier {
-  final FunctionOf1<NavigationModel<T>, StateViewModel<T>> _defaultCreateViewModelFunction;
+  final FunctionOf0<StateViewModel<T>> _defaultCreateViewModelFunction;
   final List<Transition<T>> _transitions = List<Transition<T>>();
   final ListQueue<StateViewModel<T>> _history = ListQueue<StateViewModel<T>>();
   StateViewModel<T> _currentStateViewModel;
@@ -46,7 +48,7 @@ class NavigationModel<T> extends ChangeNotifier {
   }
 
   void initialize() {
-    final stateViewModel = _defaultCreateViewModelFunction(this);
+    final stateViewModel = _defaultCreateViewModelFunction();
     _updateCurrentStateViewModel(stateViewModel);
   }
 
@@ -59,7 +61,7 @@ class NavigationModel<T> extends ChangeNotifier {
   void addTransition(
     T beginningState,
     T endingState,
-    FunctionOf1<NavigationModel<T>, StateViewModel<T>> viewModelTransform, {
+    FunctionOf0<StateViewModel<T>> viewModelTransform, {
     bool allowBack = true,
   }) {
     var transitionModel = Transition<T>(beginningState, endingState, viewModelTransform, allowBack);
@@ -103,7 +105,7 @@ class NavigationModel<T> extends ChangeNotifier {
     }
 
     //Creates and initialize the ViewModel
-    var newStateViewModel = await transition.createStateViewModel(this);
+    var newStateViewModel = await transition.createStateViewModel();
     _updateCurrentStateViewModel(newStateViewModel);
 
     return true;
@@ -160,16 +162,47 @@ class NavigationWidget<T> extends StatelessWidget {
           }
         },
         child: AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return SlideTransition(
-                  child: child,
-                  position: Tween<Offset>(begin: const Offset(-1, 0), end: Offset.zero)
-                      .animate(CurvedAnimation(curve: Curves.decelerate, parent: animation)));
-            },
-            child: Container(
-              key: ObjectKey(currentStateViewModel),
-              child: currentStateViewModel.builder(context),
-            )));
+          duration: const Duration(milliseconds: 300),
+          transitionBuilder: (Widget child, Animation<double> animation) {
+            return SlideTransition(
+                child: child,
+                position: Tween<Offset>(begin: const Offset(-1, 0), end: Offset.zero)
+                    .animate(CurvedAnimation(curve: Curves.decelerate, parent: animation)));
+          },
+          child: Container(
+            key: ObjectKey(currentStateViewModel),
+            child: currentStateViewModel.builder(context),
+
+            // child: Column(
+            //   children: <Widget>[
+            //     currentStateViewModel.builder(context),
+            //     ActionsWidget(
+            //       actions: <ActionWrap>[
+            //         ActionWrap(
+            //           navigationModel.canGoForward ? "Continua" : "Finalitza",
+            //           action: () async {
+            //             await navigationModel.forward();
+            //           },
+            //           primary: true,
+            //         ),
+            //         if (navigationModel.canGoBack)
+            //           ActionWrap(
+            //             "Torna",
+            //             action: () async {
+            //               await navigationModel.back();
+            //             },
+            //           ),
+            //       ],
+            //     ),
+            //   ],
+            // ),
+
+          ),
+        ));
   }
 }
+
+//TODO: Caldria combinar aquest amb el single_step_view_model.dart, però potser aquest no és el lloc 
+//adequat, el millor seria que hi hagués un widget que encapsulés el comportament d'afegir la botonera...
+
+//TODO: També caldria canviar la animació, que no funciona prou bé.

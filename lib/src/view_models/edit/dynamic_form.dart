@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:naples/src/view_models/edit/properties/view_property.dart';
 import 'package:naples/widgets/distribution_widget.dart';
+import 'package:naples/widgets/expandable.dart';
 
 class DynamicForm extends StatefulWidget {
-  final Iterable<ViewProperty> children;
+  final Iterable<Expandable> children;
   final int fixed;
   final int maxFlex;
   final bool normalize;
@@ -32,22 +32,15 @@ class _DynamicFormState extends State<DynamicForm> {
     return Form(
       key: _formKey,
       child: DistributionWidget(
-        <Expandable>[
-          for (var p in widget.children)
-            Expandable(
-                widget.childPadding == null
-                    ? p.widget
-                    : Container(
-                        child: p.widget,
-                        padding: widget.childPadding,
-                      ),
-                p.flex ?? 1)
-        ],
+        children: widget.children,
         distribution: widget.distribution,
         fixed: widget.fixed,
         maxFlex: widget.maxFlex,
         normalize: widget.normalize,
+        childPadding: widget.childPadding,
       ),
+      onChanged: () => _formKey.currentState.save(),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
     );
   }
 }

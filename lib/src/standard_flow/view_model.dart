@@ -1,10 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:naples/src/navigation/navigation.dart';
 import 'package:naples/src/standard_flow/service.dart';
-import 'package:naples/src/view_models/edit/properties/view_property.dart';
 import 'package:naples/src/view_models/edit/save_view_model.dart';
 import 'package:naples/src/view_models/list/filtered_view_model.dart';
 import 'package:naples/widgets/distribution_widget.dart';
+import 'package:naples/widgets/expandable.dart';
 import 'package:navy/navy.dart';
 import 'navigation.dart';
 import 'package:provider/provider.dart';
@@ -56,7 +56,7 @@ class StandardListViewModel<T, U> extends StatelessWidget {
 class StandardCreateViewModel<T, Create> extends StatelessWidget {
   final CreateStandardService<T, Create> createService;
   final FunctionOf1<Create, String> title;
-  final FunctionOf1<Create, Iterable<ViewProperty>> getLayoutMembers;
+  final FunctionOf1<Create, Iterable<Expandable>> getLayoutMembers;
   final int fixed;
   final int maxFlex;
   final bool normalize;
@@ -94,7 +94,7 @@ class StandardCreateViewModel<T, Create> extends StatelessWidget {
 class StandardUpdateViewModel<T, Get, Update> extends StatelessWidget {
   final UpdateStandardService<T, Get, Update> updateService;
   final FunctionOf1<Update, String> title;
-  final FunctionOf1<Update, Iterable<ViewProperty>> getLayoutMembers;
+  final FunctionOf1<Update, Iterable<Expandable>> getLayoutMembers;
   final int fixed;
   final int maxFlex;
   final bool normalize;

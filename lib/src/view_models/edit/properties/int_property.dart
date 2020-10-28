@@ -1,43 +1,55 @@
 import 'package:flutter/material.dart';
-import 'package:naples/src/view_models/edit/properties/text_property.dart';
-import 'package:naples/src/view_models/edit/properties/widgets/int_widget.dart';
+import 'package:flutter/services.dart';
 import 'package:navy/navy.dart';
-import 'package:provider/provider.dart';
+import 'package:naples/src/view_models/edit/properties/model_property.dart';
 
-class IntProperty extends TextProperty<int> {
+class IntProperty extends ModelProperty<int> {
+  final int maxLength;
+  final bool obscureText;
+
   IntProperty(
     FunctionOf0<int> getProperty, {
-    FunctionOf0<String> label,
-    FunctionOf0<String> hint,
+    String label,
+    String hint,
     int flex = 1,
     bool autofocus = false,
     ActionOf1<int> setProperty,
-    PredicateOf0 isVisible,
     PredicateOf0 isEditable,
     FunctionOf1<int, String> isValid,
-    bool obscureText = false,
-    int maxLength,
+    this.obscureText = false,
+    this.maxLength,
   }) : super(
-          getProperty,
+          getProperty: getProperty,
           label: label,
           hint: hint,
           flex: flex,
           autofocus: autofocus,
           setProperty: setProperty,
-          isVisible: isVisible,
           isEditable: isEditable,
           isValid: isValid,
-          obscureText: obscureText,
-          maxLength: maxLength,
         );
 
   @override
-  set serializedValue(String value) {
-    if (value == null || value.isEmpty) currentValue = 0;
-    currentValue = int.parse(value);
+  Widget build(BuildContext context) {
+    return TextFormField(
+      initialValue: (getProperty() ?? 0).toString(),
+      decoration: InputDecoration(
+        //filled: true,
+        hintText: hint,
+        labelText: label,
+      ),
+      enabled: isEditable == null ? true : isEditable(),
+      autofocus: autofocus,
+      validator: (x) => isValid(int.tryParse(x)),
+      keyboardType: TextInputType.number,
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly,
+        LengthLimitingTextInputFormatter(maxLength),
+      ],
+      obscureText: obscureText,
+      onSaved: (x) => setProperty(int.tryParse(x)),
+      // minLines: 1,
+      // maxLines: 3,
+    );
   }
-
-  @override
-  Widget get widget =>
-      ChangeNotifierProvider<IntProperty>.value(value: this, child: IntViewModelPropertyWidget());
 }

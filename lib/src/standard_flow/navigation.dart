@@ -6,13 +6,11 @@ enum StandardFlow { List, Create, Update }
 
 // T is the type of the param used to navigate from list to update
 class ListCreateUpdateStandardNavigationModel extends NavigationModel<StandardFlow> {
-  final FunctionOf1<NavigationModel<StandardFlow>, StateViewModel<StandardFlow>>
-      _createCreateViewModel;
-  final FunctionOf1<NavigationModel<StandardFlow>, StateViewModel<StandardFlow>>
-      _createUpdateViewModel;
+  final FunctionOf0<StateViewModel<StandardFlow>> _createCreateViewModel;
+  final FunctionOf0<StateViewModel<StandardFlow>> _createUpdateViewModel;
 
   ListCreateUpdateStandardNavigationModel(
-    FunctionOf1<NavigationModel<StandardFlow>, StateViewModel<StandardFlow>> createListViewModel,
+    FunctionOf0<StateViewModel<StandardFlow>> createListViewModel,
     this._createCreateViewModel,
     this._createUpdateViewModel,
   ) : super(

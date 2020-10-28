@@ -1,103 +1,80 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:naples/src/view_models/edit/properties/datetime_property.dart';
-import 'package:provider/provider.dart';
-import 'dart:async';
 
-class DateTimeViewModelPropertyWidget extends StatefulWidget {
-  @override
-  _DateTimeViewModelPropertyWidgetState createState() => _DateTimeViewModelPropertyWidgetState();
-}
+class DateTimeViewModelPropertyWidget extends FormField<DateTime> {
+  DateTimeViewModelPropertyWidget({
+    Key key,
+    String label,
+    String hint,
+    DateTime initialValue,
+    bool autofocus = false,
+    bool enabled = true,
+    FormFieldSetter<DateTime> onSaved,
+    FormFieldValidator<DateTime> validator,
+    DateTime firstDate,
+    DateTime lastDate,
+    DateFormat dateFormat,
+    bool onlyDate,
+  }) : super(
+          key: key,
+          onSaved: onSaved,
+          validator: validator,
+          initialValue: initialValue,
+          builder: (FormFieldState<DateTime> state) {
+            return TextField(
+              //key: formFieldKey,
+              controller: TextEditingController()
+                ..text = state.value != null ? dateFormat.format(state.value) : '',
+              decoration: InputDecoration(
+                hintText: hint,
+                labelText: label,
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.calendar_today_outlined),
+                  onPressed: () async {
+                    final DateTime datePicked = await showDatePicker(
+                          context: state.context,
+                          initialDate: state.value ?? DateTime.now(),
+                          firstDate: firstDate ?? DateTime(1900),
+                          lastDate: lastDate ?? DateTime(2100),
+                        ) ??
+                        state.value;
+                    //if (picked != null) state.didChange(picked);
+                    if (onlyDate) {
+                      if (state.value?.compareTo(datePicked) != 0) state.didChange(datePicked);
+                      return null; //?
+                    }
+                    final TimeOfDay time = TimeOfDay.fromDateTime(state.value ?? DateTime.now());
+                    final TimeOfDay timePicked = await showTimePicker(
+                          context: state.context,
+                          initialTime: time,
+                        ) ??
+                        time;
 
-class _DateTimeViewModelPropertyWidgetState extends State<DateTimeViewModelPropertyWidget> {
-  TextEditingController _controller;
-  DateFormat _dateFormat;
+                    if (datePicked != null || timePicked != null) {
+                      state.didChange(new DateTime(
+                        datePicked != null ? datePicked.year : DateTime.now(),
+                        datePicked != null ? datePicked.month : DateTime.now(),
+                        datePicked != null ? datePicked.day : DateTime.now(),
+                        timePicked.hour,
+                        timePicked.minute,
+                      ));
+                    }
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    var property = context.read<DateTimeProperty>();
-    if (property.dateFormat == null)
-      _dateFormat = DateFormat.yMd();
-    else
-      _dateFormat = DateFormat(property.dateFormat.pattern);
-    _controller.text = _setValue(property);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final property = context.watch<DateTimeProperty>();
-    final formFieldKey = GlobalObjectKey(property);
-
-    return TextFormField(
-      key: formFieldKey,
-      controller: _controller,
-      decoration: InputDecoration(
-        hintText: property.hint != null ? property.hint() : null,
-        labelText: property.label != null ? property.label() : null,
-        suffixIcon: IconButton(
-          icon: Icon(Icons.calendar_today_outlined),
-          onPressed: () async {
-            var date = property.currentValue ?? DateTime.now();
-            date = await _showDatePicker(
-                  date,
-                  property.firstDate ?? DateTime(1900),
-                  property.lastDate ?? DateTime(2100),
-                ) ??
-                date;
-            if (!property.onlyDate) date = await _showTimePicker(date) ?? date;
-            property.currentValue = date;
-            if (property.validate() == null) property.update();
-            _controller.text = _setValue(property);
+                    //   if (picked != null && picked != time) {
+                    //     return DateTime(
+                    //         date.year, date.month, date.day, picked.hour, picked.minute);
+                    //   }
+                    // }
+                    // property.currentValue = date;
+                    // if (property.validate() == null) property.update();
+                    // _controller.text = _setValue(property);
+                  },
+                ),
+              ),
+              autofocus: autofocus,
+              readOnly: true,
+              enableInteractiveSelection: false,
+            );
           },
-        ),
-      ),
-      autofocus: property.autofocus,
-      readOnly: true,
-      enableInteractiveSelection: false,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      validator: (_) => property.validate(),
-    );
-  }
-
-  String _setValue(DateTimeProperty property) {
-    if (property.currentValue == null) return null;
-    return _dateFormat.format(property.currentValue);
-  }
-
-  Future<DateTime> _showDatePicker(DateTime date, DateTime firstDate, DateTime lastDate) async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: date,
-      firstDate: firstDate,
-      lastDate: lastDate,
-    );
-    if (picked != null && picked != date) {
-      return picked;
-    }
-    return null;
-  }
-
-  Future<DateTime> _showTimePicker(DateTime date) async {
-    final TimeOfDay time = TimeOfDay.fromDateTime(date);
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: time,
-    );
-    if (picked != null && picked != time) {
-      return DateTime(date.year, date.month, date.day, picked.hour, picked.minute);
-    }
-    return null;
-  }
+        );
 }

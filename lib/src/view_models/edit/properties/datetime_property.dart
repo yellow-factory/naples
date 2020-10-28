@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:naples/src/view_models/edit/properties/widgets/datetime_widget.dart';
-import 'package:provider/provider.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/view_models/edit/properties/model_property.dart';
 
@@ -11,38 +10,44 @@ class DateTimeProperty extends ModelProperty<DateTime> {
   final DateTime firstDate;
   final DateTime lastDate;
 
-  DateTimeProperty(
-    FunctionOf0<DateTime> getProperty, {
-    FunctionOf0<String> label,
-    FunctionOf0<String> hint,
+  DateTimeProperty({
+    @required FunctionOf0<DateTime> getProperty,
+    String label,
+    String hint,
     int flex = 1,
     bool autofocus = false,
     ActionOf1<DateTime> setProperty,
-    PredicateOf0 isVisible,
     PredicateOf0 isEditable,
     FunctionOf1<DateTime, String> isValid,
-    this.dateFormat,
+    @required this.dateFormat,
     this.onlyDate = false,
     this.firstDate,
     this.lastDate,
   }) : super(
-          getProperty,
+          getProperty: getProperty,
           label: label,
           hint: hint,
           flex: flex,
           autofocus: autofocus,
           setProperty: setProperty,
-          isVisible: isVisible,
           isEditable: isEditable,
           isValid: isValid,
         );
 
   @override
-  Widget get widget => ChangeNotifierProvider<DateTimeProperty>.value(
-      value: this, child: DateTimeViewModelPropertyWidget());
-
-  @override
-  void initialize() {
-    currentValue = getProperty();
+  Widget build(BuildContext context) {
+    return DateTimeViewModelPropertyWidget(
+      label: label,
+      hint: hint,
+      autofocus: autofocus,
+      dateFormat: dateFormat,
+      enabled: isEditable == null ? true : isEditable(),
+      initialValue: getProperty(),
+      firstDate: firstDate,
+      lastDate: lastDate,
+      onSaved: setProperty,
+      validator: isValid,
+      onlyDate: onlyDate,
+    );
   }
 }

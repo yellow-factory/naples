@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:naples/src/view_models/edit/properties/markdown_property.dart';
 import 'package:navy/navy.dart';
 import 'package:mustache_template/mustache.dart';
@@ -6,17 +7,17 @@ import 'dart:convert';
 class MustacheProperty<T> extends MarkdownProperty {
   final T source;
 
-  MustacheProperty(
-    this.source,
-    FunctionOf0 template, {
+  MustacheProperty({
+    Key key,
+    @required this.source,
+    FunctionOf0 template,
     int flex = 99,
-    PredicateOf0 isVisible,
     double width,
     double height,
   }) : super(
-          template,
+          key: key,
+          markdown: template,
           flex: flex,
-          isVisible: isVisible,
           width: width,
           height: height,
         );

@@ -3,7 +3,7 @@
 export 'package:naples/src/view_models/edit/edit_view_model.dart';
 export 'package:naples/src/view_models/edit/save_view_model.dart';
 
-export 'package:naples/src/view_models/edit/properties/view_property.dart';
+export 'package:naples/src/view_models/edit/properties/model_property.dart';
 export 'package:naples/src/view_models/edit/properties/string_property.dart';
 export 'package:naples/src/view_models/edit/properties/int_property.dart';
 export 'package:naples/src/view_models/edit/properties/bool_property.dart';
@@ -18,6 +18,7 @@ export 'package:naples/src/view_models/edit/properties/container_property.dart';
 
 export 'package:naples/src/view_models/edit/dynamic_form.dart';
 export 'package:naples/src/view_models/edit/save_view_model.dart';
+export 'package:naples/src/view_models/edit/get_loader.dart';
 
 //TODO: Falten la resta de tipus: "double", etc.
 //       case "double":

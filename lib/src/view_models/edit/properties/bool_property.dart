@@ -1,12 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:naples/src/view_models/edit/properties/select_property.dart';
 import 'package:naples/src/view_models/edit/properties/widgets/radio_list_widget.dart';
 import 'package:naples/src/view_models/edit/properties/widgets/switch_widget.dart';
 import 'package:naples/src/view_models/edit/properties/widgets/checkbox_widget.dart';
 import 'package:naples/src/view_models/edit/properties/model_property.dart';
+import 'package:naples/widgets/expandable.dart';
 import 'package:navy/navy.dart';
-import 'package:provider/provider.dart';
 
 enum BoolWidgetType { Switch, Checkbox, Radio }
 enum BoolWidgetPosition { Leading, Trailing }
@@ -21,73 +20,81 @@ extension BoolValuesExtension on BoolValues {
   String get displayName => describeEnum(this);
 }
 
-class BoolProperty extends ModelProperty<bool> {
-  BoolWidgetType widgetType = BoolWidgetType.Checkbox;
-  BoolWidgetPosition widgetPosition = BoolWidgetPosition.Trailing;
-  FunctionOf1<BoolValues, FunctionOf0<String>> displayName = (t) => () => t.displayName;
+class BoolProperty extends ModelProperty<bool> implements Expandable {
+  final BoolWidgetType widgetType;
+  final BoolWidgetPosition widgetPosition;
+  final FunctionOf1<BoolValues, FunctionOf0<String>> displayName;
 
-  BoolProperty(
-    FunctionOf0<bool> getProperty, {
-    FunctionOf0<String> label,
-    FunctionOf0<String> hint,
+  BoolProperty({
+    @required FunctionOf0<bool> getProperty,
+    String label,
+    String hint,
     int flex,
     bool autofocus = false,
     ActionOf1<bool> setProperty,
-    PredicateOf0 isVisible,
     PredicateOf0 isEditable,
     FunctionOf1<bool, String> isValid,
-    this.widgetType,
-    this.widgetPosition,
+    this.widgetType = BoolWidgetType.Checkbox,
+    this.widgetPosition = BoolWidgetPosition.Leading,
     this.displayName,
   }) : super(
-          getProperty,
+          getProperty: getProperty ?? false,
           label: label,
           hint: hint,
           flex: flex,
           autofocus: autofocus,
           setProperty: setProperty,
-          isVisible: isVisible,
           isEditable: isEditable,
           isValid: isValid,
         );
 
   @override
-  void initialize() {
-    currentValue = this.getProperty() ?? false;
-  }
+  Widget build(BuildContext context) {
+    final controlAffinity = widgetPosition == BoolWidgetPosition.Leading
+        ? ListTileControlAffinity.leading
+        : ListTileControlAffinity.trailing;
 
-  SelectProperty<bool, BoolValues> toSelect() {
-    return SelectProperty<bool, BoolValues>(
-      this.getProperty,
-      () => BoolValues.values,
-      (t) => t.boolValue,
-      displayName,
-      flex: flex,
+    final defaultWidget = CheckboxViewModelPropertyWidget(
+      autofocus: autofocus,
+      enabled: isEditable == null ? true : isEditable(),
       label: label,
       hint: hint,
-      autofocus: autofocus,
-      isEditable: isEditable,
-      isValid: isValid,
-      setProperty: setProperty,
-      widgetType: SelectWidgetType.Radio,
+      initialValue: getProperty(),
+      onSaved: setProperty,
+      validator: isValid,
+      controlAffinity: controlAffinity,
     );
-  }
 
-  @override
-  Widget get widget {
     switch (widgetType) {
       case BoolWidgetType.Switch:
-        return ChangeNotifierProvider<BoolProperty>.value(
-            value: this, child: SwitchViewModelPropertyWidget());
+        return SwitchViewModelPropertyWidget(
+          autofocus: autofocus,
+          enabled: isEditable == null ? true : isEditable(),
+          label: label,
+          hint: hint,
+          initialValue: getProperty(),
+          onSaved: setProperty,
+          validator: isValid,
+          controlAffinity: controlAffinity,
+        );
       case BoolWidgetType.Checkbox:
-        return ChangeNotifierProvider<BoolProperty>.value(
-            value: this, child: CheckboxViewModelPropertyWidget());
+        return defaultWidget;
       case BoolWidgetType.Radio:
-        return ChangeNotifierProvider.value(
-            value: toSelect(), child: RadioListViewModelPropertyWidget<bool, BoolValues>());
+        return RadioListViewModelPropertyWidget<bool, BoolValues>(
+          autofocus: autofocus,
+          enabled: isEditable == null ? true : isEditable(),
+          label: label,
+          hint: hint,
+          initialValue: getProperty(),
+          onSaved: setProperty,
+          validator: isValid,
+          controlAffinity: controlAffinity,
+          listItems: () => BoolValues.values,
+          valueMember: (t) => t.boolValue,
+          displayMember: displayName ?? (t) => () => t.displayName,
+        );
       default:
-        return ChangeNotifierProvider<BoolProperty>.value(
-            value: this, child: CheckboxViewModelPropertyWidget());
+        return defaultWidget;
     }
   }
 }

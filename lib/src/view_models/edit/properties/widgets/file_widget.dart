@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:naples/src/view_models/edit/properties/file_property.dart';
-import 'package:provider/provider.dart';
 
 class FileViewModelPropertyWidget extends StatelessWidget {
+  final String label;
+  final String hint;
+
+  FileViewModelPropertyWidget({
+    Key key,
+    this.label,
+    this.hint,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    final property = context.watch<FileProperty>();
     return Card(
         key: UniqueKey(),
         margin: EdgeInsets.symmetric(horizontal: 0, vertical: 5),
         child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
           ListTile(
             leading: Icon(Icons.attachment_outlined),
-            title: Text(property.label()),
-            subtitle: Text(property.hint()),
+            title: Text(label),
+            subtitle: Text(hint),
           ),
           ButtonBar(
             children: <Widget>[

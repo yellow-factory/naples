@@ -1,12 +1,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:naples/models.dart';
 import 'package:naples/src/view_models/edit/get_loader.dart';
-import 'package:naples/src/view_models/edit/properties/model_property.dart';
-import 'package:naples/src/view_models/edit/properties/view_property.dart';
 import 'package:naples/steps.dart';
 import 'package:naples/widgets/actions_widget.dart';
 import 'package:naples/widgets/base_scaffold_widget.dart';
 import 'package:naples/widgets/distribution_widget.dart';
+import 'package:naples/widgets/expandable.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/navigation/navigation.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +14,7 @@ class SaveCancelViewModel<T> extends StatelessWidget {
   final FunctionOf0<Future<T>> get;
   final FunctionOf1<T, Future<void>> set;
   final FunctionOf1<T, String> title;
-  final FunctionOf1<T, Iterable<ViewProperty>> getLayoutMembers;
+  final FunctionOf1<T, Iterable<Expandable>> getLayoutMembers;
   final int fixed;
   final int maxFlex;
   final bool normalize;
@@ -47,12 +46,9 @@ class SaveCancelViewModel<T> extends StatelessWidget {
     snackModel.message = "Saved!"; //Sends a snack message
   }
 
-  Iterable<ViewProperty> visibleProperties(T t) => getLayoutMembers(t)
-      .whereType<ViewProperty>()
-      .where((element) => element.isVisible == null || element.isVisible());
-
-  bool valid(Iterable<ViewProperty> properties) {
-    return properties.whereType<ModelProperty>().every((element) => element.validate() == null);
+  bool valid(Iterable<Expandable> properties) {
+    return true;
+    //return properties.every((element) => element.isValid(element) == null);
   }
 
   @override
@@ -60,7 +56,7 @@ class SaveCancelViewModel<T> extends StatelessWidget {
     return GetLoader<T>(
       get: get,
       builder: (item, loading) {
-        final properties = visibleProperties(item);
+        final properties = getLayoutMembers(item);
         return BaseScaffoldWidget(
           title: title == null ? null : title(item),
           child: Column(
