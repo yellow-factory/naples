@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:naples/models.dart';
+import 'package:naples/src/view_models/edit/dynamic_form.dart';
 import 'package:naples/src/view_models/edit/get_loader.dart';
-import 'package:naples/steps.dart';
 import 'package:naples/widgets/actions_widget.dart';
 import 'package:naples/widgets/base_scaffold_widget.dart';
 import 'package:naples/widgets/distribution_widget.dart';

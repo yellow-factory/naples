@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:naples/naples.dart';
-import 'package:naples/src/steps/steps_navigation.dart';
 import 'package:naples/widgets/actions_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:naples/src/navigation/navigation.dart';
@@ -11,7 +10,7 @@ import 'package:naples/src/navigation/navigation.dart';
 class StepperNavigationWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var navigationModel = Provider.of<StepsNavigationModel>(context, listen: false);
+    var navigationModel = Provider.of<NavigationModel>(context, listen: false);
 
     //Tracks the current viewmodel of the NavigationModel that must be of RawStepViewModel
     var currentStateViewModel =
@@ -67,3 +66,6 @@ class StepperNavigationWidget extends StatelessWidget {
     );
   }
 }
+
+
+//TODO: Localize

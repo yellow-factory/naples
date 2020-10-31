@@ -1,8 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:naples/widgets/actions_widget.dart';
-import 'package:naples/widgets/base_scaffold_widget.dart';
-import 'package:provider/provider.dart';
 import 'package:navy/navy.dart';
 import 'package:meta/meta.dart';
 import 'dart:collection';
@@ -142,67 +139,3 @@ class NavigationModel<T> extends ChangeNotifier {
     return _executeTransition(t);
   }
 }
-
-class NavigationWidget<T> extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    var navigationModel = context.watch<NavigationModel<T>>();
-    var currentStateViewModel = navigationModel.currentStateViewModel;
-
-    if (currentStateViewModel == null) return Container();
-
-    return WillPopScope(
-        onWillPop: () async {
-          try {
-            var isBack = await navigationModel.back();
-            if (isBack) return false;
-            return true;
-          } catch (e) {
-            return false;
-          }
-        },
-        child: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          transitionBuilder: (Widget child, Animation<double> animation) {
-            return SlideTransition(
-                child: child,
-                position: Tween<Offset>(begin: const Offset(-1, 0), end: Offset.zero)
-                    .animate(CurvedAnimation(curve: Curves.decelerate, parent: animation)));
-          },
-          child: Container(
-            key: ObjectKey(currentStateViewModel),
-            child: currentStateViewModel.builder(context),
-
-            // child: Column(
-            //   children: <Widget>[
-            //     currentStateViewModel.builder(context),
-            //     ActionsWidget(
-            //       actions: <ActionWrap>[
-            //         ActionWrap(
-            //           navigationModel.canGoForward ? "Continua" : "Finalitza",
-            //           action: () async {
-            //             await navigationModel.forward();
-            //           },
-            //           primary: true,
-            //         ),
-            //         if (navigationModel.canGoBack)
-            //           ActionWrap(
-            //             "Torna",
-            //             action: () async {
-            //               await navigationModel.back();
-            //             },
-            //           ),
-            //       ],
-            //     ),
-            //   ],
-            // ),
-
-          ),
-        ));
-  }
-}
-
-//TODO: Caldria combinar aquest amb el single_step_view_model.dart, però potser aquest no és el lloc 
-//adequat, el millor seria que hi hagués un widget que encapsulés el comportament d'afegir la botonera...
-
-//TODO: També caldria canviar la animació, que no funciona prou bé.
