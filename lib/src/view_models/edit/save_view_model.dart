@@ -4,7 +4,6 @@ import 'package:naples/src/navigation/will_pop_scope_navigation_widget.dart';
 import 'package:naples/src/view_models/edit/dynamic_form.dart';
 import 'package:naples/src/view_models/edit/get_loader.dart';
 import 'package:naples/widgets/actions_widget.dart';
-import 'package:naples/widgets/back_forward_animation_widget.dart';
 import 'package:naples/widgets/base_scaffold_widget.dart';
 import 'package:naples/widgets/distribution_widget.dart';
 import 'package:naples/widgets/expandable.dart';
@@ -12,7 +11,7 @@ import 'package:navy/navy.dart';
 import 'package:naples/src/navigation/navigation.dart';
 import 'package:provider/provider.dart';
 
-class SaveCancelViewModel<T> extends StatelessWidget {
+class SaveCancelViewModel<T> extends StatefulWidget {
   final FunctionOf0<Future<T>> get;
   final FunctionOf1<T, Future<void>> set;
   final FunctionOf1<T, String> title;
@@ -36,53 +35,58 @@ class SaveCancelViewModel<T> extends StatelessWidget {
     Key key,
   }) : super(key: key);
 
+  @override
+  _SaveCancelViewModelState<T> createState() => _SaveCancelViewModelState<T>();
+}
+
+class _SaveCancelViewModelState<T> extends State<SaveCancelViewModel<T>> {
+  final _dynamicFormKey = GlobalKey<DynamicFormState>();
+  bool _valid = false;
+
   Future<void> cancel() async {
-    var back = await navigationModel.back();
+    var back = await widget.navigationModel.back();
     print('Invoking back, result: $back');
   }
 
   Future<void> save(BuildContext context, T item) async {
-    await set(item); //Send the changes to the backend
-    await navigationModel.back(); //Returns to the previous view
+    await widget.set(item); //Send the changes to the backend
+    await widget.navigationModel.back(); //Returns to the previous view
     var snackModel = context.read<SnackModel>();
     snackModel.message = "Saved!"; //Sends a snack message
-  }
-
-  bool valid(Iterable<Expandable> properties) {
-    return true;
-    //return properties.every((element) => element.isValid(element) == null);
   }
 
   @override
   Widget build(BuildContext context) {
     return GetLoader<T>(
-      get: get,
+      get: widget.get,
       builder: (item, loading) {
-        final properties = getLayoutMembers(item);
+        final properties = widget.getLayoutMembers(item);
         return WillPopScopeNavigationWidget(
           child: BaseScaffoldWidget(
-            title: title == null ? null : title(item),
+            title: widget.title == null ? null : widget.title(item),
             child: Column(
               children: <Widget>[
                 DynamicForm(
-                  fixed: fixed,
+                  key: _dynamicFormKey,
+                  fixed: widget.fixed,
                   children: properties,
-                  maxFlex: maxFlex,
-                  normalize: normalize,
-                  distribution: distribution,
+                  maxFlex: widget.maxFlex,
+                  normalize: widget.normalize,
+                  distribution: widget.distribution,
+                  onChanged: () {
+                    setState(() {
+                      _valid = _dynamicFormKey.currentState.valid;
+                    });
+                  },
                 ),
                 ActionsWidget(
                   actions: <ActionWrap>[
                     ActionWrap(
                       "Save",
-                      action: !valid(properties)
+                      action: !_valid
                           ? null
                           : () async {
-                              if (!valid(properties)) {
-                                print("Invalid properties");
-                                return;
-                              }
-                              save(context, item);
+                              await save(context, item);
                             },
                       primary: true,
                     ),

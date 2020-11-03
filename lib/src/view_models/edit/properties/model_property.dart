@@ -26,4 +26,6 @@ abstract class ModelProperty<U> extends Expandable {
       this.isEditable,
       this.isValid})
       : super(key: key);
+
+  bool get initialValid => isValid == null ? true : isValid(getProperty()) == null;
 }

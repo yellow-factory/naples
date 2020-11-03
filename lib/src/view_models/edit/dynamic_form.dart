@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:naples/widgets/distribution_widget.dart';
 import 'package:naples/widgets/expandable.dart';
+import 'package:naples/edit.dart';
 
 class DynamicForm extends StatefulWidget {
   final Iterable<Expandable> children;
@@ -9,6 +10,7 @@ class DynamicForm extends StatefulWidget {
   final bool normalize;
   final DistributionType distribution;
   final EdgeInsetsGeometry childPadding;
+  final VoidCallback onChanged;
 
   DynamicForm(
       {Key key,
@@ -17,15 +19,25 @@ class DynamicForm extends StatefulWidget {
       this.maxFlex = 1,
       this.normalize = true,
       this.distribution = DistributionType.LeftToRight,
-      this.childPadding = const EdgeInsets.only(right: 10)})
+      this.childPadding = const EdgeInsets.only(right: 10),
+      this.onChanged})
       : super(key: key);
 
   @override
-  _DynamicFormState createState() => _DynamicFormState();
+  DynamicFormState createState() => DynamicFormState();
 }
 
-class _DynamicFormState extends State<DynamicForm> {
+class DynamicFormState extends State<DynamicForm> {
   final _formKey = GlobalKey<FormState>();
+  bool _valid = false;
+
+  bool get valid => _valid;
+
+  @override
+  void initState() {
+    _valid = !widget.children.whereType<ModelProperty>().any((element) => !element.initialValid);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +51,15 @@ class _DynamicFormState extends State<DynamicForm> {
         normalize: widget.normalize,
         childPadding: widget.childPadding,
       ),
-      onChanged: () => _formKey.currentState.save(),
+      onChanged: () {
+        if (_formKey.currentState == null) return;
+        _formKey.currentState.save();
+        var isValid = _formKey.currentState.validate();
+        setState(() {
+          _valid = isValid;
+        });
+        if (widget.onChanged != null) widget.onChanged();
+      },
       autovalidateMode: AutovalidateMode.onUserInteraction,
     );
   }

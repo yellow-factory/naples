@@ -29,6 +29,8 @@ class IntProperty extends ModelProperty<int> {
           isValid: isValid,
         );
 
+  int _getValue(String x) => int.tryParse(x);
+
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -39,15 +41,15 @@ class IntProperty extends ModelProperty<int> {
         labelText: label,
       ),
       enabled: isEditable == null ? true : isEditable(),
-      autofocus: autofocus,
-      validator: (x) => isValid(int.tryParse(x)),
+      autofocus: autofocus ?? false,
+      validator: isValid == null ? null : (x) => isValid(_getValue(x)),
       keyboardType: TextInputType.number,
       inputFormatters: [
         FilteringTextInputFormatter.digitsOnly,
         LengthLimitingTextInputFormatter(maxLength),
       ],
       obscureText: obscureText,
-      onSaved: (x) => setProperty(int.tryParse(x)),
+      onSaved: setProperty == null ? null : (x) => setProperty(_getValue(x)),
       // minLines: 1,
       // maxLines: 3,
     );

@@ -17,6 +17,20 @@ class Transition<T> {
   }
 }
 
+class ViewModel extends StatefulWidget {
+  @override
+  _ViewModelState createState() => _ViewModelState();
+}
+
+class _ViewModelState extends State<ViewModel> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      
+    );
+  }
+}
+
 class StateViewModel<T> extends StatelessWidget {
   final T state;
   final FunctionOf1<BuildContext, String> title;
