@@ -36,7 +36,7 @@ class DynamicList<T> extends StatelessWidget {
           controller: _scrollController,
           itemCount: items.length,
           itemBuilder: (BuildContext ctx, int index) {
-            if (index >= items.length) return Container();
+            if (index >= items.length) return SizedBox();
             final model = items[index];
             return Card(
               child: ListTile(

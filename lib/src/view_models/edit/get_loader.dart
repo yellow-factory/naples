@@ -42,7 +42,7 @@ class GetLoaderState<T> extends State<GetLoader<T>> {
 
   @override
   Widget build(BuildContext context) {
-    if (_item == null) return Container();
+    if (_item == null) return SizedBox();
     return widget.builder(_item, loading);
   }
 }

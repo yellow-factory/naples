@@ -20,11 +20,11 @@ class SelectProperty<U, V> extends ModelProperty<U> {
   //Function to display the member as String
   final FunctionOf1<V, FunctionOf0<String>> displayMember;
 
-  SelectProperty(
+  SelectProperty({
     FunctionOf0<U> getProperty,
     this.listItems,
     this.valueMember,
-    this.displayMember, {
+    this.displayMember,
     String label,
     String hint,
     int flex,

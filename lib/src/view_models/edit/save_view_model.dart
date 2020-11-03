@@ -1,8 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:naples/models.dart';
+import 'package:naples/src/navigation/will_pop_scope_navigation_widget.dart';
 import 'package:naples/src/view_models/edit/dynamic_form.dart';
 import 'package:naples/src/view_models/edit/get_loader.dart';
 import 'package:naples/widgets/actions_widget.dart';
+import 'package:naples/widgets/back_forward_animation_widget.dart';
 import 'package:naples/widgets/base_scaffold_widget.dart';
 import 'package:naples/widgets/distribution_widget.dart';
 import 'package:naples/widgets/expandable.dart';
@@ -57,39 +59,41 @@ class SaveCancelViewModel<T> extends StatelessWidget {
       get: get,
       builder: (item, loading) {
         final properties = getLayoutMembers(item);
-        return BaseScaffoldWidget(
-          title: title == null ? null : title(item),
-          child: Column(
-            children: <Widget>[
-              DynamicForm(
-                fixed: fixed,
-                children: properties,
-                maxFlex: maxFlex,
-                normalize: normalize,
-                distribution: distribution,
-              ),
-              ActionsWidget(
-                actions: <ActionWrap>[
-                  ActionWrap(
-                    "Save",
-                    action: !valid(properties)
-                        ? null
-                        : () async {
-                            if (!valid(properties)) {
-                              print("Invalid properties");
-                              return;
-                            }
-                            save(context, item);
-                          },
-                    primary: true,
-                  ),
-                  ActionWrap(
-                    "Cancel",
-                    action: () async => cancel(),
-                  ),
-                ],
-              ),
-            ],
+        return WillPopScopeNavigationWidget(
+          child: BaseScaffoldWidget(
+            title: title == null ? null : title(item),
+            child: Column(
+              children: <Widget>[
+                DynamicForm(
+                  fixed: fixed,
+                  children: properties,
+                  maxFlex: maxFlex,
+                  normalize: normalize,
+                  distribution: distribution,
+                ),
+                ActionsWidget(
+                  actions: <ActionWrap>[
+                    ActionWrap(
+                      "Save",
+                      action: !valid(properties)
+                          ? null
+                          : () async {
+                              if (!valid(properties)) {
+                                print("Invalid properties");
+                                return;
+                              }
+                              save(context, item);
+                            },
+                      primary: true,
+                    ),
+                    ActionWrap(
+                      "Cancel",
+                      action: () async => cancel(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },

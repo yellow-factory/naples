@@ -13,17 +13,13 @@ import 'package:provider/provider.dart';
 //U is the type of the model that is the key to select
 class StandardListViewModel<T, U> extends StatelessWidget {
   final FunctionOf1<T, U> keySelector;
-  final ListStandardService<T> listService;
-  final NavigationModel<StandardFlow> navigationModel;
   final FunctionOf1<T, String> itemTitle;
   final FunctionOf1<T, String> itemSubtitle;
   final FunctionOf1<int, String> title;
 
-  StandardListViewModel(
-    this.listService,
-    this.navigationModel,
-    this.keySelector,
-    this.itemTitle, {
+  StandardListViewModel({
+    @required this.keySelector,
+    this.itemTitle,
     this.itemSubtitle,
     this.title,
     Key key,
@@ -31,6 +27,8 @@ class StandardListViewModel<T, U> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var listService = context.watch<ListStandardService<T>>();
+    var navigationModel = context.watch<NavigationModel<StandardFlow>>();
     return FilteredViewModel(
       title: title,
       getStream: listService.list,
@@ -54,28 +52,26 @@ class StandardListViewModel<T, U> extends StatelessWidget {
 }
 
 class StandardCreateViewModel<T, Create> extends StatelessWidget {
-  final CreateStandardService<T, Create> createService;
   final FunctionOf1<Create, String> title;
   final FunctionOf1<Create, Iterable<Expandable>> getLayoutMembers;
   final int fixed;
   final int maxFlex;
   final bool normalize;
   final DistributionType distribution;
-  final NavigationModel<StandardFlow> navigationModel;
 
   StandardCreateViewModel({
-    this.navigationModel,
-    this.createService,
     this.title,
     this.getLayoutMembers,
-    this.fixed,
-    this.maxFlex,
-    this.normalize,
+    this.fixed = 1,
+    this.maxFlex = 1,
+    this.normalize = true,
     this.distribution,
     Key key,
   }) : super(key: key);
 
   Widget build(BuildContext context) {
+    var createService = context.watch<CreateStandardService<T, Create>>();
+    var navigationModel = context.watch<NavigationModel<StandardFlow>>();
     return SaveCancelViewModel<Create>(
       get: createService.getCreate,
       set: (m) async {
@@ -92,29 +88,27 @@ class StandardCreateViewModel<T, Create> extends StatelessWidget {
 }
 
 class StandardUpdateViewModel<T, Get, Update> extends StatelessWidget {
-  final UpdateStandardService<T, Get, Update> updateService;
   final FunctionOf1<Update, String> title;
   final FunctionOf1<Update, Iterable<Expandable>> getLayoutMembers;
   final int fixed;
   final int maxFlex;
   final bool normalize;
   final DistributionType distribution;
-  final NavigationModel<StandardFlow> navigationModel;
 
   StandardUpdateViewModel({
-    this.navigationModel,
-    this.updateService,
     this.title,
     this.getLayoutMembers,
-    this.fixed,
-    this.maxFlex,
-    this.normalize,
+    this.fixed = 1,
+    this.maxFlex = 1,
+    this.normalize = true,
     this.distribution,
     Key key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var updateService = context.watch<UpdateStandardService<T, Get, Update>>();
+    var navigationModel = context.watch<NavigationModel<StandardFlow>>();
     return SaveCancelViewModel<Update>(
       title: title,
       get: () async {

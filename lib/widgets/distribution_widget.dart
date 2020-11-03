@@ -41,9 +41,9 @@ class DistributionWidget extends StatelessWidget {
   DistributionWidget({
     @required this.children,
     Key key,
-    this.fixed,
-    this.maxFlex,
-    this.normalize,
+    this.fixed = 1,
+    this.maxFlex = 1,
+    this.normalize = true,
     this.distribution = DistributionType.LeftToRight,
     this.childPadding,
   }) : super(key: key);

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:naples/widgets/back_forward_animation_widget.dart';
 import 'package:naples/src/navigation/navigation.dart';
-import 'package:naples/src/navigation/navigation_widget.dart';
 import 'package:naples/widgets/actions_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -10,40 +10,23 @@ class StepNavigationWidget extends StatefulWidget {
 }
 
 class _StepNavigationWidgetState extends State<StepNavigationWidget> {
-  double xBeginPosition = 1;
-
+  final key = GlobalKey<BackForwardAnimationWidgetState>();
   @override
   Widget build(BuildContext context) {
     var navigationModel = context.watch<NavigationModel>();
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 500),
-      switchInCurve: Curves.easeInOutQuart,
-      switchOutCurve: Curves.fastOutSlowIn,
-      reverseDuration: const Duration(milliseconds: 0),
-      transitionBuilder: (Widget child, Animation<double> animation) {
-        return SlideTransition(
-          child: child,
-          position: Tween<Offset>(
-            begin: Offset(xBeginPosition, 0),
-            end: const Offset(0, 0),
-          ).animate(
-            CurvedAnimation(
-              curve: Curves.decelerate,
-              parent: animation,
-            ),
-          ),
-        );
-      },
+    if (navigationModel.currentStateViewModel == null) return SizedBox();
+    return BackForwardAnimationWidget(
+      key: key,
       child: Column(
-        key: ValueKey(navigationModel.currentStateViewModel.state),
+        key: ValueKey(navigationModel.currentStateViewModel.state.toString()),
         children: <Widget>[
-          NavigationWidget(),
+          navigationModel.currentStateViewModel.builder(context),
           ActionsWidget(
             actions: <ActionWrap>[
               ActionWrap(
                 navigationModel.canGoForward ? "Continua" : "Finalitza",
                 action: () async {
-                  setState(() => xBeginPosition = 1);
+                  key.currentState.direction = BackForwardAnimationDirection.Forward;
                   await navigationModel.forward();
                 },
                 primary: true,
@@ -52,7 +35,7 @@ class _StepNavigationWidgetState extends State<StepNavigationWidget> {
                 ActionWrap(
                   "Torna",
                   action: () async {
-                    setState(() => xBeginPosition = -1);
+                    key.currentState.direction = BackForwardAnimationDirection.Back;
                     await navigationModel.back();
                   },
                 ),

@@ -7,25 +7,11 @@ class NavigationWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var navigationModel = context.watch<NavigationModel>();
-    var currentStateViewModel = navigationModel.currentStateViewModel;
-
-    if (currentStateViewModel == null) return Container();
-
-    return WillPopScope(
-      onWillPop: () async {
-        try {
-          var isBack = await navigationModel.back();
-          if (isBack) return false;
-          return true;
-        } catch (e) {
-          return false;
-        }
-      },
-
-      child: currentStateViewModel.builder(context),
+    var currentStateViewModel = context.select<NavigationModel, StateViewModel>(
+      (value) => value.currentStateViewModel,
     );
+    if (currentStateViewModel == null) return SizedBox();
+    var w = currentStateViewModel.builder(context);
+    return w;
   }
 }
-
-//TODO: També caldria canviar la animació, que no funciona prou bé.

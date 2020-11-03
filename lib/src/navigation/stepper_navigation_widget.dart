@@ -16,7 +16,7 @@ class StepperNavigationWidget extends StatelessWidget {
     var currentStateViewModel =
         context.select<NavigationModel, StateViewModel>((nm) => nm.currentStateViewModel);
 
-    if (currentStateViewModel == null) return Container();
+    if (currentStateViewModel == null) return SizedBox();
 
     return Stepper(
       key: UniqueKey(),

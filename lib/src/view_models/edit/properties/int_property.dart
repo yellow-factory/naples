@@ -7,8 +7,8 @@ class IntProperty extends ModelProperty<int> {
   final int maxLength;
   final bool obscureText;
 
-  IntProperty(
-    FunctionOf0<int> getProperty, {
+  IntProperty({
+    FunctionOf0<int> getProperty,
     String label,
     String hint,
     int flex = 1,
