@@ -21,5 +21,3 @@ class ScaffoldStepNavigationWidget<T> extends StatelessWidget {
     );
   }
 }
-
-//TODO: És necessari?

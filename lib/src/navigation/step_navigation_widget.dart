@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:naples/naples.dart';
 import 'package:naples/widgets/back_forward_animation_widget.dart';
 import 'package:naples/src/navigation/navigation.dart';
 import 'package:naples/widgets/actions_widget.dart';
@@ -24,7 +25,9 @@ class _StepNavigationWidgetState extends State<StepNavigationWidget> {
           ActionsWidget(
             actions: <ActionWrap>[
               ActionWrap(
-                navigationModel.canGoForward ? "Continua" : "Finalitza",
+                navigationModel.canGoForward
+                    ? NaplesLocalizations.of(context).continua
+                    : NaplesLocalizations.of(context).finalitza,
                 action: () async {
                   key.currentState.direction = BackForwardAnimationDirection.Forward;
                   await navigationModel.forward();
@@ -33,7 +36,7 @@ class _StepNavigationWidgetState extends State<StepNavigationWidget> {
               ),
               if (navigationModel.canGoBack)
                 ActionWrap(
-                  "Torna",
+                  NaplesLocalizations.of(context).torna,
                   action: () async {
                     key.currentState.direction = BackForwardAnimationDirection.Back;
                     await navigationModel.back();
@@ -46,5 +49,3 @@ class _StepNavigationWidgetState extends State<StepNavigationWidget> {
     );
   }
 }
-
-//TODO: Localize

@@ -6,13 +6,12 @@ import 'package:naples/src/navigation/navigation.dart';
 
 /// This widget depends on these providers:
 /// - NavigationModel
-/// - ViewModel
 class StepperNavigationWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var navigationModel = Provider.of<NavigationModel>(context, listen: false);
 
-    //Tracks the current viewmodel of the NavigationModel that must be of RawStepViewModel
+    //Tracks the current StateViewModel of the NavigationModel
     var currentStateViewModel =
         context.select<NavigationModel, StateViewModel>((nm) => nm.currentStateViewModel);
 
@@ -66,6 +65,3 @@ class StepperNavigationWidget extends StatelessWidget {
     );
   }
 }
-
-
-//TODO: Localize
