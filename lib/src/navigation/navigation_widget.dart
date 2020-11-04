@@ -11,6 +11,6 @@ class NavigationWidget extends StatelessWidget {
       (value) => value.currentStateViewModel,
     );
     if (currentStateViewModel == null) return SizedBox();
-    return currentStateViewModel.builder(null, context, null);
+    return currentStateViewModel.builder(context: context);
   }
 }

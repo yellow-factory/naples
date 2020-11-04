@@ -12,19 +12,22 @@ class Transition<T> {
   final T beginningState;
   final T endingState;
   final bool allowBack;
-  final FunctionOf0<StateViewModel<T>> _createViewModelFunction;
+  final FunctionOf0<StateViewModel<T>> _createStateViewModelFunction;
 
-  Transition(this.beginningState, this.endingState, this._createViewModelFunction, this.allowBack);
+  Transition(
+      this.beginningState, this.endingState, this._createStateViewModelFunction, this.allowBack);
 
   Future<StateViewModel<T>> createStateViewModel() async {
-    return _createViewModelFunction();
+    return _createStateViewModelFunction();
   }
 }
+
+typedef CreateViewModel = Widget Function({Key key, BuildContext context, ActionOf0 onChanged});
 
 class StateViewModel<T> {
   final T state;
   final FunctionOf1<BuildContext, String> title;
-  final FunctionOf3<Key, BuildContext, ActionOf0, Widget> builder;
+  final CreateViewModel builder;
   StateViewModel(
     this.state,
     this.builder, {

@@ -27,7 +27,7 @@ class _AnimatedNavigationWidgetState extends State<AnimatedNavigationWidget> {
       reverseDuration: widget.duration,
       child: Container(
         key: ValueKey(navigationModel.currentStateViewModel.state),
-        child: navigationModel.currentStateViewModel.builder(null, context, null),
+        child: navigationModel.currentStateViewModel.builder(context: context),
       ),
     );
   }

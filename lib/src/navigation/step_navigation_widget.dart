@@ -17,9 +17,10 @@ class _StepNavigationWidgetState extends State<StepNavigationWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final _viewModelKey = GlobalKey<ValidableState>();
+    print('_StepNavigationWidgetState');
     var navigationModel = context.watch<NavigationModel>();
     final currentStateViewModel = navigationModel.currentStateViewModel;
+    final _viewModelKey = GlobalObjectKey<ValidableState>(currentStateViewModel);
 
     if (navigationModel.currentStateViewModel == null) return SizedBox();
     return BackForwardAnimationWidget(
@@ -28,9 +29,9 @@ class _StepNavigationWidgetState extends State<StepNavigationWidget> {
         key: ValueKey(currentStateViewModel.state.toString()),
         children: <Widget>[
           currentStateViewModel.builder(
-            _viewModelKey,
-            context,
-            () {
+            key: _viewModelKey,
+            context: context,
+            onChanged: () {
               setState(() {
                 _isValid = _viewModelKey.currentState.valid;
               });

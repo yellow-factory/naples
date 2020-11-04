@@ -17,9 +17,9 @@ class _StepperNavigationWidgetState extends State<StepperNavigationWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final _viewModelKey = GlobalKey<ValidableState>();
     final navigationModel = context.watch<NavigationModel>();
     final currentStateViewModel = navigationModel.currentStateViewModel;
+    final _viewModelKey = GlobalObjectKey<ValidableState>(currentStateViewModel);
 
     if (currentStateViewModel == null) return SizedBox();
 
@@ -28,19 +28,21 @@ class _StepperNavigationWidgetState extends State<StepperNavigationWidget> {
       steps: [
         ...navigationModel.history.map((e) => Step(
               title: e == null ? null : Text(e.title(context)),
-              content: e.builder(null, context, null),
+              content: e.builder(context: context),
               state: StepState.complete,
             )),
         Step(
             title:
                 currentStateViewModel == null ? null : Text(currentStateViewModel.title(context)),
             content: currentStateViewModel.builder(
-              _viewModelKey,
-              context,
-              () {
-                setState(() {
-                  _isValid = _viewModelKey.currentState.valid;
-                });
+              key: _viewModelKey,
+              context: context,
+              onChanged: () {
+                if (_isValid != _viewModelKey.currentState.valid) {
+                  setState(() {
+                    _isValid = _viewModelKey.currentState.valid;
+                  });
+                }
               },
             ),
             isActive: true,

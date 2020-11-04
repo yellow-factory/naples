@@ -15,17 +15,19 @@ class DynamicForm extends StatefulWidget {
   final DistributionType distribution;
   final EdgeInsetsGeometry childPadding;
   final ActionOf0 onChanged;
+  //final ActionOf1<bool> onValidChanged;
 
-  DynamicForm(
-      {Key key,
-      this.children,
-      this.fixed = 1,
-      this.maxFlex = 1,
-      this.normalize = true,
-      this.distribution = DistributionType.LeftToRight,
-      this.childPadding = const EdgeInsets.only(right: 10),
-      this.onChanged})
-      : super(key: key);
+  DynamicForm({
+    Key key,
+    this.children,
+    this.fixed = 1,
+    this.maxFlex = 1,
+    this.normalize = true,
+    this.distribution = DistributionType.LeftToRight,
+    this.childPadding = const EdgeInsets.only(right: 10),
+    this.onChanged,
+    //this.onValidChanged,
+  }) : super(key: key);
 
   @override
   DynamicFormState createState() => DynamicFormState();
@@ -41,10 +43,15 @@ class DynamicFormState extends ValidableState<DynamicForm> {
   @override
   void initState() {
     super.initState();
+    print('initState dynamicForm');
     //TODO: maybe the widgets implementing ModelProperty can implement Validable?
-    _valid = widget.children.whereType<ModelProperty>().every((element) => element.initialValid);
-    if (widget.onChanged != null) {
-      scheduleMicrotask(widget.onChanged);
+    var isValid =
+        widget.children.whereType<ModelProperty>().every((element) => element.initialValid);
+    if (_valid != isValid) {
+      _valid = isValid;
+      if (widget.onChanged != null) {
+        scheduleMicrotask(widget.onChanged);
+      }
     }
   }
 
@@ -64,10 +71,14 @@ class DynamicFormState extends ValidableState<DynamicForm> {
         if (_formKey.currentState == null) return;
         _formKey.currentState.save();
         var isValid = _formKey.currentState.validate();
-        setState(() {
-          _valid = isValid;
-        });
-        if (widget.onChanged != null) widget.onChanged();
+        if (_valid != isValid) {
+          setState(() {
+            _valid = isValid;
+          });
+        }
+        if (widget.onChanged != null) {
+          scheduleMicrotask(widget.onChanged);
+        }
       },
       autovalidateMode: AutovalidateMode.onUserInteraction,
     );

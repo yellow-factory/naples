@@ -1,6 +1,5 @@
 //Import this file to make a ViewModel that inherits EditViewModel or SaveCancelViewModel
 
-export 'package:naples/src/view_models/edit/edit_view_model.dart';
 export 'package:naples/src/view_models/edit/save_view_model.dart';
 
 export 'package:naples/src/view_models/edit/properties/model_property.dart';
