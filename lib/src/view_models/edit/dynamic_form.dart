@@ -15,7 +15,7 @@ class DynamicForm extends StatefulWidget {
   final DistributionType distribution;
   final EdgeInsetsGeometry childPadding;
   final ActionOf0 onChanged;
-  //final ActionOf1<bool> onValidChanged;
+  final ActionOf1<bool> onValidChanged;
 
   DynamicForm({
     Key key,
@@ -26,7 +26,7 @@ class DynamicForm extends StatefulWidget {
     this.distribution = DistributionType.LeftToRight,
     this.childPadding = const EdgeInsets.only(right: 10),
     this.onChanged,
-    //this.onValidChanged,
+    this.onValidChanged,
   }) : super(key: key);
 
   @override
@@ -43,14 +43,13 @@ class DynamicFormState extends ValidableState<DynamicForm> {
   @override
   void initState() {
     super.initState();
-    print('initState dynamicForm');
     //TODO: maybe the widgets implementing ModelProperty can implement Validable?
     var isValid =
         widget.children.whereType<ModelProperty>().every((element) => element.initialValid);
     if (_valid != isValid) {
       _valid = isValid;
-      if (widget.onChanged != null) {
-        scheduleMicrotask(widget.onChanged);
+      if (widget.onValidChanged != null) {
+        scheduleMicrotask(() => widget.onValidChanged(_valid));
       }
     }
   }
@@ -75,6 +74,9 @@ class DynamicFormState extends ValidableState<DynamicForm> {
           setState(() {
             _valid = isValid;
           });
+          if (widget.onValidChanged != null) {
+            scheduleMicrotask(() => widget.onValidChanged(_valid));
+          }
         }
         if (widget.onChanged != null) {
           scheduleMicrotask(widget.onChanged);

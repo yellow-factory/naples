@@ -11,6 +11,7 @@ class DateTimeProperty extends ModelProperty<DateTime> {
   final DateTime lastDate;
 
   DateTimeProperty({
+    Key key,
     @required FunctionOf0<DateTime> getProperty,
     String label,
     String hint,
@@ -24,6 +25,7 @@ class DateTimeProperty extends ModelProperty<DateTime> {
     this.firstDate,
     this.lastDate,
   }) : super(
+          key: key,
           getProperty: getProperty,
           label: label,
           hint: hint,
