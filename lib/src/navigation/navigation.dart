@@ -4,6 +4,10 @@ import 'package:navy/navy.dart';
 import 'package:meta/meta.dart';
 import 'dart:collection';
 
+//TODO: Crec que no s'està utilitzant Transition.allowBack, i segurament hauria
+//de formar part de StateViewModel, i s'hauria d'aplicar al canGoBack, que ara mateix
+//només mira si hi ha una transició anterior
+
 class Transition<T> {
   final T beginningState;
   final T endingState;
@@ -17,35 +21,15 @@ class Transition<T> {
   }
 }
 
-class ViewModel extends StatefulWidget {
-  @override
-  _ViewModelState createState() => _ViewModelState();
-}
-
-class _ViewModelState extends State<ViewModel> {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      
-    );
-  }
-}
-
-class StateViewModel<T> extends StatelessWidget {
+class StateViewModel<T> {
   final T state;
   final FunctionOf1<BuildContext, String> title;
-  final FunctionOf1<BuildContext, Widget> builder;
+  final FunctionOf3<Key, BuildContext, ActionOf0, Widget> builder;
   StateViewModel(
     this.state,
     this.builder, {
     this.title,
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return builder(context);
-  }
+  });
 }
 
 class NavigationModel<T> extends ChangeNotifier {

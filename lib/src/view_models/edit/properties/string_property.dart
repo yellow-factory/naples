@@ -48,10 +48,17 @@ class StringProperty extends ModelProperty<String> {
       inputFormatters: [
         LengthLimitingTextInputFormatter(maxLength),
       ],
-
       // minLines: 1,
       // maxLines: 3,
       onSaved: setProperty,
     );
   }
 }
+
+//TODO: Potser seria millor que fos un stateful widget que implementés validable
+//i que no fés el save fins que és vàlid, així evitaríem per exmple que es mostressin
+//a l'informe valors incoherents. Es podria mirar el onchanged i fer que es validés el
+//resultat cada cop que onchanged, i si el resultat és vàlid que es fes el save
+//Ara tal com està actuant: qualsevol canvi que hi hagi al form provoca el setProperty
+//a través del onSaved
+//Això permetria que el Validable de DynamicForm tingués en compte el Validable dels de més avall

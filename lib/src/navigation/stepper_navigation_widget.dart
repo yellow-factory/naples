@@ -3,17 +3,23 @@ import 'package:naples/naples.dart';
 import 'package:naples/widgets/actions_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:naples/src/navigation/navigation.dart';
+import 'package:naples/src/common/common.dart';
 
 /// This widget depends on these providers:
 /// - NavigationModel
-class StepperNavigationWidget extends StatelessWidget {
+class StepperNavigationWidget extends StatefulWidget {
+  @override
+  _StepperNavigationWidgetState createState() => _StepperNavigationWidgetState();
+}
+
+class _StepperNavigationWidgetState extends State<StepperNavigationWidget> {
+  bool _isValid = false;
+
   @override
   Widget build(BuildContext context) {
-    var navigationModel = Provider.of<NavigationModel>(context, listen: false);
-
-    //Tracks the current StateViewModel of the NavigationModel
-    var currentStateViewModel =
-        context.select<NavigationModel, StateViewModel>((nm) => nm.currentStateViewModel);
+    final _viewModelKey = GlobalKey<ValidableState>();
+    final navigationModel = context.watch<NavigationModel>();
+    final currentStateViewModel = navigationModel.currentStateViewModel;
 
     if (currentStateViewModel == null) return SizedBox();
 
@@ -22,13 +28,21 @@ class StepperNavigationWidget extends StatelessWidget {
       steps: [
         ...navigationModel.history.map((e) => Step(
               title: e == null ? null : Text(e.title(context)),
-              content: e.builder(context),
+              content: e.builder(null, context, null),
               state: StepState.complete,
             )),
         Step(
             title:
                 currentStateViewModel == null ? null : Text(currentStateViewModel.title(context)),
-            content: currentStateViewModel.builder(context),
+            content: currentStateViewModel.builder(
+              _viewModelKey,
+              context,
+              () {
+                setState(() {
+                  _isValid = _viewModelKey.currentState.valid;
+                });
+              },
+            ),
             isActive: true,
             state: StepState.editing),
       ],
@@ -45,18 +59,18 @@ class StepperNavigationWidget extends StatelessWidget {
           {VoidCallback onStepContinue, VoidCallback onStepCancel}) {
         return Container(
             margin: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-            child: ActionsWidget(
-              actions: <ActionWrap>[
-                ActionWrap(
-                  navigationModel.canGoForward
+            child: ActionsListWidget(
+              actions: <ActionWidget>[
+                ActionWidget(
+                  title: navigationModel.canGoForward
                       ? NaplesLocalizations.of(context).continua
                       : NaplesLocalizations.of(context).finalitza,
-                  action: () => onStepContinue(),
+                  action: _isValid ? () => onStepContinue() : null,
                   primary: true,
                 ),
                 if (navigationModel.canGoBack)
-                  ActionWrap(
-                    NaplesLocalizations.of(context).torna,
+                  ActionWidget(
+                    title: NaplesLocalizations.of(context).torna,
                     action: () => onStepCancel(),
                   ),
               ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:naples/common.dart';
 import 'package:naples/naples.dart';
 import 'package:naples/widgets/back_forward_animation_widget.dart';
 import 'package:naples/src/navigation/navigation.dart';
@@ -11,34 +12,50 @@ class StepNavigationWidget extends StatefulWidget {
 }
 
 class _StepNavigationWidgetState extends State<StepNavigationWidget> {
-  final key = GlobalKey<BackForwardAnimationWidgetState>();
+  final _animationKey = GlobalKey<BackForwardAnimationWidgetState>();
+  bool _isValid = false;
+
   @override
   Widget build(BuildContext context) {
+    final _viewModelKey = GlobalKey<ValidableState>();
     var navigationModel = context.watch<NavigationModel>();
+    final currentStateViewModel = navigationModel.currentStateViewModel;
+
     if (navigationModel.currentStateViewModel == null) return SizedBox();
     return BackForwardAnimationWidget(
-      key: key,
+      key: _animationKey,
       child: Column(
-        key: ValueKey(navigationModel.currentStateViewModel.state.toString()),
+        key: ValueKey(currentStateViewModel.state.toString()),
         children: <Widget>[
-          navigationModel.currentStateViewModel.builder(context),
-          ActionsWidget(
-            actions: <ActionWrap>[
-              ActionWrap(
-                navigationModel.canGoForward
+          currentStateViewModel.builder(
+            _viewModelKey,
+            context,
+            () {
+              setState(() {
+                _isValid = _viewModelKey.currentState.valid;
+              });
+            },
+          ),
+          ActionsListWidget(
+            actions: <ActionWidget>[
+              ActionWidget(
+                title: navigationModel.canGoForward
                     ? NaplesLocalizations.of(context).continua
                     : NaplesLocalizations.of(context).finalitza,
-                action: () async {
-                  key.currentState.direction = BackForwardAnimationDirection.Forward;
-                  await navigationModel.forward();
-                },
+                action: _isValid
+                    ? () async {
+                        _animationKey.currentState.direction =
+                            BackForwardAnimationDirection.Forward;
+                        await navigationModel.forward();
+                      }
+                    : null,
                 primary: true,
               ),
               if (navigationModel.canGoBack)
-                ActionWrap(
-                  NaplesLocalizations.of(context).torna,
+                ActionWidget(
+                  title: NaplesLocalizations.of(context).torna,
                   action: () async {
-                    key.currentState.direction = BackForwardAnimationDirection.Back;
+                    _animationKey.currentState.direction = BackForwardAnimationDirection.Back;
                     await navigationModel.back();
                   },
                 ),

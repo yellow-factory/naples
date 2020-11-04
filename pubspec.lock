@@ -81,11 +81,9 @@ packages:
   crimson:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "77aa81ebfb4f43b1883b53d7cfbf219f8880ced3"
-      url: "https://github.com/yellow-factory/crimson.git"
-    source: git
+      path: "../crimson"
+      relative: true
+    source: path
     version: "0.0.1"
   crypto:
     dependency: transitive
@@ -217,11 +215,9 @@ packages:
   navy:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "3d2ca75d33d11ebd900e35cbc6f0d641ae830175"
-      url: "https://github.com/yellow-factory/navy.git"
-    source: git
+      path: "../navy"
+      relative: true
+    source: path
     version: "1.0.1"
   nested:
     dependency: transitive
@@ -311,7 +307,7 @@ packages:
       name: stack_trace
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.10.0-nullsafety.2"
+    version: "1.10.0-nullsafety.4"
   stream_channel:
     dependency: transitive
     description:
@@ -369,5 +365,5 @@ packages:
     source: hosted
     version: "2.2.1"
 sdks:
-  dart: ">=2.10.0-110 <=2.11.0-213.1.beta"
+  dart: ">=2.10.0-110 <=2.11.0-242.0.dev"
   flutter: ">=1.22.0 <2.0.0"

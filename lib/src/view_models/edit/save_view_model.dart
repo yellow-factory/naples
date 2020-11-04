@@ -79,10 +79,10 @@ class _SaveCancelViewModelState<T> extends State<SaveCancelViewModel<T>> {
                     });
                   },
                 ),
-                ActionsWidget(
-                  actions: <ActionWrap>[
-                    ActionWrap(
-                      "Save",
+                ActionsListWidget(
+                  actions: <ActionWidget>[
+                    ActionWidget(
+                      title: "Save",
                       action: !_valid
                           ? null
                           : () async {
@@ -90,8 +90,8 @@ class _SaveCancelViewModelState<T> extends State<SaveCancelViewModel<T>> {
                             },
                       primary: true,
                     ),
-                    ActionWrap(
-                      "Cancel",
+                    ActionWidget(
+                      title: "Cancel",
                       action: () async => cancel(),
                     ),
                   ],
@@ -104,3 +104,5 @@ class _SaveCancelViewModelState<T> extends State<SaveCancelViewModel<T>> {
     );
   }
 }
+
+//TODO: Localize

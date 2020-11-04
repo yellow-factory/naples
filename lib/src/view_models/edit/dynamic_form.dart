@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:naples/src/common/common.dart';
 import 'package:naples/widgets/distribution_widget.dart';
 import 'package:naples/widgets/expandable.dart';
 import 'package:naples/edit.dart';
+import 'package:navy/navy.dart';
 
 class DynamicForm extends StatefulWidget {
   final Iterable<Expandable> children;
@@ -10,7 +14,7 @@ class DynamicForm extends StatefulWidget {
   final bool normalize;
   final DistributionType distribution;
   final EdgeInsetsGeometry childPadding;
-  final VoidCallback onChanged;
+  final ActionOf0 onChanged;
 
   DynamicForm(
       {Key key,
@@ -27,16 +31,21 @@ class DynamicForm extends StatefulWidget {
   DynamicFormState createState() => DynamicFormState();
 }
 
-class DynamicFormState extends State<DynamicForm> {
+class DynamicFormState extends ValidableState<DynamicForm> {
   final _formKey = GlobalKey<FormState>();
   bool _valid = false;
 
+  @override
   bool get valid => _valid;
 
   @override
   void initState() {
-    _valid = !widget.children.whereType<ModelProperty>().any((element) => !element.initialValid);
     super.initState();
+    //TODO: maybe the widgets implementing ModelProperty can implement Validable?
+    _valid = widget.children.whereType<ModelProperty>().every((element) => element.initialValid);
+    if (widget.onChanged != null) {
+      scheduleMicrotask(widget.onChanged);
+    }
   }
 
   @override
