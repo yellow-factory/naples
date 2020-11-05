@@ -45,8 +45,8 @@ class DistributionWidget extends StatelessWidget {
   final EdgeInsetsGeometry childPadding;
 
   DistributionWidget({
-    @required this.children,
     Key key,
+    @required this.children,
     this.fixed = 1,
     this.maxFlex = 1,
     this.normalize = true,
@@ -205,7 +205,7 @@ class _LeftToRightDistributionWidget extends StatelessWidget {
         columnCount++;
         continue;
       }
-      if (currentFlex == maxFlex || columnCount == fixedWidgetsPerRow) {
+      if (currentFlex <= maxFlex && columnCount <= fixedWidgetsPerRow) {
         row.add(w);
         //Initialize row values
         flexOnRow = 0;
