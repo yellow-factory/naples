@@ -4,7 +4,7 @@ import 'package:naples/src/view_models/edit/properties/widgets/radio_list_widget
 import 'package:naples/src/view_models/edit/properties/widgets/switch_widget.dart';
 import 'package:naples/src/view_models/edit/properties/widgets/checkbox_widget.dart';
 import 'package:naples/src/view_models/edit/properties/model_property.dart';
-import 'package:naples/widgets/expandable.dart';
+import 'package:naples/src/common/common.dart';
 import 'package:navy/navy.dart';
 
 enum BoolWidgetType { Switch, Checkbox, Radio }

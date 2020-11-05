@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:naples/widgets/expandable.dart';
+import 'package:naples/src/common/common.dart';
 
-class CommentProperty extends Expandable {
+class CommentProperty extends StatelessWidget implements Expandable {
+  final int flex;
   final String comment;
   final FontStyle fontStyle;
   final FontWeight fontWeight;
@@ -12,13 +13,13 @@ class CommentProperty extends Expandable {
   CommentProperty(
       {Key key,
       @required this.comment,
-      int flex = 99,
+      this.flex = 99,
       this.fontStyle,
       this.textAlign,
       this.fontWeight,
       this.topPadding,
       this.bottomPadding})
-      : super(key: key, flex: flex);
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

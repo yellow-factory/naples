@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:naples/widgets/expandable.dart';
+import 'package:naples/src/common/common.dart';
 import 'package:navy/navy.dart';
 import 'package:flutter_markdown/flutter_markdown.dart' as fmd;
 import 'package:markdown/markdown.dart' as md;
 
-class MarkdownProperty extends Expandable {
+class MarkdownProperty extends StatelessWidget implements Expandable {
   final int flex;
   final FunctionOf0<String> markdown;
   final double width;

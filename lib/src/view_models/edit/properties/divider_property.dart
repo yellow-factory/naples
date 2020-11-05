@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:naples/widgets/expandable.dart';
+import 'package:naples/src/common/common.dart';
 
-class DividerProperty extends Expandable {
+class DividerProperty extends StatelessWidget implements Expandable {
+  final int flex;
   DividerProperty({
     Key key,
-    int flex = 99,
-  }) : super(key: key, flex: flex);
+    this.flex = 99,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) => Divider();

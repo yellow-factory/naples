@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:naples/widgets/expandable.dart';
+import 'package:naples/src/common/common.dart';
 import 'package:navy/navy.dart';
 
-class ContainerProperty extends Expandable {
+class ContainerProperty extends StatelessWidget implements Expandable {
   final int flex;
   final String label;
   final Widget container;

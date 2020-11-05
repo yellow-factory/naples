@@ -6,7 +6,6 @@ import 'package:naples/src/view_models/edit/get_loader.dart';
 import 'package:naples/widgets/actions_widget.dart';
 import 'package:naples/widgets/base_scaffold_widget.dart';
 import 'package:naples/widgets/distribution_widget.dart';
-import 'package:naples/widgets/expandable.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/navigation/navigation.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +14,7 @@ class SaveCancelViewModel<T> extends StatefulWidget {
   final FunctionOf0<Future<T>> get;
   final FunctionOf1<T, Future<void>> set;
   final FunctionOf1<T, String> title;
-  final FunctionOf1<T, Iterable<Expandable>> getLayoutMembers;
+  final FunctionOf1<T, Iterable<Widget>> getLayoutMembers;
   final int fixed;
   final int maxFlex;
   final bool normalize;

@@ -3,12 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:naples/src/common/common.dart';
 import 'package:naples/widgets/distribution_widget.dart';
-import 'package:naples/widgets/expandable.dart';
 import 'package:naples/edit.dart';
 import 'package:navy/navy.dart';
 
 class DynamicForm extends StatefulWidget {
-  final Iterable<Expandable> children;
+  final Iterable<Widget> children;
   final int fixed;
   final int maxFlex;
   final bool normalize;

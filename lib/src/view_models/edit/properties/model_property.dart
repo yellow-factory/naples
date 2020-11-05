@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
-import 'package:naples/widgets/expandable.dart';
+import 'package:naples/src/common/common.dart';
 import 'package:navy/navy.dart';
 
-abstract class ModelProperty<U> extends Expandable {
+abstract class ModelProperty<U> extends StatelessWidget implements Expandable {
   //Es podria fer servir el onSave per realitzar el setProperty, però no estic segur si és la millor opció
   //https://forum.freecodecamp.org/t/how-to-validate-forms-and-user-input-the-easy-way-using-flutter/190377
 
