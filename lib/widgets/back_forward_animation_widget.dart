@@ -56,7 +56,12 @@ class BackForwardAnimationWidgetState extends State<BackForwardAnimationWidget> 
             end: Offset.zero,
           ).animate(animation);
 
-        return SlideTransition(child: child, position: position);
+        return ClipRect(
+          child: SlideTransition(
+            child: child,
+            position: position,
+          ),
+        );
       },
       child: widget.child,
     );
