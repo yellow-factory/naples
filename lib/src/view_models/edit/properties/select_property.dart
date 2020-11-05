@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:naples/src/common/common.dart';
 import 'package:naples/src/view_models/edit/properties/widgets/radio_list_widget.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/view_models/edit/properties/model_property.dart';
@@ -12,7 +13,15 @@ enum SelectWidgetType { DropDown, Radio }
 ///U defines the type of the property being edited which is a member of T
 ///V defines the type of the list of items being exposed in the list of options
 ///In some cases U and V may coincide
-class SelectProperty<U, V> extends ModelProperty<U> {
+class SelectProperty<U, V> extends StatelessWidget with ModelProperty<U>, Expandable {
+  final int flex;
+  final String label;
+  final String hint;
+  final bool autofocus;
+  final PredicateOf0 editable;
+  final FunctionOf0<U> getProperty;
+  final ActionOf1<U> setProperty;
+  final FunctionOf1<U, String> validator;
   final SelectWidgetType widgetType;
   final FunctionOf0<List<V>> listItems;
   //Function to project U from V
@@ -21,28 +30,20 @@ class SelectProperty<U, V> extends ModelProperty<U> {
   final FunctionOf1<V, FunctionOf0<String>> displayMember;
 
   SelectProperty({
-    FunctionOf0<U> getProperty,
-    this.listItems,
-    this.valueMember,
-    this.displayMember,
-    String label,
-    String hint,
-    int flex,
-    bool autofocus = false,
-    ActionOf1<U> setProperty,
-    PredicateOf0 isEditable,
-    FunctionOf1<U, String> isValid,
+    Key key,
+    this.label,
+    this.hint,
+    this.autofocus = false,
+    this.editable,
+    @required this.getProperty,
+    this.setProperty,
+    this.validator,
+    this.flex = 1,
+    @required this.listItems,
+    @required this.valueMember,
+    @required this.displayMember,
     this.widgetType = SelectWidgetType.DropDown,
-  }) : super(
-          getProperty: getProperty,
-          label: label,
-          hint: hint,
-          flex: flex,
-          autofocus: autofocus,
-          setProperty: setProperty,
-          isEditable: isEditable,
-          isValid: isValid,
-        );
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +60,7 @@ class SelectProperty<U, V> extends ModelProperty<U> {
       items: items,
       value: getProperty(),
       onSaved: setProperty,
-      validator: isValid,
+      validator: validator,
       autofocus: autofocus,
       decoration: InputDecoration(
         labelText: label,
@@ -81,10 +82,10 @@ class SelectProperty<U, V> extends ModelProperty<U> {
           displayMember: displayMember,
           valueMember: valueMember,
           listItems: listItems,
-          enabled: isEditable == null ? true : isEditable(),
+          enabled: editable == null ? true : editable(),
           initialValue: getProperty(),
           onSaved: setProperty,
-          validator: isValid,
+          validator: validator,
           controlAffinity: ListTileControlAffinity.leading,
         );
       default:

@@ -20,33 +20,33 @@ extension BoolValuesExtension on BoolValues {
   String get displayName => describeEnum(this);
 }
 
-class BoolProperty extends ModelProperty<bool> implements Expandable {
+class BoolProperty extends StatelessWidget with ModelProperty<bool>, Expandable {
+  final int flex;
+  final String label;
+  final String hint;
+  final bool autofocus;
+  final PredicateOf0 editable;
+  final FunctionOf0<bool> getProperty;
+  final ActionOf1<bool> setProperty;
+  final FunctionOf1<bool, String> validator;
   final BoolWidgetType widgetType;
   final BoolWidgetPosition widgetPosition;
   final FunctionOf1<BoolValues, FunctionOf0<String>> displayName;
 
   BoolProperty({
-    @required FunctionOf0<bool> getProperty,
-    String label,
-    String hint,
-    int flex,
-    bool autofocus = false,
-    ActionOf1<bool> setProperty,
-    PredicateOf0 isEditable,
-    FunctionOf1<bool, String> isValid,
+    Key key,
+    this.label,
+    this.hint,
+    this.autofocus = false,
+    this.editable,
+    @required this.getProperty,
+    this.setProperty,
+    this.validator,
+    this.flex = 1,
     this.widgetType = BoolWidgetType.Checkbox,
     this.widgetPosition = BoolWidgetPosition.Leading,
     this.displayName,
-  }) : super(
-          getProperty: getProperty ?? false,
-          label: label,
-          hint: hint,
-          flex: flex,
-          autofocus: autofocus,
-          setProperty: setProperty,
-          isEditable: isEditable,
-          isValid: isValid,
-        );
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -56,12 +56,12 @@ class BoolProperty extends ModelProperty<bool> implements Expandable {
 
     final defaultWidget = CheckboxViewModelPropertyWidget(
       autofocus: autofocus,
-      enabled: isEditable == null ? true : isEditable(),
+      enabled: editable == null ? true : editable(),
       label: label,
       hint: hint,
       initialValue: getProperty(),
       onSaved: setProperty,
-      validator: isValid,
+      validator: validator,
       controlAffinity: controlAffinity,
     );
 
@@ -69,12 +69,12 @@ class BoolProperty extends ModelProperty<bool> implements Expandable {
       case BoolWidgetType.Switch:
         return SwitchViewModelPropertyWidget(
           autofocus: autofocus,
-          enabled: isEditable == null ? true : isEditable(),
+          enabled: editable == null ? true : editable(),
           label: label,
           hint: hint,
           initialValue: getProperty(),
           onSaved: setProperty,
-          validator: isValid,
+          validator: validator,
           controlAffinity: controlAffinity,
         );
       case BoolWidgetType.Checkbox:
@@ -82,12 +82,12 @@ class BoolProperty extends ModelProperty<bool> implements Expandable {
       case BoolWidgetType.Radio:
         return RadioListViewModelPropertyWidget<bool, BoolValues>(
           autofocus: autofocus,
-          enabled: isEditable == null ? true : isEditable(),
+          enabled: editable == null ? true : editable(),
           label: label,
           hint: hint,
           initialValue: getProperty(),
           onSaved: setProperty,
-          validator: isValid,
+          validator: validator,
           controlAffinity: controlAffinity,
           listItems: () => BoolValues.values,
           valueMember: (t) => t.boolValue,

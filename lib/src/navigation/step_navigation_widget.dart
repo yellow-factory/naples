@@ -17,7 +17,6 @@ class _StepNavigationWidgetState extends State<StepNavigationWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print('_StepNavigationWidgetState');
     var navigationModel = context.watch<NavigationModel>();
     final currentStateViewModel = navigationModel.currentStateViewModel;
     final _viewModelKey = GlobalObjectKey<ValidableState>(currentStateViewModel);

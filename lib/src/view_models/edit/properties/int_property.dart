@@ -1,33 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:naples/src/common/common.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/view_models/edit/properties/model_property.dart';
 
-class IntProperty extends ModelProperty<int> {
+class IntProperty extends StatelessWidget with ModelProperty<int>, Expandable {
+  final int flex;
+  final String label;
+  final String hint;
+  final bool autofocus;
+  final PredicateOf0 editable;
+  final FunctionOf0<int> getProperty;
+  final ActionOf1<int> setProperty;
+  final FunctionOf1<int, String> validator;
   final int maxLength;
   final bool obscureText;
 
   IntProperty({
-    FunctionOf0<int> getProperty,
-    String label,
-    String hint,
-    int flex = 1,
-    bool autofocus = false,
-    ActionOf1<int> setProperty,
-    PredicateOf0 isEditable,
-    FunctionOf1<int, String> isValid,
+    Key key,
+    this.label,
+    this.hint,
+    this.autofocus = false,
+    this.editable,
+    @required this.getProperty,
+    this.setProperty,
+    this.validator,
+    this.flex = 1,
     this.obscureText = false,
     this.maxLength,
-  }) : super(
-          getProperty: getProperty,
-          label: label,
-          hint: hint,
-          flex: flex,
-          autofocus: autofocus,
-          setProperty: setProperty,
-          isEditable: isEditable,
-          isValid: isValid,
-        );
+  }) : super(key: key);
 
   int _getValue(String x) => int.tryParse(x);
 
@@ -40,9 +41,9 @@ class IntProperty extends ModelProperty<int> {
         hintText: hint,
         labelText: label,
       ),
-      enabled: isEditable == null ? true : isEditable(),
+      enabled: editable == null ? true : editable(),
       autofocus: autofocus ?? false,
-      validator: isValid == null ? null : (x) => isValid(_getValue(x)),
+      validator: validator == null ? null : (x) => validator(_getValue(x)),
       keyboardType: TextInputType.number,
       inputFormatters: [
         FilteringTextInputFormatter.digitsOnly,
