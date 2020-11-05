@@ -1,10 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:list_ext/list_ext.dart';
+import 'package:naples/src/common/common.dart';
 
-class Expandable {
+class _DistributionExpanded extends StatelessWidget {
   final Widget child;
-  final int flex;
-  Expandable(this.child, this.flex);
+  final int maxFlex;
+  final EdgeInsetsGeometry padding;
+  _DistributionExpanded({
+    @required this.child,
+    this.maxFlex,
+    this.padding,
+  });
+
+  int get flex {
+    if (child is Expandable) {
+      var flexChild = child as Expandable;
+      return [flexChild.flex ?? 1, maxFlex].min();
+    }
+    return 1;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: padding == null
+          ? child
+          : Padding(
+              child: child,
+              padding: padding,
+            ),
+      flex: flex,
+    );
+  }
 }
 
 enum DistributionType { LeftToRight, TopToBottom }
@@ -13,41 +40,62 @@ class DistributionWidget extends StatelessWidget {
   final int fixed;
   final int maxFlex;
   final bool normalize;
-  final List<Expandable> children;
+  final List<Widget> children;
   final DistributionType distribution;
+  final EdgeInsetsGeometry childPadding;
 
-  DistributionWidget(this.children,
-      {Key key,
-      this.fixed = 1,
-      this.maxFlex = 1,
-      this.normalize = true,
-      this.distribution = DistributionType.LeftToRight})
-      : super(key: key);
+  DistributionWidget({
+    Key key,
+    @required this.children,
+    this.fixed = 1,
+    this.maxFlex = 1,
+    this.normalize = true,
+    this.distribution = DistributionType.LeftToRight,
+    this.childPadding,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final echildren = <_DistributionExpanded>[
+      for (var c in children)
+        _DistributionExpanded(
+          child: c,
+          maxFlex: maxFlex,
+          padding: childPadding,
+        )
+    ];
+
     return distribution == DistributionType.LeftToRight
-        ? LeftToRightDistributionWidget(children,
-            fixedWidgetsPerRow: fixed, maxFlex: maxFlex, normalize: normalize)
-        : TopToBottomDistributionWidget(children,
-            fixedWidgetsPerColumn: fixed, maxFlex: maxFlex, normalize: normalize);
+        ? _LeftToRightDistributionWidget(
+            echildren,
+            fixedWidgetsPerRow: fixed ?? 1,
+            maxFlex: maxFlex ?? 1,
+            normalize: normalize ?? true,
+          )
+        : _TopToBottomDistributionWidget(
+            echildren,
+            fixedWidgetsPerColumn: fixed ?? 1,
+            maxFlex: maxFlex ?? 1,
+            normalize: normalize ?? true,
+          );
   }
 }
 
-class TopToBottomDistributionWidget extends StatelessWidget {
-  final List<Expandable> children;
+class _TopToBottomDistributionWidget extends StatelessWidget {
+  final List<_DistributionExpanded> children;
   final int fixedWidgetsPerColumn;
   final bool normalize;
   final int maxFlex;
 
-  TopToBottomDistributionWidget(this.children,
+  _TopToBottomDistributionWidget(this.children,
       {Key key, this.fixedWidgetsPerColumn = 1, this.maxFlex = 1, this.normalize = true})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     //Calculates the minimum rows needed and the extra rows needed because of the columns constraint
-    final widgetRows = List<List<Expandable>>.generate(rows, (int index) => List<Expandable>());
+    final widgetRows = List<List<_DistributionExpanded>>.generate(
+        rows, (int index) => List<_DistributionExpanded>());
     final currentFlexOnRow = Map<int, int>();
     var currentRow = 0;
     var extraRowsUsed = 0;
@@ -56,30 +104,28 @@ class TopToBottomDistributionWidget extends StatelessWidget {
       currentFlexOnRow[i] = 0;
     }
     for (var w in children) {
-      var currentFlex = [w.flex, maxFlex].min();
-      var currentExpandable = new Expandable(w.child, currentFlex);
       if (!_anyRowWithSpace(
           currentFlexOnRow.entries
               .where((element) => element.key < fixedWidgetsPerColumn + extraRowsUsed),
-          currentFlex,
+          w.flex,
           maxFlex)) {
         //Adds extra row
         currentRow = fixedWidgetsPerColumn + extraRowsUsed;
         extraRowsUsed++;
       }
       //Advances to the desired row
-      while (currentFlexOnRow[currentRow] + currentFlex > maxFlex) {
+      while (currentFlexOnRow[currentRow] + w.flex > maxFlex) {
         currentRow++;
         if (currentRow >= fixedWidgetsPerColumn + extraRowsUsed) currentRow = 0;
       }
       //Counts the flex in the corresponding row
-      currentFlexOnRow[currentRow] += currentFlex;
-      widgetRows[currentRow].add(currentExpandable);
+      currentFlexOnRow[currentRow] += w.flex;
+      widgetRows[currentRow].add(w);
       //Next row
       currentRow++;
       if (currentRow >= fixedWidgetsPerColumn + extraRowsUsed) currentRow = 0;
     }
-    return ContainerDistributionWidget(widgetRows, normalize: normalize);
+    return _ContainerDistributionWidget(widgetRows, normalize: normalize);
   }
 
   int get rows => fixedWidgetsPerColumn + extraRows;
@@ -101,11 +147,10 @@ class TopToBottomDistributionWidget extends StatelessWidget {
     }
     for (var c in children) {
       //Tops the flex value with the maxFlex
-      var currentFlex = [c.flex, maxFlex].min();
       if (!_anyRowWithSpace(
           currentFlexOnRow.entries
               .where((element) => element.key < fixedWidgetsPerColumn + extraRowsUsed),
-          currentFlex,
+          c.flex,
           maxFlex)) {
         if (extraRowsUsed == extraRowsAdded) return false;
         //Adds extra row
@@ -113,12 +158,12 @@ class TopToBottomDistributionWidget extends StatelessWidget {
         extraRowsUsed++;
       }
       //Advances to the desired row
-      while (currentFlexOnRow[currentRow] + currentFlex > maxFlex) {
+      while (currentFlexOnRow[currentRow] + c.flex > maxFlex) {
         currentRow++;
         if (currentRow >= fixedWidgetsPerColumn + extraRowsUsed) currentRow = 0;
       }
       //Counts the flex in the corresponding row
-      currentFlexOnRow[currentRow] += currentFlex;
+      currentFlexOnRow[currentRow] += c.flex;
       //Next row
       currentRow++;
       if (currentRow >= fixedWidgetsPerColumn + extraRowsUsed) currentRow = 0;
@@ -131,74 +176,73 @@ class TopToBottomDistributionWidget extends StatelessWidget {
   }
 }
 
-class LeftToRightDistributionWidget extends StatelessWidget {
+class _LeftToRightDistributionWidget extends StatelessWidget {
   final int fixedWidgetsPerRow;
   final int maxFlex;
-  final List<Expandable> children;
+  final List<_DistributionExpanded> children;
   final bool normalize;
 
-  LeftToRightDistributionWidget(this.children,
+  _LeftToRightDistributionWidget(this.children,
       {Key key, this.fixedWidgetsPerRow = 1, this.maxFlex = 99, this.normalize = true})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     //The number of columns is fixed...
-    final widgetRows = <List<Expandable>>[
-      List<Expandable>()
+    final widgetRows = <List<_DistributionExpanded>>[
+      List<_DistributionExpanded>()
     ]; //List of all rows, initialize first row
     int currentRow = 0;
     int flexOnRow = 0; //Sum flex of widgets on the current row
     int columnCount = 1;
     for (var w in children) {
-      var currentExpandable = new Expandable(w.child, [w.flex, maxFlex].min());
       var currentFlex = flexOnRow + w.flex;
       var row = widgetRows[currentRow];
       if (currentFlex < maxFlex && columnCount < fixedWidgetsPerRow) {
         //Adds the widget to the current row of widgets
-        row.add(currentExpandable);
-        flexOnRow += currentExpandable.flex;
+        row.add(w);
+        flexOnRow += w.flex;
         columnCount++;
         continue;
       }
-      if (currentFlex == maxFlex || columnCount == fixedWidgetsPerRow) {
-        row.add(currentExpandable);
+      if (currentFlex <= maxFlex && columnCount <= fixedWidgetsPerRow) {
+        row.add(w);
         //Initialize row values
         flexOnRow = 0;
         columnCount = 1;
         currentRow++;
-        widgetRows.add(List<Expandable>());
+        widgetRows.add(List<_DistributionExpanded>());
         continue;
       }
       //If the new widget has a flex that overflows current row
       currentRow++;
       columnCount = 1;
-      widgetRows.add(List<Expandable>());
-      widgetRows[currentRow].add(currentExpandable);
-      flexOnRow = currentExpandable.flex;
+      widgetRows.add(List<_DistributionExpanded>());
+      widgetRows[currentRow].add(w);
+      flexOnRow = w.flex;
     }
-    return ContainerDistributionWidget(widgetRows, normalize: normalize);
+    return _ContainerDistributionWidget(widgetRows, normalize: normalize);
   }
 }
 
-class ContainerDistributionWidget extends StatelessWidget {
-  final List<List<Expandable>> children;
+class _ContainerDistributionWidget extends StatelessWidget {
+  final List<List<_DistributionExpanded>> children;
   final bool normalize;
 
-  ContainerDistributionWidget(this.children, {Key key, this.normalize = true}) : super(key: key);
+  _ContainerDistributionWidget(this.children, {Key key, this.normalize = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: _getRows);
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: _getRows(context));
   }
 
-  int _flexOnRow(List<Expandable> liste) => liste.sumOf((e) => e.flex);
+  int _flexOnRow(List<_DistributionExpanded> liste) => liste.sumOf((e) => e.flex);
 
   int get _maxFlex => children.map((c) => _flexOnRow(c)).max();
 
-  Row _getRow(List<Expandable> expandable) {
+  Row _getRow(BuildContext context, List<_DistributionExpanded> expandable) {
     var expanded = List<Widget>();
-    for (var e in expandable) expanded.add(Expanded(child: e.child, flex: e.flex));
+    for (var e in expandable) expanded.add(e.build(context));
     if (normalize) {
       var flexOnRow = _flexOnRow(expandable);
       for (int i = flexOnRow; i < _maxFlex; i++) {
@@ -212,14 +256,15 @@ class ContainerDistributionWidget extends StatelessWidget {
     );
   }
 
-  List<Row> get _getRows => children.where((e) => e.length > 0).map((e) => _getRow(e)).toList();
+  List<Row> _getRows(BuildContext context) =>
+      children.where((e) => e.length > 0).map((e) => _getRow(context, e)).toList();
 }
 
 class PlaygroundDistributionWidget extends StatefulWidget {
   final int fixed;
   final int maxFlex;
   final bool normalize;
-  final List<Expandable> children;
+  final List<Widget> children;
   final DistributionType distribution;
 
   PlaygroundDistributionWidget(this.children,
@@ -239,7 +284,7 @@ class _PlaygroundDistributionWidgetState extends State<PlaygroundDistributionWid
   int fixed;
   int maxFlex;
   bool normalize;
-  List<Expandable> children;
+  List<Widget> children;
   DistributionType distribution;
 
   _PlaygroundDistributionWidgetState(
@@ -323,7 +368,7 @@ class _PlaygroundDistributionWidgetState extends State<PlaygroundDistributionWid
                   )))
         ])),
         DistributionWidget(
-          children,
+          children: children,
           fixed: fixed,
           maxFlex: maxFlex,
           distribution: distribution,

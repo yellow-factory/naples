@@ -1,43 +1,58 @@
 import 'package:flutter/material.dart';
-import 'package:naples/src/view_models/edit/properties/text_property.dart';
-import 'package:naples/src/view_models/edit/properties/widgets/int_widget.dart';
+import 'package:flutter/services.dart';
+import 'package:naples/src/common/common.dart';
 import 'package:navy/navy.dart';
-import 'package:provider/provider.dart';
+import 'package:naples/src/view_models/edit/properties/model_property.dart';
 
-class IntProperty extends TextProperty<int> {
-  IntProperty(
-    FunctionOf0<int> getProperty, {
-    FunctionOf0<String> label,
-    FunctionOf0<String> hint,
-    int flex = 1,
-    bool autofocus = false,
-    ActionOf1<int> setProperty,
-    PredicateOf0 isVisible,
-    PredicateOf0 isEditable,
-    FunctionOf1<int, String> isValid,
-    bool obscureText = false,
-    int maxLength,
-  }) : super(
-          getProperty,
-          label: label,
-          hint: hint,
-          flex: flex,
-          autofocus: autofocus,
-          setProperty: setProperty,
-          isVisible: isVisible,
-          isEditable: isEditable,
-          isValid: isValid,
-          obscureText: obscureText,
-          maxLength: maxLength,
-        );
+class IntProperty extends StatelessWidget with ModelProperty<int>, Expandable {
+  final int flex;
+  final String label;
+  final String hint;
+  final bool autofocus;
+  final PredicateOf0 editable;
+  final FunctionOf0<int> getProperty;
+  final ActionOf1<int> setProperty;
+  final FunctionOf1<int, String> validator;
+  final int maxLength;
+  final bool obscureText;
+
+  IntProperty({
+    Key key,
+    this.label,
+    this.hint,
+    this.autofocus = false,
+    this.editable,
+    @required this.getProperty,
+    this.setProperty,
+    this.validator,
+    this.flex = 1,
+    this.obscureText = false,
+    this.maxLength,
+  }) : super(key: key);
+
+  int _getValue(String x) => int.tryParse(x);
 
   @override
-  set serializedValue(String value) {
-    if (value == null || value.isEmpty) currentValue = 0;
-    currentValue = int.parse(value);
+  Widget build(BuildContext context) {
+    return TextFormField(
+      initialValue: (getProperty() ?? 0).toString(),
+      decoration: InputDecoration(
+        //filled: true,
+        hintText: hint,
+        labelText: label,
+      ),
+      enabled: editable == null ? true : editable(),
+      autofocus: autofocus ?? false,
+      validator: validator == null ? null : (x) => validator(_getValue(x)),
+      keyboardType: TextInputType.number,
+      inputFormatters: [
+        FilteringTextInputFormatter.digitsOnly,
+        LengthLimitingTextInputFormatter(maxLength),
+      ],
+      obscureText: obscureText,
+      onSaved: setProperty == null ? null : (x) => setProperty(_getValue(x)),
+      // minLines: 1,
+      // maxLines: 3,
+    );
   }
-
-  @override
-  Widget get widget =>
-      ChangeNotifierProvider<IntProperty>.value(value: this, child: IntViewModelPropertyWidget());
 }

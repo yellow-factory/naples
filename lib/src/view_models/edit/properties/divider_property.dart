@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:navy/navy.dart';
-import 'package:naples/src/view_models/edit/properties/view_property.dart';
+import 'package:naples/src/common/common.dart';
 
-class DividerProperty extends ViewProperty {
+class DividerProperty extends StatelessWidget implements Expandable {
+  final int flex;
   DividerProperty({
-    int flex = 99,
-    PredicateOf0 isVisible,
-  }) : super(
-          flex: flex,
-          isVisible: isVisible,
-        );
+    Key key,
+    this.flex = 99,
+  }) : super(key: key);
 
   @override
-  Widget get widget => Divider();
+  Widget build(BuildContext context) => Divider();
 
-//TODO: Cal separar el widget com en la resta de casos
 //TODO: Es podrien afegir algunes propietats per fer-lo més ric, com en el cas del CommentLayoutMember: topPadding, bottomPadding,etc.
   // const Divider(
   //           color: Colors.black,

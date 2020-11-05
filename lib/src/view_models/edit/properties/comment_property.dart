@@ -1,32 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:naples/src/view_models/edit/properties/widgets/comment_widget.dart';
-import 'package:provider/provider.dart';
-import 'package:navy/navy.dart';
-import 'package:naples/src/view_models/edit/properties/view_property.dart';
+import 'package:naples/src/common/common.dart';
 
-class CommentProperty extends ViewProperty {
-  final FunctionOf0<String> comment;
+class CommentProperty extends StatelessWidget implements Expandable {
+  final int flex;
+  final String comment;
   final FontStyle fontStyle;
   final FontWeight fontWeight;
   final TextAlign textAlign;
   final double topPadding;
   final double bottomPadding;
 
-  CommentProperty(this.comment,
-      {int flex = 99,
-      PredicateOf0 isVisible,
+  CommentProperty(
+      {Key key,
+      @required this.comment,
+      this.flex = 99,
       this.fontStyle,
       this.textAlign,
       this.fontWeight,
       this.topPadding,
       this.bottomPadding})
-      : super(flex: flex, isVisible: isVisible);
+      : super(key: key);
 
   @override
-  Widget get widget {
-    return ChangeNotifierProvider<CommentProperty>.value(
-      value: this,
-      child: CommentViewModelPropertyWidget(),
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(top: topPadding ?? 0.0, bottom: bottomPadding ?? 0.0),
+      child: Text(
+        comment,
+        style: TextStyle(fontStyle: fontStyle, fontWeight: fontWeight),
+        textAlign: textAlign,
+      ),
     );
   }
 }

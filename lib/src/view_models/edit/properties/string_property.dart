@@ -1,40 +1,63 @@
 import 'package:flutter/material.dart';
-import 'package:naples/src/view_models/edit/properties/text_property.dart';
-import 'package:naples/src/view_models/edit/properties/widgets/string_widget.dart';
+import 'package:flutter/services.dart';
+import 'package:naples/src/common/common.dart';
 import 'package:navy/navy.dart';
-import 'package:provider/provider.dart';
+import 'package:naples/src/view_models/edit/properties/model_property.dart';
 
-class StringProperty extends TextProperty<String> {
-  StringProperty(
-    FunctionOf0<String> getProperty, {
-    FunctionOf0<String> label,
-    FunctionOf0<String> hint,
-    int flex = 1,
-    bool autofocus = false,
-    ActionOf1<String> setProperty,
-    PredicateOf0 isVisible,
-    PredicateOf0 isEditable,
-    FunctionOf1<String, String> isValid,
-    bool obscureText = false,
-    int maxLength,
-  }) : super(
-          getProperty,
-          label: label,
-          hint: hint,
-          flex: flex,
-          autofocus: autofocus,
-          setProperty: setProperty,
-          isVisible: isVisible,
-          isEditable: isEditable,
-          isValid: isValid,
-          obscureText: obscureText,
-          maxLength: maxLength,
-        );
+class StringProperty extends StatelessWidget with ModelProperty<String>, Expandable {
+  final int flex;
+  final String label;
+  final String hint;
+  final bool autofocus;
+  final PredicateOf0 editable;
+  final FunctionOf0<String> getProperty;
+  final ActionOf1<String> setProperty;
+  final FunctionOf1<String, String> validator;
+  final bool obscureText;
+  final int maxLength;
 
-  @override
-  set serializedValue(String value) => currentValue = value;
+  StringProperty({
+    Key key,
+    this.label,
+    this.hint,
+    this.autofocus = false,
+    @required this.getProperty,
+    this.setProperty,
+    this.editable,
+    this.validator,
+    this.flex = 1,
+    this.obscureText = false,
+    this.maxLength,
+  }) : super(key: key);
 
   @override
-  Widget get widget => ChangeNotifierProvider<StringProperty>.value(
-      value: this, child: StringViewModelPropertyWidget());
+  Widget build(BuildContext context) {
+    return TextFormField(
+      initialValue: getProperty(),
+      decoration: InputDecoration(
+        //filled: true,
+        hintText: hint,
+        labelText: label,
+      ),
+      enabled: editable == null ? true : editable(),
+      autofocus: autofocus,
+      validator: validator,
+      obscureText: obscureText,
+      //maxLength: property.maxLength,
+      inputFormatters: [
+        LengthLimitingTextInputFormatter(maxLength),
+      ],
+      // minLines: 1,
+      // maxLines: 3,
+      onSaved: setProperty,
+    );
+  }
 }
+
+//TODO: Potser seria millor que fos un stateful widget que implementés validable
+//i que no fés el save fins que és vàlid, així evitaríem per exmple que es mostressin
+//a l'informe valors incoherents. Es podria mirar el onchanged i fer que es validés el
+//resultat cada cop que onchanged, i si el resultat és vàlid que es fes el save
+//Ara tal com està actuant: qualsevol canvi que hi hagi al form provoca el setProperty
+//a través del onSaved
+//Això permetria que el Validable de DynamicForm tingués en compte el Validable dels de més avall

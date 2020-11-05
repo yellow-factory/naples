@@ -1,65 +1,112 @@
-import 'package:flutter/widgets.dart';
-import 'package:naples/src/view_models/list/list_view_model.dart';
-import 'package:naples/src/view_models/list/widgets/filtered_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:naples/src/view_models/list/dynamic_list.dart';
+import 'package:naples/src/view_models/list/list_loader.dart';
+import 'package:naples/widgets/async_action_icon_button.dart';
+import 'package:naples/widgets/base_scaffold_widget.dart';
 import 'package:navy/navy.dart';
-import 'package:provider/provider.dart';
 
-abstract class FilteredViewModel<T> extends ListViewModel<T> {
+class FilteredViewModel<T> extends StatefulWidget {
+  final FunctionOf0<Stream<T>> getStream;
+  final FunctionOf1<int, String> title;
+  final FunctionOf1<T, String> itemTitle;
+  final FunctionOf1<T, String> itemSubtitle;
+  final FunctionOf1<T, Future<void>> select;
+  final FunctionOf0<Future<void>> create;
+
+  FilteredViewModel({
+    @required this.getStream,
+    @required this.itemTitle,
+    this.title,
+    this.itemSubtitle,
+    this.select,
+    this.create,
+    Key key,
+  }) : super(key: key);
+
+  @override
+  _FilteredViewModelState<T> createState() => _FilteredViewModelState<T>();
+}
+
+class _FilteredViewModelState<T> extends State<FilteredViewModel<T>> {
+  final _listLoaderKey = GlobalKey<ListLoaderState<T>>();
   bool _filtered = false;
   String _filterValue = "";
 
-  FilteredViewModel(
-    BuildContext context,
-    FunctionOf0<Stream<T>> getStream,
-    FunctionOf1<T, String> itemTitle, {
-    FunctionOf1<T, String> itemSubtitle,
-  }) : super(
-          context,
-          getStream,
-          itemTitle,
-          itemSubtitle: itemSubtitle,
-        );
-
-  //Hi hauria d'haver una enumeració per saber si filtre per title, subtitle o tots dos
-  //Hi hauria d'haver una enumeració per saber com fer el tipus d'enumeració: StartsWith, contains...
-
-  @override
-  Future<void> refresh() async {
-    clearItems();
-    if (filtered)
-      togleFiltered(); //Si està filtrat el traiem, perquè sinó potser no es veurà l'element nou o actualitzat
-    return load();
+  Future<void> _togleFiltered() async {
+    setState(() {
+      _filtered = !_filtered;
+    });
   }
-
-  get filtered => _filtered;
-  void togleFiltered() {
-    _filtered = !_filtered;
-    notifyListeners();
-  }
-
-  get filterValue => _filterValue;
-  set filterValue(String value) {
-    _filterValue = value;
-    notifyListeners();
-  }
-
-  List<T> get _filteredItems => super.items.where(_filterPredicate).toList();
-
-  @override
-  List<T> get items => filtered ? _filteredItems : super.items;
 
   bool Function(T) get _filterPredicate {
     var filterBy = _filterValue.toLowerCase().trim();
     if ((!_filtered) || filterBy.isEmpty) return (x) => true;
-    return (x) => itemTitle(x).toLowerCase().startsWith(filterBy);
+    return (x) => widget.itemTitle(x).toLowerCase().startsWith(filterBy);
   }
 
+  List<T> _filteredItems(List<T> items) => items.where(_filterPredicate).toList();
+
   @override
-  Widget get widget {
-    return MultiProvider(providers: [
-      ChangeNotifierProvider<ListViewModel<T>>.value(value: this),
-      ChangeNotifierProvider<FilteredViewModel<T>>.value(value: this),
-      ChangeNotifierProvider<FilteredViewModel>.value(value: this),
-    ], child: FilteredWidget<T>());
+  Widget build(BuildContext context) {
+    return ListLoader<T>(
+      key: _listLoaderKey,
+      getStream: widget.getStream,
+      builder: (items, loading) {
+        return BaseScaffoldWidget(
+          title: widget.title(items.length),
+          child: Column(
+            children: <Widget>[
+              if (loading) Container(child: LinearProgressIndicator()),
+              if (_filtered)
+                Card(
+                  child: TextField(
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Filter by',
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        _filterValue = value;
+                      });
+                    },
+                  ),
+                ),
+              Expanded(
+                child: DynamicList<T>(
+                  _filtered ? _filteredItems(items) : items,
+                  widget.itemTitle,
+                  itemSubtitle: widget.itemSubtitle,
+                  select: widget.select,
+                ),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            AsyncActionIconButton(
+              Icons.filter_list,
+              _togleFiltered,
+            ),
+            AsyncActionIconButton(
+              Icons.refresh,
+              () async {
+                await _listLoaderKey.currentState.refresh();
+              },
+              message: (c) => "Refreshed!!",
+            ),
+          ],
+          floatingAction: widget.create == null
+              ? null
+              : FloatingActionButton(
+                  onPressed: () async {
+                    await widget.create();
+                  },
+                  tooltip: 'New model', //TODO: Això s'hauria de parametritzar, i l'icona també?
+                  child: Icon(Icons.add),
+                ),
+          padding: 0,
+        );
+      },
+    );
   }
 }

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:naples/src/view_models/edit/properties/widgets/dropdown_widget.dart';
+import 'package:naples/src/common/common.dart';
 import 'package:naples/src/view_models/edit/properties/widgets/radio_list_widget.dart';
 import 'package:navy/navy.dart';
-import 'package:provider/provider.dart';
 import 'package:naples/src/view_models/edit/properties/model_property.dart';
 
 //TODO: Crec que hi hauria d'haver un Select i un MultipleSelect per a casos de selecció múltiple
@@ -14,56 +13,83 @@ enum SelectWidgetType { DropDown, Radio }
 ///U defines the type of the property being edited which is a member of T
 ///V defines the type of the list of items being exposed in the list of options
 ///In some cases U and V may coincide
-class SelectProperty<U, V> extends ModelProperty<U> {
-  SelectWidgetType widgetType = SelectWidgetType.DropDown;
+class SelectProperty<U, V> extends StatelessWidget with ModelProperty<U>, Expandable {
+  final int flex;
+  final String label;
+  final String hint;
+  final bool autofocus;
+  final PredicateOf0 editable;
+  final FunctionOf0<U> getProperty;
+  final ActionOf1<U> setProperty;
+  final FunctionOf1<U, String> validator;
+  final SelectWidgetType widgetType;
   final FunctionOf0<List<V>> listItems;
-  final FunctionOf1<V, U> valueMember; //Function to project U from V
-  final FunctionOf1<V, FunctionOf0<String>>
-      displayMember; //Function to display the member as String
+  //Function to project U from V
+  final FunctionOf1<V, U> valueMember;
+  //Function to display the member as String
+  final FunctionOf1<V, FunctionOf0<String>> displayMember;
 
-  SelectProperty(
-    FunctionOf0<U> getProperty,
-    this.listItems,
-    this.valueMember,
-    this.displayMember, {
-    FunctionOf0<String> label,
-    FunctionOf0<String> hint,
-    int flex,
-    bool autofocus = false,
-    ActionOf1<U> setProperty,
-    PredicateOf0 isVisible,
-    PredicateOf0 isEditable,
-    FunctionOf1<U, String> isValid,
-    this.widgetType,
-  }) : super(
-          getProperty,
-          label: label,
-          hint: hint,
-          flex: flex,
-          autofocus: autofocus,
-          setProperty: setProperty,
-          isVisible: isVisible,
-          isEditable: isEditable,
-          isValid: isValid,
-        );
+  SelectProperty({
+    Key key,
+    this.label,
+    this.hint,
+    this.autofocus = false,
+    this.editable,
+    @required this.getProperty,
+    this.setProperty,
+    this.validator,
+    this.flex = 1,
+    @required this.listItems,
+    @required this.valueMember,
+    @required this.displayMember,
+    this.widgetType = SelectWidgetType.DropDown,
+  }) : super(key: key);
 
   @override
-  void initialize() {
-    currentValue = getProperty();
-  }
+  Widget build(BuildContext context) {
+    final items = <DropdownMenuItem<U>>[
+      for (var item in listItems())
+        DropdownMenuItem<U>(
+          value: valueMember(item),
+          child: Text(displayMember(item)()),
+        )
+    ];
+    final dropdownKey = GlobalKey<FormFieldState<U>>();
+    final defaultWidget = DropdownButtonFormField<U>(
+      key: dropdownKey,
+      items: items,
+      value: getProperty(),
+      onSaved: setProperty,
+      validator: validator,
+      autofocus: autofocus,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: hint,
+      ),
+      onChanged: (value) {
+        dropdownKey.currentState.didChange(value);
+      },
+    );
 
-  @override
-  Widget get widget {
     switch (widgetType) {
       case SelectWidgetType.DropDown:
-        return ChangeNotifierProvider<SelectProperty<U, V>>.value(
-            value: this, child: DropDownViewModelPropertyWidget<U, V>());
+        return defaultWidget;
       case SelectWidgetType.Radio:
-        return ChangeNotifierProvider<SelectProperty<U, V>>.value(
-            value: this, child: RadioListViewModelPropertyWidget<U, V>());
+        return RadioListViewModelPropertyWidget<U, V>(
+          label: label,
+          hint: hint,
+          autofocus: autofocus,
+          displayMember: displayMember,
+          valueMember: valueMember,
+          listItems: listItems,
+          enabled: editable == null ? true : editable(),
+          initialValue: getProperty(),
+          onSaved: setProperty,
+          validator: validator,
+          controlAffinity: ListTileControlAffinity.leading,
+        );
       default:
-        return ChangeNotifierProvider<SelectProperty<U, V>>.value(
-            value: this, child: DropDownViewModelPropertyWidget<U, V>());
+        return defaultWidget;
     }
   }
 }

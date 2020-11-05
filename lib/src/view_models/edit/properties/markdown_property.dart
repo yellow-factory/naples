@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:naples/src/view_models/edit/properties/widgets/markdown_widget.dart';
-import 'package:naples/src/view_models/edit/properties/widgets/sized_markdown_widget.dart';
-import 'package:naples/src/view_models/edit/properties/view_property.dart';
+import 'package:naples/src/common/common.dart';
 import 'package:navy/navy.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_markdown/flutter_markdown.dart' as fmd;
+import 'package:markdown/markdown.dart' as md;
 
-class MarkdownProperty extends ViewProperty {
+class MarkdownProperty extends StatelessWidget implements Expandable {
+  final int flex;
   final FunctionOf0<String> markdown;
   final double width;
   final double height;
 
-  MarkdownProperty(
-    this.markdown, {
-    int flex = 99,
+  MarkdownProperty({
+    Key key,
+    @required this.markdown,
+    this.flex = 99,
     PredicateOf0 isVisible,
     this.width,
     this.height,
-  }) : super(
-          flex: flex,
-          isVisible: isVisible,
-        );
+  }) : super(key: key);
 
   @override
-  Widget get widget {
-    return ChangeNotifierProvider<MarkdownProperty>.value(
-      value: this,
-      child: width == null && height == null ? MarkdownWidget() : SizedMarkdownWidget(),
+  Widget build(BuildContext context) {
+    final m = fmd.MarkdownBody(
+      data: markdown(),
+      extensionSet: md.ExtensionSet.gitHubWeb,
     );
+    if (width == null && height == null) return m;
+    return SizedBox(height: height, width: width, child: m);
   }
 }
