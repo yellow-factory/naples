@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:naples/src/common/common.dart';
-import 'package:naples/src/view_models/edit/properties/widgets/radio_list_widget.dart';
+import 'package:naples/src/edit/properties/widgets/radio_list_form_field.dart';
 import 'package:navy/navy.dart';
-import 'package:naples/src/view_models/edit/properties/model_property.dart';
+import 'package:naples/src/edit/properties/model_property.dart';
 
 //TODO: Crec que hi hauria d'haver un Select i un MultipleSelect per a casos de selecció múltiple
 //TODO: En el cas de MultipleSelect les opcions han de ser CheckBox, Chips o algun tipus de Dropdown...
@@ -75,7 +75,7 @@ class SelectProperty<U, V> extends StatelessWidget with ModelProperty<U>, Expand
       case SelectWidgetType.DropDown:
         return defaultWidget;
       case SelectWidgetType.Radio:
-        return RadioListViewModelPropertyWidget<U, V>(
+        return RadioListFormField<U, V>(
           label: label,
           hint: hint,
           autofocus: autofocus,

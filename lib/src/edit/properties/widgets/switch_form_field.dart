@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class SwitchViewModelPropertyWidget extends FormField<bool> {
-  SwitchViewModelPropertyWidget({
+class SwitchFormField extends FormField<bool> {
+  SwitchFormField({
     Key key,
     String label,
     String hint,

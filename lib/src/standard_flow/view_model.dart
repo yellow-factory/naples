@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:naples/src/navigation/navigation.dart';
 import 'package:naples/src/standard_flow/service.dart';
-import 'package:naples/src/view_models/edit/save_view_model.dart';
-import 'package:naples/src/view_models/list/filtered_view_model.dart';
+import 'package:naples/src/edit/save_view_widget.dart';
+import 'package:naples/src/list/filtered_view_model.dart';
 import 'package:naples/widgets/distribution_widget.dart';
 import 'package:navy/navy.dart';
 import 'navigation.dart';
@@ -70,8 +70,7 @@ class StandardCreateViewModel<T, Create> extends StatelessWidget {
 
   Widget build(BuildContext context) {
     var createService = context.watch<CreateStandardService<T, Create>>();
-    var navigationModel = context.watch<NavigationModel<StandardFlow>>();
-    return SaveCancelViewModel<Create>(
+    return SaveCancelWidget<Create>(
       get: createService.getCreate,
       set: (m) async {
         await createService.create(m);
@@ -81,7 +80,6 @@ class StandardCreateViewModel<T, Create> extends StatelessWidget {
       maxFlex: maxFlex,
       normalize: normalize,
       distribution: distribution,
-      navigationModel: navigationModel,
     );
   }
 }
@@ -107,8 +105,7 @@ class StandardUpdateViewModel<T, Get, Update> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var updateService = context.watch<UpdateStandardService<T, Get, Update>>();
-    var navigationModel = context.watch<NavigationModel<StandardFlow>>();
-    return SaveCancelViewModel<Update>(
+    return SaveCancelWidget<Update>(
       title: title,
       get: () async {
         final ValueNotifier<Get> param = Provider.of<ValueNotifier<Get>>(context);
@@ -122,7 +119,6 @@ class StandardUpdateViewModel<T, Get, Update> extends StatelessWidget {
       maxFlex: maxFlex,
       normalize: normalize,
       distribution: distribution,
-      navigationModel: navigationModel,
     );
   }
 }

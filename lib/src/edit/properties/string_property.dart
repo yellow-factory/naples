@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:naples/src/common/common.dart';
 import 'package:navy/navy.dart';
-import 'package:naples/src/view_models/edit/properties/model_property.dart';
+import 'package:naples/src/edit/properties/model_property.dart';
 
 class StringProperty extends StatelessWidget with ModelProperty<String>, Expandable {
   final int flex;

@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:naples/src/view_models/edit/properties/widgets/radio_list_widget.dart';
-import 'package:naples/src/view_models/edit/properties/widgets/switch_widget.dart';
-import 'package:naples/src/view_models/edit/properties/widgets/checkbox_widget.dart';
-import 'package:naples/src/view_models/edit/properties/model_property.dart';
+import 'package:naples/src/edit/properties/widgets/radio_list_form_field.dart';
+import 'package:naples/src/edit/properties/widgets/switch_form_field.dart';
+import 'package:naples/src/edit/properties/widgets/checkbox_form_field.dart';
+import 'package:naples/src/edit/properties/model_property.dart';
 import 'package:naples/src/common/common.dart';
 import 'package:navy/navy.dart';
 
@@ -54,7 +54,7 @@ class BoolProperty extends StatelessWidget with ModelProperty<bool>, Expandable 
         ? ListTileControlAffinity.leading
         : ListTileControlAffinity.trailing;
 
-    final defaultWidget = CheckboxViewModelPropertyWidget(
+    final defaultWidget = CheckboxFormField(
       autofocus: autofocus,
       enabled: editable == null ? true : editable(),
       label: label,
@@ -67,7 +67,7 @@ class BoolProperty extends StatelessWidget with ModelProperty<bool>, Expandable 
 
     switch (widgetType) {
       case BoolWidgetType.Switch:
-        return SwitchViewModelPropertyWidget(
+        return SwitchFormField(
           autofocus: autofocus,
           enabled: editable == null ? true : editable(),
           label: label,
@@ -80,7 +80,7 @@ class BoolProperty extends StatelessWidget with ModelProperty<bool>, Expandable 
       case BoolWidgetType.Checkbox:
         return defaultWidget;
       case BoolWidgetType.Radio:
-        return RadioListViewModelPropertyWidget<bool, BoolValues>(
+        return RadioListFormField<bool, BoolValues>(
           autofocus: autofocus,
           enabled: editable == null ? true : editable(),
           label: label,

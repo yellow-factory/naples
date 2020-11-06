@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:naples/models.dart';
 import 'package:naples/src/navigation/will_pop_scope_navigation_widget.dart';
-import 'package:naples/src/view_models/edit/dynamic_form.dart';
-import 'package:naples/src/view_models/edit/get_loader.dart';
+import 'package:naples/src/edit/dynamic_form.dart';
+import 'package:naples/src/edit/get_loader.dart';
 import 'package:naples/widgets/actions_widget.dart';
 import 'package:naples/widgets/base_scaffold_widget.dart';
 import 'package:naples/widgets/distribution_widget.dart';
@@ -10,7 +10,7 @@ import 'package:navy/navy.dart';
 import 'package:naples/src/navigation/navigation.dart';
 import 'package:provider/provider.dart';
 
-class SaveCancelViewModel<T> extends StatefulWidget {
+class SaveCancelWidget<T> extends StatefulWidget {
   final FunctionOf0<Future<T>> get;
   final FunctionOf1<T, Future<void>> set;
   final FunctionOf1<T, String> title;
@@ -19,9 +19,8 @@ class SaveCancelViewModel<T> extends StatefulWidget {
   final int maxFlex;
   final bool normalize;
   final DistributionType distribution;
-  final NavigationModel navigationModel;
 
-  SaveCancelViewModel({
+  SaveCancelWidget({
     @required this.get,
     @required this.set,
     this.title,
@@ -30,32 +29,20 @@ class SaveCancelViewModel<T> extends StatefulWidget {
     this.maxFlex = 1,
     this.normalize = true,
     this.distribution = DistributionType.LeftToRight,
-    this.navigationModel,
     Key key,
   }) : super(key: key);
 
   @override
-  _SaveCancelViewModelState<T> createState() => _SaveCancelViewModelState<T>();
+  _SaveCancelWidgetState<T> createState() => _SaveCancelWidgetState<T>();
 }
 
-class _SaveCancelViewModelState<T> extends State<SaveCancelViewModel<T>> {
+class _SaveCancelWidgetState<T> extends State<SaveCancelWidget<T>> {
   final _dynamicFormKey = GlobalKey<DynamicFormState>();
   bool _valid = false;
 
-  Future<void> cancel() async {
-    var back = await widget.navigationModel.back();
-    print('Invoking back, result: $back');
-  }
-
-  Future<void> save(BuildContext context, T item) async {
-    await widget.set(item); //Send the changes to the backend
-    await widget.navigationModel.back(); //Returns to the previous view
-    var snackModel = context.read<SnackModel>();
-    snackModel.message = "Saved!"; //Sends a snack message
-  }
-
   @override
   Widget build(BuildContext context) {
+    var navigationModel = context.watch<NavigationModel>();
     return GetLoader<T>(
       get: widget.get,
       builder: (item, loading) {
@@ -72,9 +59,9 @@ class _SaveCancelViewModelState<T> extends State<SaveCancelViewModel<T>> {
                   maxFlex: widget.maxFlex,
                   normalize: widget.normalize,
                   distribution: widget.distribution,
-                  onChanged: () {
+                  onValidChanged: (valid) {
                     setState(() {
-                      _valid = _dynamicFormKey.currentState.valid;
+                      _valid = valid;
                     });
                   },
                 ),
@@ -85,13 +72,18 @@ class _SaveCancelViewModelState<T> extends State<SaveCancelViewModel<T>> {
                       action: !_valid
                           ? null
                           : () async {
-                              await save(context, item);
+                              await widget.set(item); //Send the changes to the backend
+                              await navigationModel.back(); //Returns to the previous view
+                              var snackModel = context.read<SnackModel>();
+                              snackModel.message = "Saved!"; //Sends a snack message
                             },
                       primary: true,
                     ),
                     ActionWidget(
                       title: "Cancel",
-                      action: () async => cancel(),
+                      action: () async {
+                        await navigationModel.back();
+                      },
                     ),
                   ],
                 ),

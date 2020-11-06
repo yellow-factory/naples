@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:naples/src/common/common.dart';
 import 'package:naples/widgets/distribution_widget.dart';
 import 'package:naples/edit.dart';
 import 'package:navy/navy.dart';
@@ -32,12 +31,9 @@ class DynamicForm extends StatefulWidget {
   DynamicFormState createState() => DynamicFormState();
 }
 
-class DynamicFormState extends ValidableState<DynamicForm> {
+class DynamicFormState extends State<DynamicForm> {
   final _formKey = GlobalKey<FormState>();
   bool _valid = false;
-
-  @override
-  bool get valid => _valid;
 
   @override
   void initState() {

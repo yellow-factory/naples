@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:naples/widgets/back_forward_animation_widget.dart';
 import 'package:naples/src/navigation/navigation.dart';
+import 'package:navy/navy.dart';
 import 'package:provider/provider.dart';
 
-class AnimatedNavigationWidget extends StatefulWidget {
+class AnimatedNavigationWidget<T> extends StatefulWidget {
   final Duration duration;
   final Duration reverseDuration;
+  final FunctionOf1<T, Widget> currentStepBuilder;
+
   AnimatedNavigationWidget({
+    @required this.currentStepBuilder,
     this.duration = const Duration(milliseconds: 500),
     this.reverseDuration = const Duration(milliseconds: 500),
     Key key,
@@ -26,8 +30,8 @@ class _AnimatedNavigationWidgetState extends State<AnimatedNavigationWidget> {
       duration: widget.duration,
       reverseDuration: widget.duration,
       child: Container(
-        key: ValueKey(navigationModel.currentStateViewModel.state),
-        child: navigationModel.currentStateViewModel.builder(context: context),
+        key: ValueKey(navigationModel.currentState),
+        child: widget.currentStepBuilder(navigationModel.currentState),
       ),
     );
   }
