@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:navy/navy.dart';
 import 'package:meta/meta.dart';
 import 'dart:collection';
 
@@ -12,57 +11,33 @@ class Transition<T> {
   final T beginningState;
   final T endingState;
   final bool allowBack;
-  final FunctionOf0<StateViewModel<T>> _createStateViewModelFunction;
 
   Transition(
-      this.beginningState, this.endingState, this._createStateViewModelFunction, this.allowBack);
-
-  Future<StateViewModel<T>> createStateViewModel() async {
-    return _createStateViewModelFunction();
-  }
-}
-
-typedef CreateViewModel = Widget Function({Key key, BuildContext context, ActionOf0 onChanged});
-
-class StateViewModel<T> {
-  final T state;
-  final FunctionOf1<BuildContext, String> title;
-  final CreateViewModel builder;
-  StateViewModel(
-    this.state,
-    this.builder, {
-    this.title,
-  });
+    this.beginningState,
+    this.endingState,
+    this.allowBack,
+  );
 }
 
 class NavigationModel<T> extends ChangeNotifier {
-  final FunctionOf0<StateViewModel<T>> _defaultCreateViewModelFunction;
   final List<Transition<T>> _transitions = List<Transition<T>>();
-  final ListQueue<StateViewModel<T>> _history = ListQueue<StateViewModel<T>>();
-  StateViewModel<T> _currentStateViewModel;
+  final ListQueue<T> _history = ListQueue<T>();
+  T _currentState;
 
-  NavigationModel(this._defaultCreateViewModelFunction) {
-    initialize();
-  }
+  NavigationModel(this._currentState);
 
-  void initialize() {
-    final stateViewModel = _defaultCreateViewModelFunction();
-    _updateCurrentStateViewModel(stateViewModel);
-  }
-
-  void _updateCurrentStateViewModel(StateViewModel<T> stateViewModel) {
-    _currentStateViewModel = stateViewModel;
+  void _updateCurrentStateViewModel(T state) {
+    _currentState = state;
     notifyListeners();
   }
 
   @protected
   void addTransition(
     T beginningState,
-    T endingState,
-    FunctionOf0<StateViewModel<T>> viewModelTransform, {
+    T endingState, {
     bool allowBack = true,
   }) {
-    var transitionModel = Transition<T>(beginningState, endingState, viewModelTransform, allowBack);
+    var transitionModel = Transition<T>(beginningState, endingState, allowBack);
     addTransitionModel(transitionModel);
   }
 
@@ -82,30 +57,27 @@ class NavigationModel<T> extends ChangeNotifier {
         orElse: () => null);
   }
 
-  StateViewModel<T> get currentStateViewModel => _currentStateViewModel;
+  T get currentState => _currentState;
 
-  Iterable<StateViewModel> get history => _history;
+  Iterable<T> get history => _history;
 
   Future<bool> transition(T newState) async {
-    if (canGoBack && _history.last.state == newState) back();
+    if (canGoBack && _history.last == newState) back();
 
-    final t = getTransition(currentStateViewModel.state, newState);
+    final t = getTransition(currentState, newState);
 
     return _executeTransition(t);
   }
 
   Future<bool> _executeTransition(Transition transition) async {
-    if (currentStateViewModel != null && transition == null) return false;
+    if (currentState != null && transition == null) return false;
 
     //Adds the current to the history
-    if (currentStateViewModel != null && transition.allowBack) {
-      _history.add(currentStateViewModel);
+    if (currentState != null && transition.allowBack) {
+      _history.add(currentState);
     }
-
-    //Creates and initialize the ViewModel
-    var newStateViewModel = await transition.createStateViewModel();
-    _updateCurrentStateViewModel(newStateViewModel);
-
+    
+    _updateCurrentStateViewModel(transition.endingState);
     return true;
   }
 
@@ -125,17 +97,13 @@ class NavigationModel<T> extends ChangeNotifier {
 
   bool get canGoForward {
     //Can go forward if exists one and only one transition to the next state
-    return _transitions
-            .where((element) => element.beginningState == currentStateViewModel.state)
-            .length ==
-        1;
+    return _transitions.where((element) => element.beginningState == currentState).length == 1;
   }
 
   Future<bool> forward() async {
     if (!canGoForward) return false;
 
-    final t = _transitions
-        .singleWhere((element) => element.beginningState == currentStateViewModel.state);
+    final t = _transitions.singleWhere((element) => element.beginningState == currentState);
 
     return _executeTransition(t);
   }

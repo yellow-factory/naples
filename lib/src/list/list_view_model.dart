@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:naples/list.dart';
-import 'package:naples/src/view_models/list/list_loader.dart';
+import 'package:naples/src/list/list_loader.dart';
 import 'package:naples/widgets/async_action_icon_button.dart';
 import 'package:naples/widgets/base_scaffold_widget.dart';
 import 'package:navy/navy.dart';

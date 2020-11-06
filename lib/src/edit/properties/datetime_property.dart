@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:naples/src/common/common.dart';
-import 'package:naples/src/view_models/edit/properties/widgets/datetime_widget.dart';
+import 'package:naples/src/edit/properties/widgets/datetime_form_field.dart';
 import 'package:navy/navy.dart';
-import 'package:naples/src/view_models/edit/properties/model_property.dart';
+import 'package:naples/src/edit/properties/model_property.dart';
 
 class DateTimeProperty extends StatelessWidget with ModelProperty<DateTime>, Expandable {
   final int flex;
@@ -37,7 +37,7 @@ class DateTimeProperty extends StatelessWidget with ModelProperty<DateTime>, Exp
 
   @override
   Widget build(BuildContext context) {
-    return DateTimeViewModelPropertyWidget(
+    return DateTimeFormField(
       label: label,
       hint: hint,
       autofocus: autofocus,

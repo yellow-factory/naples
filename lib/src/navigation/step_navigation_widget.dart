@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:naples/common.dart';
 import 'package:naples/naples.dart';
 import 'package:naples/widgets/back_forward_animation_widget.dart';
 import 'package:naples/src/navigation/navigation.dart';
 import 'package:naples/widgets/actions_widget.dart';
+import 'package:navy/navy.dart';
 import 'package:provider/provider.dart';
 
-class StepNavigationWidget extends StatefulWidget {
+class StepNavigationWidget<T> extends StatefulWidget {
+  final FunctionOf1<T, Widget> currentStepTitleBuilder;
+  final FunctionOf2<T, ActionOf1<bool>, Widget> currentStepContentBuilder;
+
+  StepNavigationWidget({
+    Key key,
+    this.currentStepTitleBuilder,
+    @required this.currentStepContentBuilder,
+  }) : super(key: key);
+
   @override
   _StepNavigationWidgetState createState() => _StepNavigationWidgetState();
 }
@@ -18,22 +27,24 @@ class _StepNavigationWidgetState extends State<StepNavigationWidget> {
   @override
   Widget build(BuildContext context) {
     var navigationModel = context.watch<NavigationModel>();
-    final currentStateViewModel = navigationModel.currentStateViewModel;
-    final _viewModelKey = GlobalObjectKey<ValidableState>(currentStateViewModel);
+    final currentState = navigationModel.currentState;
 
-    if (navigationModel.currentStateViewModel == null) return SizedBox();
+    if (navigationModel.currentState == null) return SizedBox();
     return BackForwardAnimationWidget(
       key: _animationKey,
       child: Column(
-        key: ValueKey(currentStateViewModel.state.toString()),
+        key: ValueKey(currentState.toString()),
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          currentStateViewModel.builder(
-            key: _viewModelKey,
-            context: context,
-            onChanged: () {
-              setState(() {
-                _isValid = _viewModelKey.currentState.valid;
-              });
+          if (widget.currentStepTitleBuilder != null) widget.currentStepTitleBuilder(currentState),
+          widget.currentStepContentBuilder(
+            currentState,
+            (bool valid) {
+              if (_isValid != valid) {
+                setState(() {
+                  _isValid = valid;
+                });
+              }
             },
           ),
           ActionsListWidget(

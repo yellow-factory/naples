@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:naples/src/view_models/edit/properties/markdown_property.dart';
+import 'package:naples/src/edit/properties/markdown_property.dart';
 import 'package:navy/navy.dart';
 import 'package:mustache_template/mustache.dart';
 import 'dart:convert';

@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:naples/src/navigation/navigation.dart';
+import 'package:navy/navy.dart';
 import 'package:provider/provider.dart';
 
-class NavigationWidget extends StatelessWidget {
-  NavigationWidget({Key key}) : super(key: key);
+class NavigationWidget<T> extends StatelessWidget {
+  final FunctionOf1<T, Widget> currentStepBuilder;
+
+  NavigationWidget({Key key, @required this.currentStepBuilder}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    var currentStateViewModel = context.select<NavigationModel, StateViewModel>(
-      (value) => value.currentStateViewModel,
-    );
-    if (currentStateViewModel == null) return SizedBox();
-    return currentStateViewModel.builder(context: context);
+    var navigationModel = context.watch<NavigationModel>();
+    if (navigationModel.currentState == null) return SizedBox();
+    return currentStepBuilder(navigationModel.currentState);
   }
 }

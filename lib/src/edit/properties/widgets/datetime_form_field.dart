@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class DateTimeViewModelPropertyWidget extends FormField<DateTime> {
-  DateTimeViewModelPropertyWidget({
+class DateTimeFormField extends FormField<DateTime> {
+  DateTimeFormField({
     Key key,
     String label,
     String hint,
@@ -38,10 +38,9 @@ class DateTimeViewModelPropertyWidget extends FormField<DateTime> {
                           lastDate: lastDate ?? DateTime(2100),
                         ) ??
                         state.value;
-                    //if (picked != null) state.didChange(picked);
                     if (onlyDate) {
                       if (state.value?.compareTo(datePicked) != 0) state.didChange(datePicked);
-                      return null; //?
+                      return null;
                     }
                     final TimeOfDay time = TimeOfDay.fromDateTime(state.value ?? DateTime.now());
                     final TimeOfDay timePicked = await showTimePicker(
@@ -59,15 +58,6 @@ class DateTimeViewModelPropertyWidget extends FormField<DateTime> {
                         timePicked.minute,
                       ));
                     }
-
-                    //   if (picked != null && picked != time) {
-                    //     return DateTime(
-                    //         date.year, date.month, date.day, picked.hour, picked.minute);
-                    //   }
-                    // }
-                    // property.currentValue = date;
-                    // if (property.validate() == null) property.update();
-                    // _controller.text = _setValue(property);
                   },
                 ),
               ),

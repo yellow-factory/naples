@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-class FileViewModelPropertyWidget extends StatelessWidget {
+class FileWidget extends StatelessWidget {
   final String label;
   final String hint;
 
-  FileViewModelPropertyWidget({
+  FileWidget({
     Key key,
     this.label,
     this.hint,
