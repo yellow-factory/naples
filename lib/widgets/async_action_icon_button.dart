@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:naples/models.dart';
 import 'package:navy/navy.dart';
-import 'package:provider/provider.dart';
 
-class AsyncActionIconButton extends StatelessWidget {
+class AsyncActionIconButtonWidget extends StatelessWidget {
   final IconData iconData;
   final FunctionOf0<Future<void>> action;
-  final FunctionOf1<BuildContext, String> message;
+  final String message;
 
-  AsyncActionIconButton(
+  AsyncActionIconButtonWidget(
     this.iconData,
     this.action, {
     this.message,
@@ -22,7 +20,11 @@ class AsyncActionIconButton extends StatelessWidget {
       onPressed: () async {
         await action();
         if (message != null) {
-          context.read<SnackModel>()..message = message(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(message),
+            ),
+          );
         }
       },
     );

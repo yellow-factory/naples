@@ -17,7 +17,6 @@ dependencies:
   intl: ^0.16.1
   #end Internationalization support.
   provider: ^4.3.0
-  font_awesome_flutter: ^8.8.1
   list_ext: ^0.1.13
   flutter_markdown: ^0.4.4
   mustache_template: ^1.0.0+1

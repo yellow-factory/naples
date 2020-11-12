@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:naples/navigation.dart';
 import 'package:naples/src/navigation/will_pop_scope_navigation_widget.dart';
-import 'package:naples/widgets/base_scaffold_widget.dart';
 import 'package:navy/navy.dart';
 
 class ScaffoldStepNavigationWidget<T> extends StatelessWidget {
@@ -19,11 +18,16 @@ class ScaffoldStepNavigationWidget<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScopeNavigationWidget(
-      child: BaseScaffoldWidget(
-        title: title,
-        child: StepNavigationWidget(
-          currentStepTitleBuilder: currentStepTitleBuilder,
-          currentStepContentBuilder: currentStepContentBuilder,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(title),
+        ),
+        body: Padding(
+          padding: EdgeInsets.all(16),
+          child: StepNavigationWidget(
+            currentStepTitleBuilder: currentStepTitleBuilder,
+            currentStepContentBuilder: currentStepContentBuilder,
+          ),
         ),
       ),
     );

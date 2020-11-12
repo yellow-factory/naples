@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:naples/src/list/dynamic_list.dart';
 import 'package:naples/src/list/list_loader.dart';
 import 'package:naples/widgets/async_action_icon_button.dart';
-import 'package:naples/widgets/base_scaffold_widget.dart';
 import 'package:navy/navy.dart';
 
 class FilteredViewModel<T> extends StatefulWidget {
@@ -52,9 +51,24 @@ class _FilteredViewModelState<T> extends State<FilteredViewModel<T>> {
       key: _listLoaderKey,
       getStream: widget.getStream,
       builder: (items, loading) {
-        return BaseScaffoldWidget(
-          title: widget.title(items.length),
-          child: Column(
+        return Scaffold(
+          appBar: AppBar(
+            title: widget.title == null ? null : Text(widget.title(items.length)),
+            actions: <Widget>[
+              AsyncActionIconButtonWidget(
+                Icons.filter_list,
+                _togleFiltered,
+              ),
+              AsyncActionIconButtonWidget(
+                Icons.refresh,
+                () async {
+                  await _listLoaderKey.currentState.refresh();
+                },
+                message: "Refreshed!!",
+              ),
+            ],
+          ),
+          body: Column(
             children: <Widget>[
               if (loading) Container(child: LinearProgressIndicator()),
               if (_filtered)
@@ -82,20 +96,7 @@ class _FilteredViewModelState<T> extends State<FilteredViewModel<T>> {
               ),
             ],
           ),
-          actions: <Widget>[
-            AsyncActionIconButton(
-              Icons.filter_list,
-              _togleFiltered,
-            ),
-            AsyncActionIconButton(
-              Icons.refresh,
-              () async {
-                await _listLoaderKey.currentState.refresh();
-              },
-              message: (c) => "Refreshed!!",
-            ),
-          ],
-          floatingAction: widget.create == null
+          floatingActionButton: widget.create == null
               ? null
               : FloatingActionButton(
                   onPressed: () async {
@@ -104,7 +105,6 @@ class _FilteredViewModelState<T> extends State<FilteredViewModel<T>> {
                   tooltip: 'New model', //TODO: Això s'hauria de parametritzar, i l'icona també?
                   child: Icon(Icons.add),
                 ),
-          padding: 0,
         );
       },
     );

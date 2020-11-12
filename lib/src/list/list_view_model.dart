@@ -3,13 +3,12 @@ import 'package:flutter/widgets.dart';
 import 'package:naples/list.dart';
 import 'package:naples/src/list/list_loader.dart';
 import 'package:naples/widgets/async_action_icon_button.dart';
-import 'package:naples/widgets/base_scaffold_widget.dart';
 import 'package:navy/navy.dart';
 
 //T tipus de dades de la llista
 class ListViewModel<T> extends StatelessWidget {
   final FunctionOf0<Stream<T>> getStream;
-  final FunctionOf2<BuildContext, int, String> title;
+  final FunctionOf1<int, String> title;
   final FunctionOf1<T, String> itemTitle;
   final FunctionOf1<T, String> itemSubtitle;
   final FunctionOf1<T, Future<void>> select;
@@ -38,7 +37,7 @@ class ListViewModel<T> extends StatelessWidget {
 
   final _listLoaderKey = GlobalKey<ListLoaderState<T>>();
 
-//TODO; The loading is a good case for the notofication system
+//TODO; The loading is a good case for the notofication system?
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +45,20 @@ class ListViewModel<T> extends StatelessWidget {
       key: _listLoaderKey,
       getStream: getStream,
       builder: (items, loading) {
-        return BaseScaffoldWidget(
-          child: Column(
+        return Scaffold(
+          appBar: AppBar(
+            title: title == null ? null : Text(title(items.length)),
+            actions: <Widget>[
+              AsyncActionIconButtonWidget(
+                Icons.refresh,
+                () async {
+                  await _listLoaderKey.currentState.refresh();
+                },
+                message: "Refreshed!!",
+              ),
+            ],
+          ),
+          body: Column(
             children: <Widget>[
               if (loading) Container(child: LinearProgressIndicator()),
               Expanded(
@@ -60,16 +71,7 @@ class ListViewModel<T> extends StatelessWidget {
               ),
             ],
           ),
-          actions: <Widget>[
-            AsyncActionIconButton(
-              Icons.refresh,
-              () async {
-                await _listLoaderKey.currentState.refresh();
-              },
-              message: (c) => "Refreshed!!",
-            ),
-          ],
-          floatingAction: create == null
+          floatingActionButton: create == null
               ? null
               : FloatingActionButton(
                   onPressed: () async {
@@ -78,7 +80,6 @@ class ListViewModel<T> extends StatelessWidget {
                   tooltip: 'New model', //TODO: Això s'hauria de parametritzar, i l'icona també?
                   child: Icon(Icons.add),
                 ),
-          padding: 0,
         );
       },
     );

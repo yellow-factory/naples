@@ -1,10 +1,8 @@
-import 'package:flutter/widgets.dart';
-import 'package:naples/models.dart';
+import 'package:flutter/material.dart';
 import 'package:naples/src/navigation/will_pop_scope_navigation_widget.dart';
 import 'package:naples/src/edit/dynamic_form.dart';
 import 'package:naples/src/edit/get_loader.dart';
 import 'package:naples/widgets/actions_widget.dart';
-import 'package:naples/widgets/base_scaffold_widget.dart';
 import 'package:naples/widgets/distribution_widget.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/navigation/navigation.dart';
@@ -48,46 +46,56 @@ class _SaveCancelWidgetState<T> extends State<SaveCancelWidget<T>> {
       builder: (item, loading) {
         final properties = widget.getLayoutMembers(item);
         return WillPopScopeNavigationWidget(
-          child: BaseScaffoldWidget(
-            title: widget.title == null ? null : widget.title(item),
-            child: Column(
-              children: <Widget>[
-                DynamicForm(
-                  key: _dynamicFormKey,
-                  fixed: widget.fixed,
-                  children: properties,
-                  maxFlex: widget.maxFlex,
-                  normalize: widget.normalize,
-                  distribution: widget.distribution,
-                  onValidChanged: (valid) {
-                    setState(() {
-                      _valid = valid;
-                    });
-                  },
-                ),
-                ActionsListWidget(
-                  actions: <ActionWidget>[
-                    ActionWidget(
-                      title: "Save",
-                      action: !_valid
-                          ? null
-                          : () async {
-                              await widget.set(item); //Send the changes to the backend
-                              await navigationModel.back(); //Returns to the previous view
-                              var snackModel = context.read<SnackModel>();
-                              snackModel.message = "Saved!"; //Sends a snack message
-                            },
-                      primary: true,
-                    ),
-                    ActionWidget(
-                      title: "Cancel",
-                      action: () async {
-                        await navigationModel.back();
-                      },
-                    ),
-                  ],
-                ),
-              ],
+          child: Scaffold(
+            appBar: widget.title == null
+                ? null
+                : AppBar(
+                    title: Text(widget.title(item)),
+                  ),
+            body: Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                children: <Widget>[
+                  DynamicForm(
+                    key: _dynamicFormKey,
+                    fixed: widget.fixed,
+                    children: properties,
+                    maxFlex: widget.maxFlex,
+                    normalize: widget.normalize,
+                    distribution: widget.distribution,
+                    onValidChanged: (valid) {
+                      setState(() {
+                        _valid = valid;
+                      });
+                    },
+                  ),
+                  ActionsListWidget(
+                    actions: <ActionWidget>[
+                      ActionWidget(
+                        title: "Save",
+                        action: !_valid
+                            ? null
+                            : () async {
+                                await widget.set(item); //Send the changes to the backend
+                                await navigationModel.back(); //Returns to the previous view
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text("Saved!"),
+                                  ),
+                                );
+                              },
+                        primary: true,
+                      ),
+                      ActionWidget(
+                        title: "Cancel",
+                        action: () async {
+                          await navigationModel.back();
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         );
