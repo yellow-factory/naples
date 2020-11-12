@@ -8,15 +8,15 @@ class ActionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-      child: Text(title.toUpperCase()),
-      color: primary ? Theme.of(context).primaryColor : Theme.of(context).buttonColor,
-      padding: EdgeInsets.all(15),
-      onPressed: action == null
-          ? null
-          : () {
-              action();
-            },
+    var txtTitle = Text(title.toUpperCase());
+    if (primary)
+      return ElevatedButton(
+        child: txtTitle,
+        onPressed: action,
+      );
+    return TextButton(
+      child: txtTitle,
+      onPressed: action,
     );
   }
 }

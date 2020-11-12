@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:navy/navy.dart';
 import './snack_widget.dart';
 
 class BaseScaffoldWidget extends StatelessWidget {

@@ -42,7 +42,9 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
   }
 
   Future<void> refresh() async {
-    _items.clear();
+    setState(() {
+      _items.clear();
+    });
     await load();
   }
 

@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:naples/src/common/common.dart';
+import 'package:naples/widgets/markdown_widget.dart';
 import 'package:navy/navy.dart';
-import 'package:flutter_markdown/flutter_markdown.dart' as fmd;
-import 'package:markdown/markdown.dart' as md;
 
 class MarkdownProperty extends StatelessWidget implements Expandable {
   final int flex;
-  final FunctionOf0<String> markdown;
-  final double width;
+  final String markdown;
   final double height;
 
   MarkdownProperty({
@@ -15,17 +13,14 @@ class MarkdownProperty extends StatelessWidget implements Expandable {
     @required this.markdown,
     this.flex = 99,
     PredicateOf0 isVisible,
-    this.width,
     this.height,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final m = fmd.MarkdownBody(
-      data: markdown(),
-      extensionSet: md.ExtensionSet.gitHubWeb,
+    return MarkdownWidget(
+      template: markdown,
+      height: height,
     );
-    if (width == null && height == null) return m;
-    return SizedBox(height: height, width: width, child: m);
   }
 }

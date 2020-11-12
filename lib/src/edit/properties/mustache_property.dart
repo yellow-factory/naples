@@ -1,32 +1,39 @@
 import 'package:flutter/widgets.dart';
-import 'package:naples/src/edit/properties/markdown_property.dart';
-import 'package:navy/navy.dart';
-import 'package:mustache_template/mustache.dart';
-import 'dart:convert';
+import 'package:naples/src/common/common.dart';
+import 'package:naples/widgets/linkyfied_widget.dart';
+import 'package:naples/widgets/markdown_widget.dart';
 
-class MustacheProperty<T> extends MarkdownProperty {
+class MustacheProperty<T> extends StatelessWidget implements Expandable {
+  final int flex;
   final T source;
+  final String template;
+  final bool processMarkdown;
+  final double height;
 
   MustacheProperty({
     Key key,
+    this.flex = 99,
     @required this.source,
-    FunctionOf0 template,
-    int flex = 99,
-    double width,
-    double height,
-  }) : super(
-          key: key,
-          markdown: template,
-          flex: flex,
-          width: width,
-          height: height,
-        );
+    @required this.template,
+    this.processMarkdown = false,
+    this.height,
+  }) : super(key: key);
 
   @override
-  FunctionOf0<String> get markdown {
-    var template = new Template(super.markdown());
-    var transSource = json.decode(json.encode(source));
-    var output = template.renderString(transSource);
-    return () => output;
+  Widget build(BuildContext context) {
+    if (processMarkdown)
+      return MarkdownWidget(
+        template: template,
+        height: height,
+      );
+    var linkyfied = LinkyfiedWidget(
+      text: template,
+    );
+    if (height != null)
+      return SizedBox(
+        height: height,
+        child: linkyfied,
+      );
+    return linkyfied;
   }
 }

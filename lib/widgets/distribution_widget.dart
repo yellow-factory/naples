@@ -241,19 +241,24 @@ class _ContainerDistributionWidget extends StatelessWidget {
   int get _maxFlex => children.map((c) => _flexOnRow(c)).max();
 
   Row _getRow(BuildContext context, List<_DistributionExpanded> expandable) {
-    var expanded = List<Widget>();
-    for (var e in expandable) expanded.add(e.build(context));
-    if (normalize) {
-      var flexOnRow = _flexOnRow(expandable);
-      for (int i = flexOnRow; i < _maxFlex; i++) {
-        expanded.add(Spacer());
+    try {
+      var expanded = List<Widget>();
+      for (var e in expandable) expanded.add(e.build(context));
+      if (normalize) {
+        var flexOnRow = _flexOnRow(expandable);
+        for (int i = flexOnRow; i < _maxFlex; i++) {
+          expanded.add(Spacer());
+        }
       }
+      return Row(
+        children: expanded,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
+      );
+    } catch (e) {
+      throw e;
     }
-    return Row(
-      children: expanded,
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.baseline,
-    );
   }
 
   List<Row> _getRows(BuildContext context) =>

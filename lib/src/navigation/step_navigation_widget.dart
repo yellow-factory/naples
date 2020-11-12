@@ -30,10 +30,11 @@ class _StepNavigationWidgetState extends State<StepNavigationWidget> {
     final currentState = navigationModel.currentState;
 
     if (navigationModel.currentState == null) return SizedBox();
+
     return BackForwardAnimationWidget(
       key: _animationKey,
       child: Column(
-        key: ValueKey(currentState.toString()),
+        key: ValueKey(currentState),
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           if (widget.currentStepTitleBuilder != null) widget.currentStepTitleBuilder(currentState),

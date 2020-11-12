@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:naples/src/common/common.dart';
+import 'package:naples/widgets/linkyfied_widget.dart';
 
 class CommentProperty extends StatelessWidget implements Expandable {
   final int flex;
   final String comment;
-  final FontStyle fontStyle;
-  final FontWeight fontWeight;
+  final TextStyle textStyle;
+  final TextStyle linkStyle;
   final TextAlign textAlign;
   final double topPadding;
   final double bottomPadding;
@@ -14,9 +15,9 @@ class CommentProperty extends StatelessWidget implements Expandable {
       {Key key,
       @required this.comment,
       this.flex = 99,
-      this.fontStyle,
+      this.textStyle,
       this.textAlign,
-      this.fontWeight,
+      this.linkStyle,
       this.topPadding,
       this.bottomPadding})
       : super(key: key);
@@ -25,10 +26,11 @@ class CommentProperty extends StatelessWidget implements Expandable {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(top: topPadding ?? 0.0, bottom: bottomPadding ?? 0.0),
-      child: Text(
-        comment,
-        style: TextStyle(fontStyle: fontStyle, fontWeight: fontWeight),
+      child: LinkyfiedWidget(
+        text: comment,
+        linkStyle: linkStyle,
         textAlign: textAlign,
+        textStyle: textStyle,
       ),
     );
   }
