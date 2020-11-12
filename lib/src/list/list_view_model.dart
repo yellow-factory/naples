@@ -11,6 +11,8 @@ class ListViewModel<T> extends StatelessWidget {
   final FunctionOf1<int, String> title;
   final FunctionOf1<T, String> itemTitle;
   final FunctionOf1<T, String> itemSubtitle;
+  final FunctionOf1<T, Widget> itemLeading;
+  final FunctionOf1<T, Widget> itemTrailing;
   final FunctionOf1<T, Future<void>> select;
   final FunctionOf0<Future<void>> create;
 
@@ -29,6 +31,8 @@ class ListViewModel<T> extends StatelessWidget {
     @required this.getStream,
     @required this.itemTitle,
     this.itemSubtitle,
+    this.itemLeading,
+    this.itemTrailing,
     this.title,
     this.select,
     this.create,
@@ -63,9 +67,11 @@ class ListViewModel<T> extends StatelessWidget {
               if (loading) Container(child: LinearProgressIndicator()),
               Expanded(
                 child: DynamicList<T>(
-                  items,
-                  itemTitle,
+                  items: items,
+                  itemTitle: itemTitle,
                   itemSubtitle: itemSubtitle,
+                  itemLeading: itemLeading,
+                  itemTrailing: itemTrailing,
                   select: select,
                 ),
               ),

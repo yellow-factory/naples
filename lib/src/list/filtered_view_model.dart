@@ -9,6 +9,8 @@ class FilteredViewModel<T> extends StatefulWidget {
   final FunctionOf1<int, String> title;
   final FunctionOf1<T, String> itemTitle;
   final FunctionOf1<T, String> itemSubtitle;
+  final FunctionOf1<T, Widget> itemLeading;
+  final FunctionOf1<T, Widget> itemTrailing;
   final FunctionOf1<T, Future<void>> select;
   final FunctionOf0<Future<void>> create;
 
@@ -17,6 +19,8 @@ class FilteredViewModel<T> extends StatefulWidget {
     @required this.itemTitle,
     this.title,
     this.itemSubtitle,
+    this.itemLeading,
+    this.itemTrailing,
     this.select,
     this.create,
     Key key,
@@ -88,9 +92,11 @@ class _FilteredViewModelState<T> extends State<FilteredViewModel<T>> {
                 ),
               Expanded(
                 child: DynamicList<T>(
-                  _filtered ? _filteredItems(items) : items,
-                  widget.itemTitle,
+                  items: _filtered ? _filteredItems(items) : items,
+                  itemTitle: widget.itemTitle,
                   itemSubtitle: widget.itemSubtitle,
+                  itemLeading: widget.itemLeading,
+                  itemTrailing: widget.itemTrailing,
                   select: widget.select,
                 ),
               ),

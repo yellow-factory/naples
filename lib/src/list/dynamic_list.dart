@@ -21,9 +21,9 @@ class DynamicList<T> extends StatelessWidget {
 //-https://www.codingame.com/playgrounds/5363/paging-with-entity-framework-core
 //-https://www.sqlshack.com/pagination-in-sql-server/
 
-  DynamicList(
-    this.items,
-    this.itemTitle, {
+  DynamicList({
+    @required this.items,
+    @required this.itemTitle,
     this.itemSubtitle,
     this.itemLeading,
     this.itemTrailing,
