@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:naples/src/common/common.dart';
-import 'package:naples/src/edit/properties/widgets/file_widget.dart';
+import 'package:naples/widgets/file_widget.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/edit/properties/model_property.dart';
 

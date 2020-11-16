@@ -13,8 +13,8 @@ class DateTimeFormField extends FormField<DateTime> {
     FormFieldValidator<DateTime> validator,
     DateTime firstDate,
     DateTime lastDate,
-    DateFormat dateFormat,
-    bool onlyDate,
+    @required DateFormat dateFormat,
+    bool onlyDate = true,
   }) : super(
           key: key,
           onSaved: onSaved,

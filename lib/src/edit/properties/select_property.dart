@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:naples/src/common/common.dart';
-import 'package:naples/src/edit/properties/widgets/radio_list_form_field.dart';
+import 'package:naples/widgets/radio_list_form_field.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/edit/properties/model_property.dart';
 

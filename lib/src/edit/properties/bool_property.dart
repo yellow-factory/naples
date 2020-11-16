@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:naples/src/edit/properties/widgets/radio_list_form_field.dart';
-import 'package:naples/src/edit/properties/widgets/switch_form_field.dart';
-import 'package:naples/src/edit/properties/widgets/checkbox_form_field.dart';
+import 'package:naples/widgets/radio_list_form_field.dart';
+import 'package:naples/widgets/switch_form_field.dart';
+import 'package:naples/widgets/checkbox_form_field.dart';
 import 'package:naples/src/edit/properties/model_property.dart';
 import 'package:naples/src/common/common.dart';
 import 'package:navy/navy.dart';
