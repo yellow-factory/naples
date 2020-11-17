@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:naples/widgets/distribution_widget.dart';
+import 'package:naples/src/widgets/distribution_widget.dart';
 import 'package:naples/edit.dart';
 import 'package:navy/navy.dart';
 

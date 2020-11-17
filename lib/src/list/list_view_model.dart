@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:naples/list.dart';
 import 'package:naples/src/list/list_loader.dart';
-import 'package:naples/widgets/async_action_icon_button.dart';
+import 'package:naples/src/widgets/async_action_icon_button.dart';
 import 'package:navy/navy.dart';
 
 //T tipus de dades de la llista

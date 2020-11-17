@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:naples/src/list/dynamic_list.dart';
 import 'package:naples/src/list/list_loader.dart';
-import 'package:naples/widgets/async_action_icon_button.dart';
+import 'package:naples/src/widgets/async_action_icon_button.dart';
 import 'package:navy/navy.dart';
 
 class FilteredViewModel<T> extends StatefulWidget {

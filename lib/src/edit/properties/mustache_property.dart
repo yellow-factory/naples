@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:naples/src/common/common.dart';
-import 'package:naples/widgets.dart';
-import 'package:naples/widgets/linkyfied_widget.dart';
-import 'package:naples/widgets/markdown_widget.dart';
+import 'package:naples/src/widgets/linkyfied_widget.dart';
+import 'package:naples/src/widgets/markdown_widget.dart';
+import 'package:naples/src/widgets/mustache_widget.dart';
 
 class MustacheProperty<T extends IMustacheValues> extends StatelessWidget implements Expandable {
   final int flex;

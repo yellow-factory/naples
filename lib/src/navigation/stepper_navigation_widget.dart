@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:naples/naples.dart';
-import 'package:naples/widgets/actions_widget.dart';
+import 'package:naples/src/widgets/actions_widget.dart';
 import 'package:navy/navy.dart';
 import 'package:provider/provider.dart';
 import 'package:naples/src/navigation/navigation.dart';

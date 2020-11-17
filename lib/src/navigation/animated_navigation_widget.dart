@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:naples/widgets/back_forward_animation_widget.dart';
+import 'package:naples/src/widgets/back_forward_animation_widget.dart';
 import 'package:naples/src/navigation/navigation.dart';
 import 'package:navy/navy.dart';
 import 'package:provider/provider.dart';

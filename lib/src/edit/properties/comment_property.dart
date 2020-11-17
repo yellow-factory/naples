@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:naples/src/common/common.dart';
-import 'package:naples/widgets/linkyfied_widget.dart';
+import 'package:naples/src/widgets/linkyfied_widget.dart';
 
 class CommentProperty extends StatelessWidget implements Expandable {
   final int flex;
