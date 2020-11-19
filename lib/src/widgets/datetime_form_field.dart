@@ -6,6 +6,7 @@ class DateTimeFormField extends FormField<DateTime> {
     Key key,
     String label,
     String hint,
+    bool filled = false,
     DateTime initialValue,
     bool autofocus = false,
     bool enabled = true,
@@ -28,6 +29,7 @@ class DateTimeFormField extends FormField<DateTime> {
               decoration: InputDecoration(
                 hintText: hint,
                 labelText: label,
+                filled: filled,
                 suffixIcon: IconButton(
                   icon: Icon(Icons.calendar_today_outlined),
                   onPressed: () async {
