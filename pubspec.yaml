@@ -3,6 +3,7 @@ description: A View-Model framework from The Yellow Factory.
 version: 0.0.1
 author: null
 homepage: null
+publish_to: none
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -18,9 +19,9 @@ dependencies:
   #end Internationalization support.
   provider: ^4.3.0
   list_ext: ^0.1.13
-  flutter_markdown: ^0.4.4
+  flutter_markdown: ^0.5.1
   mustache_template: ^1.0.0+1
-  markdown: ^2.1.8
+  markdown: ^3.0.0
   flutter_linkify: ^4.0.2
   url_launcher: ^5.7.10
   crimson:

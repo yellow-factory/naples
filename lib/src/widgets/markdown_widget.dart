@@ -13,11 +13,11 @@ class MarkdownWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var onTapLink = (link) async {
-      if (await canLaunch(link)) {
-        await launch(link);
+    var onTapLink = (text, href, title) async {
+      if (await canLaunch(href)) {
+        await launch(href);
       } else {
-        throw 'Could not launch $link';
+        throw 'Could not launch $href';
       }
     };
     var extensionSet = md.ExtensionSet.gitHubWeb;
