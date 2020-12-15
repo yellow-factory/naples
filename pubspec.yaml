@@ -15,7 +15,7 @@ dependencies:
   # Internationalization support.
   flutter_localizations:
     sdk: flutter
-  intl: ^0.16.1
+  intl: ^0.17.0-nullsafety.2
   #end Internationalization support.
   provider: ^4.3.0
   list_ext: ^0.1.13
@@ -24,6 +24,9 @@ dependencies:
   markdown: ^3.0.0
   flutter_linkify: ^4.0.2
   url_launcher: ^5.7.10
+  #file_picker: ^2.1.0
+  file_picker_cross: ^4.2.6
+  path: ^1.7.0
   crimson:
     git: https://github.com/yellow-factory/crimson.git
   navy:   
@@ -38,7 +41,7 @@ dependency_overrides:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  intl_translation: ^0.17.10+1
+  #intl_translation: ^0.17.10+1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

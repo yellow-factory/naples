@@ -38,6 +38,10 @@ class _SaveCancelWidgetState<T> extends State<SaveCancelWidget<T>> {
   final _dynamicFormKey = GlobalKey<DynamicFormState>();
   bool _valid = false;
 
+//TODO: Probablement el nom hauria de ser alguna cosa com edit_model enlloc de save_view
+//TODO: Segurament el millor seria que aquest partís de item, i que
+//en tot cas després hi hagués un altre widget que combinés el getloader + aquest
+
   @override
   Widget build(BuildContext context) {
     var navigationModel = context.watch<NavigationModel>();

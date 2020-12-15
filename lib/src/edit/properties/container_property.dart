@@ -5,12 +5,12 @@ import 'package:navy/navy.dart';
 class ContainerProperty extends StatelessWidget implements Expandable {
   final int flex;
   final String label;
-  final Widget container;
+  final Widget child;
 
   ContainerProperty({
     Key key,
     @required this.label,
-    @required this.container,
+    @required this.child,
     this.flex = 1,
     PredicateOf0 isEditable,
   }) : super(key: key);
@@ -36,7 +36,7 @@ class ContainerProperty extends StatelessWidget implements Expandable {
       // ),
       backgroundColor: Colors.grey[200],
       children: [
-        SizedBox(height: 400, child: container),
+        SizedBox(height: 400, child: child),
       ],
     );
   }
