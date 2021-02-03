@@ -17,16 +17,16 @@ dependencies:
     sdk: flutter
   intl: ^0.17.0-nullsafety.2
   #end Internationalization support.
-  provider: ^4.3.0
-  list_ext: ^0.1.13
-  flutter_markdown: ^0.5.1
+  provider: 5.0.0-nullsafety.3 
+  list_ext: ^1.0.1-nullsafety.0
+  flutter_markdown: ^0.5.2
   mustache_template: ^1.0.0+1
-  markdown: ^3.0.0
+  markdown: ^3.0.0 #^4.0.0-nullsafety.0 --> Conflicts with flutter_markdown
   flutter_linkify: ^4.0.2
-  url_launcher: ^5.7.10
+  url_launcher: ^6.0.0-nullsafety.4 
   #file_picker: ^2.1.0
-  file_picker_cross: ^4.2.6
-  path: ^1.7.0
+  file_picker_cross: ^4.2.7
+  path: ^1.8.0-nullsafety.3
   crimson:
     git: https://github.com/yellow-factory/crimson.git
   navy:   

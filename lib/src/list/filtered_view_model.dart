@@ -1,6 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:naples/src/list/dynamic_list.dart';
-import 'package:naples/src/list/list_loader.dart';
+import 'package:naples/list.dart' as naples;
 import 'package:naples/src/widgets/async_action_icon_button.dart';
 import 'package:navy/navy.dart';
 
@@ -31,9 +32,14 @@ class FilteredViewModel<T> extends StatefulWidget {
 }
 
 class _FilteredViewModelState<T> extends State<FilteredViewModel<T>> {
-  final _listLoaderKey = GlobalKey<ListLoaderState<T>>();
+  GlobalKey<naples.ListViewModelState<T>> _listViewKey;
   bool _filtered = false;
-  String _filterValue = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _listViewKey = GlobalKey();
+  }
 
   Future<void> _togleFiltered() async {
     setState(() {
@@ -41,78 +47,37 @@ class _FilteredViewModelState<T> extends State<FilteredViewModel<T>> {
     });
   }
 
-  bool Function(T) get _filterPredicate {
-    var filterBy = _filterValue.toLowerCase().trim();
-    if ((!_filtered) || filterBy.isEmpty) return (x) => true;
-    return (x) => widget.itemTitle(x).toLowerCase().startsWith(filterBy);
-  }
-
-  List<T> _filteredItems(List<T> items) => items.where(_filterPredicate).toList();
-
   @override
   Widget build(BuildContext context) {
-    return ListLoader<T>(
-      key: _listLoaderKey,
+    return naples.ListViewModel<T>(
+      key: _listViewKey,
       getStream: widget.getStream,
-      builder: (items, loading) {
-        return Scaffold(
-          appBar: AppBar(
-            title: widget.title == null ? null : Text(widget.title(items.length)),
-            actions: <Widget>[
-              AsyncActionIconButtonWidget(
-                Icons.filter_list,
-                _togleFiltered,
-              ),
-              AsyncActionIconButtonWidget(
-                Icons.refresh,
-                () async {
-                  await _listLoaderKey.currentState.refresh();
+      itemTitle: widget.itemTitle,
+      itemSubtitle: widget.itemSubtitle,
+      itemLeading: widget.itemLeading,
+      itemTrailing: widget.itemTrailing,
+      select: widget.select,
+      title: widget.title,
+      actions: <Widget>[
+        AsyncActionIconButtonWidget(
+          Icons.filter_list,
+          _togleFiltered,
+        ),
+      ],
+      header: _filtered
+          ? Card(
+              child: TextField(
+                autofocus: true,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Filter by',
+                ),
+                onChanged: (value) {
+                  if (_listViewKey.currentState != null) _listViewKey.currentState.filterBy(value);
                 },
-                message: "Refreshed!!",
               ),
-            ],
-          ),
-          body: Column(
-            children: <Widget>[
-              if (loading) Container(child: LinearProgressIndicator()),
-              if (_filtered)
-                Card(
-                  child: TextField(
-                    autofocus: true,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Filter by',
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _filterValue = value;
-                      });
-                    },
-                  ),
-                ),
-              Expanded(
-                child: DynamicList<T>(
-                  items: _filtered ? _filteredItems(items) : items,
-                  itemTitle: widget.itemTitle,
-                  itemSubtitle: widget.itemSubtitle,
-                  itemLeading: widget.itemLeading,
-                  itemTrailing: widget.itemTrailing,
-                  select: widget.select,
-                ),
-              ),
-            ],
-          ),
-          floatingActionButton: widget.create == null
-              ? null
-              : FloatingActionButton(
-                  onPressed: () async {
-                    await widget.create();
-                  },
-                  tooltip: 'New model', //TODO: Això s'hauria de parametritzar, i l'icona també?
-                  child: Icon(Icons.add),
-                ),
-        );
-      },
+            )
+          : null,
     );
   }
 }

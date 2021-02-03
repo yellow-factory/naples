@@ -42,6 +42,7 @@ class FileProperty extends StatelessWidget with ModelProperty<String>, Expandabl
         return id;
       },
       download: download,
+      delete: () => setProperty(null),
     );
   }
 }

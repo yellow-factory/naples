@@ -13,6 +13,7 @@ class FileWidget extends StatefulWidget {
   final String fileName;
   final FunctionOf2<String, List<int>, Future<String>> upload;
   final FunctionOf1<String, Future<List<int>>> download;
+  final ActionOf0 delete;
 
   FileWidget({
     Key key,
@@ -20,6 +21,7 @@ class FileWidget extends StatefulWidget {
     this.hint,
     this.upload,
     this.download,
+    this.delete,
     this.fileId,
     this.fileName,
   }) : super(key: key);
@@ -31,10 +33,12 @@ class FileWidget extends StatefulWidget {
 class _FileWidgetState extends State<FileWidget> {
   String fileId;
   String fileName;
+  bool waiting;
 
   @override
   void initState() {
     super.initState();
+    waiting = false;
     fileId = widget.fileId;
     fileName = widget.fileName;
   }
@@ -52,20 +56,22 @@ class _FileWidgetState extends State<FileWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             ListTile(
-              leading: Icon(Icons.attachment_outlined),
               title: Text(widget.label),
               subtitle: Text(widget.hint),
               isThreeLine: true,
             ),
+            if (fileName != null && fileName.isNotEmpty)
+              ListTile(
+                leading: Icon(Icons.attachment_outlined),
+                title: Text(fileName),
+              ),
             ButtonBar(
               children: <Widget>[
                 if (fileId != null)
                   OutlinedButton.icon(
                     icon: Icon(Icons.delete_outline),
-                    onPressed: () {
-                      print("File deleted");
-                    },
                     label: Text("Delete"),
+                    onPressed: () => delete(),
                   ),
                 OutlinedButton.icon(
                   icon: Icon(Icons.cloud_upload_outlined),
@@ -80,10 +86,19 @@ class _FileWidgetState extends State<FileWidget> {
                   ),
               ],
             ),
+            if (waiting) LinearProgressIndicator(),
           ],
         ),
       ),
     );
+  }
+
+  void delete() {
+    setState(() {
+      fileName = null;
+      fileId = null;
+    });
+    widget.delete();
   }
 
   Future upload() async {
@@ -94,6 +109,9 @@ class _FileWidgetState extends State<FileWidget> {
         fileExtension: 'pdf,png',
       );
       var name = myFile.fileName;
+      setState(() {
+        waiting = true;
+      });
       var id = await widget.upload(myFile.fileName, myFile.toUint8List());
       setState(() {
         fileName = name;
@@ -101,8 +119,11 @@ class _FileWidgetState extends State<FileWidget> {
       });
     } catch (e) {
       print('error uploading file');
+    } finally {
+      setState(() {
+        waiting = false;
+      });
     }
-    print("File uploaded");
   }
 
   Future download() async {
@@ -113,18 +134,22 @@ class _FileWidgetState extends State<FileWidget> {
       var nameWithoutExtension = p.basenameWithoutExtension(fileName);
       var myFile = FilePickerCross(
         Uint8List.fromList(blob),
+        //Shoud be fileName instead of nameWithoutExtension, but:
+        //https://gitlab.com/testapp-system/file_picker_cross/-/issues/24
         path: nameWithoutExtension,
         fileExtension: ext,
       );
-      // Shows a dialog to save a file
-      var filePath = await myFile.exportToStorage();
-      var name = p.basename(filePath);
       setState(() {
-        fileName = name;
+        waiting = true;
       });
+      // Shows a dialog to save a file
+      await myFile.exportToStorage();
     } catch (e) {
       print('error downloading file');
+    } finally {
+      setState(() {
+        waiting = false;
+      });
     }
-    print("File downloaded");
   }
 }

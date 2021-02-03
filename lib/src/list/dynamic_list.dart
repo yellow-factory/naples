@@ -14,6 +14,8 @@ class DynamicList<T> extends StatelessWidget {
 
 //TODO: Potser seria bona idea que la càrrega estigués al BaseScaffold?
 //i potser el loading fos part d'un model genèric? no sé si podrà ser
+//De fet podria funcionar amb un control encarregat de rebre les notificacions de loading i loaded
+
 
 //TODO: Estaria bé que el conjunt de items estés particionat i que anés carregant més págines
 //em farà falta aquesta informació:
