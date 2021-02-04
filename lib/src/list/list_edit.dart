@@ -33,10 +33,9 @@ class ListSideEdit<T> extends StatelessWidget {
     return ListLoader<T>(
       key: _listLoaderKey,
       getStream: getStream,
-      builder: (items, loading) {
+      builder: (items) {
         return Column(
           children: <Widget>[
-            if (loading) Container(child: LinearProgressIndicator()),
             Expanded(
               child: DynamicList<T>(
                 items: items,

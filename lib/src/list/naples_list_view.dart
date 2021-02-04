@@ -3,13 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:naples/list.dart';
-import 'package:naples/src/common/loading.dart';
 import 'package:naples/src/list/list_loader.dart';
 import 'package:navy/navy.dart';
 
 //T tipus de dades de la llista
-//ListView= ListLoader + DynamicList
-class ListView<T> extends StatefulWidget {
+//NaplesListView= ListLoader + DynamicList
+class NaplesListView<T> extends StatefulWidget {
   final FunctionOf0<Stream<T>> getStream;
   final FunctionOf1<int, String> title;
   final FunctionOf1<T, String> itemTitle;
@@ -19,7 +18,7 @@ class ListView<T> extends StatefulWidget {
   final FunctionOf1<T, Future<void>> select;
   final Widget header;
 
-  ListView({
+  NaplesListView({
     @required this.getStream,
     @required this.itemTitle,
     this.itemSubtitle,
@@ -32,12 +31,12 @@ class ListView<T> extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  ListViewState<T> createState() => ListViewState<T>();
+  NaplesListViewState<T> createState() => NaplesListViewState<T>();
 }
 
-class ListViewState<T> extends State<ListView<T>> {
+class NaplesListViewState<T> extends State<NaplesListView<T>> {
   GlobalKey<ListLoaderState<T>> _listLoaderKey;
-  String filterValue = "";
+  String filterBy = "";
 
   @override
   void initState() {
@@ -46,12 +45,12 @@ class ListViewState<T> extends State<ListView<T>> {
   }
 
   bool Function(T) get _filterPredicate {
-    var filterBy = filterValue.toLowerCase().trim();
-    if (filterBy.isEmpty) return (x) => true;
-    return (x) => widget.itemTitle(x).toLowerCase().contains(filterBy);
+    var filter = filterBy.toLowerCase().trim();
+    if (filter.isEmpty) return (x) => true;
+    return (x) => widget.itemTitle(x).toLowerCase().contains(filter);
   }
 
-  List<T> _filteredItems(List<T> items) {
+  List<T> _filterItems(List<T> items) {
     var lst = items.where(_filterPredicate).toList();
     LengthNotification(lst.length).dispatch(context);
     return lst;
@@ -66,13 +65,13 @@ class ListViewState<T> extends State<ListView<T>> {
     return ListLoader<T>(
       key: _listLoaderKey,
       getStream: widget.getStream,
-      builder: (items, loading) {
+      builder: (items) {
         return Column(
           children: <Widget>[
             if (widget.header != null) widget.header,
             Expanded(
               child: DynamicList<T>(
-                items: _filteredItems(items),
+                items: _filterItems(items),
                 itemTitle: widget.itemTitle,
                 itemSubtitle: widget.itemSubtitle,
                 itemLeading: widget.itemLeading,

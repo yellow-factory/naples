@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:naples/list.dart' as naples;
+import 'package:naples/list.dart';
 import 'package:naples/src/widgets/async_action_icon_button.dart';
 import 'package:navy/navy.dart';
 
-class FilteredViewModel<T> extends StatefulWidget {
+class FilteredListScaffold<T> extends StatefulWidget {
   final FunctionOf0<Stream<T>> getStream;
   final FunctionOf1<int, String> title;
   final FunctionOf1<T, String> itemTitle;
@@ -15,7 +15,7 @@ class FilteredViewModel<T> extends StatefulWidget {
   final FunctionOf1<T, Future<void>> select;
   final FunctionOf0<Future<void>> create;
 
-  FilteredViewModel({
+  FilteredListScaffold({
     @required this.getStream,
     @required this.itemTitle,
     this.title,
@@ -28,11 +28,11 @@ class FilteredViewModel<T> extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _FilteredViewModelState<T> createState() => _FilteredViewModelState<T>();
+  _FilteredListScaffoldState<T> createState() => _FilteredListScaffoldState<T>();
 }
 
-class _FilteredViewModelState<T> extends State<FilteredViewModel<T>> {
-  GlobalKey<naples.ListViewModelState<T>> _listViewKey;
+class _FilteredListScaffoldState<T> extends State<FilteredListScaffold<T>> {
+  GlobalKey<ListScaffoldState<T>> _listViewKey;
   bool _filtered = false;
 
   @override
@@ -49,7 +49,7 @@ class _FilteredViewModelState<T> extends State<FilteredViewModel<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return naples.ListViewModel<T>(
+    return ListScaffold<T>(
       key: _listViewKey,
       getStream: widget.getStream,
       itemTitle: widget.itemTitle,

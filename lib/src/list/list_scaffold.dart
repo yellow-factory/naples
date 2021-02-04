@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:naples/list.dart' as naples;
+import 'package:naples/list.dart';
 import 'package:naples/src/common/loading.dart';
 import 'package:naples/src/widgets/async_action_icon_button.dart';
 import 'package:navy/navy.dart';
 
 //T tipus de dades de la llista
-class ListViewModel<T> extends StatefulWidget {
+class ListScaffold<T> extends StatefulWidget {
   final FunctionOf0<Stream<T>> getStream;
   final FunctionOf1<int, String> title;
   final FunctionOf1<T, String> itemTitle;
@@ -20,11 +20,6 @@ class ListViewModel<T> extends StatefulWidget {
   final Widget header;
   final List<Widget> actions;
 
-//TODO: Els botons de filtre i refresh, quan està carregant haurien d'estar deshabilitats
-
-//TODO: Potser seria bona idea que la càrrega estigués al BaseScaffold?
-//i potser el loading fos part d'un model genèric? no sé si podrà ser
-
 //TODO: Estaria bé que el conjunt de items estés particionat i que anés carregant més págines
 //em farà falta aquesta informació:
 //-https://codinglatte.com/posts/flutter/listview-infinite-scrolling-in-flutter/
@@ -33,7 +28,7 @@ class ListViewModel<T> extends StatefulWidget {
 
 //TODO: S'hauria de dir alguna cosa com ListScaffold
 
-  ListViewModel({
+  ListScaffold({
     @required this.getStream,
     @required this.itemTitle,
     this.itemSubtitle,
@@ -48,11 +43,11 @@ class ListViewModel<T> extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  ListViewModelState<T> createState() => ListViewModelState<T>();
+  ListScaffoldState<T> createState() => ListScaffoldState<T>();
 }
 
-class ListViewModelState<T> extends State<ListViewModel<T>> {
-  GlobalKey<naples.ListViewState<T>> _listViewKey;
+class ListScaffoldState<T> extends State<ListScaffold<T>> {
+  GlobalKey<NaplesListViewState<T>> _listViewKey;
   int _length = 0;
 
   @override
@@ -63,12 +58,12 @@ class ListViewModelState<T> extends State<ListViewModel<T>> {
 
   void filterBy(String filterBy) {
     if (_listViewKey.currentState == null) return;
-    _listViewKey.currentState.filterValue = filterBy;
+    _listViewKey.currentState.filterBy = filterBy;
   }
 
   @override
   Widget build(BuildContext context) {
-    return NotificationListener<naples.LengthNotification>(
+    return NotificationListener<LengthNotification>(
       onNotification: (notification) {
         scheduleMicrotask(() {
           setState(() {
@@ -92,7 +87,7 @@ class ListViewModelState<T> extends State<ListViewModel<T>> {
           ],
         ),
         body: Loading(
-          child: naples.ListView<T>(
+          child: NaplesListView<T>(
             key: _listViewKey,
             getStream: widget.getStream,
             itemTitle: widget.itemTitle,

@@ -5,7 +5,7 @@ import 'package:navy/navy.dart';
 
 class ListLoader<T> extends StatefulWidget {
   final FunctionOf0<Stream<T>> getStream;
-  final FunctionOf2<List<T>, bool, Widget> builder;
+  final FunctionOf1<List<T>, Widget> builder;
 
   ListLoader({
     @required this.getStream,
@@ -30,7 +30,7 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
   Future<void> load() async {
     try {
       _loading = true;
-      LoadingNotification(true).dispatch(context);
+      _notifyLoading();
       await for (var m in widget.getStream()) {
         setState(() {
           _items.add(m);
@@ -40,11 +40,16 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
       throw e;
     } finally {
       _loading = false;
-      LoadingNotification(false).dispatch(context);
+      _notifyLoading();
     }
   }
 
+  void _notifyLoading() {
+    LoadingNotification(_loading).dispatch(context);
+  }
+
   Future<void> refresh() async {
+    if (_loading) return;
     setState(() {
       _items.clear();
     });
@@ -53,6 +58,6 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.builder(_items, _loading);
+    return widget.builder(_items);
   }
 }
