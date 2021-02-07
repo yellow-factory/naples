@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:naples/list.dart';
-import 'package:naples/src/common/loading.dart';
+import 'package:naples/load.dart';
 import 'package:navy/navy.dart';
 
 class ExpandableList<T> extends StatefulWidget {

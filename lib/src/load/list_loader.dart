@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:naples/src/common/loading.dart';
 import 'package:navy/navy.dart';
+import 'loading.dart';
 
 class ListLoader<T> extends StatefulWidget {
   final FunctionOf0<Stream<T>> getStream;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:naples/src/common/loading.dart';
+import 'package:naples/src/load/loading.dart';
 import 'package:naples/src/navigation/will_pop_scope_navigation_widget.dart';
 
 class NavigationScaffold extends StatelessWidget {
