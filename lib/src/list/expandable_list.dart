@@ -40,6 +40,7 @@ class _ExpandableListState<T> extends State<ExpandableList<T>> {
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
+      maintainState: true,
       collapsedBackgroundColor: Theme.of(context).colorScheme.surface,
       backgroundColor: Theme.of(context).colorScheme.surface,
       title: Row(
@@ -64,6 +65,11 @@ class _ExpandableListState<T> extends State<ExpandableList<T>> {
             child: ListLoader<T>(
               getStream: widget.getStream,
               builder: (items) {
+                scheduleMicrotask(() {
+                  setState(() {
+                    _length = items.length;
+                  });
+                });
                 return DynamicList<T>(
                   items: items,
                   itemTitle: widget.itemTitle,
