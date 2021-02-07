@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:naples/src/common/loading.dart';
 import 'package:navy/navy.dart';
 
 class GetLoader<T> extends StatefulWidget {
   final FunctionOf0<Future<T>> get;
-  final FunctionOf2<T, bool, Widget> builder;
+  final FunctionOf1<T, Widget> builder;
 
   GetLoader({
     @required this.get,
@@ -18,7 +19,7 @@ class GetLoader<T> extends StatefulWidget {
 
 class GetLoaderState<T> extends State<GetLoader<T>> {
   T _item;
-  bool loading = false;
+  bool _loading = false;
 
   @override
   void initState() {
@@ -28,7 +29,8 @@ class GetLoaderState<T> extends State<GetLoader<T>> {
 
   Future<void> load() async {
     try {
-      loading = true;
+      _loading = true;
+      _notifyLoading();
       var item = await widget.get();
       setState(() {
         _item = item;
@@ -36,13 +38,18 @@ class GetLoaderState<T> extends State<GetLoader<T>> {
     } catch (e) {
       throw e;
     } finally {
-      loading = false;
+      _loading = false;
+      _notifyLoading();
     }
+  }
+
+  void _notifyLoading() {
+    LoadingNotification(_loading).dispatch(context);
   }
 
   @override
   Widget build(BuildContext context) {
     if (_item == null) return SizedBox();
-    return widget.builder(_item, loading);
+    return widget.builder(_item);
   }
 }

@@ -12,17 +12,6 @@ class DynamicList<T> extends StatelessWidget {
   final FunctionOf1<T, Future<void>> select;
   final ScrollController _scrollController = ScrollController();
 
-//TODO: Potser seria bona idea que la càrrega estigués al BaseScaffold?
-//i potser el loading fos part d'un model genèric? no sé si podrà ser
-//De fet podria funcionar amb un control encarregat de rebre les notificacions de loading i loaded
-
-
-//TODO: Estaria bé que el conjunt de items estés particionat i que anés carregant més págines
-//em farà falta aquesta informació:
-//-https://codinglatte.com/posts/flutter/listview-infinite-scrolling-in-flutter/
-//-https://www.codingame.com/playgrounds/5363/paging-with-entity-framework-core
-//-https://www.sqlshack.com/pagination-in-sql-server/
-
   DynamicList({
     @required this.items,
     @required this.itemTitle,
@@ -47,7 +36,7 @@ class DynamicList<T> extends StatelessWidget {
             return ListTile(
               dense: false,
               title: Text(itemTitle(model)),
-              subtitle: Text(itemSubtitle(model)),
+              subtitle: itemSubtitle != null ? Text(itemSubtitle(model)) : null,
               leading: itemLeading != null ? itemLeading(model) : null,
               trailing: itemTrailing != null ? itemTrailing(model) : null,
               onTap: () {

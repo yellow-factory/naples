@@ -14,9 +14,8 @@ export 'package:naples/src/edit/properties/mustache_property.dart';
 export 'package:naples/src/edit/properties/container_property.dart';
 
 export 'package:naples/src/edit/dynamic_form.dart';
-export 'package:naples/src/edit/save_view_widget.dart';
 export 'package:naples/src/edit/get_loader.dart';
-export 'package:naples/src/edit/save_view_widget.dart';
+export 'package:naples/src/edit/edit_view.dart';
 
 //TODO: Falten la resta de tipus: "double", etc.
 //       case "double":
