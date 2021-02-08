@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:naples/edit.dart';
-import 'package:naples/navigation.dart';
 import 'package:naples/widgets.dart';
-import 'package:navy/navy.dart';
-import 'package:provider/provider.dart';
 
 class EditView<T> extends StatefulWidget {
-  final FunctionOf0<Future<void>> set;
+  final Function save;
+  final Function cancel;
+  final String saveText;
+  final String cancelText;
   final Iterable<Widget> properties;
   final int fixed;
   final int maxFlex;
@@ -14,7 +14,10 @@ class EditView<T> extends StatefulWidget {
   final DistributionType distribution;
 
   EditView({
-    @required this.set,
+    @required this.save,
+    @required this.cancel,
+    @required this.saveText,
+    @required this.cancelText,
     @required this.properties,
     this.fixed = 1,
     this.maxFlex = 1,
@@ -33,7 +36,6 @@ class _EditViewState extends State<EditView> {
 
   @override
   Widget build(BuildContext context) {
-    var navigationModel = context.watch<NavigationModel>();
     return Padding(
       padding: EdgeInsets.all(16),
       child: Column(
@@ -54,25 +56,13 @@ class _EditViewState extends State<EditView> {
           ActionsListWidget(
             actions: <ActionWidget>[
               ActionWidget(
-                title: "Save",
-                action: !_valid
-                    ? null
-                    : () async {
-                        await widget.set(); //Send the changes to the backend
-                        await navigationModel.back(); //Returns to the previous view
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text("Saved!"),
-                          ),
-                        );
-                      },
+                title: widget.saveText,
+                action: !_valid ? null : widget.save,
                 primary: true,
               ),
               ActionWidget(
-                title: "Cancel",
-                action: () async {
-                  await navigationModel.back();
-                },
+                title: widget.cancelText,
+                action: widget.cancel,
               ),
             ],
           ),
@@ -81,5 +71,3 @@ class _EditViewState extends State<EditView> {
     );
   }
 }
-
-//TODO: Localize
