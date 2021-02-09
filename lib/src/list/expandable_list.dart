@@ -6,7 +6,7 @@ import 'package:naples/list.dart';
 import 'package:naples/load.dart';
 import 'package:navy/navy.dart';
 
-class ExpandableList<T> extends StatefulWidget {
+class ExpandableList<T> extends StatelessWidget {
   final FunctionOf0<Stream<T>> getStream;
   final FunctionOf1<int, String> title;
   final FunctionOf1<T, String> itemTitle;
@@ -31,58 +31,49 @@ class ExpandableList<T> extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ExpandableListState<T> createState() => _ExpandableListState<T>();
-}
-
-class _ExpandableListState<T> extends State<ExpandableList<T>> {
-  int _length = 0;
-
-  @override
   Widget build(BuildContext context) {
-    return ExpansionTile(
-      maintainState: true,
-      collapsedBackgroundColor: Theme.of(context).colorScheme.surface,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(widget.title(_length)),
-          if (widget.create != null)
-            IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                this.widget.create();
-              },
-            )
-        ],
-      ),
-      tilePadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-      initiallyExpanded: false,
-      children: [
-        SizedBox(
-          height: widget.expandedHeight,
-          child: Loading(
-            child: ListLoader<T>(
-              getStream: widget.getStream,
-              builder: (items) {
-                scheduleMicrotask(() {
-                  setState(() {
-                    _length = items.length;
-                  });
-                });
-                return DynamicList<T>(
-                  items: items,
-                  itemTitle: widget.itemTitle,
-                  itemSubtitle: widget.itemSubtitle,
-                  itemLeading: widget.itemLeading,
-                  itemTrailing: widget.itemTrailing,
-                  select: widget.select,
-                );
-              },
-            ),
-          ),
+    return IntrinsicHeight(
+      child: Loading(
+        child: ListLoader<T>(
+          getStream: getStream,
+          builder: (items) {
+            return ExpansionTile(
+              maintainState: true,
+              collapsedBackgroundColor: Theme.of(context).colorScheme.surface,
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(title(items.length)),
+                  if (create != null)
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () {
+                        this.create();
+                      },
+                    )
+                ],
+              ),
+              tilePadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+              initiallyExpanded: false,
+              children: [
+                SizedBox(
+                  height: expandedHeight,
+                  child: DynamicList<T>(
+                    separated: true,
+                    items: items,
+                    itemTitle: itemTitle,
+                    itemSubtitle: itemSubtitle,
+                    itemLeading: itemLeading,
+                    itemTrailing: itemTrailing,
+                    select: select,
+                  ),
+                ),
+              ],
+            );
+          },
         ),
-      ],
+      ),
     );
   }
 }
