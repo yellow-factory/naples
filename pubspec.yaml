@@ -15,18 +15,24 @@ dependencies:
   # Internationalization support.
   flutter_localizations:
     sdk: flutter
-  intl: ^0.17.0-nullsafety.2
+  intl: ^0.17.0
   #end Internationalization support.
-  provider: 5.0.0-nullsafety.3 
+  provider: ^5.0.0-nullsafety.5 
   list_ext: ^1.0.1-nullsafety.0
-  flutter_markdown: ^0.5.2
+  flutter_markdown: ^0.6.0
   mustache_template: ^1.0.0+1
-  markdown: ^3.0.0 #^4.0.0-nullsafety.0 --> Conflicts with flutter_markdown
+  markdown: ^4.0.0 
   flutter_linkify: ^4.0.2
-  url_launcher: ^6.0.0-nullsafety.4 
-  #file_picker: ^2.1.0
-  file_picker_cross: ^4.2.7
-  path: ^1.8.0-nullsafety.3
+  url_launcher: ^6.0.0
+  
+  file_picker_cross: ^4.2.8
+
+  #Cal fer servir aquest enlloc de file_picker_cross, però cal esperar a la versió null-safe
+  #file_selector: ^0.7.0+2
+  #file_selector_macos: ^0.0.3
+  #file_selector_web: ^0.8.1
+
+  path: ^1.8.0
   crimson:
     git: https://github.com/yellow-factory/crimson.git
   navy:   

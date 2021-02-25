@@ -1,11 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:naples/common.dart';
 import 'package:naples/src/widgets/distribution_widget.dart';
 import 'package:naples/edit.dart';
 import 'package:navy/navy.dart';
 
-class DynamicForm extends StatefulWidget {
+class DynamicForm extends StatefulWidget implements Validable {
   final Iterable<Widget> children;
   final int fixed;
   final int maxFlex;
@@ -14,6 +15,7 @@ class DynamicForm extends StatefulWidget {
   final EdgeInsetsGeometry childPadding;
   final ActionOf0 onChanged;
   final ActionOf1<bool> onValidChanged;
+  final FunctionOf2<Widget, bool, Widget> builder;
 
   DynamicForm({
     Key key,
@@ -25,10 +27,15 @@ class DynamicForm extends StatefulWidget {
     this.childPadding = const EdgeInsets.only(right: 10),
     this.onChanged,
     this.onValidChanged,
+    this.builder,
   }) : super(key: key);
 
   @override
   DynamicFormState createState() => DynamicFormState();
+
+  @override
+  bool get initialValid =>
+      children.whereType<ModelProperty>().every((element) => element.initialValid);
 }
 
 class DynamicFormState extends State<DynamicForm> {
@@ -39,8 +46,7 @@ class DynamicFormState extends State<DynamicForm> {
   void initState() {
     super.initState();
     //TODO: maybe the widgets implementing ModelProperty can implement Validable?
-    var isValid =
-        widget.children.whereType<ModelProperty>().every((element) => element.initialValid);
+    var isValid = widget.initialValid;
     if (_valid != isValid) {
       _valid = isValid;
       if (widget.onValidChanged != null) {
@@ -51,7 +57,7 @@ class DynamicFormState extends State<DynamicForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
+    var form = Form(
       key: _formKey,
       child: DistributionWidget(
         children: widget.children,
@@ -79,5 +85,7 @@ class DynamicFormState extends State<DynamicForm> {
       },
       autovalidateMode: AutovalidateMode.onUserInteraction,
     );
+    if (widget.builder == null) return form;
+    return widget.builder(form, _valid);
   }
 }

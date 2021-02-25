@@ -15,6 +15,7 @@ class FileProperty extends StatelessWidget with ModelProperty<String>, Expandabl
   final FunctionOf1<String, String> validator;
   final FunctionOf2<String, List<int>, Future<String>> upload;
   final FunctionOf1<String, Future<List<int>>> download;
+  final FunctionOf1<String, Future<String>> publicUrl;
 
   FileProperty({
     Key key,
@@ -28,6 +29,7 @@ class FileProperty extends StatelessWidget with ModelProperty<String>, Expandabl
     this.flex = 1,
     this.upload,
     this.download,
+    this.publicUrl,
   }) : super(key: key);
 
   @override
@@ -42,6 +44,7 @@ class FileProperty extends StatelessWidget with ModelProperty<String>, Expandabl
         return id;
       },
       download: download,
+      publicUrl: publicUrl,
       delete: () => setProperty(null),
     );
   }

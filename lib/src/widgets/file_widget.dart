@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:navy/navy.dart';
 import 'package:path/path.dart' as p;
+import 'package:flutter/services.dart';
 
 class FileWidget extends StatefulWidget {
   final String label;
@@ -13,6 +14,7 @@ class FileWidget extends StatefulWidget {
   final String fileName;
   final FunctionOf2<String, List<int>, Future<String>> upload;
   final FunctionOf1<String, Future<List<int>>> download;
+  final FunctionOf1<String, Future<String>> publicUrl;
   final ActionOf0 delete;
 
   FileWidget({
@@ -21,6 +23,7 @@ class FileWidget extends StatefulWidget {
     this.hint,
     this.upload,
     this.download,
+    this.publicUrl,
     this.delete,
     this.fileId,
     this.fileName,
@@ -84,6 +87,12 @@ class _FileWidgetState extends State<FileWidget> {
                     label: Text("Download"),
                     onPressed: () async => await download(),
                   ),
+                if (fileId != null)
+                  OutlinedButton.icon(
+                    onPressed: () async => await publicUrl(),
+                    icon: Icon(Icons.copy),
+                    label: Text("Copy URL to Clipboard"),
+                  ),
               ],
             ),
             if (waiting) LinearProgressIndicator(),
@@ -99,6 +108,12 @@ class _FileWidgetState extends State<FileWidget> {
       fileId = null;
     });
     widget.delete();
+  }
+
+  Future publicUrl() async {
+    if (fileId == null || fileId.isEmpty) return; //Aquí hauria d'ensenyar un diàleg
+    var url = await widget.publicUrl(fileId);
+    Clipboard.setData(new ClipboardData(text: url));
   }
 
   Future upload() async {

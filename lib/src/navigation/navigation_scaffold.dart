@@ -32,3 +32,5 @@ class NavigationScaffold extends StatelessWidget {
     );
   }
 }
+
+//TODO: Tinc dubtes sobre si aquest tipus d'Scaffold haurien d'existir

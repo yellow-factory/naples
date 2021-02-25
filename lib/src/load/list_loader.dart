@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:naples/load.dart';
 import 'package:navy/navy.dart';
 import 'loading.dart';
 
@@ -32,6 +33,7 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
       _loading = true;
       _notifyLoading();
       await for (var m in widget.getStream()) {
+        if (!mounted) break;
         setState(() {
           _items.add(m);
         });
@@ -45,7 +47,7 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
   }
 
   void _notifyLoading() {
-    LoadingNotification(_loading).dispatch(context);
+    if (mounted) LoadingNotification(_loading).dispatch(context);
   }
 
   Future<void> refresh() async {
@@ -58,6 +60,12 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return widget.builder(_items);
+    return NotificationListener<NeedsRefreshNotification>(
+      onNotification: (notification) {
+        refresh();
+        return true;
+      },
+      child: widget.builder(_items),
+    );
   }
 }
