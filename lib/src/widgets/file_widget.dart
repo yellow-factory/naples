@@ -2,9 +2,9 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:file_picker_cross/file_picker_cross.dart';
+import 'package:file_selector/file_selector.dart';
 import 'package:navy/navy.dart';
-import 'package:path/path.dart' as p;
+//import 'package:path/path.dart' as p;
 import 'package:flutter/services.dart';
 
 class FileWidget extends StatefulWidget {
@@ -119,21 +119,18 @@ class _FileWidgetState extends State<FileWidget> {
   Future upload() async {
     try {
       // show a dialog to open a file
-      var myFile = await FilePickerCross.importFromStorage(
-        //type: FileTypeCross.any,
-        fileExtension: 'pdf,png',
-      );
-      var name = myFile.fileName;
+      final typeGroup = XTypeGroup(label: 'documents', extensions: ['pdf', 'png']);
+      final file = await openFile(acceptedTypeGroups: [typeGroup]);
       setState(() {
         waiting = true;
       });
-      var id = await widget.upload(myFile.fileName, myFile.toUint8List());
+      var id = await widget.upload(file.name, await file.readAsBytes());
       setState(() {
-        fileName = name;
+        fileName = file.name;
         fileId = id;
       });
     } catch (e) {
-      print('error uploading file');
+      print('error uploading file: $e');
     } finally {
       setState(() {
         waiting = false;
@@ -144,21 +141,15 @@ class _FileWidgetState extends State<FileWidget> {
   Future download() async {
     try {
       if (fileId == null || fileId.isEmpty) return; //Aquí hauria d'ensenyar un diàleg
+      final path = await getSavePath(suggestedName: fileName);
       var blob = await widget.download(fileId);
-      var ext = p.extension(fileName).replaceFirst('.', '');
-      var nameWithoutExtension = p.basenameWithoutExtension(fileName);
-      var myFile = FilePickerCross(
-        Uint8List.fromList(blob),
-        //Shoud be fileName instead of nameWithoutExtension, but:
-        //https://gitlab.com/testapp-system/file_picker_cross/-/issues/24
-        path: nameWithoutExtension,
-        fileExtension: ext,
-      );
+      final data = Uint8List.fromList(blob);
+      //final mimeType = "application/pdf";
+      final file = XFile.fromData(data, name: fileName); //, mimeType: mimeType
       setState(() {
         waiting = true;
       });
-      // Shows a dialog to save a file
-      await myFile.exportToStorage();
+      await file.saveTo(path);
     } catch (e) {
       print('error downloading file');
     } finally {

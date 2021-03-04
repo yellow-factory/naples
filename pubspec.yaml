@@ -6,7 +6,7 @@ homepage: null
 publish_to: none
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"  #>=2.12.0-0 Per migrar a null-safety cal posar aquesta versió mínima
   flutter: ">=1.22.0 <2.0.0"
 
 dependencies:
@@ -22,16 +22,10 @@ dependencies:
   flutter_markdown: ^0.6.0
   mustache_template: ^1.0.0+1
   markdown: ^4.0.0 
-  flutter_linkify: ^4.0.2
-  url_launcher: ^6.0.0
-  
-  file_picker_cross: ^4.2.8
-
-  #Cal fer servir aquest enlloc de file_picker_cross, però cal esperar a la versió null-safe
-  #file_selector: ^0.7.0+2
-  #file_selector_macos: ^0.0.3
-  #file_selector_web: ^0.8.1
-
+  flutter_linkify: ^4.1.0
+  url_launcher: ^6.0.1
+  file_selector: ^0.8.1
+  file_selector_macos: ^0.0.4
   path: ^1.8.0
   crimson:
     git: https://github.com/yellow-factory/crimson.git
