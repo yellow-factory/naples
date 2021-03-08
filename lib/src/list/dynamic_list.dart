@@ -6,22 +6,22 @@ import 'package:navy/navy.dart';
 class DynamicList<T> extends StatelessWidget {
   final List<T> items;
   final FunctionOf1<T, String> itemTitle;
-  final FunctionOf1<T, String> itemSubtitle;
-  final FunctionOf1<T, Widget> itemLeading;
-  final FunctionOf1<T, Widget> itemTrailing;
-  final FunctionOf1<T, Future<void>> select;
+  final FunctionOf1<T, String>? itemSubtitle;
+  final FunctionOf1<T, Widget>? itemLeading;
+  final FunctionOf1<T, Widget>? itemTrailing;
+  final FunctionOf1<T, Future<void>>? select;
   final bool separated;
   final ScrollController _scrollController = ScrollController();
 
   DynamicList({
-    @required this.items,
-    @required this.itemTitle,
+    required this.items,
+    required this.itemTitle,
     this.itemSubtitle,
     this.itemLeading,
     this.itemTrailing,
     this.select,
     this.separated = false,
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -41,12 +41,12 @@ class DynamicList<T> extends StatelessWidget {
                 ListTile(
                   dense: false,
                   title: Text(itemTitle(model)),
-                  subtitle: itemSubtitle != null ? Text(itemSubtitle(model)) : null,
-                  leading: itemLeading != null ? itemLeading(model) : null,
-                  trailing: itemTrailing != null ? itemTrailing(model) : null,
+                  subtitle: itemSubtitle != null ? Text(itemSubtitle!(model)) : null,
+                  leading: itemLeading != null ? itemLeading!(model) : null,
+                  trailing: itemTrailing != null ? itemTrailing!(model) : null,
                   onTap: () {
                     if (select == null) return;
-                    select(model);
+                    select!(model);
                   },
                 ),
                 if (separated)

@@ -20,33 +20,35 @@ extension BoolValuesExtension on BoolValues {
   String get displayName => describeEnum(this);
 }
 
-class BoolProperty extends StatelessWidget with ModelProperty<bool>, Expandable {
+class BoolProperty extends StatelessWidget with ModelProperty<bool?>, Expandable {
   final int flex;
   final String label;
-  final String hint;
+  final String? hint;
   final bool autofocus;
-  final PredicateOf0 editable;
-  final FunctionOf0<bool> getProperty;
-  final ActionOf1<bool> setProperty;
-  final FunctionOf1<bool, String> validator;
+  final PredicateOf0? editable;
+  final FunctionOf0<bool?> getProperty;
+  final ActionOf1<bool?>? setProperty;
+  final FunctionOf1<bool?, String?>? validator;
   final BoolWidgetType widgetType;
   final BoolWidgetPosition widgetPosition;
   final FunctionOf1<BoolValues, FunctionOf0<String>> displayName;
 
   BoolProperty({
-    Key key,
-    this.label,
+    Key? key,
+    required this.label,
     this.hint,
     this.autofocus = false,
     this.editable,
-    @required this.getProperty,
+    required this.getProperty,
     this.setProperty,
     this.validator,
     this.flex = 1,
     this.widgetType = BoolWidgetType.Checkbox,
     this.widgetPosition = BoolWidgetPosition.Leading,
-    this.displayName,
+    this.displayName = defaultDisplayName,
   }) : super(key: key);
+
+  static FunctionOf0<String> defaultDisplayName(BoolValues t) => () => t.displayName;
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +58,10 @@ class BoolProperty extends StatelessWidget with ModelProperty<bool>, Expandable 
 
     final defaultWidget = CheckboxFormField(
       autofocus: autofocus,
-      enabled: editable == null ? true : editable(),
+      enabled: enabled,
       label: label,
       hint: hint,
-      initialValue: getProperty(),
+      initialValue: getProperty() ?? false,
       onSaved: setProperty,
       validator: validator,
       controlAffinity: controlAffinity,
@@ -69,10 +71,10 @@ class BoolProperty extends StatelessWidget with ModelProperty<bool>, Expandable 
       case BoolWidgetType.Switch:
         return SwitchFormField(
           autofocus: autofocus,
-          enabled: editable == null ? true : editable(),
+          enabled: enabled,
           label: label,
           hint: hint,
-          initialValue: getProperty(),
+          initialValue: getProperty() ?? false,
           onSaved: setProperty,
           validator: validator,
           controlAffinity: controlAffinity,
@@ -82,7 +84,7 @@ class BoolProperty extends StatelessWidget with ModelProperty<bool>, Expandable 
       case BoolWidgetType.Radio:
         return RadioListFormField<bool, BoolValues>(
           autofocus: autofocus,
-          enabled: editable == null ? true : editable(),
+          enabled: enabled,
           label: label,
           hint: hint,
           initialValue: getProperty(),
@@ -91,7 +93,7 @@ class BoolProperty extends StatelessWidget with ModelProperty<bool>, Expandable 
           controlAffinity: controlAffinity,
           listItems: () => BoolValues.values,
           valueMember: (t) => t.boolValue,
-          displayMember: displayName ?? (t) => () => t.displayName,
+          displayMember: displayName,
         );
       default:
         return defaultWidget;

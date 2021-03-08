@@ -5,10 +5,14 @@ import 'package:url_launcher/url_launcher.dart';
 
 class MarkdownWidget extends StatelessWidget {
   final String template;
-  final double height;
+  final double? height;
   final WrapAlignment wrapAlignment;
 
-  MarkdownWidget({@required this.template, this.height, this.wrapAlignment, Key key})
+  MarkdownWidget(
+      {required this.template,
+      this.height,
+      this.wrapAlignment = WrapAlignment.spaceBetween,
+      Key? key})
       : super(key: key);
 
   @override
@@ -22,9 +26,9 @@ class MarkdownWidget extends StatelessWidget {
     };
     var extensionSet = md.ExtensionSet.gitHubWeb;
     var styleSheet = fmd.MarkdownStyleSheet(
-      textAlign: wrapAlignment ?? WrapAlignment.spaceBetween,
-      unorderedListAlign: wrapAlignment ?? WrapAlignment.spaceBetween,
-      orderedListAlign: wrapAlignment ?? WrapAlignment.spaceBetween,
+      textAlign: wrapAlignment,
+      unorderedListAlign: wrapAlignment,
+      orderedListAlign: wrapAlignment,
     );
 
     if (height != null) {

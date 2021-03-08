@@ -4,15 +4,15 @@ import 'package:navy/navy.dart';
 import 'navigation_scaffold.dart';
 
 class StepNavigationScaffold<T> extends StatelessWidget {
-  final String title;
-  final FunctionOf1<T, Widget> currentStepTitleBuilder;
+  final String? title;
+  final FunctionOf1<T, Widget>? currentStepTitleBuilder;
   final FunctionOf2<T, ActionOf1<bool>, Widget> currentStepContentBuilder;
 
   StepNavigationScaffold({
-    Key key,
+    Key? key,
     this.title,
     this.currentStepTitleBuilder,
-    @required this.currentStepContentBuilder,
+    required this.currentStepContentBuilder,
   }) : super(key: key);
 
   @override

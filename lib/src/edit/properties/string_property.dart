@@ -4,30 +4,30 @@ import 'package:naples/src/common/common.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/edit/properties/model_property.dart';
 
-class StringProperty extends StatelessWidget with ModelProperty<String>, Expandable {
+class StringProperty extends StatelessWidget with ModelProperty<String?>, Expandable {
   final int flex;
   final String label;
-  final String hint;
+  final String? hint;
   final bool autofocus;
-  final PredicateOf0 editable;
-  final FunctionOf0<String> getProperty;
-  final ActionOf1<String> setProperty;
-  final FunctionOf1<String, String> validator;
+  final PredicateOf0? editable;
+  final FunctionOf0<String?> getProperty;
+  final ActionOf1<String?>? setProperty;
+  final FunctionOf1<String?, String?>? validator;
   final bool obscureText;
   final int maxLength;
 
   StringProperty({
-    Key key,
-    this.label,
+    Key? key,
+    required this.label,
     this.hint,
     this.autofocus = false,
-    @required this.getProperty,
+    required this.getProperty,
     this.setProperty,
     this.editable,
     this.validator,
     this.flex = 1,
     this.obscureText = false,
-    this.maxLength,
+    this.maxLength = -1,
   }) : super(key: key);
 
   @override
@@ -39,7 +39,7 @@ class StringProperty extends StatelessWidget with ModelProperty<String>, Expanda
         hintText: hint,
         labelText: label,
       ),
-      enabled: editable == null ? true : editable(),
+      enabled: enabled,
       autofocus: autofocus,
       validator: validator,
       obscureText: obscureText,

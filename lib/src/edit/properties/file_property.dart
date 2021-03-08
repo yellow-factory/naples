@@ -4,26 +4,26 @@ import 'package:naples/src/widgets/file_widget.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/edit/properties/model_property.dart';
 
-class FileProperty extends StatelessWidget with ModelProperty<String>, Expandable {
+class FileProperty extends StatelessWidget with ModelProperty<String?>, Expandable {
   final int flex;
   final String label;
-  final String hint;
+  final String? hint;
   final bool autofocus;
-  final PredicateOf0 editable;
-  final FunctionOf0<String> getProperty;
-  final ActionOf1<String> setProperty;
-  final FunctionOf1<String, String> validator;
-  final FunctionOf2<String, List<int>, Future<String>> upload;
-  final FunctionOf1<String, Future<List<int>>> download;
-  final FunctionOf1<String, Future<String>> publicUrl;
+  final PredicateOf0? editable;
+  final FunctionOf0<String?> getProperty;
+  final ActionOf1<String?>? setProperty;
+  final FunctionOf1<String?, String?>? validator;
+  final FunctionOf2<String, List<int>, Future<String?>>? upload;
+  final FunctionOf1<String, Future<List<int>?>>? download;
+  final FunctionOf1<String, Future<String?>>? publicUrl;
 
   FileProperty({
-    Key key,
-    this.label,
+    Key? key,
+    required this.label,
     this.hint,
     this.autofocus = false,
     this.editable,
-    @required this.getProperty,
+    required this.getProperty,
     this.setProperty,
     this.validator,
     this.flex = 1,
@@ -38,14 +38,17 @@ class FileProperty extends StatelessWidget with ModelProperty<String>, Expandabl
       label: label,
       hint: hint,
       upload: (fileName, fileBytes) async {
-        var id = await upload(fileName, fileBytes);
-        setProperty(id);
+        if (upload == null) return null;
+        var id = await upload!(fileName, fileBytes);
+        if (id == null) throw Exception("Upload has not returned an identifier");
+        if (setProperty == null) return id;
+        setProperty!(id);
         print('File id: $id');
         return id;
       },
       download: download,
       publicUrl: publicUrl,
-      delete: () => setProperty(null),
+      delete: setProperty == null ? null : () => setProperty!(null),
     );
   }
 }

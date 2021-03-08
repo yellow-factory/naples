@@ -6,11 +6,11 @@ class BackForwardAnimationWidget extends StatefulWidget {
   final Duration reverseDuration;
   final bool showOnlyInWidget;
   BackForwardAnimationWidget({
-    @required this.child,
+    required this.child,
     this.duration = const Duration(milliseconds: 500),
     this.reverseDuration = const Duration(milliseconds: 500),
     this.showOnlyInWidget = false,
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -39,6 +39,7 @@ class BackForwardAnimationWidgetState extends State<BackForwardAnimationWidget> 
       reverseDuration: widget.reverseDuration,
       layoutBuilder: widget.showOnlyInWidget
           ? (currentChild, previousChildren) {
+              if (currentChild == null) return Placeholder();
               return currentChild;
             }
           : AnimatedSwitcher.defaultLayoutBuilder,

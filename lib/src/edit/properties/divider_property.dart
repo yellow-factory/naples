@@ -4,7 +4,7 @@ import 'package:naples/src/common/common.dart';
 class DividerProperty extends StatelessWidget implements Expandable {
   final int flex;
   DividerProperty({
-    Key key,
+    Key? key,
     this.flex = 99,
   }) : super(key: key);
 

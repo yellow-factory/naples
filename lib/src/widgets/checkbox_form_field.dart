@@ -3,15 +3,15 @@ import 'package:flutter/widgets.dart';
 
 class CheckboxFormField extends FormField<bool> {
   CheckboxFormField({
-    Key key,
-    @required String label,
-    String hint,
-    ListTileControlAffinity controlAffinity,
+    Key? key,
+    required String label,
+    String? hint,
+    ListTileControlAffinity controlAffinity = ListTileControlAffinity.platform,
     bool initialValue = false,
     bool autofocus = false,
     bool enabled = true,
-    FormFieldSetter<bool> onSaved,
-    FormFieldValidator<bool> validator,
+    FormFieldSetter<bool>? onSaved,
+    FormFieldValidator<bool>? validator,
   }) : super(
           key: key,
           onSaved: onSaved,

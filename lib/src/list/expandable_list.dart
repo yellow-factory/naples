@@ -10,18 +10,18 @@ class ExpandableList<T> extends StatelessWidget {
   final FunctionOf0<Stream<T>> getStream;
   final FunctionOf1<int, String> title;
   final FunctionOf1<T, String> itemTitle;
-  final FunctionOf1<T, String> itemSubtitle;
-  final FunctionOf1<T, Widget> itemLeading;
-  final FunctionOf1<T, Widget> itemTrailing;
-  final FunctionOf1<T, Future<void>> select;
-  final FunctionOf0<Future<void>> create;
+  final FunctionOf1<T, String>? itemSubtitle;
+  final FunctionOf1<T, Widget>? itemLeading;
+  final FunctionOf1<T, Widget>? itemTrailing;
+  final FunctionOf1<T, Future<void>>? select;
+  final FunctionOf0<Future<void>>? create;
   final double expandedHeight;
 
   ExpandableList({
-    Key key,
-    @required this.title,
-    @required this.getStream,
-    @required this.itemTitle,
+    Key? key,
+    required this.title,
+    required this.getStream,
+    required this.itemTitle,
     this.itemSubtitle,
     this.itemLeading,
     this.itemTrailing,
@@ -49,7 +49,8 @@ class ExpandableList<T> extends StatelessWidget {
                     IconButton(
                       icon: Icon(Icons.add),
                       onPressed: () {
-                        this.create();
+                        if (create == null) return;
+                        this.create!();
                       },
                     )
                 ],

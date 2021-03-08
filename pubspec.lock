@@ -56,7 +56,7 @@ packages:
       path: "../crimson"
       relative: true
     source: path
-    version: "0.0.1"
+    version: "0.0.2"
   cross_file:
     dependency: transitive
     description:
@@ -70,7 +70,7 @@ packages:
       name: email_validator
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.6"
+    version: "2.0.0-nullsafety"
   fake_async:
     dependency: transitive
     description:
@@ -84,7 +84,7 @@ packages:
       name: file_selector
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.8.1"
+    version: "0.8.2"
   file_selector_macos:
     dependency: "direct main"
     description:
@@ -98,7 +98,7 @@ packages:
       name: file_selector_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.1"
+    version: "2.0.2"
   file_selector_web:
     dependency: transitive
     description:
@@ -111,13 +111,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_linkify:
-    dependency: "direct main"
-    description:
-      name: flutter_linkify
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.1.0"
   flutter_localizations:
     dependency: "direct main"
     description: flutter
@@ -168,20 +161,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.6.3"
-  linkify:
-    dependency: transitive
-    description:
-      name: linkify
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.0.0"
   list_ext:
     dependency: "direct main"
     description:
       name: list_ext
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.1-nullsafety.0"
+    version: "1.0.2"
   markdown:
     dependency: "direct main"
     description:
@@ -206,17 +192,19 @@ packages:
   mustache_template:
     dependency: "direct main"
     description:
-      name: mustache_template
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0+1"
+      path: "."
+      ref: HEAD
+      resolved-ref: c4344e0dd45f6605758eb11aa4837859e2c055f0
+      url: "https://github.com/jonahwilliams/mustache.git"
+    source: git
+    version: "2.0.0"
   navy:
     dependency: "direct main"
     description:
       path: "../navy"
       relative: true
     source: path
-    version: "1.0.1"
+    version: "1.0.2"
   nested:
     dependency: transitive
     description:
@@ -237,28 +225,28 @@ packages:
       name: pedantic
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.10.0"
+    version: "1.11.0"
   plugin_platform_interface:
     dependency: transitive
     description:
       name: plugin_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.1.0-nullsafety.1"
+    version: "2.0.0"
   provider:
     dependency: "direct main"
     description:
       name: provider
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.0.0-nullsafety.5"
+    version: "5.0.0"
   quiver:
     dependency: transitive
     description:
       name: quiver
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.0-nullsafety.3"
+    version: "3.0.0"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -270,7 +258,7 @@ packages:
       name: source_span
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.8.1"
+    version: "1.8.0"
   stack_trace:
     dependency: transitive
     description:
@@ -319,7 +307,7 @@ packages:
       name: url_launcher
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "6.0.1"
+    version: "6.0.2"
   url_launcher_linux:
     dependency: transitive
     description:
@@ -340,7 +328,7 @@ packages:
       name: url_launcher_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.1"
+    version: "2.0.2"
   url_launcher_web:
     dependency: transitive
     description:
@@ -363,5 +351,5 @@ packages:
     source: hosted
     version: "2.1.0"
 sdks:
-  dart: ">=2.12.0-259.9.beta <3.0.0"
-  flutter: ">=1.22.0"
+  dart: ">=2.12.0 <3.0.0"
+  flutter: ">=2.0.0"

@@ -13,15 +13,15 @@ enum SelectWidgetType { DropDown, Radio }
 ///U defines the type of the property being edited which is a member of T
 ///V defines the type of the list of items being exposed in the list of options
 ///In some cases U and V may coincide
-class SelectProperty<U, V> extends StatelessWidget with ModelProperty<U>, Expandable {
+class SelectProperty<U, V> extends StatelessWidget with ModelProperty<U?>, Expandable {
   final int flex;
   final String label;
-  final String hint;
+  final String? hint;
   final bool autofocus;
-  final PredicateOf0 editable;
-  final FunctionOf0<U> getProperty;
-  final ActionOf1<U> setProperty;
-  final FunctionOf1<U, String> validator;
+  final PredicateOf0? editable;
+  final FunctionOf0<U?> getProperty;
+  final ActionOf1<U?>? setProperty;
+  final FunctionOf1<U?, String?>? validator;
   final SelectWidgetType widgetType;
   final FunctionOf0<List<V>> listItems;
   //Function to project U from V
@@ -30,18 +30,18 @@ class SelectProperty<U, V> extends StatelessWidget with ModelProperty<U>, Expand
   final FunctionOf1<V, FunctionOf0<String>> displayMember;
 
   SelectProperty({
-    Key key,
-    this.label,
+    Key? key,
+    required this.label,
     this.hint,
     this.autofocus = false,
     this.editable,
-    @required this.getProperty,
+    required this.getProperty,
     this.setProperty,
     this.validator,
     this.flex = 1,
-    @required this.listItems,
-    @required this.valueMember,
-    @required this.displayMember,
+    required this.listItems,
+    required this.valueMember,
+    required this.displayMember,
     this.widgetType = SelectWidgetType.DropDown,
   }) : super(key: key);
 
@@ -67,7 +67,8 @@ class SelectProperty<U, V> extends StatelessWidget with ModelProperty<U>, Expand
         hintText: hint,
       ),
       onChanged: (value) {
-        dropdownKey.currentState.didChange(value);
+        if (dropdownKey.currentState == null) return;
+        dropdownKey.currentState!.didChange(value);
       },
     );
 
@@ -82,7 +83,7 @@ class SelectProperty<U, V> extends StatelessWidget with ModelProperty<U>, Expand
           displayMember: displayMember,
           valueMember: valueMember,
           listItems: listItems,
-          enabled: editable == null ? true : editable(),
+          enabled: enabled,
           initialValue: getProperty(),
           onSaved: setProperty,
           validator: validator,

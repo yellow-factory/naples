@@ -3,14 +3,14 @@ import 'package:navy/navy.dart';
 
 class AsyncActionIconButtonWidget extends StatelessWidget {
   final IconData iconData;
-  final FunctionOf0<Future<void>> action;
-  final String message;
+  final FunctionOf0<Future<void>>? action;
+  final String? message;
 
-  AsyncActionIconButtonWidget(
-    this.iconData,
-    this.action, {
+  AsyncActionIconButtonWidget({
+    required this.iconData,
+    this.action,
     this.message,
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -18,14 +18,14 @@ class AsyncActionIconButtonWidget extends StatelessWidget {
     return IconButton(
       icon: Icon(iconData),
       onPressed: () async {
-        await action();
-        if (message != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(message),
-            ),
-          );
-        }
+        if (action == null) return;
+        await action!();
+        if (message == null) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(message!),
+          ),
+        );
       },
     );
   }

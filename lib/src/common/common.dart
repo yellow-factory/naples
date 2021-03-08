@@ -14,7 +14,7 @@ abstract class IMustacheValues {
 //TODO: Remove
 abstract class Validable {
   bool get initialValid;
-  ActionOf1<bool> get onValidChanged;
+  ActionOf1<bool>? get onValidChanged;
 }
 
 abstract class HasBuilder {

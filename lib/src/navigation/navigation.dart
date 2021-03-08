@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'dart:collection';
 
+import 'package:navy/navy.dart';
+
 //TODO: Crec que no s'està utilitzant Transition.allowBack, i segurament hauria
 //de formar part de StateViewModel, i s'hauria d'aplicar al canGoBack, que ara mateix
 //només mira si hi ha una transició anterior
@@ -20,9 +22,9 @@ class Transition<T> {
 }
 
 class NavigationModel<T> extends ChangeNotifier {
-  final List<Transition<T>> _transitions = List<Transition<T>>();
+  final List<Transition<T>> _transitions = <Transition<T>>[];
   final ListQueue<T> _history = ListQueue<T>();
-  T _currentState;
+  T? _currentState;
 
   NavigationModel(this._currentState);
 
@@ -51,34 +53,42 @@ class NavigationModel<T> extends ChangeNotifier {
   }
 
   @protected
-  Transition<T> getTransition(T beginningState, T endingState) {
-    return _transitions.firstWhere(
-        (element) => element.beginningState == beginningState && element.endingState == endingState,
-        orElse: () => null);
+  Transition<T>? getTransition(T beginningState, T endingState) {
+    var test =
+        (element) => element.beginningState == beginningState && element.endingState == endingState;
+    if (_transitions.any(test)) return _transitions.firstWhere(test);
+    return null;
   }
 
-  T get currentState => _currentState;
+  T? get currentState => _currentState;
 
   Iterable<T> get history => _history;
 
   Future<bool> transition(T newState) async {
     if (canGoBack && _history.last == newState) back();
-
-    final t = getTransition(currentState, newState);
-
-    return _executeTransition(t);
+    return ifNotNullFunctionOf1(
+      currentState,
+      (T state) {
+        final transition = getTransition(state, newState);
+        return ifNotNullFunctionOf1(
+          transition,
+          (Transition<T> t) => _executeTransition(t),
+          false,
+        );
+      },
+      false,
+    );
   }
 
-  Future<bool> _executeTransition(Transition transition) async {
-    if (currentState != null && transition == null) return false;
-
-    //Adds the current to the history
-    if (currentState != null && transition.allowBack) {
-      _history.add(currentState);
-    }
-    
-    _updateCurrentStateViewModel(transition.endingState);
-    return true;
+  Future<bool> _executeTransition(Transition<T> transition) async {
+    return ifNotNullPredicateOf1(currentState, (T state) {
+      //Adds the current to the history
+      if (transition.allowBack) {
+        _history.add(state);
+      }
+      _updateCurrentStateViewModel(transition.endingState);
+      return true;
+    }, false);
   }
 
   bool get canGoBack => _history.isNotEmpty;

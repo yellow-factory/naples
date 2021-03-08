@@ -5,31 +5,31 @@ import 'package:naples/src/widgets/datetime_form_field.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/edit/properties/model_property.dart';
 
-class DateTimeProperty extends StatelessWidget with ModelProperty<DateTime>, Expandable {
+class DateTimeProperty extends StatelessWidget with ModelProperty<DateTime?>, Expandable {
   final int flex;
   final String label;
-  final String hint;
+  final String? hint;
   final bool autofocus;
-  final PredicateOf0 editable;
-  final FunctionOf0<DateTime> getProperty;
-  final ActionOf1<DateTime> setProperty;
-  final FunctionOf1<DateTime, String> validator;
+  final PredicateOf0? editable;
+  final FunctionOf0<DateTime?> getProperty;
+  final ActionOf1<DateTime?>? setProperty;
+  final FunctionOf1<DateTime?, String?>? validator;
   final DateFormat dateFormat;
   final bool onlyDate;
-  final DateTime firstDate;
-  final DateTime lastDate;
+  final DateTime? firstDate;
+  final DateTime? lastDate;
 
   DateTimeProperty({
-    Key key,
-    @required this.getProperty,
-    this.label,
+    Key? key,
+    required this.getProperty,
+    required this.label,
     this.hint,
     this.autofocus = false,
     this.setProperty,
     this.editable,
     this.validator,
     this.flex = 1,
-    @required this.dateFormat,
+    required this.dateFormat,
     this.onlyDate = false,
     this.firstDate,
     this.lastDate,
@@ -42,7 +42,7 @@ class DateTimeProperty extends StatelessWidget with ModelProperty<DateTime>, Exp
       hint: hint,
       autofocus: autofocus,
       dateFormat: dateFormat,
-      enabled: editable == null ? true : editable(),
+      enabled: enabled,
       initialValue: getProperty(),
       firstDate: firstDate,
       lastDate: lastDate,

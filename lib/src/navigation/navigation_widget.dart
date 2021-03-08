@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 class NavigationWidget<T> extends StatelessWidget {
   final FunctionOf1<T, Widget> currentStepBuilder;
 
-  NavigationWidget({Key key, @required this.currentStepBuilder}) : super(key: key);
+  NavigationWidget({Key? key, required this.currentStepBuilder}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

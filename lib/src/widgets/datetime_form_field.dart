@@ -3,18 +3,18 @@ import 'package:intl/intl.dart';
 
 class DateTimeFormField extends FormField<DateTime> {
   DateTimeFormField({
-    Key key,
-    String label,
-    String hint,
+    Key? key,
+    required String label,
+    String? hint,
     bool filled = false,
-    DateTime initialValue,
+    DateTime? initialValue,
     bool autofocus = false,
     bool enabled = true,
-    FormFieldSetter<DateTime> onSaved,
-    FormFieldValidator<DateTime> validator,
-    DateTime firstDate,
-    DateTime lastDate,
-    @required DateFormat dateFormat,
+    FormFieldSetter<DateTime>? onSaved,
+    FormFieldValidator<DateTime>? validator,
+    DateTime? firstDate,
+    DateTime? lastDate,
+    required DateFormat dateFormat,
     bool onlyDate = true,
   }) : super(
           key: key,
@@ -22,10 +22,12 @@ class DateTimeFormField extends FormField<DateTime> {
           validator: validator,
           initialValue: initialValue,
           builder: (FormFieldState<DateTime> state) {
+            var currentValue = state.value ?? DateTime.now();
+            var currentFirstDate = firstDate ?? DateTime(1900);
+            var currentLastDate = lastDate ?? DateTime(2100);
             return TextField(
-              //key: formFieldKey,
               controller: TextEditingController()
-                ..text = state.value != null ? dateFormat.format(state.value) : '',
+                ..text = state.value != null ? dateFormat.format(currentValue) : '',
               decoration: InputDecoration(
                 hintText: hint,
                 labelText: label,
@@ -35,31 +37,31 @@ class DateTimeFormField extends FormField<DateTime> {
                   onPressed: () async {
                     final DateTime datePicked = await showDatePicker(
                           context: state.context,
-                          initialDate: state.value ?? DateTime.now(),
-                          firstDate: firstDate ?? DateTime(1900),
-                          lastDate: lastDate ?? DateTime(2100),
+                          initialDate: currentValue,
+                          firstDate: currentFirstDate,
+                          lastDate: currentLastDate,
                         ) ??
-                        state.value;
+                        currentValue;
+
                     if (onlyDate) {
-                      if (state.value?.compareTo(datePicked) != 0) state.didChange(datePicked);
+                      if (currentValue.compareTo(datePicked) != 0) state.didChange(datePicked);
                       return null;
                     }
-                    final TimeOfDay time = TimeOfDay.fromDateTime(state.value ?? DateTime.now());
+
+                    final TimeOfDay time = TimeOfDay.fromDateTime(currentValue);
                     final TimeOfDay timePicked = await showTimePicker(
                           context: state.context,
                           initialTime: time,
                         ) ??
                         time;
 
-                    if (datePicked != null || timePicked != null) {
-                      state.didChange(new DateTime(
-                        datePicked != null ? datePicked.year : DateTime.now(),
-                        datePicked != null ? datePicked.month : DateTime.now(),
-                        datePicked != null ? datePicked.day : DateTime.now(),
-                        timePicked.hour,
-                        timePicked.minute,
-                      ));
-                    }
+                    state.didChange(new DateTime(
+                      datePicked.year,
+                      datePicked.month,
+                      datePicked.day,
+                      timePicked.hour,
+                      timePicked.minute,
+                    ));
                   },
                 ),
               ),

@@ -38,7 +38,7 @@ import 'naples_localizations_es.dart';
 ///   # Internationalization support.
 ///   flutter_localizations:
 ///     sdk: flutter
-///   intl: 0.16.1
+///   intl: any # Use the pinned version from flutter_localizations
 ///
 ///   # rest of dependencies
 /// ```
@@ -63,12 +63,12 @@ import 'naples_localizations_es.dart';
 /// be consistent with the languages listed in the NaplesLocalizations.supportedLocales
 /// property.
 abstract class NaplesLocalizations {
-  NaplesLocalizations(String locale) : assert(locale != null), localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  NaplesLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   // ignore: unused_field
   final String localeName;
 
-  static NaplesLocalizations of(BuildContext context) {
+  static NaplesLocalizations? of(BuildContext context) {
     return Localizations.of<NaplesLocalizations>(context, NaplesLocalizations);
   }
 
@@ -98,13 +98,22 @@ abstract class NaplesLocalizations {
     Locale('es')
   ];
 
-  // To go to the next step
+  /// To go to the next step
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
   String get continua;
 
-  // To go to the previous step
+  /// To go to the previous step
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
   String get torna;
 
-  // To end the sequence of steps
+  /// To end the sequence of steps
+  ///
+  /// In en, this message translates to:
+  /// **'Finalize'**
   String get finalitza;
 }
 
@@ -125,15 +134,20 @@ class _NaplesLocalizationsDelegate extends LocalizationsDelegate<NaplesLocalizat
 
 NaplesLocalizations _lookupNaplesLocalizations(Locale locale) {
   
-  
-  
-  // Lookup logic when only language code is specified.
-  switch (locale.languageCode) {
-    case 'ca': return NaplesLocalizationsCa();
+
+
+// Lookup logic when only language code is specified.
+switch (locale.languageCode) {
+  case 'ca': return NaplesLocalizationsCa();
     case 'en': return NaplesLocalizationsEn();
     case 'es': return NaplesLocalizationsEs();
-  }
+}
 
-  assert(false, 'NaplesLocalizations.delegate failed to load unsupported locale "$locale"');
-  return null;
+
+  throw FlutterError(
+    'NaplesLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+    'an issue with the localizations generation tool. Please file an issue '
+    'on GitHub with a reproducible sample app and the gen-l10n configuration '
+    'that was used.'
+  );
 }

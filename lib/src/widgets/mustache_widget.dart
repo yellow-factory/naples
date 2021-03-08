@@ -10,11 +10,11 @@ class MustacheWidget<T extends IMustacheValues> extends StatelessWidget {
   final FunctionOf1<String, Widget> builder;
 
   MustacheWidget({
-    @required this.source,
-    @required this.template,
-    @required this.locale,
-    @required this.builder,
-    Key key,
+    required this.source,
+    required this.template,
+    required this.locale,
+    required this.builder,
+    Key? key,
   }) : super(key: key);
 
   @override

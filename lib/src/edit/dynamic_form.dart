@@ -13,13 +13,13 @@ class DynamicForm extends StatefulWidget implements Validable {
   final bool normalize;
   final DistributionType distribution;
   final EdgeInsetsGeometry childPadding;
-  final ActionOf0 onChanged;
-  final ActionOf1<bool> onValidChanged;
-  final FunctionOf2<Widget, bool, Widget> builder;
+  final ActionOf0? onChanged;
+  final ActionOf1<bool>? onValidChanged;
+  final FunctionOf2<Widget, bool, Widget>? builder;
 
   DynamicForm({
-    Key key,
-    this.children,
+    Key? key,
+    required this.children,
     this.fixed = 1,
     this.maxFlex = 1,
     this.normalize = true,
@@ -49,10 +49,22 @@ class DynamicFormState extends State<DynamicForm> {
     var isValid = widget.initialValid;
     if (_valid != isValid) {
       _valid = isValid;
-      if (widget.onValidChanged != null) {
-        scheduleMicrotask(() => widget.onValidChanged(_valid));
-      }
+      _fireOnValidChanged();
     }
+  }
+
+  void _fireOnValidChanged() {
+    ifNotNullActionOf1(
+      widget.onValidChanged,
+      (ActionOf1<bool> onValidChanged) => scheduleMicrotask(() => onValidChanged(_valid)),
+    );
+  }
+
+  void _fireOnChanged() {
+    ifNotNullActionOf1(
+      widget.onChanged,
+      (ActionOf0 onChanged) => scheduleMicrotask(onChanged),
+    );
   }
 
   @override
@@ -68,24 +80,25 @@ class DynamicFormState extends State<DynamicForm> {
         childPadding: widget.childPadding,
       ),
       onChanged: () {
-        if (_formKey.currentState == null) return;
-        _formKey.currentState.save();
-        var isValid = _formKey.currentState.validate();
-        if (_valid != isValid) {
-          setState(() {
-            _valid = isValid;
-          });
-          if (widget.onValidChanged != null) {
-            scheduleMicrotask(() => widget.onValidChanged(_valid));
+        ifNotNullActionOf1<FormState>(_formKey.currentState, (currentState) {
+          currentState.save();
+          var isValid = currentState.validate();
+          if (_valid != isValid) {
+            setState(() {
+              _valid = isValid;
+            });
+            _fireOnValidChanged();
           }
-        }
-        if (widget.onChanged != null) {
-          scheduleMicrotask(widget.onChanged);
-        }
+          _fireOnChanged();
+        });
       },
       autovalidateMode: AutovalidateMode.onUserInteraction,
     );
-    if (widget.builder == null) return form;
-    return widget.builder(form, _valid);
+
+    return ifNotNullFunctionOf1<FunctionOf2<Widget, bool, Widget>, Widget>(
+      widget.builder,
+      (builder) => builder(form, _valid),
+      form,
+    );
   }
 }

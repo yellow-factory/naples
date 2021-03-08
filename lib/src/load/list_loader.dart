@@ -9,9 +9,9 @@ class ListLoader<T> extends StatefulWidget {
   final FunctionOf1<List<T>, Widget> builder;
 
   ListLoader({
-    @required this.getStream,
-    @required this.builder,
-    Key key,
+    required this.getStream,
+    required this.builder,
+    Key? key,
   }) : super(key: key);
 
   @override

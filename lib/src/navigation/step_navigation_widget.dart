@@ -7,13 +7,13 @@ import 'package:navy/navy.dart';
 import 'package:provider/provider.dart';
 
 class StepNavigationWidget<T> extends StatefulWidget {
-  final FunctionOf1<T, Widget> currentStepTitleBuilder;
+  final FunctionOf1<T, Widget>? currentStepTitleBuilder;
   final FunctionOf2<T, ActionOf1<bool>, Widget> currentStepContentBuilder;
 
   StepNavigationWidget({
-    Key key,
+    Key? key,
     this.currentStepTitleBuilder,
-    @required this.currentStepContentBuilder,
+    required this.currentStepContentBuilder,
   }) : super(key: key);
 
   @override
@@ -23,6 +23,10 @@ class StepNavigationWidget<T> extends StatefulWidget {
 class _StepNavigationWidgetState extends State<StepNavigationWidget> {
   final _animationKey = GlobalKey<BackForwardAnimationWidgetState>();
   bool _isValid = false;
+
+  NaplesLocalizations get naplesLocalizations =>
+      NaplesLocalizations.of(context) ??
+      (throw Exception("NaplesLocalizations not found in the context"));
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +41,7 @@ class _StepNavigationWidgetState extends State<StepNavigationWidget> {
         key: ValueKey(currentState),
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          if (widget.currentStepTitleBuilder != null) widget.currentStepTitleBuilder(currentState),
+          if (widget.currentStepTitleBuilder != null) widget.currentStepTitleBuilder!(currentState),
           widget.currentStepContentBuilder(
             currentState,
             (bool valid) {
@@ -52,11 +56,11 @@ class _StepNavigationWidgetState extends State<StepNavigationWidget> {
             actions: <ActionWidget>[
               ActionWidget(
                 title: navigationModel.canGoForward
-                    ? NaplesLocalizations.of(context).continua
-                    : NaplesLocalizations.of(context).finalitza,
+                    ? naplesLocalizations.continua
+                    : naplesLocalizations.finalitza,
                 action: _isValid
                     ? () async {
-                        _animationKey.currentState.direction =
+                        _animationKey.currentState?.direction =
                             BackForwardAnimationDirection.Forward;
                         await navigationModel.forward();
                       }
@@ -65,9 +69,9 @@ class _StepNavigationWidgetState extends State<StepNavigationWidget> {
               ),
               if (navigationModel.canGoBack)
                 ActionWidget(
-                  title: NaplesLocalizations.of(context).torna,
+                  title: naplesLocalizations.torna,
                   action: () async {
-                    _animationKey.currentState.direction = BackForwardAnimationDirection.Back;
+                    _animationKey.currentState?.direction = BackForwardAnimationDirection.Back;
                     await navigationModel.back();
                   },
                 ),

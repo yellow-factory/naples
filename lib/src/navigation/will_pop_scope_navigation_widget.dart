@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 class WillPopScopeNavigationWidget extends StatelessWidget {
   final Widget child;
-  WillPopScopeNavigationWidget({Key key, @required this.child}) : super(key: key);
+  WillPopScopeNavigationWidget({Key? key, required this.child}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

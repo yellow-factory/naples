@@ -6,8 +6,8 @@ class ContainerProperty extends StatelessWidget implements Expandable {
   final Widget child;
 
   ContainerProperty({
-    Key key,
-    @required this.child,
+    Key? key,
+    required this.child,
     this.flex = 1,
   }) : super(key: key);
 

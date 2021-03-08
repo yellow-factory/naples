@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class ActionWidget extends StatelessWidget {
   final String title;
-  final Function action;
+  final VoidCallback? action;
   final bool primary;
-  ActionWidget({@required this.title, this.action, this.primary = false});
+  ActionWidget({required this.title, this.action, this.primary = false});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class ActionWidget extends StatelessWidget {
     if (primary)
       return ElevatedButton(
         child: txtTitle,
-        onPressed: action,
+        onPressed: action == null ? null : action!,
       );
     return TextButton(
       child: txtTitle,
@@ -24,7 +24,7 @@ class ActionWidget extends StatelessWidget {
 class ActionsListWidget extends StatelessWidget {
   final List<ActionWidget> actions;
 
-  ActionsListWidget({Key key, @required this.actions}) : super(key: key);
+  ActionsListWidget({Key? key, required this.actions}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

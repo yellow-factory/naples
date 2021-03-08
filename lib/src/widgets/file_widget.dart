@@ -9,17 +9,17 @@ import 'package:flutter/services.dart';
 
 class FileWidget extends StatefulWidget {
   final String label;
-  final String hint;
-  final String fileId;
-  final String fileName;
-  final FunctionOf2<String, List<int>, Future<String>> upload;
-  final FunctionOf1<String, Future<List<int>>> download;
-  final FunctionOf1<String, Future<String>> publicUrl;
-  final ActionOf0 delete;
+  final String? hint;
+  final String? fileId;
+  final String? fileName;
+  final FunctionOf2<String, List<int>, Future<String?>>? upload;
+  final FunctionOf1<String, Future<List<int>?>>? download;
+  final FunctionOf1<String, Future<String?>>? publicUrl;
+  final ActionOf0? delete;
 
   FileWidget({
-    Key key,
-    @required this.label,
+    Key? key,
+    required this.label,
     this.hint,
     this.upload,
     this.download,
@@ -34,9 +34,9 @@ class FileWidget extends StatefulWidget {
 }
 
 class _FileWidgetState extends State<FileWidget> {
-  String fileId;
-  String fileName;
-  bool waiting;
+  String? fileId;
+  String? fileName;
+  late bool waiting;
 
   @override
   void initState() {
@@ -60,13 +60,13 @@ class _FileWidgetState extends State<FileWidget> {
           children: <Widget>[
             ListTile(
               title: Text(widget.label),
-              subtitle: Text(widget.hint),
+              subtitle: widget.hint == null ? null : Text(widget.hint!),
               isThreeLine: true,
             ),
-            if (fileName != null && fileName.isNotEmpty)
+            if (fileName != null && fileName!.isNotEmpty)
               ListTile(
                 leading: Icon(Icons.attachment_outlined),
-                title: Text(fileName),
+                title: Text(fileName!),
               ),
             ButtonBar(
               children: <Widget>[
@@ -103,28 +103,32 @@ class _FileWidgetState extends State<FileWidget> {
   }
 
   void delete() {
+    if (widget.delete == null) return;
     setState(() {
       fileName = null;
       fileId = null;
     });
-    widget.delete();
+    widget.delete!();
   }
 
   Future publicUrl() async {
-    if (fileId == null || fileId.isEmpty) return; //Aquí hauria d'ensenyar un diàleg
-    var url = await widget.publicUrl(fileId);
+    if (widget.publicUrl == null) return;
+    if (fileId == null || fileId!.isEmpty) return; //Aquí hauria d'ensenyar un diàleg
+    var url = await widget.publicUrl!(fileId!);
     Clipboard.setData(new ClipboardData(text: url));
   }
 
   Future upload() async {
     try {
+      if (widget.upload == null) return;
       // show a dialog to open a file
       final typeGroup = XTypeGroup(label: 'documents', extensions: ['pdf', 'png']);
       final file = await openFile(acceptedTypeGroups: [typeGroup]);
+      if (file == null) return;
       setState(() {
         waiting = true;
       });
-      var id = await widget.upload(file.name, await file.readAsBytes());
+      var id = await widget.upload!(file.name, await file.readAsBytes());
       setState(() {
         fileName = file.name;
         fileId = id;
@@ -140,9 +144,12 @@ class _FileWidgetState extends State<FileWidget> {
 
   Future download() async {
     try {
-      if (fileId == null || fileId.isEmpty) return; //Aquí hauria d'ensenyar un diàleg
+      if (fileId == null || fileId!.isEmpty) return; //Aquí hauria d'ensenyar un diàleg
+      if (widget.download == null) return;
       final path = await getSavePath(suggestedName: fileName);
-      var blob = await widget.download(fileId);
+      if (path == null) return;
+      var blob = await widget.download!(fileId!);
+      if (blob == null) throw new Exception("File is empty");
       final data = Uint8List.fromList(blob);
       //final mimeType = "application/pdf";
       final file = XFile.fromData(data, name: fileName); //, mimeType: mimeType

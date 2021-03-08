@@ -10,14 +10,14 @@ class MustacheProperty<T extends IMustacheValues> extends StatelessWidget implem
   final String template;
   final String locale;
   final bool processMarkdown;
-  final double height;
+  final double? height;
 
   MustacheProperty({
-    Key key,
+    Key? key,
     this.flex = 99,
-    @required this.source,
-    @required this.template,
-    @required this.locale,
+    required this.source,
+    required this.template,
+    required this.locale,
     this.processMarkdown = false,
     this.height,
   }) : super(key: key);

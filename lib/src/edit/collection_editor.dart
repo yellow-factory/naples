@@ -13,7 +13,7 @@ class CollectionEditor<ListItem, Update, Create> extends StatefulWidget with Exp
   final int flex;
   final List<ListItem> items;
   final FunctionOf1<ListItem, String> itemTitle;
-  final FunctionOf1<ListItem, String> itemSubtitle;
+  final FunctionOf1<ListItem, String>? itemSubtitle;
 
   //TODO: Si volguessim tenir una vista diferent per al get i després passar al edit també es podria fer, i
   //es podria afegir alguna cosa com ...
@@ -25,25 +25,25 @@ class CollectionEditor<ListItem, Update, Create> extends StatefulWidget with Exp
   final FunctionOf2<Update, FunctionOf2<Widget, bool, Widget>, Widget> updateWidget;
   final FunctionOf1<Update, Future<ListItem>> update;
 
-  final FunctionOf0<Future<Create>> getCreate;
-  final FunctionOf2<Create, FunctionOf2<Widget, bool, Widget>, Widget> createWidget;
-  final FunctionOf1<Create, Future<ListItem>> create;
+  final FunctionOf0<Future<Create>>? getCreate;
+  final FunctionOf2<Create, FunctionOf2<Widget, bool, Widget>, Widget>? createWidget;
+  final FunctionOf1<Create, Future<ListItem>>? create;
 
   final bool callRefreshAfterEdit;
 
   CollectionEditor({
-    @required this.items,
-    @required this.itemTitle,
+    required this.items,
+    required this.itemTitle,
     this.itemSubtitle,
-    @required this.getUpdate,
-    @required this.updateWidget,
-    @required this.update,
+    required this.getUpdate,
+    required this.updateWidget,
+    required this.update,
     this.getCreate,
     this.createWidget,
     this.create,
     this.flex = 1,
     this.callRefreshAfterEdit = false,
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -55,10 +55,10 @@ class CollectionEditor<ListItem, Update, Create> extends StatefulWidget with Exp
 
 class _CollectionEditorState<ListItem, Update, Create>
     extends State<CollectionEditor<ListItem, Update, Create>> {
-  ListItem _selectedItem;
-  Update _updateItem;
-  Create _createItem;
-  List<ListItem> _items;
+  ListItem? _selectedItem;
+  Update? _updateItem;
+  Create? _createItem;
+  late List<ListItem> _items;
 
   @override
   void initState() {
@@ -67,7 +67,7 @@ class _CollectionEditorState<ListItem, Update, Create>
   }
 
   @override
-  void didUpdateWidget(Widget oldWidget) {
+  void didUpdateWidget(CollectionEditor<ListItem, Update, Create> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (_items.length != widget.items.length) {
       _items = List<ListItem>.from(widget.items);
@@ -86,9 +86,9 @@ class _CollectionEditorState<ListItem, Update, Create>
                 child: DynamicList(
                   items: _items,
                   itemTitle: widget.itemTitle,
-                  itemSubtitle: widget.itemSubtitle,
+                  itemSubtitle: widget.itemSubtitle != null ? widget.itemSubtitle : null,
                   separated: true,
-                  select: (item) async {
+                  select: (ListItem item) async {
                     var updateItem = await widget.getUpdate(item);
                     setState(() {
                       _createItem = null;
@@ -115,7 +115,8 @@ class _CollectionEditorState<ListItem, Update, Create>
         padding: EdgeInsets.all(10),
         child: OutlinedButton.icon(
           onPressed: () async {
-            var createItem = await widget.getCreate();
+            if (widget.getCreate == null) return;
+            var createItem = await widget.getCreate!();
             setState(() {
               _updateItem = null;
               _createItem = createItem;
@@ -130,18 +131,20 @@ class _CollectionEditorState<ListItem, Update, Create>
   }
 
   Widget getUpdateWidget(BuildContext context) {
+    if (_updateItem == null) return Placeholder();
     return Expanded(
       child: Card(
         child: widget.updateWidget(
-          _updateItem,
+          _updateItem!,
           (form, valid) {
             return getEditWidget(
               context,
               form,
               valid,
               () async {
-                var updatedItem = await widget.update(_updateItem);
-                var i = _items.indexOf(_selectedItem);
+                if (_selectedItem == null) return;
+                var updatedItem = await widget.update(_updateItem!);
+                var i = _items.indexOf(_selectedItem!);
                 setState(() {
                   _items.removeAt(i);
                   _items.insert(i, updatedItem);
@@ -160,17 +163,19 @@ class _CollectionEditorState<ListItem, Update, Create>
   }
 
   Widget getCreateWidget(BuildContext context) {
+    if (_createItem == null) return Placeholder();
+    if (widget.createWidget == null) return Placeholder();
     return Expanded(
       child: Card(
-        child: widget.createWidget(
-          _createItem,
+        child: widget.createWidget!(
+          _createItem!,
           (form, valid) {
             return getEditWidget(
               context,
               form,
               valid,
               () async {
-                var newItem = await widget.create(_createItem);
+                var newItem = await widget.create!(_createItem!);
                 setState(() {
                   _items.insert(0, newItem);
                 });
@@ -215,7 +220,7 @@ class _CollectionEditorState<ListItem, Update, Create>
               ),
               ActionWidget(
                 title: "cancel",
-                action: cancel,
+                action: () => cancel(),
               ),
             ],
           ),

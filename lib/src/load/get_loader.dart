@@ -8,9 +8,9 @@ class GetLoader<T> extends StatefulWidget {
   final FunctionOf1<T, Widget> builder;
 
   GetLoader({
-    @required this.get,
-    @required this.builder,
-    Key key,
+    required this.get,
+    required this.builder,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -18,7 +18,7 @@ class GetLoader<T> extends StatefulWidget {
 }
 
 class GetLoaderState<T> extends State<GetLoader<T>> {
-  T _item;
+  T? _item;
   bool _loading = false;
 
   @override
@@ -49,7 +49,10 @@ class GetLoaderState<T> extends State<GetLoader<T>> {
 
   @override
   Widget build(BuildContext context) {
-    if (_item == null) return SizedBox();
-    return widget.builder(_item);
+    return ifNotNullFunctionOf1(
+      _item,
+      (T item) => widget.builder(item),
+      SizedBox(),
+    );
   }
 }

@@ -10,10 +10,10 @@ class AnimatedNavigationWidget<T> extends StatefulWidget {
   final FunctionOf1<T, Widget> currentStepBuilder;
 
   AnimatedNavigationWidget({
-    @required this.currentStepBuilder,
+    required this.currentStepBuilder,
     this.duration = const Duration(milliseconds: 500),
     this.reverseDuration = const Duration(milliseconds: 500),
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
