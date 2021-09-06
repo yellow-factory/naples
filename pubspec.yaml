@@ -17,16 +17,16 @@ dependencies:
     sdk: flutter
   intl: ^0.17.0
   #end Internationalization support.
-  provider: ^5.0.0-nullsafety.5 
-  list_ext: ^1.0.1-nullsafety.0
-  flutter_markdown: ^0.6.0
+  provider: ^6.0.0
+  list_ext: ^1.0.2
+  flutter_markdown: ^0.6.6
   mustache_template: 
-    git: https://github.com/jonahwilliams/mustache.git
+    git: https://github.com/jonahwilliams/mustache.git #No sé si ara ja es pot agafar la versió 2.0.0 de pub
   markdown: ^4.0.0 
   #flutter_linkify: ^4.1.0
-  url_launcher: ^6.0.1
-  file_selector: ^0.8.1
-  file_selector_macos: ^0.0.4
+  url_launcher: ^6.0.10
+  file_selector: ^0.8.2
+  file_selector_macos: ^0.0.4+1
   path: ^1.8.0
   crimson:
     git: https://github.com/yellow-factory/crimson.git
