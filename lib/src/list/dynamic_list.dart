@@ -73,14 +73,17 @@ class DynamicList<T> extends StatelessWidget {
   double _defaultTileHeight(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final bool isThreeLine = false;
-    final bool isDense = false;
+    //final bool isDense = false;
     final bool hasSubtitle = this.itemSubtitle != null;
     final bool isTwoLine = !isThreeLine && hasSubtitle;
     final bool isOneLine = !isThreeLine && !hasSubtitle;
 
     final Offset baseDensity = theme.visualDensity.baseSizeAdjustment;
-    if (isOneLine) return (isDense ? 48.0 : 56.0) + baseDensity.dy;
-    if (isTwoLine) return (isDense ? 64.0 : 72.0) + baseDensity.dy;
-    return (isDense ? 76.0 : 88.0) + baseDensity.dy;
+    if (isOneLine) return 56.0 + baseDensity.dy;
+    //return (isDense ? 48.0 : 56.0) + baseDensity.dy;
+    if (isTwoLine) return 72.0 + baseDensity.dy;
+    //if (isTwoLine) return (isDense ? 64.0 : 72.0) + baseDensity.dy;
+    //return (isDense ? 76.0 : 88.0) + baseDensity.dy;
+    return 88.0 + baseDensity.dy;
   }
 }

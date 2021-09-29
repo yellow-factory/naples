@@ -30,6 +30,7 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
 
   Future<void> load() async {
     try {
+      print('load list_loader');
       _loading = true;
       _notifyLoading();
       await for (var m in widget.getStream()) {
@@ -60,7 +61,7 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return NotificationListener<NeedsRefreshNotification>(
+    return NotificationListener<RefreshNeededNotification>(
       onNotification: (notification) {
         refresh();
         return true;

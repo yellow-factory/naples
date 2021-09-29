@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:naples/src/load/refresh.dart';
 import 'package:navy/navy.dart';
 import 'loading.dart';
 
@@ -47,12 +48,23 @@ class GetLoaderState<T> extends State<GetLoader<T>> {
     LoadingNotification(_loading).dispatch(context);
   }
 
+  Future<void> refresh() async {
+    if (_loading) return;
+    await load();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ifNotNullFunctionOf1(
-      _item,
-      (T item) => widget.builder(item),
-      SizedBox(),
+    return NotificationListener<RefreshNeededNotification>(
+      onNotification: (notification) {
+        refresh();
+        return true;
+      },
+      child: ifNotNullFunctionOf1(
+        _item,
+        (T item) => widget.builder(item),
+        SizedBox(),
+      ),
     );
   }
 }

@@ -17,10 +17,10 @@ class StepNavigationWidget<T> extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _StepNavigationWidgetState createState() => _StepNavigationWidgetState();
+  _StepNavigationWidgetState<T> createState() => _StepNavigationWidgetState<T>();
 }
 
-class _StepNavigationWidgetState extends State<StepNavigationWidget> {
+class _StepNavigationWidgetState<T> extends State<StepNavigationWidget<T>> {
   final _animationKey = GlobalKey<BackForwardAnimationWidgetState>();
   bool _isValid = false;
 
@@ -30,7 +30,7 @@ class _StepNavigationWidgetState extends State<StepNavigationWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var navigationModel = context.watch<NavigationModel>();
+    var navigationModel = context.watch<NavigationModel<T>>();
     final currentState = navigationModel.currentState;
 
     if (navigationModel.currentState == null) return SizedBox();

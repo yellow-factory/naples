@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:naples/navigation.dart';
 import 'package:navy/navy.dart';
-import 'navigation_scaffold.dart';
 
 class StepNavigationScaffold<T> extends StatelessWidget {
   final String? title;
@@ -17,9 +16,9 @@ class StepNavigationScaffold<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NavigationScaffold(
-      title: title,
-      child: Padding(
+    return Scaffold(
+      appBar: AppBar(title: Text(title ?? '')),
+      body: Padding(
         padding: EdgeInsets.all(16),
         child: StepNavigationWidget(
           currentStepTitleBuilder: currentStepTitleBuilder,

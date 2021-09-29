@@ -10,5 +10,5 @@ abstract class ModelProperty<U> {
   FunctionOf1<U, String?>? get validator;
 
   bool get initialValid => validator == null ? true : validator!(getProperty()) == null;
-  bool get enabled => ifNotNullPredicateOf0(editable, true);
+  bool get enabled => ifNotNullPredicateOf0(editable, setProperty == null ? false : true);
 }

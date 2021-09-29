@@ -17,14 +17,14 @@ class AnimatedNavigationWidget<T> extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _AnimatedNavigationWidgetState createState() => _AnimatedNavigationWidgetState();
+  _AnimatedNavigationWidgetState<T> createState() => _AnimatedNavigationWidgetState<T>();
 }
 
-class _AnimatedNavigationWidgetState extends State<AnimatedNavigationWidget> {
+class _AnimatedNavigationWidgetState<T> extends State<AnimatedNavigationWidget<T>> {
   final key = GlobalKey<BackForwardAnimationWidgetState>();
   @override
   Widget build(BuildContext context) {
-    var navigationModel = context.watch<NavigationModel>();
+    var navigationModel = context.watch<NavigationModel<T>>();
     return BackForwardAnimationWidget(
       key: key,
       duration: widget.duration,

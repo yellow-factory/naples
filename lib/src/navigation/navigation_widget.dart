@@ -10,8 +10,7 @@ class NavigationWidget<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var navigationModel = context.watch<NavigationModel>();
-    if (navigationModel.currentState == null) return SizedBox();
+    var navigationModel = context.watch<NavigationModel<T>>();
     return currentStepBuilder(navigationModel.currentState);
   }
 }

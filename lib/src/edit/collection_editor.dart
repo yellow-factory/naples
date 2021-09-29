@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:naples/common.dart';
 import 'package:naples/list.dart';
-import 'package:naples/load.dart';
 import 'package:naples/widgets.dart';
 import 'package:navy/navy.dart';
 
+//TODO: Cal fer el botó d'eliminar de la llista
+//TODO: al canviar de camp amb el tabulador no actua correctament quan es troba en edició
+
 //Combination of List + Edit to edit a collection of items...
-//Where T is type parent holding the collection
+//Where ListItem is the type holding the collection
 //Where Update is the type needed to update
 //Where Create is the type needed to create
 class CollectionEditor<ListItem, Update, Create> extends StatefulWidget with Expandable {
@@ -29,8 +31,6 @@ class CollectionEditor<ListItem, Update, Create> extends StatefulWidget with Exp
   final FunctionOf2<Create, FunctionOf2<Widget, bool, Widget>, Widget>? createWidget;
   final FunctionOf1<Create, Future<ListItem>>? create;
 
-  final bool callRefreshAfterEdit;
-
   CollectionEditor({
     required this.items,
     required this.itemTitle,
@@ -42,7 +42,6 @@ class CollectionEditor<ListItem, Update, Create> extends StatefulWidget with Exp
     this.createWidget,
     this.create,
     this.flex = 1,
-    this.callRefreshAfterEdit = false,
     Key? key,
   }) : super(key: key);
 
@@ -212,8 +211,6 @@ class _CollectionEditorState<ListItem, Update, Create>
                     ? null
                     : () {
                         save();
-                        if (widget.callRefreshAfterEdit)
-                          NeedsRefreshNotification().dispatch(context);
                         cancel();
                       },
                 primary: true,

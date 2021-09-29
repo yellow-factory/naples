@@ -4,19 +4,23 @@ import 'package:navy/navy.dart';
 
 class EditView extends StatelessWidget {
   final ActionOf0 save;
-  final ActionOf0 cancel;
+  final ActionOf0? cancel;
   final String saveText;
   final String cancelText;
   final Widget child;
+  final String? savedMessage;
   final bool valid;
+  final bool goBack;
 
   EditView({
     required this.save,
-    required this.cancel,
-    required this.saveText,
-    required this.cancelText,
+    this.cancel,
+    this.saveText = "Save", //TODO: Localize
+    this.cancelText = "Cancel", //TODO: Localize
     required this.child,
+    this.savedMessage,
     this.valid = true,
+    this.goBack = true,
     Key? key,
   }) : super(key: key);
 
@@ -31,13 +35,29 @@ class EditView extends StatelessWidget {
             actions: <ActionWidget>[
               ActionWidget(
                 title: saveText,
-                action: !valid ? null : save,
+                action: () async {
+                  if (!valid) return;
+                  save();
+                  if (goBack) Navigator.pop(context);
+                  ifNotNullActionOf1(savedMessage, (String sm) {
+                    if (sm.isEmpty) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(sm),
+                      ),
+                    );
+                  });
+                },
                 primary: true,
               ),
-              ActionWidget(
-                title: cancelText,
-                action: cancel,
-              ),
+              if (cancel != null)
+                ActionWidget(
+                  title: cancelText,
+                  action: () async {
+                    cancel!();
+                    if (goBack) Navigator.pop(context);
+                  },
+                ),
             ],
           ),
         ],

@@ -15,6 +15,7 @@ export 'package:naples/src/edit/properties/container_property.dart';
 
 export 'package:naples/src/edit/dynamic_form.dart';
 export 'package:naples/src/edit/edit_view.dart';
+export 'package:naples/src/edit/edit_builder.dart';
 export 'package:naples/src/edit/collection_editor.dart';
 
 //TODO: Falten la resta de tipus: "double", etc.
