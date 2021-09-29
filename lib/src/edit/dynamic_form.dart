@@ -71,13 +71,16 @@ class DynamicFormState extends State<DynamicForm> {
   Widget build(BuildContext context) {
     var form = Form(
       key: _formKey,
-      child: DistributionWidget(
-        children: widget.children,
-        distribution: widget.distribution,
-        fixed: widget.fixed,
-        maxFlex: widget.maxFlex,
-        normalize: widget.normalize,
-        childPadding: widget.childPadding,
+      child: FocusTraversalGroup(
+        policy: OrderedTraversalPolicy(),
+        child: DistributionWidget(
+          children: widget.children,
+          distribution: widget.distribution,
+          fixed: widget.fixed,
+          maxFlex: widget.maxFlex,
+          normalize: widget.normalize,
+          childPadding: widget.childPadding,
+        ),
       ),
       onChanged: () {
         ifNotNullActionOf1<FormState>(_formKey.currentState, (currentState) {

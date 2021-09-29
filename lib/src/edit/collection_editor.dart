@@ -5,7 +5,6 @@ import 'package:naples/widgets.dart';
 import 'package:navy/navy.dart';
 
 //TODO: Cal fer el botó d'eliminar de la llista
-//TODO: al canviar de camp amb el tabulador no actua correctament quan es troba en edició
 
 //Combination of List + Edit to edit a collection of items...
 //Where ListItem is the type holding the collection
@@ -200,28 +199,31 @@ class _CollectionEditorState<ListItem, Update, Create>
   ) {
     return Padding(
       padding: EdgeInsets.all(16),
-      child: Column(
-        children: <Widget>[
-          form,
-          ActionsListWidget(
-            actions: <ActionWidget>[
-              ActionWidget(
-                title: "save",
-                action: !valid
-                    ? null
-                    : () {
-                        save();
-                        cancel();
-                      },
-                primary: true,
-              ),
-              ActionWidget(
-                title: "cancel",
-                action: () => cancel(),
-              ),
-            ],
-          ),
-        ],
+      child: FocusTraversalGroup(
+        policy: OrderedTraversalPolicy(),
+        child: Column(
+          children: <Widget>[
+            form,
+            ActionsListWidget(
+              actions: <ActionWidget>[
+                ActionWidget(
+                  title: "save",
+                  action: !valid
+                      ? null
+                      : () {
+                          save();
+                          cancel();
+                        },
+                  primary: true,
+                ),
+                ActionWidget(
+                  title: "cancel",
+                  action: () => cancel(),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -10,13 +10,19 @@ class ActionWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     var txtTitle = Text(title.toUpperCase());
     if (primary)
-      return ElevatedButton(
-        child: txtTitle,
-        onPressed: action == null ? null : action!,
+      return FocusTraversalOrder(
+        order: NumericFocusOrder(0),
+        child: ElevatedButton(
+          child: txtTitle,
+          onPressed: action == null ? null : action!,
+        ),
       );
-    return TextButton(
-      child: txtTitle,
-      onPressed: action,
+    return FocusTraversalOrder(
+      order: NumericFocusOrder(1),
+      child: TextButton(
+        child: txtTitle,
+        onPressed: action,
+      ),
     );
   }
 }
@@ -28,6 +34,10 @@ class ActionsListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ButtonBar(children: actions.reversed.toList());
+    return FocusTraversalGroup(
+        policy: OrderedTraversalPolicy(),
+        child: ButtonBar(
+          children: actions.reversed.toList(),
+        ));
   }
 }
