@@ -30,6 +30,8 @@ class CollectionEditor<ListItem, Update, Create> extends StatefulWidget with Exp
   final FunctionOf2<Create, FunctionOf2<Widget, bool, Widget>, Widget>? createWidget;
   final FunctionOf1<Create, Future<ListItem>>? create;
 
+  final FunctionOf1<ListItem, Future<bool>>? delete;
+
   CollectionEditor({
     required this.items,
     required this.itemTitle,
@@ -40,6 +42,7 @@ class CollectionEditor<ListItem, Update, Create> extends StatefulWidget with Exp
     this.getCreate,
     this.createWidget,
     this.create,
+    this.delete,
     this.flex = 1,
     Key? key,
   }) : super(key: key);
@@ -93,8 +96,18 @@ class _CollectionEditorState<ListItem, Update, Create>
                       _selectedItem = item;
                       _updateItem = updateItem;
                     });
-                    return;
                   },
+                  itemTrailing: ifNotNullFunctionOf1<FunctionOf1<ListItem, Future<bool>>,
+                      FunctionOf1<ListItem, Widget>?>(
+                    widget.delete,
+                    (delete) => (listItem) {
+                      return IconButton(
+                        onPressed: () => delete(listItem),
+                        icon: Icon(Icons.delete),
+                      );
+                    },
+                    null,
+                  ),
                 ),
               ),
             ],

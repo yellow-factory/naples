@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:navy/navy.dart';
 
+//TODO: S'hauria de poder mantenir un element seleccionat i per fer-ho cal convertir-lo a Stateful
+
 //T tipus de dades de la llista
 class DynamicList<T> extends StatelessWidget {
   final List<T> items;
@@ -30,7 +32,6 @@ class DynamicList<T> extends StatelessWidget {
       controller: _scrollController,
       child: ListView.builder(
           itemExtent: _tileHeight(context),
-          //separatorBuilder: (context, index) => Divider(),
           controller: _scrollController,
           itemCount: items.length,
           itemBuilder: (BuildContext ctx, int index) {
