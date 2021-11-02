@@ -5,9 +5,10 @@ import 'package:naples/src/widgets/switch_form_field.dart';
 import 'package:naples/src/widgets/checkbox_form_field.dart';
 import 'package:naples/src/edit/properties/model_property.dart';
 import 'package:naples/src/common/common.dart';
+import 'package:naples/src/widgets/toggle_button_form_field.dart';
 import 'package:navy/navy.dart';
 
-enum BoolWidgetType { Switch, Checkbox, Radio }
+enum BoolWidgetType { Switch, Checkbox, Radio, ToggleButtons }
 enum BoolWidgetPosition { Leading, Trailing }
 enum BoolValues { True, False }
 
@@ -83,6 +84,20 @@ class BoolProperty extends StatelessWidget with ModelProperty<bool?>, Expandable
         return defaultWidget;
       case BoolWidgetType.Radio:
         return RadioListFormField<bool, BoolValues>(
+          autofocus: autofocus,
+          enabled: enabled,
+          label: label,
+          hint: hint,
+          initialValue: getProperty(),
+          onSaved: setProperty,
+          validator: validator,
+          controlAffinity: controlAffinity,
+          listItems: () => BoolValues.values,
+          valueMember: (t) => t.boolValue,
+          displayMember: displayName,
+        );
+      case BoolWidgetType.ToggleButtons:
+        return ToggleButtonFormField<bool, BoolValues>(
           autofocus: autofocus,
           enabled: enabled,
           label: label,
