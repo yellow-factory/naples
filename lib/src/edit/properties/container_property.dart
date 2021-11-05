@@ -16,7 +16,7 @@ class ContainerProperty extends StatelessWidget implements Expandable {
     return Container(
       child: child,
       decoration: BoxDecoration(
-        border: Border.all(color: Theme.of(context).accentColor, width: 1.5),
+        border: Border.all(color: Theme.of(context).colorScheme.secondary, width: 1.5),
         borderRadius: BorderRadius.all(Radius.circular(3)),
       ),
       margin: EdgeInsets.symmetric(vertical: 10),
