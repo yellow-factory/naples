@@ -33,16 +33,17 @@ class MarkdownWidget extends StatelessWidget {
 
     if (height != null) {
       return SizedBox(
-          height: height,
-          child: fmd.Markdown(
-            data: template,
-            extensionSet: extensionSet,
-            onTapLink: onTapLink,
-            styleSheet: styleSheet,
-            // imageBuilder: (uri, title, alt) =>
-            //   Text('image'),
-            //styleSheet: fmd.MarkdownStyleSheet(textAlign: WrapAlignment.start),
-          ));
+        height: height,
+        child: fmd.Markdown(
+          data: template,
+          extensionSet: extensionSet,
+          onTapLink: onTapLink,
+          styleSheet: styleSheet,
+          // imageBuilder: (uri, title, alt) =>
+          //   Text('image'),
+          //styleSheet: fmd.MarkdownStyleSheet(textAlign: WrapAlignment.start),
+        ),
+      );
     }
 
     return fmd.MarkdownBody(

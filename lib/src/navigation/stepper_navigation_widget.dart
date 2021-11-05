@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:naples/naples.dart';
 import 'package:naples/src/widgets/actions_widget.dart';
 import 'package:navy/navy.dart';
-import 'package:provider/provider.dart';
 import 'package:naples/src/navigation/navigation.dart';
 
 /// This widget depends on these providers:
@@ -10,11 +9,13 @@ import 'package:naples/src/navigation/navigation.dart';
 class StepperNavigationWidget<T> extends StatefulWidget {
   final FunctionOf1<T, Widget> currentStepTitleBuilder;
   final FunctionOf2<T, ActionOf1<bool>, Widget> currentStepContentBuilder;
+  final NavigationModel<T> navigationModel;
 
   StepperNavigationWidget({
     Key? key,
     required this.currentStepTitleBuilder,
     required this.currentStepContentBuilder,
+    required this.navigationModel,
   });
 
   @override
@@ -23,17 +24,40 @@ class StepperNavigationWidget<T> extends StatefulWidget {
 
 class _StepperNavigationWidgetState<T> extends State<StepperNavigationWidget<T>> {
   bool _isValid = false;
+  late T _currentState;
+  late Iterable<T> _history;
+  late bool _canGoForward;
+  late bool _canGoBack;
 
   NaplesLocalizations get naplesLocalizations =>
       NaplesLocalizations.of(context) ??
       (throw Exception("NaplesLocalizations not found in the context"));
 
   @override
-  Widget build(BuildContext context) {
-    final navigationModel = context.watch<NavigationModel<T>>();
-    final currentState = navigationModel.currentState;
+  void initState() {
+    super.initState();
+    var navigationModel = this.widget.navigationModel;
+    _setNavigationState(navigationModel);
+    navigationModel.addListener(() {
+      setState(() {
+        _setNavigationState(navigationModel);
+      });
+    });
+  }
 
-    if (currentState == null) return SizedBox();
+  void _setNavigationState(NavigationModel<T> navigationModel) {
+    _currentState = navigationModel.currentState;
+    _history = navigationModel.history;
+    _canGoForward = navigationModel.canGoForward;
+    _canGoBack = navigationModel.canGoBack;
+  }
+
+  bool back() => this.widget.navigationModel.back();
+  bool forward() => this.widget.navigationModel.forward();
+
+  @override
+  Widget build(BuildContext context) {
+    if (_currentState == null) return SizedBox();
 
     //In order to work correctly, the stepper key must be related with the number
     //of steps. If the build is triggered by a change in the number of steps we have
@@ -41,18 +65,18 @@ class _StepperNavigationWidgetState<T> extends State<StepperNavigationWidget<T>>
     //link with the state (valid).
 
     return Stepper(
-        key: ValueKey(navigationModel.history.length),
+        key: ValueKey(_history.length),
         steps: [
-          ...navigationModel.history.map((e) => Step(
+          ..._history.map((e) => Step(
                 title: widget.currentStepTitleBuilder(e),
                 //Because we change the number of steps we only care about the current step
                 content: SizedBox(),
                 state: StepState.complete,
               )),
           Step(
-              title: widget.currentStepTitleBuilder(currentState),
+              title: widget.currentStepTitleBuilder(_currentState),
               content: widget.currentStepContentBuilder(
-                currentState,
+                _currentState,
                 (bool valid) {
                   if (_isValid != valid) {
                     setState(() {
@@ -64,10 +88,10 @@ class _StepperNavigationWidgetState<T> extends State<StepperNavigationWidget<T>>
               isActive: true,
               state: StepState.editing),
         ],
-        currentStep: navigationModel.history.length,
+        currentStep: _history.length,
         type: StepperType.vertical,
-        onStepContinue: () => navigationModel.forward(),
-        onStepCancel: () => navigationModel.back(),
+        onStepContinue: () => forward(),
+        onStepCancel: () => back(),
 
         //TODO: execute arbitrary transitions when possible
         //onStepTapped: (step) {
@@ -87,13 +111,13 @@ class _StepperNavigationWidgetState<T> extends State<StepperNavigationWidget<T>>
                 child: ActionsListWidget(
                   actions: <ActionWidget>[
                     ActionWidget(
-                      title: navigationModel.canGoForward
+                      title: _canGoForward
                           ? naplesLocalizations.continua
                           : naplesLocalizations.finalitza,
                       action: _isValid ? () => onContinue() : null,
                       primary: true,
                     ),
-                    if (navigationModel.canGoBack)
+                    if (_canGoBack)
                       ActionWidget(
                         title: naplesLocalizations.torna,
                         action: () => onCancel(),

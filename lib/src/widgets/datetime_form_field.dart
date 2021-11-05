@@ -25,46 +25,50 @@ class DateTimeFormField extends FormField<DateTime> {
             var currentValue = state.value ?? DateTime.now();
             var currentFirstDate = firstDate ?? DateTime(1900);
             var currentLastDate = lastDate ?? DateTime(2100);
+
+            final InputDecoration fieldDecoration = InputDecoration(
+              hintText: hint,
+              labelText: label,
+              errorText: state.errorText,
+              filled: filled,
+              suffixIcon: IconButton(
+                icon: Icon(Icons.calendar_today_outlined),
+                onPressed: () async {
+                  final DateTime datePicked = await showDatePicker(
+                        context: state.context,
+                        initialDate: currentValue,
+                        firstDate: currentFirstDate,
+                        lastDate: currentLastDate,
+                      ) ??
+                      currentValue;
+
+                  if (onlyDate) {
+                    if (currentValue.compareTo(datePicked) != 0) state.didChange(datePicked);
+                    return null;
+                  }
+
+                  final TimeOfDay time = TimeOfDay.fromDateTime(currentValue);
+                  final TimeOfDay timePicked = await showTimePicker(
+                        context: state.context,
+                        initialTime: time,
+                      ) ??
+                      time;
+
+                  state.didChange(new DateTime(
+                    datePicked.year,
+                    datePicked.month,
+                    datePicked.day,
+                    timePicked.hour,
+                    timePicked.minute,
+                  ));
+                },
+              ),
+            );
+
             return TextField(
               controller: TextEditingController()
                 ..text = state.value != null ? dateFormat.format(currentValue) : '',
-              decoration: InputDecoration(
-                hintText: hint,
-                labelText: label,
-                filled: filled,
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.calendar_today_outlined),
-                  onPressed: () async {
-                    final DateTime datePicked = await showDatePicker(
-                          context: state.context,
-                          initialDate: currentValue,
-                          firstDate: currentFirstDate,
-                          lastDate: currentLastDate,
-                        ) ??
-                        currentValue;
-
-                    if (onlyDate) {
-                      if (currentValue.compareTo(datePicked) != 0) state.didChange(datePicked);
-                      return null;
-                    }
-
-                    final TimeOfDay time = TimeOfDay.fromDateTime(currentValue);
-                    final TimeOfDay timePicked = await showTimePicker(
-                          context: state.context,
-                          initialTime: time,
-                        ) ??
-                        time;
-
-                    state.didChange(new DateTime(
-                      datePicked.year,
-                      datePicked.month,
-                      datePicked.day,
-                      timePicked.hour,
-                      timePicked.minute,
-                    ));
-                  },
-                ),
-              ),
+              decoration: fieldDecoration,
               autofocus: autofocus,
               readOnly: true,
               enableInteractiveSelection: false,

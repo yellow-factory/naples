@@ -59,10 +59,10 @@ class _StepNavigationWidgetState<T> extends State<StepNavigationWidget<T>> {
                     ? naplesLocalizations.continua
                     : naplesLocalizations.finalitza,
                 action: _isValid
-                    ? () async {
+                    ? () {
                         _animationKey.currentState?.direction =
                             BackForwardAnimationDirection.Forward;
-                        await navigationModel.forward();
+                        navigationModel.forward();
                       }
                     : null,
                 primary: true,
@@ -70,9 +70,9 @@ class _StepNavigationWidgetState<T> extends State<StepNavigationWidget<T>> {
               if (navigationModel.canGoBack)
                 ActionWidget(
                   title: naplesLocalizations.torna,
-                  action: () async {
+                  action: () {
                     _animationKey.currentState?.direction = BackForwardAnimationDirection.Back;
-                    await navigationModel.back();
+                    navigationModel.back();
                   },
                 ),
             ],
