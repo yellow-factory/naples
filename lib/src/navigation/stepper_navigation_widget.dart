@@ -37,23 +37,44 @@ class _StepperNavigationWidgetState<T> extends State<StepperNavigationWidget<T>>
       NaplesLocalizations.of(context) ??
       (throw Exception("NaplesLocalizations not found in the context"));
 
+  NavigationModel<T> get navigationModel => widget.navigationModel;
+
   @override
   void initState() {
     super.initState();
-    var navigationModel = this.widget.navigationModel;
-    _setNavigationState(navigationModel);
-    navigationModel.addListener(() {
-      setState(() {
-        _setNavigationState(navigationModel);
-      });
-    });
+    _setNavigationState();
+    navigationModel.addListener(_setNavigationStateAndNotify);
   }
 
-  void _setNavigationState(NavigationModel<T> navigationModel) {
+  @override
+  void didUpdateWidget(covariant StepperNavigationWidget<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    //Pot ser que el widget hagi canviat,
+    //per això ens hem d'assegurar d'oblidar l'anterior i actuar sobre el nou
+    if (widget.navigationModel != oldWidget.navigationModel) {
+      oldWidget.navigationModel.removeListener(_setNavigationStateAndNotify);
+      widget.navigationModel.addListener(_setNavigationStateAndNotify);
+    }
+  }
+
+  @override
+  void dispose() {
+    var navigationModel = this.widget.navigationModel;
+    navigationModel.removeListener(_setNavigationStateAndNotify);
+    super.dispose();
+  }
+
+  void _setNavigationState() {
     _currentState = navigationModel.currentState;
     _history = navigationModel.history;
     _canGoForward = navigationModel.canGoForward;
     _canGoBack = navigationModel.canGoBack;
+  }
+
+  void _setNavigationStateAndNotify() {
+    setState(() {
+      _setNavigationState();
+    });
   }
 
   bool back() => this.widget.navigationModel.back();
