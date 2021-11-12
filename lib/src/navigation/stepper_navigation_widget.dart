@@ -10,12 +10,16 @@ class StepperNavigationWidget<T> extends StatefulWidget {
   final FunctionOf1<T, Widget> currentStepTitleBuilder;
   final FunctionOf2<T, ActionOf1<bool>, Widget> currentStepContentBuilder;
   final NavigationModel<T> navigationModel;
+  final StepperType stepperType;
+  final bool indexedIcons;
 
   StepperNavigationWidget({
     Key? key,
     required this.currentStepTitleBuilder,
     required this.currentStepContentBuilder,
     required this.navigationModel,
+    this.stepperType = StepperType.vertical,
+    this.indexedIcons = false,
   });
 
   @override
@@ -65,69 +69,69 @@ class _StepperNavigationWidgetState<T> extends State<StepperNavigationWidget<T>>
     //link with the state (valid).
 
     return Stepper(
-        key: ValueKey(_history.length),
-        steps: [
-          ..._history.map((e) => Step(
-                title: widget.currentStepTitleBuilder(e),
-                //Because we change the number of steps we only care about the current step
-                content: SizedBox(),
-                state: StepState.complete,
-              )),
-          Step(
-              title: widget.currentStepTitleBuilder(_currentState),
-              content: widget.currentStepContentBuilder(
-                _currentState,
-                (bool valid) {
-                  if (_isValid != valid) {
-                    setState(() {
-                      _isValid = valid;
-                    });
-                  }
-                },
-              ),
-              isActive: true,
-              state: StepState.editing),
-        ],
-        currentStep: _history.length,
-        type: StepperType.vertical,
-        onStepContinue: () => forward(),
-        onStepCancel: () => back(),
+      key: ValueKey(_history.length),
+      steps: [
+        ..._history.map((e) => Step(
+              title: widget.currentStepTitleBuilder(e),
+              content: SizedBox(),
+              state: widget.indexedIcons ? StepState.indexed : StepState.complete,
+            )),
+        Step(
+            title: widget.currentStepTitleBuilder(_currentState),
+            content: widget.currentStepContentBuilder(
+              _currentState,
+              (bool valid) {
+                if (_isValid != valid) {
+                  setState(() {
+                    _isValid = valid;
+                  });
+                }
+              },
+            ),
+            isActive: true,
+            state: widget.indexedIcons ? StepState.indexed : StepState.editing),
+      ],
+      currentStep: _history.length,
+      type: widget.stepperType,
+      onStepContinue: () => forward(),
+      onStepCancel: () => back(),
 
-        //TODO: execute arbitrary transitions when possible
-        //onStepTapped: (step) {
-        //  currentViewModel.gotoStep();
-        //},
-        controlsBuilder: (
-          BuildContext context, {
-          VoidCallback? onStepContinue,
-          VoidCallback? onStepCancel,
-        }) {
-          return ifNotNullFunctionOf2(
-            onStepContinue,
-            onStepCancel,
-            (VoidCallback onContinue, VoidCallback onCancel) {
-              return Container(
-                margin: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-                child: ActionsListWidget(
-                  actions: <ActionWidget>[
+      //TODO: execute arbitrary transitions when possible
+      //onStepTapped: (step) {
+      //  currentViewModel.gotoStep();
+      //},
+      controlsBuilder: (
+        BuildContext context, {
+        VoidCallback? onStepContinue,
+        VoidCallback? onStepCancel,
+      }) {
+        return ifNotNullFunctionOf2(
+          onStepContinue,
+          onStepCancel,
+          (VoidCallback onContinue, VoidCallback onCancel) {
+            return Container(
+              margin: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+              child: ActionsListWidget(
+                actions: <ActionWidget>[
+                  ActionWidget(
+                    title: _canGoForward
+                        ? naplesLocalizations.continua
+                        : naplesLocalizations.finalitza,
+                    action: _isValid ? () => onContinue() : null,
+                    primary: true,
+                  ),
+                  if (_canGoBack)
                     ActionWidget(
-                      title: _canGoForward
-                          ? naplesLocalizations.continua
-                          : naplesLocalizations.finalitza,
-                      action: _isValid ? () => onContinue() : null,
-                      primary: true,
+                      title: naplesLocalizations.torna,
+                      action: () => onCancel(),
                     ),
-                    if (_canGoBack)
-                      ActionWidget(
-                        title: naplesLocalizations.torna,
-                        action: () => onCancel(),
-                      ),
-                  ],
-                ),
-              );
-            },
-            SizedBox(),
-          );
-        });
+                ],
+              ),
+            );
+          },
+          SizedBox(),
+        );
+      },
+    );
   }
 }
