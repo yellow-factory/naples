@@ -43,7 +43,7 @@ class _StepperNavigationWidgetState<T> extends State<StepperNavigationWidget<T>>
   void initState() {
     super.initState();
     _setNavigationState();
-    navigationModel.addListener(_setNavigationStateAndNotify);
+    navigationModel.addListener(_onNavigationModelChanged);
   }
 
   @override
@@ -52,15 +52,14 @@ class _StepperNavigationWidgetState<T> extends State<StepperNavigationWidget<T>>
     //Pot ser que el widget hagi canviat,
     //per això ens hem d'assegurar d'oblidar l'anterior i actuar sobre el nou
     if (widget.navigationModel != oldWidget.navigationModel) {
-      oldWidget.navigationModel.removeListener(_setNavigationStateAndNotify);
-      widget.navigationModel.addListener(_setNavigationStateAndNotify);
+      oldWidget.navigationModel.removeListener(_onNavigationModelChanged);
+      widget.navigationModel.addListener(_onNavigationModelChanged);
     }
   }
 
   @override
   void dispose() {
-    var navigationModel = this.widget.navigationModel;
-    navigationModel.removeListener(_setNavigationStateAndNotify);
+    navigationModel.removeListener(_onNavigationModelChanged);
     super.dispose();
   }
 
@@ -71,7 +70,7 @@ class _StepperNavigationWidgetState<T> extends State<StepperNavigationWidget<T>>
     _canGoBack = navigationModel.canGoBack;
   }
 
-  void _setNavigationStateAndNotify() {
+  void _onNavigationModelChanged() {
     setState(() {
       _setNavigationState();
     });
