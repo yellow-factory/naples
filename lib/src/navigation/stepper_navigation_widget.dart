@@ -120,14 +120,11 @@ class _StepperNavigationWidgetState<T> extends State<StepperNavigationWidget<T>>
       //onStepTapped: (step) {
       //  currentViewModel.gotoStep();
       //},
-      controlsBuilder: (
-        BuildContext context, {
-        VoidCallback? onStepContinue,
-        VoidCallback? onStepCancel,
-      }) {
+
+      controlsBuilder: (BuildContext context, ControlsDetails controlDetails) {
         return ifNotNullFunctionOf2(
-          onStepContinue,
-          onStepCancel,
+          controlDetails.onStepContinue,
+          controlDetails.onStepCancel,
           (VoidCallback onContinue, VoidCallback onCancel) {
             return Container(
               margin: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
