@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:navy/navy.dart';
 
 class RadioListFormField<U, V> extends FormField<U> {

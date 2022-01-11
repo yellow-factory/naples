@@ -1,9 +1,7 @@
 
-// ignore: unused_import
-import 'package:intl/intl.dart' as intl;
-import 'naples_localizations.dart';
 
-// ignore_for_file: unnecessary_brace_in_string_interps
+
+import 'naples_localizations.dart';
 
 /// The translations for English (`en`).
 class NaplesLocalizationsEn extends NaplesLocalizations {

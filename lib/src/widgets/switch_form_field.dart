@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SwitchFormField extends FormField<bool> {
@@ -20,7 +19,7 @@ class SwitchFormField extends FormField<bool> {
           builder: (FormFieldState<bool> state) {
             return SwitchListTile(
                 title: Text(label),
-                subtitle: hint == null ? null : Text(hint),
+                subtitle: _getSubtitle(hint, state),
                 controlAffinity: controlAffinity,
                 value: state.value ?? false,
                 onChanged: enabled ? state.didChange : null,
@@ -31,4 +30,25 @@ class SwitchFormField extends FormField<bool> {
                 );
           },
         );
+
+  static Widget _getSubtitle(String? hint, FormFieldState<bool> state) {
+    final errorColor = Theme.of(state.context).errorColor;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (hint != null) Text(hint),
+        if (state.hasError)
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 5.0),
+            child: Text(
+              state.errorText ?? '',
+              style: TextStyle(
+                color: errorColor,
+                fontSize: 12,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
 }

@@ -1,7 +1,6 @@
 
 import 'dart:async';
 
-// ignore: unused_import
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -65,7 +64,6 @@ import 'naples_localizations_es.dart';
 abstract class NaplesLocalizations {
   NaplesLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
-  // ignore: unused_field
   final String localeName;
 
   static NaplesLocalizations? of(BuildContext context) {
@@ -122,7 +120,7 @@ class _NaplesLocalizationsDelegate extends LocalizationsDelegate<NaplesLocalizat
 
   @override
   Future<NaplesLocalizations> load(Locale locale) {
-    return SynchronousFuture<NaplesLocalizations>(_lookupNaplesLocalizations(locale));
+    return SynchronousFuture<NaplesLocalizations>(lookupNaplesLocalizations(locale));
   }
 
   @override
@@ -132,17 +130,15 @@ class _NaplesLocalizationsDelegate extends LocalizationsDelegate<NaplesLocalizat
   bool shouldReload(_NaplesLocalizationsDelegate old) => false;
 }
 
-NaplesLocalizations _lookupNaplesLocalizations(Locale locale) {
-  
+NaplesLocalizations lookupNaplesLocalizations(Locale locale) {
 
 
-// Lookup logic when only language code is specified.
-switch (locale.languageCode) {
-  case 'ca': return NaplesLocalizationsCa();
+  // Lookup logic when only language code is specified.
+  switch (locale.languageCode) {
+    case 'ca': return NaplesLocalizationsCa();
     case 'en': return NaplesLocalizationsEn();
     case 'es': return NaplesLocalizationsEs();
-}
-
+  }
 
   throw FlutterError(
     'NaplesLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
