@@ -15,7 +15,7 @@ class Refresh extends InheritedWidget {
 
   static Refresh of(BuildContext context) {
     final Refresh? result = context.dependOnInheritedWidgetOfExactType<Refresh>();
-    assert(result != null, 'NeedsRefresh not found in context');
+    assert(result != null, 'Refresh not found in context');
     return result!;
   }
 
