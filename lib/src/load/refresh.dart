@@ -23,7 +23,7 @@ class Refresh extends InheritedWidget {
   bool updateShouldNotify(Refresh old) => refreshNeeded.value != old.refreshNeeded.value;
 }
 
-//A class to hold the needed value of a refresh
+//A class to hold the need of a refresh
 class NeedRefresh extends ValueNotifier<bool> {
   NeedRefresh(bool value) : super(value);
 }
