@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:naples/load.dart';
 import 'package:navy/navy.dart';
-import 'loading.dart';
 
 class ListLoader<T> extends StatefulWidget {
   final FunctionOf0<Stream<T>> getStream;
@@ -61,7 +60,7 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return NotificationListener<RefreshNeededNotification>(
+    return NotificationListener<NeedRefreshNotification>(
       onNotification: (notification) {
         refresh();
         return true;

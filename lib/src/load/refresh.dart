@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 //To send a Notification up to the tree to indicate a Refresh is needed
-class RefreshNeededNotification extends Notification {}
+class NeedRefreshNotification extends Notification {}
 
 //Inherited widget to hold the state of needed refresh or not
 class Refresh extends InheritedWidget {
@@ -11,7 +11,7 @@ class Refresh extends InheritedWidget {
     required Widget child,
   }) : super(key: key, child: child);
 
-  final RefreshNeeded refreshNeeded;
+  final NeedRefresh refreshNeeded;
 
   static Refresh of(BuildContext context) {
     final Refresh? result = context.dependOnInheritedWidgetOfExactType<Refresh>();
@@ -24,6 +24,6 @@ class Refresh extends InheritedWidget {
 }
 
 //A class to hold the needed value of a refresh
-class RefreshNeeded extends ValueNotifier<bool> {
-  RefreshNeeded(bool value) : super(value);
+class NeedRefresh extends ValueNotifier<bool> {
+  NeedRefresh(bool value) : super(value);
 }
