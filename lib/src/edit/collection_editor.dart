@@ -23,8 +23,8 @@ class CollectionEditor<ListItem, Update, Create> extends StatefulWidget with Exp
   //TODO: En alguns casos potser ens pot interessar que tingui títol i potser vora perquè estigui delimitat
 
   final FunctionOf1<ListItem, Future<Update>> getUpdate;
-  final FunctionOf2<Update, FunctionOf2<Widget, bool, Widget>, Widget> updateWidget;
-  final FunctionOf1<Update, Future<ListItem>> update;
+  final FunctionOf3<ListItem, Update, FunctionOf2<Widget, bool, Widget>, Widget> updateWidget;
+  final FunctionOf2<ListItem, Update, Future<ListItem>> update;
 
   final FunctionOf0<Future<Create>>? getCreate;
   final FunctionOf2<Create, FunctionOf2<Widget, bool, Widget>, Widget>? createWidget;
@@ -142,10 +142,12 @@ class _CollectionEditorState<ListItem, Update, Create>
   }
 
   Widget getUpdateWidget(BuildContext context) {
+    if (_selectedItem == null) return Placeholder();
     if (_updateItem == null) return Placeholder();
     return Expanded(
       child: Card(
         child: widget.updateWidget(
+          _selectedItem!,
           _updateItem!,
           (form, valid) {
             return getEditWidget(
@@ -154,7 +156,7 @@ class _CollectionEditorState<ListItem, Update, Create>
               valid,
               () async {
                 if (_selectedItem == null) return;
-                var updatedItem = await widget.update(_updateItem!);
+                var updatedItem = await widget.update(_selectedItem!, _updateItem!);
                 var i = _items.indexOf(_selectedItem!);
                 setState(() {
                   _items.removeAt(i);

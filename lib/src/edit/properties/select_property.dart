@@ -68,7 +68,9 @@ class SelectProperty<U, V> extends StatelessWidget with ModelProperty<U?>, Expan
       ),
       onChanged: (value) {
         if (dropdownKey.currentState == null) return;
-        dropdownKey.currentState!.didChange(value);
+        if (dropdownKey.currentState!.value != value) {
+          dropdownKey.currentState!.didChange(value);
+        }
       },
     );
 

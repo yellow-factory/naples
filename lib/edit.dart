@@ -3,6 +3,7 @@
 export 'package:naples/src/edit/properties/model_property.dart';
 export 'package:naples/src/edit/properties/string_property.dart';
 export 'package:naples/src/edit/properties/int_property.dart';
+export 'package:naples/src/edit/properties/double_property.dart';
 export 'package:naples/src/edit/properties/bool_property.dart';
 export 'package:naples/src/edit/properties/select_property.dart';
 export 'package:naples/src/edit/properties/datetime_property.dart';
