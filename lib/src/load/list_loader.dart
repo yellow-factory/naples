@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:naples/load.dart';
+import 'package:naples/src/widgets/length.dart';
 import 'package:navy/navy.dart';
 
 class ListLoader<T> extends StatefulWidget {
@@ -32,10 +35,14 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
       print('load list_loader');
       _loading = true;
       _notifyLoading();
+
       await for (var m in widget.getStream()) {
         if (!mounted) break;
         setState(() {
           _items.add(m);
+          if (_lengthWidget != null) {
+            scheduleMicrotask(() => _lengthWidget?.length.value = _items.length);
+          }
         });
       }
     } catch (e) {
@@ -44,6 +51,11 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
       _loading = false;
       _notifyLoading();
     }
+  }
+
+  LengthWidget? get _lengthWidget {
+    if (!mounted) return null;
+    return context.dependOnInheritedWidgetOfExactType<LengthWidget>();
   }
 
   void _notifyLoading() {
@@ -60,7 +72,7 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return NotificationListener<NeedRefreshNotification>(
+    return NotificationListener<RefreshNotification>(
       onNotification: (notification) {
         refresh();
         return true;

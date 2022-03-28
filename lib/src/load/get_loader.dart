@@ -55,7 +55,7 @@ class GetLoaderState<T> extends State<GetLoader<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return NotificationListener<NeedRefreshNotification>(
+    return NotificationListener<RefreshNotification>(
       onNotification: (notification) {
         refresh();
         return true;

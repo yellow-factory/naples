@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:naples/src/widgets/length.dart';
 import 'package:navy/navy.dart';
 
 /// Filter list of items, defining the value to filter with getItemValue
@@ -36,6 +39,10 @@ class FilterList<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var fitems = _filterItems(items);
+    var lengthWidget = context.dependOnInheritedWidgetOfExactType<LengthWidget>();
+    if (lengthWidget != null) {
+      scheduleMicrotask(() => lengthWidget.length.value = fitems.length);
+    }
     return builder(fitems);
   }
 }

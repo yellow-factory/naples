@@ -1,10 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:naples/list.dart';
 import 'package:naples/load.dart';
 import 'package:navy/navy.dart';
+
+//TODO: Remove...o bé acabar d'arreglar, faltaria un builder per al item dins l'expanded
+//i potser sobraria el listloader i el create??
+//TODO: Crec que això va ser una prova que no va anar a més
 
 class ExpandableList<T> extends StatelessWidget {
   final FunctionOf0<Stream<T>> getStream;
