@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:navy/navy.dart';
 
 //TODO: S'hauria de poder mantenir un element seleccionat i per fer-ho cal convertir-lo a Stateful

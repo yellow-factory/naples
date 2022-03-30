@@ -12,3 +12,4 @@ export 'package:naples/src/widgets/distribution_widget.dart';
 export 'package:naples/src/widgets/actions_widget.dart';
 export 'package:naples/src/widgets/async_action_icon_button.dart';
 export 'package:naples/src/widgets/back_forward_animation_widget.dart';
+export 'package:naples/src/widgets/tab_container.dart';
