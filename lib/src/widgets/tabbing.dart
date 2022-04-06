@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:navy/navy.dart';
 
 class TabbingItem extends StatelessWidget {
   final String name;
@@ -30,9 +31,8 @@ class Tabbing extends StatefulWidget {
 
 class _TabbingState extends State<Tabbing> {
   final _tabs = <TabbingItem>[];
-  final _currentIndexNotifier = ValueNotifier<int>(0);
-  int _currentIndex = 0;
-  int _previousIndex = 0;
+  final _currentIndexNotifier = ValueNotifier<int?>(null);
+  final _previousSelectedTabs = <int>[];
 
   @override
   void initState() {
@@ -47,23 +47,30 @@ class _TabbingState extends State<Tabbing> {
   }
 
   void currentIndexChanged() {
-    _previousIndex = _currentIndex;
-    _currentIndex = _currentIndexNotifier.value;
+    if (_currentIndexNotifier.value == null) return;
+    _previousSelectedTabs.add(_currentIndexNotifier.value!);
   }
 
   void addTab(TabbingItem tab) {
     setState(() {
       _tabs.add(tab);
-      _currentIndexNotifier.value = _tabs.length - 1;
+      var newIndex = _tabs.length - 1;
+      _currentIndexNotifier.value = newIndex;
     });
   }
 
   void removeTab(TabbingItem tab) {
-    var currentTabIndex = _tabs.indexOf(tab);
-    var newIndex = currentTabIndex == _currentIndexNotifier.value
-        ? _previousIndex
-        : _currentIndexNotifier.value;
-    if (newIndex > 0 && newIndex >= currentTabIndex) newIndex--;
+    if (_previousSelectedTabs.length == 0) return;
+    var indexToRemove = _previousSelectedTabs.last;
+    _previousSelectedTabs.removeWhere((x) => x == indexToRemove);
+    for (int i = 0; i < _previousSelectedTabs.length; i++) {
+      var current = _previousSelectedTabs[i];
+      if (current > indexToRemove) _previousSelectedTabs[i] = current - 1;
+    }
+    int? newIndex;
+    if (_previousSelectedTabs.length > 0) {
+      newIndex = _previousSelectedTabs.last;
+    }
     setState(() {
       _currentIndexNotifier.value = newIndex;
       _tabs.remove(tab);
@@ -84,17 +91,18 @@ class _TabbingState extends State<Tabbing> {
 
 class TabbingContainer extends InheritedWidget {
   final List<TabbingItem> tabs;
-  final ValueNotifier<int> indexNotifier;
-  final Function addTab;
-  final Function removeTab;
+  final ValueNotifier<int?> indexNotifier;
+  final ActionOf1<TabbingItem> addTab;
+  final ActionOf1<TabbingItem> removeTab;
 
   void removeCurrentTab() {
-    var tabToRemove = tabs[currentTabIndex];
+    if (index == null) return;
+    var tabToRemove = tabs[index!];
     removeTab(tabToRemove);
   }
 
   int get length => tabs.length;
-  int get currentTabIndex => indexNotifier.value;
+  int? get index => indexNotifier.value;
 
   TabbingContainer({
     Key? key,
@@ -114,13 +122,14 @@ class TabbingContainer extends InheritedWidget {
 
   @override
   bool updateShouldNotify(TabbingContainer old) {
-    return tabs.length != old.tabs.length;
+    return true;
+    //return length != old.length;
   }
 }
 
 class TabbingViewer extends StatefulWidget {
   final int length;
-  final int initialIndex;
+  final int? initialIndex;
   const TabbingViewer({
     Key? key,
     required this.length,
@@ -142,13 +151,13 @@ class _TabbingViewerState extends State<TabbingViewer> with SingleTickerProvider
     _tabController = TabController(
       vsync: this,
       length: widget.length,
-      initialIndex: widget.initialIndex,
+      initialIndex: widget.initialIndex ?? 0,
     );
     _tabController.addListener(notifyIndexChange);
   }
 
   void notifyIndexChange() {
-    if (_tabContainer.currentTabIndex != _tabController.index) {
+    if (_tabContainer.index != _tabController.index) {
       _tabContainer.indexNotifier.value = _tabController.index;
     }
   }

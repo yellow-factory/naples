@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:navy/navy.dart';
 
 class DynamicTable<T> extends StatelessWidget {
-  final ActionOf1<T>? onSelected;
   final List<DataColumn> dataColumns;
   final FunctionOf1<T, DataRow> getDataRow;
   final List<T> items;
@@ -12,7 +11,6 @@ class DynamicTable<T> extends StatelessWidget {
     required this.dataColumns,
     required this.getDataRow,
     required this.items,
-    this.onSelected,
   }) : super(key: key);
 
   @override
