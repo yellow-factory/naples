@@ -116,7 +116,7 @@ class TabbingContainer extends InheritedWidget {
 
   static TabbingContainer of(BuildContext context) {
     final TabbingContainer? result = context.dependOnInheritedWidgetOfExactType<TabbingContainer>();
-    assert(result != null, 'No TabContainerRoot found in context');
+    assert(result != null, 'No TabContainer found in context');
     return result!;
   }
 
