@@ -40,8 +40,16 @@ class DynamicList<T> extends StatelessWidget {
               children: [
                 ListTile(
                   dense: false,
-                  title: Text(itemTitle(model)),
-                  subtitle: itemSubtitle != null ? Text(itemSubtitle!(model)) : null,
+                  title: Text(
+                    itemTitle(model),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  subtitle: itemSubtitle != null
+                      ? Text(
+                          itemSubtitle!(model),
+                          overflow: TextOverflow.ellipsis,
+                        )
+                      : null,
                   leading: itemLeading != null ? itemLeading!(model) : null,
                   trailing: itemTrailing != null ? itemTrailing!(model) : null,
                   onTap: () {

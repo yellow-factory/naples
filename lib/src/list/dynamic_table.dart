@@ -15,15 +15,10 @@ class DynamicTable<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: SizedBox(
-        width: double.infinity,
-        child: DataTable(
-          showCheckboxColumn: false, //Not show the selector in case we only want to navigate
-          columns: dataColumns,
-          rows: <DataRow>[for (var x in items) getDataRow(x)],
-        ),
-      ),
+    return DataTable(
+      showCheckboxColumn: false, //Not show the selector in case we only want to navigate
+      columns: dataColumns,
+      rows: <DataRow>[for (var x in items) getDataRow(x)],
     );
   }
 }
