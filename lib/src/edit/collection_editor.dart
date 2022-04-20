@@ -102,7 +102,14 @@ class _CollectionEditorState<ListItem, Update, Create>
                     widget.delete,
                     (delete) => (listItem) {
                       return IconButton(
-                        onPressed: () => delete(listItem),
+                        onPressed: () async {
+                          var deleted = await delete(listItem);
+                          if (deleted) {
+                            setState(() {
+                              _items.remove(listItem);
+                            });
+                          }
+                        },
                         icon: Icon(Icons.delete),
                       );
                     },
