@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:naples/src/widgets/onhover.dart';
 import 'package:navy/navy.dart';
 
 //TODO: S'hauria de poder mantenir un element seleccionat i per fer-ho cal convertir-lo a Stateful
@@ -10,6 +11,7 @@ class DynamicList<T> extends StatelessWidget {
   final FunctionOf1<T, String>? itemSubtitle;
   final FunctionOf1<T, Widget>? itemLeading;
   final FunctionOf1<T, Widget>? itemTrailing;
+  final bool onlyShowItemTrailingOnHover;
   final FunctionOf1<T, Future<void>>? select;
   final bool separated;
   final ScrollController _scrollController = ScrollController();
@@ -20,6 +22,7 @@ class DynamicList<T> extends StatelessWidget {
     this.itemSubtitle,
     this.itemLeading,
     this.itemTrailing,
+    this.onlyShowItemTrailingOnHover = false,
     this.select,
     this.separated = false,
     Key? key,
@@ -38,23 +41,32 @@ class DynamicList<T> extends StatelessWidget {
             final model = items[index];
             return Column(
               children: [
-                ListTile(
-                  dense: false,
-                  title: Text(
-                    itemTitle(model),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  subtitle: itemSubtitle != null
-                      ? Text(
-                          itemSubtitle!(model),
-                          overflow: TextOverflow.ellipsis,
-                        )
-                      : null,
-                  leading: itemLeading != null ? itemLeading!(model) : null,
-                  trailing: itemTrailing != null ? itemTrailing!(model) : null,
-                  onTap: () {
-                    if (select == null) return;
-                    select!(model);
+                OnHoverWidget(
+                  builder: (hover) {
+                    return ListTile(
+                      dense: false,
+                      title: Text(
+                        itemTitle(model),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      subtitle: itemSubtitle != null
+                          ? Text(
+                              itemSubtitle!(model),
+                              overflow: TextOverflow.ellipsis,
+                            )
+                          : null,
+                      leading: itemLeading != null ? itemLeading!(model) : null,
+                      trailing: itemTrailing != null
+                          ? onlyShowItemTrailingOnHover == false ||
+                                  onlyShowItemTrailingOnHover && hover
+                              ? itemTrailing!(model)
+                              : null
+                          : null,
+                      onTap: () {
+                        if (select == null) return;
+                        select!(model);
+                      },
+                    );
                   },
                 ),
                 if (separated)

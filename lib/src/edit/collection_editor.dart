@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:naples/common.dart';
 import 'package:naples/list.dart';
+import 'package:naples/src/widgets/onhover.dart';
 import 'package:naples/widgets.dart';
 import 'package:navy/navy.dart';
 
@@ -109,12 +110,19 @@ class _CollectionEditorState<ListItem, Update, Create>
                               _items.remove(listItem);
                             });
                           }
+                          if (listItem == _selectedItem) {
+                            setState(() {
+                              _selectedItem = null;
+                              _updateItem = null;
+                            });
+                          }
                         },
                         icon: Icon(Icons.delete),
                       );
                     },
                     null,
                   ),
+                  onlyShowItemTrailingOnHover: true,
                 ),
               ),
             ],
