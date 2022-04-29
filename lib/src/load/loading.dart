@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 
 class Loading extends StatefulWidget {
   final Widget child;
-  const Loading({Key? key, required this.child}) : super(key: key);
+  final bool keepSpace;
+  const Loading({Key? key, required this.child, this.keepSpace = true}) : super(key: key);
 
   @override
   State<Loading> createState() => _LoadingState();
@@ -27,7 +28,7 @@ class _LoadingState extends State<Loading> {
       },
       child: Column(
         children: [
-          if (_loading) LinearProgressIndicator(),
+          _loading ? LinearProgressIndicator() : SizedBox(height: widget.keepSpace ? 4 : 0),
           Expanded(child: widget.child),
         ],
       ),
