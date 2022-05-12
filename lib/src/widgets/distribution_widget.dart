@@ -65,7 +65,7 @@ class DistributionWidget extends StatelessWidget {
         )
     ];
 
-    return distribution == DistributionType.LeftToRight
+    var distributed = distribution == DistributionType.LeftToRight
         ? _LeftToRightDistributionWidget(
             echildren,
             fixedWidgetsPerRow: fixed,
@@ -78,6 +78,11 @@ class DistributionWidget extends StatelessWidget {
             maxFlex: maxFlex,
             normalize: normalize,
           );
+
+    return FocusTraversalGroup(
+      policy: OrderedTraversalPolicy(),
+      child: distributed,
+    );
   }
 }
 

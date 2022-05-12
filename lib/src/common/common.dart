@@ -11,12 +11,6 @@ abstract class IMustacheValues {
   Map<String, dynamic> mustacheValues(String locale);
 }
 
-//TODO: Remove
-abstract class Validable {
-  bool get initialValid;
-  ActionOf1<bool>? get onValidChanged;
-}
-
 abstract class HasBuilder {
   FunctionOf2<Widget, bool, Widget> get builder;
 }

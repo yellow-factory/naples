@@ -33,6 +33,7 @@ class GetLoaderState<T> extends State<GetLoader<T>> {
       _loading = true;
       _notifyLoading();
       var item = await widget.get();
+      if (!mounted) return;
       setState(() {
         _item = item;
       });
@@ -45,7 +46,7 @@ class GetLoaderState<T> extends State<GetLoader<T>> {
   }
 
   void _notifyLoading() {
-    LoadingNotification(_loading).dispatch(context);
+    if (mounted) LoadingNotification(_loading).dispatch(context);
   }
 
   Future<void> refresh() async {
