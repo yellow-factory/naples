@@ -4,7 +4,7 @@ import 'package:naples/src/navigation/navigation.dart';
 class WillPopScopeNavigationWidget extends StatelessWidget {
   final Widget child;
   final NavigationModel navigationModel;
-  WillPopScopeNavigationWidget({Key? key, required this.child, required this.navigationModel})
+  const WillPopScopeNavigationWidget({Key? key, required this.child, required this.navigationModel})
       : super(key: key);
 
   @override

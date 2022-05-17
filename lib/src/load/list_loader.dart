@@ -10,7 +10,7 @@ class ListLoader<T> extends StatefulWidget {
   final FunctionOf0<Stream<T>> getStream;
   final FunctionOf1<List<T>, Widget> builder;
 
-  ListLoader({
+  const ListLoader({
     required this.getStream,
     required this.builder,
     Key? key,
@@ -46,7 +46,7 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
         });
       }
     } catch (e) {
-      throw e;
+      rethrow;
     } finally {
       _loading = false;
       _notifyLoading();

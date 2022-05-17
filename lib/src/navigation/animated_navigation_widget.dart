@@ -9,7 +9,7 @@ class AnimatedNavigationWidget<T> extends StatefulWidget {
   final Duration reverseDuration;
   final FunctionOf1<T, Widget> currentStepBuilder;
 
-  AnimatedNavigationWidget({
+  const AnimatedNavigationWidget({
     required this.currentStepBuilder,
     this.duration = const Duration(milliseconds: 500),
     this.reverseDuration = const Duration(milliseconds: 500),

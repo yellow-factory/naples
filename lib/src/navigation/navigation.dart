@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
 import 'dart:collection';
 
 //TODO: Crec que no s'està utilitzant Transition.allowBack, i segurament hauria
@@ -59,10 +58,12 @@ class NavigationModel<T> extends ChangeNotifier {
 
   @protected
   void addTransitionModel(Transition<T> transition) {
-    if (getTransition(transition.beginningState, transition.endingState) != null)
-      throw new Exception("The specified transition already exist");
-    if (transition.beginningState == transition.endingState)
-      throw new Exception("The beginningState and the endingState must be different");
+    if (getTransition(transition.beginningState, transition.endingState) != null) {
+      throw Exception("The specified transition already exist");
+    }
+    if (transition.beginningState == transition.endingState) {
+      throw Exception("The beginningState and the endingState must be different");
+    }
     _transitions.add(transition);
   }
 
@@ -136,7 +137,7 @@ class StateMachineWidget<T, U> extends StatefulWidget {
   //TODO: a partir d'un estat de tipus T torna un widget??
   final Map<T, T> builder;
 
-  StateMachineWidget(this.currentState, this.builder);
+  const StateMachineWidget(this.currentState, this.builder);
 
   @override
   _StateMachineWidgetState<T, U> createState() => _StateMachineWidgetState<T, U>();

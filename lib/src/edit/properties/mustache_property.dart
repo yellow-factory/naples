@@ -5,6 +5,7 @@ import 'package:naples/src/widgets/markdown_widget.dart';
 import 'package:naples/src/widgets/mustache_widget.dart';
 
 class MustacheProperty<T extends IMustacheValues> extends StatelessWidget implements Expandable {
+  @override
   final int flex;
   final T source;
   final String template;
@@ -12,7 +13,7 @@ class MustacheProperty<T extends IMustacheValues> extends StatelessWidget implem
   final bool processMarkdown;
   final double? height;
 
-  MustacheProperty({
+  const MustacheProperty({
     Key? key,
     this.flex = 99,
     required this.source,
@@ -30,21 +31,23 @@ class MustacheProperty<T extends IMustacheValues> extends StatelessWidget implem
       locale: locale,
       builder: (t) {
         //If Markdown...
-        if (processMarkdown)
+        if (processMarkdown) {
           return MarkdownWidget(
             template: template,
             height: height,
           );
+        }
 
         //By default uses Linkyfi
         var linkyfied = LinkyfiedWidget(
           text: template,
         );
-        if (height != null)
+        if (height != null) {
           return SizedBox(
             height: height,
             child: linkyfied,
           );
+        }
         return linkyfied;
       },
     );

@@ -13,7 +13,7 @@ class StepperNavigationWidget<T> extends StatefulWidget {
   final StepperType stepperType;
   final bool indexedIcons;
 
-  StepperNavigationWidget({
+  const StepperNavigationWidget({
     Key? key,
     required this.currentStepTitleBuilder,
     required this.currentStepContentBuilder,
@@ -76,12 +76,12 @@ class _StepperNavigationWidgetState<T> extends State<StepperNavigationWidget<T>>
     });
   }
 
-  bool back() => this.widget.navigationModel.back();
-  bool forward() => this.widget.navigationModel.forward();
+  bool back() => widget.navigationModel.back();
+  bool forward() => widget.navigationModel.forward();
 
   @override
   Widget build(BuildContext context) {
-    if (_currentState == null) return SizedBox();
+    if (_currentState == null) return const SizedBox();
 
     //In order to work correctly, the stepper key must be related with the number
     //of steps. If the build is triggered by a change in the number of steps we have
@@ -93,7 +93,7 @@ class _StepperNavigationWidgetState<T> extends State<StepperNavigationWidget<T>>
       steps: [
         ..._history.map((e) => Step(
               title: widget.currentStepTitleBuilder(e),
-              content: SizedBox(),
+              content: const SizedBox(),
               state: widget.indexedIcons ? StepState.indexed : StepState.complete,
             )),
         Step(
@@ -127,7 +127,7 @@ class _StepperNavigationWidgetState<T> extends State<StepperNavigationWidget<T>>
           controlDetails.onStepCancel,
           (VoidCallback onContinue, VoidCallback onCancel) {
             return Container(
-              margin: EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
               child: ActionsListWidget(
                 actions: <ActionWidget>[
                   ActionWidget(
@@ -146,7 +146,7 @@ class _StepperNavigationWidgetState<T> extends State<StepperNavigationWidget<T>>
               ),
             );
           },
-          SizedBox(),
+          const SizedBox(),
         );
       },
     );

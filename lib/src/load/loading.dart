@@ -28,7 +28,7 @@ class _LoadingState extends State<Loading> {
       },
       child: Column(
         children: [
-          _loading ? LinearProgressIndicator() : SizedBox(height: widget.keepSpace ? 4 : 0),
+          _loading ? const LinearProgressIndicator() : SizedBox(height: widget.keepSpace ? 4 : 0),
           Expanded(child: widget.child),
         ],
       ),

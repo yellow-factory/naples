@@ -1,7 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:naples/list.dart';
-import 'package:naples/src/load/loading.dart';
-import 'package:navy/navy.dart';
 
 //TODO: Segurament sobra si tenim el collection editor
 

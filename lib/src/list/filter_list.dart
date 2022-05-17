@@ -15,25 +15,27 @@ class FilterList<T> extends StatelessWidget {
   final String filterBy;
   final FunctionOf1<List<T>, Widget> builder;
 
-  FilterList({
+  const FilterList({
     required this.items,
     required this.builder,
     required this.getItemValue,
     required this.filterBy,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   List<T> _filterItems(List<T> items) {
     var curatedFilterBy = filterBy.toLowerCase().trim();
     if (curatedFilterBy.isEmpty) return items;
+    var predicate = _buildPredicate(curatedFilterBy);
+    return items.where(predicate).toList();
+  }
 
-    var predicate = (item) {
+  bool Function(T item) _buildPredicate(String curatedFilterBy) {
+    return (item) {
       if (item == null) return false;
       var itemValue = getItemValue(item);
       return itemValue.toLowerCase().trim().contains(curatedFilterBy);
     };
-
-    return items.where(predicate).toList();
   }
 
   @override

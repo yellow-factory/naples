@@ -9,7 +9,7 @@ abstract class EditBuilder<T> extends StatelessWidget {
   final T model;
   final FunctionOf2<Widget, bool, Widget> builder;
 
-  EditBuilder({
+  const EditBuilder({
     required this.model,
     required this.builder,
     Key? key,
@@ -21,7 +21,7 @@ abstract class EditBuilder2<T, U> extends StatelessWidget {
   final U model2;
   final FunctionOf2<Widget, bool, Widget> builder;
 
-  EditBuilder2({
+  const EditBuilder2({
     required this.model1,
     required this.model2,
     required this.builder,

@@ -37,7 +37,7 @@ class CheckboxFormField extends FormField<bool> {
         if (hint != null) Text(hint),
         if (state.hasError)
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 5.0),
+            padding: const EdgeInsets.symmetric(vertical: 5.0),
             child: Text(
               state.errorText ?? '',
               style: TextStyle(

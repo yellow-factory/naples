@@ -14,6 +14,7 @@ class CardTopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      elevation: 4,
       child: Column(children: <Widget>[
         ListTile(
           tileColor: Colors.grey.shade200,
@@ -31,7 +32,6 @@ class CardTopBar extends StatelessWidget {
         ),
         Expanded(child: child)
       ]),
-      elevation: 4,
     );
   }
 }

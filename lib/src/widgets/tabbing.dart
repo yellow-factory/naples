@@ -60,7 +60,7 @@ class _TabbingState extends State<Tabbing> {
   }
 
   void removeTab(TabbingItem tab) {
-    if (_previousSelectedTabs.length == 0) return;
+    if (_previousSelectedTabs.isEmpty) return;
     var indexToRemove = _previousSelectedTabs.last;
     _previousSelectedTabs.removeWhere((x) => x == indexToRemove);
     for (int i = 0; i < _previousSelectedTabs.length; i++) {
@@ -68,7 +68,7 @@ class _TabbingState extends State<Tabbing> {
       if (current > indexToRemove) _previousSelectedTabs[i] = current - 1;
     }
     int? newIndex;
-    if (_previousSelectedTabs.length > 0) {
+    if (_previousSelectedTabs.isNotEmpty) {
       newIndex = _previousSelectedTabs.last;
     }
     setState(() {
@@ -171,13 +171,13 @@ class _TabbingViewerState extends State<TabbingViewer> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-    if (_tabContainer.tabs.length == 0) return SizedBox();
+    if (_tabContainer.tabs.isEmpty) return const SizedBox();
     return Column(
       children: [
         TabBar(
           controller: _tabController,
           tabs: _tabContainer.tabs.map<Widget>((x) => TabbingTab(item: x)).toList(),
-          labelPadding: EdgeInsets.symmetric(horizontal: 10.0),
+          labelPadding: const EdgeInsets.symmetric(horizontal: 10.0),
           isScrollable: true,
         ),
         Expanded(
@@ -206,12 +206,12 @@ class TabbingTab extends StatelessWidget {
         children: [
           if (item.iconData != null)
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 5),
               child: Icon(item.iconData),
             ),
           Text(item.name),
           IconButton(
-            icon: Icon(Icons.close),
+            icon: const Icon(Icons.close),
             splashRadius: 16,
             iconSize: 16,
             onPressed: () {

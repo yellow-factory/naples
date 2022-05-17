@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:naples/src/common/common.dart';
 
 class ExpandableProperty extends StatelessWidget implements Expandable {
+  @override
   final int flex;
   final String label;
   final Widget child;
   final double expandedHeight;
 
-  ExpandableProperty({
+  const ExpandableProperty({
     Key? key,
     required this.label,
     required this.child,
@@ -24,7 +25,7 @@ class ExpandableProperty extends StatelessWidget implements Expandable {
           Text(label),
         ],
       ),
-      tilePadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+      tilePadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
       initiallyExpanded: false,
       backgroundColor: Colors.grey[200],
       children: [

@@ -8,7 +8,7 @@ class GetLoader<T> extends StatefulWidget {
   final FunctionOf0<Future<T>> get;
   final FunctionOf1<T, Widget> builder;
 
-  GetLoader({
+  const GetLoader({
     required this.get,
     required this.builder,
     Key? key,
@@ -38,7 +38,7 @@ class GetLoaderState<T> extends State<GetLoader<T>> {
         _item = item;
       });
     } catch (e) {
-      throw e;
+      rethrow;
     } finally {
       _loading = false;
       _notifyLoading();
@@ -64,7 +64,7 @@ class GetLoaderState<T> extends State<GetLoader<T>> {
       child: ifNotNullFunctionOf1(
         _item,
         (T item) => widget.builder(item),
-        SizedBox(),
+        const SizedBox(),
       ),
     );
   }

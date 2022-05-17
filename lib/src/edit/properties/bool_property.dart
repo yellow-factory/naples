@@ -22,13 +22,21 @@ extension BoolValuesExtension on BoolValues {
 }
 
 class BoolProperty extends StatelessWidget with ModelProperty<bool?>, Expandable {
+  @override
   final int flex;
+  @override
   final String label;
+  @override
   final String? hint;
+  @override
   final bool autofocus;
+  @override
   final PredicateOf0? editable;
+  @override
   final FunctionOf0<bool?> getProperty;
+  @override
   final ActionOf1<bool?>? setProperty;
+  @override
   final FunctionOf1<bool?, String?>? validator;
   final BoolWidgetType widgetType;
   final BoolWidgetPosition widgetPosition;

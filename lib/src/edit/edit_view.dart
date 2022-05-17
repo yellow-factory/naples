@@ -12,7 +12,7 @@ class EditView extends StatelessWidget {
   final bool valid;
   final bool goBack;
 
-  EditView({
+  const EditView({
     required this.save,
     this.cancel,
     this.saveText = "Save", //TODO: Localize
@@ -27,7 +27,7 @@ class EditView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: <Widget>[
           child,

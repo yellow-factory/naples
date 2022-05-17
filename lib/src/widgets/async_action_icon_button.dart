@@ -6,7 +6,7 @@ class AsyncActionIconButtonWidget extends StatelessWidget {
   final FunctionOf0<Future<void>>? action;
   final String? message;
 
-  AsyncActionIconButtonWidget({
+  const AsyncActionIconButtonWidget({
     required this.iconData,
     this.action,
     this.message,

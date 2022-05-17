@@ -32,7 +32,7 @@ class DateTimeFormField extends FormField<DateTime> {
               errorText: state.errorText,
               filled: filled,
               suffixIcon: IconButton(
-                icon: Icon(Icons.calendar_today_outlined),
+                icon: const Icon(Icons.calendar_today_outlined),
                 onPressed: () async {
                   final DateTime datePicked = await showDatePicker(
                         context: state.context,
@@ -44,7 +44,7 @@ class DateTimeFormField extends FormField<DateTime> {
 
                   if (onlyDate) {
                     if (currentValue.compareTo(datePicked) != 0) state.didChange(datePicked);
-                    return null;
+                    return;
                   }
 
                   final TimeOfDay time = TimeOfDay.fromDateTime(currentValue);
@@ -54,7 +54,7 @@ class DateTimeFormField extends FormField<DateTime> {
                       ) ??
                       time;
 
-                  state.didChange(new DateTime(
+                  state.didChange(DateTime(
                     datePicked.year,
                     datePicked.month,
                     datePicked.day,

@@ -24,26 +24,27 @@ class ToggleButtonFormField<U, V> extends FormField<U> {
           builder: (FormFieldState<U> state) {
             List<bool> isSelected() {
               var selectedList = <bool>[];
-              for (var item in listItems())
+              for (var item in listItems()) {
                 selectedList.add(valueMember(item) == state.value ? true : false);
+              }
               return selectedList;
             }
 
             var toggleButtons = ToggleButtons(
               borderRadius: BorderRadius.circular(4.0),
-              constraints: BoxConstraints(minHeight: 36.0),
+              constraints: const BoxConstraints(minHeight: 36.0),
               onPressed: (index) {
                 var item = listItems()[index];
                 state.didChange(valueMember(item));
               },
+              isSelected: isSelected(),
               children: [
                 for (var item in listItems())
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Text(displayMember(item)()),
                   ),
               ],
-              isSelected: isSelected(),
             );
 
             return ListTile(
@@ -64,7 +65,7 @@ class ToggleButtonFormField<U, V> extends FormField<U> {
         if (hint != null) Text(hint),
         if (state.hasError)
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 5.0),
+            padding: const EdgeInsets.symmetric(vertical: 5.0),
             child: Text(
               state.errorText ?? '',
               style: TextStyle(

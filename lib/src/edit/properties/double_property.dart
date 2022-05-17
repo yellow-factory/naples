@@ -5,13 +5,21 @@ import 'package:navy/navy.dart';
 import 'package:naples/src/edit/properties/model_property.dart';
 
 class DoubleProperty extends StatelessWidget with ModelProperty<double?>, Expandable {
+  @override
   final int flex;
+  @override
   final String label;
+  @override
   final String? hint;
+  @override
   final bool autofocus;
+  @override
   final PredicateOf0? editable;
+  @override
   final FunctionOf0<double?> getProperty;
+  @override
   final ActionOf1<double?>? setProperty;
+  @override
   final FunctionOf1<double?, String?>? validator;
   final bool obscureText;
 

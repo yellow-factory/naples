@@ -8,7 +8,7 @@ class LinkyfiedWidget extends StatelessWidget {
   final TextStyle? linkStyle;
   final TextAlign? textAlign;
 
-  LinkyfiedWidget({
+  const LinkyfiedWidget({
     Key? key,
     required this.text,
     this.textStyle,

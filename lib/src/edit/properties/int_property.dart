@@ -5,13 +5,21 @@ import 'package:navy/navy.dart';
 import 'package:naples/src/edit/properties/model_property.dart';
 
 class IntProperty extends StatelessWidget with ModelProperty<int?>, Expandable {
+  @override
   final int flex;
+  @override
   final String label;
+  @override
   final String? hint;
+  @override
   final bool autofocus;
+  @override
   final PredicateOf0? editable;
+  @override
   final FunctionOf0<int?> getProperty;
+  @override
   final ActionOf1<int?>? setProperty;
+  @override
   final FunctionOf1<int?, String?>? validator;
   final int? maxLength;
   final bool obscureText;

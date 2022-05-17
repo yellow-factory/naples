@@ -20,7 +20,7 @@ class ExpandableList<T> extends StatelessWidget {
   final FunctionOf0<Future<void>>? create;
   final double expandedHeight;
 
-  ExpandableList({
+  const ExpandableList({
     Key? key,
     required this.title,
     required this.getStream,
@@ -50,15 +50,15 @@ class ExpandableList<T> extends StatelessWidget {
                   Text(title(items.length)),
                   if (create != null)
                     IconButton(
-                      icon: Icon(Icons.add),
+                      icon: const Icon(Icons.add),
                       onPressed: () {
                         if (create == null) return;
-                        this.create!();
+                        create!();
                       },
                     )
                 ],
               ),
-              tilePadding: EdgeInsets.symmetric(vertical: 10, horizontal: 5),
+              tilePadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
               initiallyExpanded: false,
               children: [
                 SizedBox(

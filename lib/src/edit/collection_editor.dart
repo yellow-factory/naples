@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:naples/common.dart';
+import 'package:naples/edit.dart';
 import 'package:naples/list.dart';
-import 'package:naples/src/widgets/onhover.dart';
 import 'package:naples/widgets.dart';
 import 'package:navy/navy.dart';
-
-//TODO: Cal fer el botó d'eliminar de la llista
 
 //Combination of List + Edit to edit a collection of items...
 //Where ListItem is the type holding the collection
 //Where Update is the type needed to update
 //Where Create is the type needed to create
 class CollectionEditor<ListItem, Update, Create> extends StatefulWidget with Expandable {
+  @override
   final int flex;
   final List<ListItem> items;
   final FunctionOf1<ListItem, String> itemTitle;
@@ -21,14 +20,12 @@ class CollectionEditor<ListItem, Update, Create> extends StatefulWidget with Exp
   //es podria afegir alguna cosa com ...
   //final FunctionOf2<ListItem, FunctionOf1<Widget, Widget>, Widget> getWidget;
 
-  //TODO: En alguns casos potser ens pot interessar que tingui títol i potser vora perquè estigui delimitat
-
   final FunctionOf1<ListItem, Future<Update>> getUpdate;
-  final FunctionOf3<ListItem, Update, FunctionOf2<Widget, bool, Widget>, Widget> updateWidget;
+  final FunctionOf2<ListItem, Update, Widget> updateWidget;
   final FunctionOf2<ListItem, Update, Future<ListItem>> update;
 
   final FunctionOf0<Future<Create>>? getCreate;
-  final FunctionOf2<Create, FunctionOf2<Widget, bool, Widget>, Widget>? createWidget;
+  final FunctionOf1<Create, Widget>? createWidget;
   final FunctionOf1<Create, Future<ListItem>>? create;
 
   final FunctionOf1<ListItem, Future<bool>>? delete;
@@ -49,18 +46,21 @@ class CollectionEditor<ListItem, Update, Create> extends StatefulWidget with Exp
   }) : super(key: key);
 
   @override
-  _CollectionEditorState<ListItem, Update, Create> createState() =>
-      _CollectionEditorState<ListItem, Update, Create>();
+  CollectionEditorState<ListItem, Update, Create> createState() =>
+      CollectionEditorState<ListItem, Update, Create>();
 
   bool get existCreate => getCreate != null && create != null && createWidget != null;
 }
 
-class _CollectionEditorState<ListItem, Update, Create>
+enum CollectionEditorMode { list, create, update }
+
+class CollectionEditorState<ListItem, Update, Create>
     extends State<CollectionEditor<ListItem, Update, Create>> {
   ListItem? _selectedItem;
   Update? _updateItem;
   Create? _createItem;
   late List<ListItem> _items;
+  var _mode = CollectionEditorMode.list;
 
   @override
   void initState() {
@@ -78,58 +78,49 @@ class _CollectionEditorState<ListItem, Update, Create>
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       children: [
+        if (widget.existCreate) getCreateButton(context),
+        const Divider(height: 1),
         Expanded(
-          child: Column(
+          child: Row(
             children: [
-              if (widget.existCreate) getCreateButton(context),
               Expanded(
-                child: DynamicList(
-                  items: _items,
-                  itemTitle: widget.itemTitle,
-                  itemSubtitle: widget.itemSubtitle != null ? widget.itemSubtitle : null,
-                  separated: true,
-                  select: (ListItem item) async {
-                    var updateItem = await widget.getUpdate(item);
-                    setState(() {
-                      _createItem = null;
-                      _selectedItem = item;
-                      _updateItem = updateItem;
-                    });
-                  },
-                  itemTrailing: ifNotNullFunctionOf1<FunctionOf1<ListItem, Future<bool>>,
-                      FunctionOf1<ListItem, Widget>?>(
-                    widget.delete,
-                    (delete) => (listItem) {
-                      return IconButton(
-                        onPressed: () async {
-                          var deleted = await delete(listItem);
-                          if (deleted) {
-                            setState(() {
-                              _items.remove(listItem);
-                            });
-                          }
-                          if (listItem == _selectedItem) {
-                            setState(() {
-                              _selectedItem = null;
-                              _updateItem = null;
-                            });
-                          }
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: DynamicList(
+                        items: _items,
+                        itemTitle: widget.itemTitle,
+                        itemSubtitle: widget.itemSubtitle,
+                        separated: true,
+                        select: (ListItem item) async {
+                          var updateItem = await widget.getUpdate(item);
+                          setState(() {
+                            _mode = CollectionEditorMode.update;
+                            _createItem = null;
+                            _selectedItem = item;
+                            _updateItem = updateItem;
+                          });
                         },
-                        icon: Icon(Icons.delete),
-                      );
-                    },
-                    null,
-                  ),
-                  onlyShowItemTrailingOnHover: true,
+                        itemTrailing: widget.delete == null
+                            ? (ListItem item) => IconButton(
+                                  onPressed: () => delete(item),
+                                  icon: const Icon(Icons.delete),
+                                )
+                            : null,
+                        onlyShowItemTrailingOnHover: true,
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              const VerticalDivider(width: 1),
+              if (_mode == CollectionEditorMode.update) getUpdateWidget(context),
+              if (_mode == CollectionEditorMode.create) getCreateWidget(context),
             ],
           ),
         ),
-        if (_updateItem != null) getUpdateWidget(context),
-        if (_createItem != null) getCreateWidget(context),
       ],
     );
   }
@@ -138,18 +129,19 @@ class _CollectionEditorState<ListItem, Update, Create>
     return Align(
       alignment: Alignment.centerRight,
       child: Padding(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: OutlinedButton.icon(
           onPressed: () async {
             if (widget.getCreate == null) return;
             var createItem = await widget.getCreate!();
             setState(() {
+              _mode = CollectionEditorMode.create;
               _updateItem = null;
               _createItem = createItem;
             });
           },
-          icon: Icon(Icons.add),
-          label: Text("NEW"),
+          icon: const Icon(Icons.add),
+          label: const Text("NEW"),
           //style: OutlinedButton.styleFrom(side: ),
         ),
       ),
@@ -157,124 +149,162 @@ class _CollectionEditorState<ListItem, Update, Create>
   }
 
   Widget getUpdateWidget(BuildContext context) {
-    if (_selectedItem == null) return Placeholder();
-    if (_updateItem == null) return Placeholder();
-    return Expanded(
-      child: Card(
-        child: widget.updateWidget(
-          _selectedItem!,
-          _updateItem!,
-          (form, valid) {
-            return getEditWidget(
-              context,
-              form,
-              valid,
-              () async {
-                if (_selectedItem == null) return;
-                var updatedItem = await widget.update(_selectedItem!, _updateItem!);
-                var i = _items.indexOf(_selectedItem!);
-                setState(() {
-                  _items.removeAt(i);
-                  _items.insert(i, updatedItem);
-                });
-              },
-              () {
-                setState(() {
-                  _updateItem = null;
-                });
-              },
-            );
-          },
-        ),
-      ),
+    if (_selectedItem == null) return const Placeholder();
+    if (_updateItem == null) return const Placeholder();
+    var updateWidget = widget.updateWidget(
+      _selectedItem as ListItem,
+      _updateItem as Update,
     );
+    return _InnerEditWidget(
+      title: "UPDATE",
+      form: updateWidget,
+      accept: update,
+      cancel: cancelUpdate,
+    );
+  }
+
+  Future<void> update() async {
+    if (_selectedItem == null) return;
+    var updatedItem = await widget.update(_selectedItem as ListItem, _updateItem as Update);
+    var i = _items.indexOf(_selectedItem as ListItem);
+    setState(() {
+      _items.removeAt(i);
+      _items.insert(i, updatedItem);
+    });
+  }
+
+  void cancelUpdate() {
+    setState(() {
+      _updateItem = null;
+      _mode = CollectionEditorMode.list;
+    });
   }
 
   Widget getCreateWidget(BuildContext context) {
-    if (_createItem == null) return Placeholder();
-    if (widget.createWidget == null) return Placeholder();
-    return Expanded(
-      child: Card(
-        child: widget.createWidget!(
-          _createItem!,
-          (form, valid) {
-            return getEditWidget(
-              context,
-              form,
-              valid,
-              () async {
-                var newItem = await widget.create!(_createItem!);
-                setState(() {
-                  _items.insert(0, newItem);
-                });
-              },
-              () {
-                setState(() {
-                  _createItem = null;
-                });
-              },
-            );
-          },
-        ),
-      ),
+    if (_createItem == null) return const Placeholder();
+    if (widget.createWidget == null) return const Placeholder();
+    return _InnerEditWidget(
+      title: "CREATE",
+      form: widget.createWidget!(_createItem as Create),
+      accept: create,
+      cancel: cancelCreate,
     );
   }
 
-  Widget getEditWidget(
-    BuildContext context,
-    Widget form,
-    bool valid,
-    Function save,
-    Function cancel,
-  ) {
-    return Padding(
-      padding: EdgeInsets.all(16),
-      child: FocusTraversalGroup(
-        policy: OrderedTraversalPolicy(),
-        child: Column(
-          children: <Widget>[
-            form,
-            ActionsListWidget(
-              actions: <ActionWidget>[
-                ActionWidget(
-                  title: "save",
-                  action: !valid
-                      ? null
-                      : () {
-                          save();
-                          cancel();
-                        },
-                  primary: true,
-                ),
-                ActionWidget(
-                  title: "cancel",
-                  action: () => cancel(),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+  Future<void> create() async {
+    var newItem = await widget.create!(_createItem as Create);
+    setState(() {
+      _items.insert(0, newItem);
+    });
   }
 
-  //TODO: Probablement hauria de tenir dos vistes, una per pantalles grans i una altra per petites(mòbil)
-  //A les pantalles petites, el botó de crear hauria de ser amb un floating action button, però
-  //a les grans no, per a les petites:
-  // Stack(
-  //   children: [
-  //     DynamicList(),
-  //     Positioned(
-  //       bottom: 20,
-  //       right: 20,
-  //       child: FloatingActionButton(
-  //         onPressed: () {
-  //           print('hola');
-  //         },
-  //         child: Icon(Icons.add),
-  //       ),
-  //     ),
-  //   ],
-  // ),
+  void cancelCreate() {
+    setState(() {
+      _createItem = null;
+      _mode = CollectionEditorMode.list;
+    });
+  }
 
+  Future<void> delete(ListItem listItem) async {
+    if (widget.delete == null) return;
+    var deleted = await widget.delete!(listItem);
+    if (deleted) {
+      setState(() {
+        _items.remove(listItem);
+      });
+    }
+    if (listItem == _selectedItem) {
+      setState(() {
+        _selectedItem = null;
+        _updateItem = null;
+      });
+    }
+  }
 }
+
+class _InnerEditWidget extends StatelessWidget {
+  final Widget form;
+  final Function accept;
+  final Function cancel;
+  final String? title;
+
+  const _InnerEditWidget({
+    Key? key,
+    required this.form,
+    required this.accept,
+    required this.cancel,
+    this.title,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ValidForm(
+      validateOnFormChanged: true,
+      child: form,
+      builder: (validformstate) {
+        return Expanded(
+          child: Column(
+            children: <Widget>[
+              if (title != null)
+                Column(
+                  children: [
+                    ListTile(
+                      title: Text(title!),
+                      tileColor: Colors.grey.shade200,
+                    ),
+                    const Divider(height: 1),
+                  ],
+                ),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    validformstate.form,
+                    ActionsListWidget(
+                      actions: <ActionWidget>[
+                        ActionWidget(
+                          title: "accept",
+                          action: !validformstate.valid
+                              ? null
+                              : () {
+                                  if (!validformstate.validate()) return;
+                                  accept();
+                                  cancel();
+                                },
+                          primary: true,
+                        ),
+                        ActionWidget(
+                          title: "cancel",
+                          action: () => cancel(),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+//TODO: Probablement hauria de tenir dos vistes, una per pantalles grans i una altra per petites(mòbil)
+//A les pantalles petites, el botó de crear hauria de ser amb un floating action button, però
+//a les grans no, per a les petites:
+// Stack(
+//   children: [
+//     DynamicList(),
+//     Positioned(
+//       bottom: 20,
+//       right: 20,
+//       child: FloatingActionButton(
+//         onPressed: () {
+//           print('hola');
+//         },
+//         child: Icon(Icons.add),
+//       ),
+//     ),
+//   ],
+// ),

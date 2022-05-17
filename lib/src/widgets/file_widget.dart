@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:navy/navy.dart';
 //import 'package:path/path.dart' as p;
@@ -17,7 +16,7 @@ class FileWidget extends StatefulWidget {
   final FunctionOf1<String, Future<String?>>? publicUrl;
   final ActionOf0? delete;
 
-  FileWidget({
+  const FileWidget({
     Key? key,
     required this.label,
     this.hint,
@@ -49,10 +48,10 @@ class _FileWidgetState extends State<FileWidget> {
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: BoxConstraints(minHeight: 150),
+      constraints: const BoxConstraints(minHeight: 150),
       child: Card(
         key: UniqueKey(),
-        margin: EdgeInsets.symmetric(horizontal: 0, vertical: 5),
+        margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 5),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,37 +64,37 @@ class _FileWidgetState extends State<FileWidget> {
             ),
             if (fileName != null && fileName!.isNotEmpty)
               ListTile(
-                leading: Icon(Icons.attachment_outlined),
+                leading: const Icon(Icons.attachment_outlined),
                 title: Text(fileName!),
               ),
             ButtonBar(
               children: <Widget>[
                 if (fileId != null)
                   OutlinedButton.icon(
-                    icon: Icon(Icons.delete_outline),
-                    label: Text("Delete"),
+                    icon: const Icon(Icons.delete_outline),
+                    label: const Text("Delete"),
                     onPressed: () => delete(),
                   ),
                 OutlinedButton.icon(
-                  icon: Icon(Icons.cloud_upload_outlined),
-                  label: Text("Upload"),
+                  icon: const Icon(Icons.cloud_upload_outlined),
+                  label: const Text("Upload"),
                   onPressed: () async => await upload(),
                 ),
                 if (fileId != null)
                   OutlinedButton.icon(
-                    icon: Icon(Icons.cloud_download_outlined),
-                    label: Text("Download"),
+                    icon: const Icon(Icons.cloud_download_outlined),
+                    label: const Text("Download"),
                     onPressed: () async => await download(),
                   ),
                 if (fileId != null)
                   OutlinedButton.icon(
                     onPressed: () async => await publicUrl(),
-                    icon: Icon(Icons.copy),
-                    label: Text("Copy URL to Clipboard"),
+                    icon: const Icon(Icons.copy),
+                    label: const Text("Copy URL to Clipboard"),
                   ),
               ],
             ),
-            if (waiting) LinearProgressIndicator(),
+            if (waiting) const LinearProgressIndicator(),
           ],
         ),
       ),
@@ -115,7 +114,7 @@ class _FileWidgetState extends State<FileWidget> {
     if (widget.publicUrl == null) return;
     if (fileId == null || fileId!.isEmpty) return; //Aquí hauria d'ensenyar un diàleg
     var url = await widget.publicUrl!(fileId!);
-    Clipboard.setData(new ClipboardData(text: url));
+    Clipboard.setData(ClipboardData(text: url));
   }
 
   Future upload() async {
@@ -149,7 +148,7 @@ class _FileWidgetState extends State<FileWidget> {
       final path = await getSavePath(suggestedName: fileName);
       if (path == null) return;
       var blob = await widget.download!(fileId!);
-      if (blob == null) throw new Exception("File is empty");
+      if (blob == null) throw Exception("File is empty");
       final data = Uint8List.fromList(blob);
       //final mimeType = "application/pdf";
       final file = XFile.fromData(data, name: fileName); //, mimeType: mimeType

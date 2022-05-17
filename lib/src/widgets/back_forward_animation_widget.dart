@@ -5,7 +5,7 @@ class BackForwardAnimationWidget extends StatefulWidget {
   final Duration duration;
   final Duration reverseDuration;
   final bool showOnlyInWidget;
-  BackForwardAnimationWidget({
+  const BackForwardAnimationWidget({
     required this.child,
     this.duration = const Duration(milliseconds: 500),
     this.reverseDuration = const Duration(milliseconds: 500),
@@ -39,28 +39,29 @@ class BackForwardAnimationWidgetState extends State<BackForwardAnimationWidget> 
       reverseDuration: widget.reverseDuration,
       layoutBuilder: widget.showOnlyInWidget
           ? (currentChild, previousChildren) {
-              if (currentChild == null) return Placeholder();
+              if (currentChild == null) return const Placeholder();
               return currentChild;
             }
           : AnimatedSwitcher.defaultLayoutBuilder,
       transitionBuilder: (Widget child, Animation<double> animation) {
         var isInWidget = child == widget.child;
         Animation<Offset> position;
-        if (isInWidget)
+        if (isInWidget) {
           position = Tween<Offset>(
             begin: Offset(1 * directionV, 0),
             end: Offset.zero,
           ).animate(animation);
-        else
+        } else {
           position = Tween<Offset>(
             begin: Offset(-1 * directionV, 0),
             end: Offset.zero,
           ).animate(animation);
+        }
 
         return ClipRect(
           child: SlideTransition(
-            child: child,
             position: position,
+            child: child,
           ),
         );
       },

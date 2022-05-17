@@ -3,6 +3,7 @@ import 'package:naples/src/common/common.dart';
 import 'package:naples/src/widgets/linkyfied_widget.dart';
 
 class CommentProperty extends StatelessWidget implements Expandable {
+  @override
   final int flex;
   final String comment;
   final TextStyle? textStyle;
@@ -11,7 +12,7 @@ class CommentProperty extends StatelessWidget implements Expandable {
   final double topPadding;
   final double bottomPadding;
 
-  CommentProperty(
+  const CommentProperty(
       {Key? key,
       required this.comment,
       this.flex = 99,

@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:naples/src/common/common.dart';
 
 class DividerProperty extends StatelessWidget implements Expandable {
+  @override
   final int flex;
-  DividerProperty({
+  const DividerProperty({
     Key? key,
     this.flex = 99,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Divider();
+  Widget build(BuildContext context) => const Divider();
 
 //TODO: Es podrien afegir algunes propietats per fer-lo més ric, com en el cas del CommentLayoutMember: topPadding, bottomPadding,etc.
   // const Divider(

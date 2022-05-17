@@ -5,13 +5,21 @@ import 'package:navy/navy.dart';
 import 'package:naples/src/edit/properties/model_property.dart';
 
 class FileProperty extends StatelessWidget with ModelProperty<String?>, Expandable {
+  @override
   final int flex;
+  @override
   final String label;
+  @override
   final String? hint;
+  @override
   final bool autofocus;
+  @override
   final PredicateOf0? editable;
+  @override
   final FunctionOf0<String?> getProperty;
+  @override
   final ActionOf1<String?>? setProperty;
+  @override
   final FunctionOf1<String?, String?>? validator;
   final FunctionOf2<String, List<int>, Future<String?>>? upload;
   final FunctionOf1<String, Future<List<int>?>>? download;

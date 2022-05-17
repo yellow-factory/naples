@@ -6,13 +6,21 @@ import 'package:navy/navy.dart';
 import 'package:naples/src/edit/properties/model_property.dart';
 
 class DateTimeProperty extends StatelessWidget with ModelProperty<DateTime?>, Expandable {
+  @override
   final int flex;
+  @override
   final String label;
+  @override
   final String? hint;
+  @override
   final bool autofocus;
+  @override
   final PredicateOf0? editable;
+  @override
   final FunctionOf0<DateTime?> getProperty;
+  @override
   final ActionOf1<DateTime?>? setProperty;
+  @override
   final FunctionOf1<DateTime?, String?>? validator;
   final DateFormat dateFormat;
   final bool onlyDate;

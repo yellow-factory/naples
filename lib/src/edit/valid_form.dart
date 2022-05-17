@@ -13,7 +13,7 @@ class ValidForm extends StatefulWidget {
   final bool validateOnFormChanged;
   final bool saveOnFormChanged;
 
-  ValidForm({
+  const ValidForm({
     Key? key,
     required this.child,
     this.builder,
@@ -69,9 +69,9 @@ class ValidFormState extends State<ValidForm> {
   void _updateForm() {
     form = Form(
       key: _formKey,
-      child: _ValidFormScope(formState: this, child: widget.child),
       onChanged: _evaluateOnChanged,
       autovalidateMode: AutovalidateMode.onUserInteraction,
+      child: _ValidFormScope(formState: this, child: widget.child),
     );
   }
 

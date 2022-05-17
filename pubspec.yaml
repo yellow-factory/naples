@@ -1,12 +1,12 @@
 name: naples
 description: A View-Model framework from The Yellow Factory.
-version: 0.0.1
+version: 0.0.2
 homepage: null
 publish_to: none
 
 environment:
-  sdk: ">=2.12.0 <3.0.0" 
-  flutter: ">=2.0.0 <3.0.0"
+  sdk: ">=2.17.0 <3.0.0" 
+  flutter: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -39,6 +39,7 @@ dependency_overrides:
     path: ../navy
 
 dev_dependencies:
+  flutter_lints: ^2.0.1
   flutter_test:
     sdk: flutter
   #intl_translation: ^0.17.10+1

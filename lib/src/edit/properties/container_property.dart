@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:naples/src/common/common.dart';
 
 class ContainerProperty extends StatelessWidget implements Expandable {
+  @override
   final int flex;
   final Widget child;
 
-  ContainerProperty({
+  const ContainerProperty({
     Key? key,
     required this.child,
     this.flex = 1,
@@ -14,12 +15,12 @@ class ContainerProperty extends StatelessWidget implements Expandable {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: child,
       decoration: BoxDecoration(
         border: Border.all(color: Theme.of(context).colorScheme.secondary, width: 1.5),
-        borderRadius: BorderRadius.all(Radius.circular(3)),
+        borderRadius: const BorderRadius.all(Radius.circular(3)),
       ),
-      margin: EdgeInsets.symmetric(vertical: 10),
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: child,
     );
   }
 }

@@ -9,7 +9,7 @@ class MustacheWidget<T extends IMustacheValues> extends StatelessWidget {
   final String locale;
   final FunctionOf1<String, Widget> builder;
 
-  MustacheWidget({
+  const MustacheWidget({
     required this.source,
     required this.template,
     required this.locale,
@@ -19,7 +19,7 @@ class MustacheWidget<T extends IMustacheValues> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var t = new Template(template, htmlEscapeValues: false);
+    var t = Template(template, htmlEscapeValues: false);
     var output = t.renderString(source.mustacheValues(locale));
     return builder(output);
   }

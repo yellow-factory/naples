@@ -8,7 +8,7 @@ class MarkdownWidget extends StatelessWidget {
   final double? height;
   final WrapAlignment wrapAlignment;
 
-  MarkdownWidget(
+  const MarkdownWidget(
       {required this.template,
       this.height,
       this.wrapAlignment = WrapAlignment.spaceBetween,

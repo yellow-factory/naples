@@ -37,7 +37,7 @@ class DynamicList<T> extends StatelessWidget {
           controller: _scrollController,
           itemCount: items.length,
           itemBuilder: (BuildContext ctx, int index) {
-            if (index >= items.length) return SizedBox();
+            if (index >= items.length) return const SizedBox();
             final model = items[index];
             return Column(
               children: [
@@ -92,9 +92,9 @@ class DynamicList<T> extends StatelessWidget {
 
   double _defaultTileHeight(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final bool isThreeLine = false;
+    const bool isThreeLine = false;
     //final bool isDense = false;
-    final bool hasSubtitle = this.itemSubtitle != null;
+    final bool hasSubtitle = itemSubtitle != null;
     final bool isTwoLine = !isThreeLine && hasSubtitle;
     final bool isOneLine = !isThreeLine && !hasSubtitle;
 

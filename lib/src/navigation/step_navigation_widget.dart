@@ -10,7 +10,7 @@ class StepNavigationWidget<T> extends StatefulWidget {
   final FunctionOf1<T, Widget>? currentStepTitleBuilder;
   final FunctionOf2<T, ActionOf1<bool>, Widget> currentStepContentBuilder;
 
-  StepNavigationWidget({
+  const StepNavigationWidget({
     Key? key,
     this.currentStepTitleBuilder,
     required this.currentStepContentBuilder,
@@ -33,7 +33,7 @@ class _StepNavigationWidgetState<T> extends State<StepNavigationWidget<T>> {
     var navigationModel = context.watch<NavigationModel<T>>();
     final currentState = navigationModel.currentState;
 
-    if (navigationModel.currentState == null) return SizedBox();
+    if (navigationModel.currentState == null) return const SizedBox();
 
     return BackForwardAnimationWidget(
       key: _animationKey,

@@ -31,7 +31,7 @@ class LengthConsumerWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
       valueListenable: LengthWidget.of(context).length,
-      builder: (context, int length, child) => this.builder(length),
+      builder: (context, int length, child) => builder(length),
     );
   }
 }

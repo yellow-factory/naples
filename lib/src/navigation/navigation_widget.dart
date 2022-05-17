@@ -6,7 +6,7 @@ class NavigationWidget<T> extends StatefulWidget {
   final NavigationModel<T> navigationModel;
   final FunctionOf1<T, Widget> currentStepBuilder;
 
-  NavigationWidget({
+  const NavigationWidget({
     Key? key,
     required this.currentStepBuilder,
     required this.navigationModel,
