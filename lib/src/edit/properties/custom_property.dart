@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:naples/edit.dart';
 import 'package:naples/src/dialogs/confirm_delete_dialog.dart';
 import 'package:naples/src/dialogs/select_cancel_dialog.dart';
-import 'package:naples/src/edit/valid_form.dart';
 
-class CustomProperty extends StatelessWidget {
+class CustomProperty extends StatefulWidget {
   final String name;
   final Widget description;
   final Widget editContent;
@@ -19,47 +19,53 @@ class CustomProperty extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<CustomProperty> createState() => _CustomPropertyState();
+}
+
+class _CustomPropertyState extends State<CustomProperty> {
+  ValidFormState? _validFormState;
+
+  @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Expanded(child: description),
+        Expanded(child: widget.description),
         IconButton(
           onPressed: () {
             showConfirmCancelDialog(
               context: context,
               child: ValidForm(
-                validateOnFormChanged: true,
-                //saveOnFormChanged: false,
-                builder: (validformstate) {
-                  return SelectCancelDialog(
-                    title: name,
-                    valid: validformstate.valid,
-                    validate: validformstate.validate,
-                    child: validformstate.form,
-                  );
-                },
-                child: SingleChildScrollView(
-                  child: SizedBox(
-                    width: 300,
-                    child: editContent,
-                  ),
-                ),
-              ),
+                  child: widget.editContent,
+                  builder: (validFormState) {
+                    _validFormState = validFormState;
+                    return SelectCancelDialog(
+                      title: widget.name,
+                      valid: validFormState.valid,
+                      validate: validFormState.validate,
+                      child: SingleChildScrollView(
+                        child: SizedBox(
+                          width: 300,
+                          child: validFormState.form,
+                        ),
+                      ),
+                    );
+                  }),
               confirmAction: () {
-                set();
+                _validFormState?.formState?.save();
+                widget.set();
               },
             );
           },
           icon: const Icon(Icons.edit),
         ),
-        if (delete != null)
+        if (widget.delete != null)
           IconButton(
             onPressed: () {
               showConfirmDeleteDialog(
                   context: context,
-                  itemName: name,
+                  itemName: widget.name,
                   deleteAction: () {
-                    delete!();
+                    widget.delete!();
                   });
             },
             icon: const Icon(Icons.delete),

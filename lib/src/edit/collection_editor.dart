@@ -239,7 +239,6 @@ class _InnerEditWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ValidForm(
-      validateOnFormChanged: true,
       child: form,
       builder: (validformstate) {
         return Expanded(

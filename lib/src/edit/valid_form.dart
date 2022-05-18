@@ -1,36 +1,90 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:navy/navy.dart';
 
 class ValidForm extends StatefulWidget {
-  //The form is not being validated until the user interacts with it
-  //While the user does not interact with the form builder returns as valid the value of initialValid
-  final Widget child;
   final FunctionOf1<ValidFormState, Widget>? builder;
-  final bool initialValid;
-  final ActionOf0? onChanged;
-  final bool validateOnFormChanged;
-  final bool saveOnFormChanged;
-
+  final Widget child;
+  final bool valid;
   const ValidForm({
     Key? key,
     required this.child,
+    this.valid = false,
     this.builder,
-    this.initialValid = false,
-    this.onChanged,
-    this.validateOnFormChanged = false,
-    this.saveOnFormChanged = true,
   }) : super(key: key);
 
   @override
-  ValidFormState createState() => ValidFormState();
+  State<ValidForm> createState() => ValidFormState();
 
   static ValidFormState? of(BuildContext context) {
     final _ValidFormScope? scope = context.dependOnInheritedWidgetOfExactType<_ValidFormScope>();
     return scope?._formState;
   }
 }
+
+class ValidFormState extends State<ValidForm> {
+  final _formKey = GlobalKey<FormState>();
+  late bool valid;
+  late Form form;
+
+  @override
+  void initState() {
+    super.initState();
+    valid = widget.valid;
+    form = Form(
+        key: _formKey,
+        onChanged: () => validate(),
+        child: _ValidFormScope(
+          formState: this,
+          child: widget.child,
+        ));
+  }
+
+  FormState? get formState => _formKey.currentState;
+
+  bool validate() {
+    var newValid = formState?.validate() ?? true;
+    if (newValid == valid) return newValid;
+    setState(() {
+      valid = newValid;
+    });
+    return newValid;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.builder == null) return form;
+    return widget.builder!(this);
+  }
+}
+
+// class ValidForm extends StatefulWidget {
+//   //The form is not being validated until the user interacts with it
+//   //While the user does not interact with the form builder returns as valid the value of initialValid
+//   final Widget child;
+//   final FunctionOf1<ValidFormState, Widget>? builder;
+//   final bool initialValid;
+//   final ActionOf0? onChanged;
+//   final bool validateOnFormChanged;
+//   final bool saveOnFormChanged;
+
+//   const ValidForm({
+//     Key? key,
+//     required this.child,
+//     this.builder,
+//     this.initialValid = false,
+//     this.onChanged,
+//     this.validateOnFormChanged = false,
+//     this.saveOnFormChanged = true,
+//   }) : super(key: key);
+
+//   @override
+//   ValidFormState createState() => ValidFormState();
+
+//   static ValidFormState? of(BuildContext context) {
+//     final _ValidFormScope? scope = context.dependOnInheritedWidgetOfExactType<_ValidFormScope>();
+//     return scope?._formState;
+//   }
+// }
 
 class _ValidFormScope extends InheritedWidget {
   const _ValidFormScope({
@@ -48,79 +102,79 @@ class _ValidFormScope extends InheritedWidget {
   bool updateShouldNotify(_ValidFormScope old) => false;
 }
 
-class ValidFormState extends State<ValidForm> {
-  final _formKey = GlobalKey<FormState>();
-  late bool valid;
-  late Form form;
+// class ValidFormState extends State<ValidForm> {
+//   final _formKey = GlobalKey<FormState>();
+//   late bool valid;
+//   late Form form;
 
-  @override
-  void initState() {
-    super.initState();
-    valid = widget.initialValid;
-    _updateForm();
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     valid = widget.initialValid;
+//     _updateForm();
+//   }
 
-  @override
-  void didUpdateWidget(covariant ValidForm oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    refresh();
-  }
+//   @override
+//   void didUpdateWidget(covariant ValidForm oldWidget) {
+//     super.didUpdateWidget(oldWidget);
+//     refresh();
+//   }
 
-  void _updateForm() {
-    form = Form(
-      key: _formKey,
-      onChanged: _evaluateOnChanged,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      child: _ValidFormScope(formState: this, child: widget.child),
-    );
-  }
+//   void _updateForm() {
+//     form = Form(
+//       key: _formKey,
+//       onChanged: _evaluateOnChanged,
+//       autovalidateMode: AutovalidateMode.onUserInteraction,
+//       child: _ValidFormScope(formState: this, child: widget.child),
+//     );
+//   }
 
-  void _evaluateOnChanged() {
-    if (widget.saveOnFormChanged) save();
-    if (widget.validateOnFormChanged) validate();
-    _fireOnChanged();
-  }
+//   void _evaluateOnChanged() {
+//     if (widget.saveOnFormChanged) save();
+//     if (widget.validateOnFormChanged) validate();
+//     _fireOnChanged();
+//   }
 
-  void _fireOnChanged() {
-    if (widget.onChanged == null) return;
-    scheduleMicrotask(widget.onChanged!);
-  }
+//   void _fireOnChanged() {
+//     if (widget.onChanged == null) return;
+//     scheduleMicrotask(widget.onChanged!);
+//   }
 
-  void save() {
-    var formState = _formKey.currentState;
-    if (formState == null) return;
-    formState.save();
-  }
+//   void save() {
+//     var formState = _formKey.currentState;
+//     if (formState == null) return;
+//     formState.save();
+//   }
 
-  void refresh() {
-    _updateForm();
-    _evaluateOnChanged();
-  }
+//   void refresh() {
+//     _updateForm();
+//     _evaluateOnChanged();
+//   }
 
-  bool validate() {
-    return ifNotNullPredicateOf1<FormState>(
-      _formKey.currentState,
-      (currentState) {
-        //It's necessary to call the form's save because the it's the way
-        //to call the setProperty of the ModelProperty fields, and this is
-        //is necessary because sometimes in the setProperty we change the
-        //fields that are visible on the form.
-        currentState.save();
-        var isValid = currentState.validate();
-        if (isValid != valid) {
-          setState(() {
-            valid = isValid;
-          });
-        }
-        return valid;
-      },
-      valid,
-    );
-  }
+//   bool validate() {
+//     return ifNotNullPredicateOf1<FormState>(
+//       _formKey.currentState,
+//       (currentState) {
+//         //It's necessary to call the form's save because the it's the way
+//         //to call the setProperty of the ModelProperty fields, and this is
+//         //is necessary because sometimes in the setProperty we change the
+//         //fields that are visible on the form.
+//         currentState.save();
+//         var isValid = currentState.validate();
+//         if (isValid != valid) {
+//           setState(() {
+//             valid = isValid;
+//           });
+//         }
+//         return valid;
+//       },
+//       valid,
+//     );
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (widget.builder == null) return form;
-    return widget.builder!(this);
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     if (widget.builder == null) return form;
+//     return widget.builder!(this);
+//   }
+// }

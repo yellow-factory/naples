@@ -8,6 +8,8 @@ enum SelectCancelDialogOptions { select, cancel }
 String selectOptionText(BuildContext context) => "Select";
 String cancelOptionText(BuildContext context) => "Cancel";
 
+//https://stackoverflow.com/questions/58977815/flutter-setstate-on-showdialog
+
 class SelectCancelDialog extends StatelessWidget {
   final String title;
   final Widget child;

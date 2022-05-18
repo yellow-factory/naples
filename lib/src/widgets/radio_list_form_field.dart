@@ -15,6 +15,7 @@ class RadioListFormField<U, V> extends FormField<U> {
     required FunctionOf0<List<V>> listItems,
     required FunctionOf1<V, U> valueMember, //Function to project U from V
     required FunctionOf1<V, FunctionOf0<String>> displayMember,
+    Function(U?)? onChanged,
   }) : super(
           key: key,
           onSaved: onSaved,
@@ -22,6 +23,11 @@ class RadioListFormField<U, V> extends FormField<U> {
           initialValue: initialValue,
           enabled: enabled,
           builder: (FormFieldState<U> state) {
+            void onChangedCall(U? value) {
+              state.didChange(value);
+              if (onChanged != null) onChanged(value);
+            }
+
             return Column(
               children: <Widget>[
                 ListTile(title: Text(label), subtitle: hint == null ? null : Text(hint)),
@@ -31,7 +37,7 @@ class RadioListFormField<U, V> extends FormField<U> {
                     value: valueMember(item),
                     //groupValue: property.currentValue,
                     groupValue: state.value,
-                    onChanged: enabled ? state.didChange : null, //?
+                    onChanged: enabled ? onChangedCall : null, //?
                     controlAffinity: controlAffinity,
                   ),
               ],

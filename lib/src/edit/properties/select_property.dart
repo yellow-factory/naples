@@ -36,6 +36,8 @@ class SelectProperty<U, V> extends StatelessWidget with ModelProperty<U?>, Expan
   final FunctionOf1<V, U> valueMember;
   //Function to display the member as String
   final FunctionOf1<V, FunctionOf0<String>> displayMember;
+  //Calls setProperty on control value change
+  final bool saveOnValueChanged;
 
   SelectProperty({
     Key? key,
@@ -51,6 +53,7 @@ class SelectProperty<U, V> extends StatelessWidget with ModelProperty<U?>, Expan
     required this.valueMember,
     required this.displayMember,
     this.widgetType = SelectWidgetType.DropDown,
+    this.saveOnValueChanged = false,
   }) : super(key: key);
 
   @override
@@ -76,9 +79,12 @@ class SelectProperty<U, V> extends StatelessWidget with ModelProperty<U?>, Expan
       ),
       onChanged: (value) {
         if (dropdownKey.currentState == null) return;
+        if (saveOnValueChanged) dropdownKey.currentState!.save();
         if (dropdownKey.currentState!.value != value) {
           dropdownKey.currentState!.didChange(value);
         }
+
+        //print('didchange selectpropery');
       },
     );
 
