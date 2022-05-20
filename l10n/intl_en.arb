@@ -11,5 +11,8 @@
   "finalitza": "Finalize",
   "@finalitza": {
     "description": "To end the sequence of steps"
-  }        
+  },
+  "accept": "Accept",
+  "cancel": "Cancel",
+  "delete": "Delete"
 }

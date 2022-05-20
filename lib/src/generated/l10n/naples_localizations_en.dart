@@ -15,4 +15,13 @@ class NaplesLocalizationsEn extends NaplesLocalizations {
 
   @override
   String get finalitza => 'Finalize';
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get delete => 'Delete';
 }

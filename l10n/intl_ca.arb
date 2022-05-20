@@ -11,5 +11,8 @@
   "finalitza": "Finalitza",
   "@finalitza": {
     "description": "Per finalitzar la seqüència de passos"
-  }      
+  },
+  "accept": "Accepta",
+  "cancel": "Cancel·la",
+  "delete": "Elimina"
 }

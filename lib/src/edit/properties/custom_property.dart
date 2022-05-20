@@ -1,11 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:naples/edit.dart';
-import 'package:naples/src/dialogs/confirm_delete_dialog.dart';
-import 'package:naples/src/dialogs/select_cancel_dialog.dart';
+import 'package:naples/src/dialogs/accept_cancel_delete_dialog.dart';
+import 'package:navy/navy.dart';
 
 class CustomProperty extends StatefulWidget {
   final String name;
-  final Widget description;
+  final FunctionOf0<Future<String>> description;
   final Widget editContent;
   final Function set;
   final Function? delete;
@@ -25,52 +27,89 @@ class CustomProperty extends StatefulWidget {
 class _CustomPropertyState extends State<CustomProperty> {
   ValidFormState? _validFormState;
 
+  final _descriptionController = TextEditingController();
+
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(child: widget.description),
-        IconButton(
-          onPressed: () {
-            showConfirmCancelDialog(
-              context: context,
-              child: ValidForm(
-                  child: widget.editContent,
-                  builder: (validFormState) {
-                    _validFormState = validFormState;
-                    return SelectCancelDialog(
-                      title: widget.name,
-                      valid: validFormState.valid,
-                      validate: validFormState.validate,
-                      child: SingleChildScrollView(
-                        child: SizedBox(
-                          width: 300,
-                          child: validFormState.form,
-                        ),
-                      ),
-                    );
-                  }),
-              confirmAction: () {
-                _validFormState?.formState?.save();
-                widget.set();
-              },
+  void initState() {
+    super.initState();
+    initDescription();
+  }
+
+  Future<void> initDescription() async {
+    _descriptionController.text = await widget.description();
+  }
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _delete() async {
+    await widget.delete!();
+    _descriptionController.text = '';
+  }
+
+  Future<void> _set() async {
+    _validFormState?.formState?.save();
+    widget.set();
+    _descriptionController.text = await widget.description();
+  }
+
+  Future<void> _showSelectDialog() async {
+    var dialogResult = await showDialog<AcceptCancelDeleteDialogOptions>(
+      context: context,
+      builder: (context) {
+        return ValidForm(
+          child: widget.editContent,
+          builder: (validFormState) {
+            _validFormState = validFormState;
+            return AcceptCancelDeleteDialog(
+              title: widget.name,
+              showDelete: widget.delete != null,
+              valid: validFormState.valid,
+              validate: validFormState.validate,
+              child: SingleChildScrollView(
+                child: SizedBox(
+                  width: 300,
+                  child: validFormState.form,
+                ),
+              ),
             );
           },
+        );
+      },
+    );
+    _executeDialogResult(dialogResult ?? AcceptCancelDeleteDialogOptions.cancel);
+  }
+
+  Future<void> _executeDialogResult(AcceptCancelDeleteDialogOptions result) async {
+    switch (result) {
+      case AcceptCancelDeleteDialogOptions.delete:
+        await _delete();
+        break;
+      case AcceptCancelDeleteDialogOptions.accept:
+        _set();
+        break;
+      default:
+        break;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: _descriptionController,
+      readOnly: true,
+      enabled: true,
+      autofocus: false,
+      decoration: InputDecoration(
+        labelText: widget.name,
+        suffixIcon: IconButton(
+          onPressed: _showSelectDialog,
           icon: const Icon(Icons.edit),
         ),
-        if (widget.delete != null)
-          IconButton(
-            onPressed: () {
-              showConfirmDeleteDialog(
-                  context: context,
-                  itemName: widget.name,
-                  deleteAction: () {
-                    widget.delete!();
-                  });
-            },
-            icon: const Icon(Icons.delete),
-          ),
-      ],
+      ),
     );
   }
 }

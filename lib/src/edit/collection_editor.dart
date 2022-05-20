@@ -267,6 +267,7 @@ class _InnerEditWidget extends StatelessWidget {
                               ? null
                               : () {
                                   if (!validformstate.validate()) return;
+                                  validformstate.formState?.save();
                                   accept();
                                   cancel();
                                 },

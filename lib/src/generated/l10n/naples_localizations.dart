@@ -113,6 +113,24 @@ abstract class NaplesLocalizations {
   /// In en, this message translates to:
   /// **'Finalize'**
   String get finalitza;
+
+  /// No description provided for @accept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get accept;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
 }
 
 class _NaplesLocalizationsDelegate extends LocalizationsDelegate<NaplesLocalizations> {

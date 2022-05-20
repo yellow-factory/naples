@@ -28,17 +28,15 @@ class ConfirmDeleteDialog extends StatelessWidget {
   }
 }
 
-void showConfirmDeleteDialog(
-    {required BuildContext context,
-    required String itemName,
-    required Function deleteAction}) async {
+Future<YesNoDialogOptions> showConfirmDeleteDialog({
+  required BuildContext context,
+  required String itemName,
+}) async {
   var dialogResult = await showDialog<YesNoDialogOptions>(
     context: context,
     builder: (BuildContext context) => ConfirmDeleteDialog(
       itemName: itemName,
     ),
   );
-  if (dialogResult == YesNoDialogOptions.yes) {
-    deleteAction();
-  }
+  return dialogResult ?? YesNoDialogOptions.no;
 }
