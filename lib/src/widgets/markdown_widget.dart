@@ -15,15 +15,16 @@ class MarkdownWidget extends StatelessWidget {
       Key? key})
       : super(key: key);
 
+  void onTapLink(text, href, title) async {
+    if (await canLaunchUrl(href)) {
+      await launchUrl(href);
+    } else {
+      throw 'Could not launch $href';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    var onTapLink = (text, href, title) async {
-      if (await canLaunch(href)) {
-        await launch(href);
-      } else {
-        throw 'Could not launch $href';
-      }
-    };
     var extensionSet = md.ExtensionSet.gitHubWeb;
     var styleSheet = fmd.MarkdownStyleSheet(
       textAlign: wrapAlignment,

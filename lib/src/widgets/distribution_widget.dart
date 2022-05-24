@@ -34,7 +34,7 @@ class _DistributionExpanded extends StatelessWidget {
   }
 }
 
-enum DistributionType { LeftToRight, TopToBottom }
+enum DistributionType { leftToRight, topToBottom }
 
 class DistributionWidget extends StatelessWidget {
   final int fixed;
@@ -50,7 +50,7 @@ class DistributionWidget extends StatelessWidget {
     this.fixed = 1,
     this.maxFlex = 1,
     this.normalize = true,
-    this.distribution = DistributionType.LeftToRight,
+    this.distribution = DistributionType.leftToRight,
     this.childPadding,
   }) : super(key: key);
 
@@ -65,7 +65,7 @@ class DistributionWidget extends StatelessWidget {
         )
     ];
 
-    var distributed = distribution == DistributionType.LeftToRight
+    var distributed = distribution == DistributionType.leftToRight
         ? _LeftToRightDistributionWidget(
             echildren,
             fixedWidgetsPerRow: fixed,
@@ -241,7 +241,8 @@ class _ContainerDistributionWidget extends StatelessWidget {
   final List<List<_DistributionExpanded>> children;
   final bool normalize;
 
-  const _ContainerDistributionWidget(this.children, {Key? key, this.normalize = true}) : super(key: key);
+  const _ContainerDistributionWidget(this.children, {Key? key, this.normalize = true})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -291,23 +292,19 @@ class PlaygroundDistributionWidget extends StatefulWidget {
       this.fixed = 1,
       this.maxFlex = 99,
       this.normalize = true,
-      this.distribution = DistributionType.LeftToRight})
+      this.distribution = DistributionType.leftToRight})
       : super(key: key);
 
   @override
-  _PlaygroundDistributionWidgetState createState() =>
-      _PlaygroundDistributionWidgetState(fixed, maxFlex, normalize, children, distribution);
+  PlaygroundDistributionWidgetState createState() => PlaygroundDistributionWidgetState();
 }
 
-class _PlaygroundDistributionWidgetState extends State<PlaygroundDistributionWidget> {
-  int fixed;
-  int maxFlex;
-  bool normalize;
-  List<Widget> children;
-  DistributionType distribution;
-
-  _PlaygroundDistributionWidgetState(
-      this.fixed, this.maxFlex, this.normalize, this.children, this.distribution);
+class PlaygroundDistributionWidgetState extends State<PlaygroundDistributionWidget> {
+  late int fixed;
+  late int maxFlex;
+  late bool normalize;
+  late List<Widget> children;
+  late DistributionType distribution;
 
   late TextEditingController _fixedController;
   late TextEditingController _maxFlexController;
@@ -315,6 +312,11 @@ class _PlaygroundDistributionWidgetState extends State<PlaygroundDistributionWid
   @override
   void initState() {
     super.initState();
+    fixed = widget.fixed;
+    maxFlex = widget.maxFlex;
+    normalize = widget.normalize;
+    children = widget.children;
+    distribution = widget.distribution;
     _fixedController = TextEditingController(text: fixed.toString());
     _maxFlexController = TextEditingController(text: maxFlex.toString());
   }
@@ -334,7 +336,8 @@ class _PlaygroundDistributionWidgetState extends State<PlaygroundDistributionWid
             child: Column(children: [
           SwitchListTile(
             title: const Text("Normalize"),
-            subtitle: const Text("Enforce the form layout to create empty spaces to keep proportions"),
+            subtitle:
+                const Text("Enforce the form layout to create empty spaces to keep proportions"),
             value: normalize,
             onChanged: (value) => setState(() => normalize = value),
           ),
@@ -342,10 +345,10 @@ class _PlaygroundDistributionWidgetState extends State<PlaygroundDistributionWid
             title: const Text("Top to bottom distribution"),
             subtitle: const Text(
                 "By default the distribution of the widgets is left to right, but you can opt in top to bottom"),
-            value: distribution != DistributionType.LeftToRight,
+            value: distribution != DistributionType.leftToRight,
             onChanged: (value) => setState(() => value
-                ? distribution = DistributionType.TopToBottom
-                : distribution = DistributionType.LeftToRight),
+                ? distribution = DistributionType.topToBottom
+                : distribution = DistributionType.leftToRight),
           ),
           ListTile(
               title: const Text("Fixed widgets per row/column"),
@@ -362,15 +365,14 @@ class _PlaygroundDistributionWidgetState extends State<PlaygroundDistributionWid
                     ),
                     onChanged: (value) {
                       setState(() {
-                        print(value);
                         if (int.tryParse(value) != null) fixed = [int.parse(value), 1].max();
                       });
                     },
                   ))),
           ListTile(
               title: const Text("Max Flex"),
-              subtitle:
-                  const Text("Max flex per row when summarizing the flex of the widgets in the row"),
+              subtitle: const Text(
+                  "Max flex per row when summarizing the flex of the widgets in the row"),
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               trailing: SizedBox(
                   width: 50,
@@ -382,7 +384,6 @@ class _PlaygroundDistributionWidgetState extends State<PlaygroundDistributionWid
                     ),
                     onChanged: (value) {
                       setState(() {
-                        print(value);
                         if (int.tryParse(value) != null) maxFlex = [int.parse(value), 1].max();
                       });
                     },

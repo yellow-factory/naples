@@ -8,13 +8,15 @@ import 'package:naples/src/common/common.dart';
 import 'package:naples/src/widgets/toggle_button_form_field.dart';
 import 'package:navy/navy.dart';
 
-enum BoolWidgetType { Switch, Checkbox, Radio, ToggleButtons }
-enum BoolWidgetPosition { Leading, Trailing }
-enum BoolValues { True, False }
+enum BoolWidgetType { switchBox, checkBox, radioButton, toggleButton }
+
+enum BoolWidgetPosition { leading, trailing }
+
+enum BoolValues { isTrue, isFalse }
 
 extension BoolValuesExtension on BoolValues {
   bool get boolValue {
-    if (this == BoolValues.True) return true;
+    if (this == BoolValues.isTrue) return true;
     return false;
   }
 
@@ -52,8 +54,8 @@ class BoolProperty extends StatelessWidget with ModelProperty<bool?>, Expandable
     this.setProperty,
     this.validator,
     this.flex = 1,
-    this.widgetType = BoolWidgetType.Checkbox,
-    this.widgetPosition = BoolWidgetPosition.Leading,
+    this.widgetType = BoolWidgetType.checkBox,
+    this.widgetPosition = BoolWidgetPosition.leading,
     this.displayName = defaultDisplayName,
   }) : super(key: key);
 
@@ -61,7 +63,7 @@ class BoolProperty extends StatelessWidget with ModelProperty<bool?>, Expandable
 
   @override
   Widget build(BuildContext context) {
-    final controlAffinity = widgetPosition == BoolWidgetPosition.Leading
+    final controlAffinity = widgetPosition == BoolWidgetPosition.leading
         ? ListTileControlAffinity.leading
         : ListTileControlAffinity.trailing;
 
@@ -77,7 +79,7 @@ class BoolProperty extends StatelessWidget with ModelProperty<bool?>, Expandable
     );
 
     switch (widgetType) {
-      case BoolWidgetType.Switch:
+      case BoolWidgetType.switchBox:
         return SwitchFormField(
           autofocus: autofocus,
           enabled: enabled,
@@ -88,9 +90,9 @@ class BoolProperty extends StatelessWidget with ModelProperty<bool?>, Expandable
           validator: validator,
           controlAffinity: controlAffinity,
         );
-      case BoolWidgetType.Checkbox:
+      case BoolWidgetType.checkBox:
         return defaultWidget;
-      case BoolWidgetType.Radio:
+      case BoolWidgetType.radioButton:
         return RadioListFormField<bool, BoolValues>(
           autofocus: autofocus,
           enabled: enabled,
@@ -104,7 +106,7 @@ class BoolProperty extends StatelessWidget with ModelProperty<bool?>, Expandable
           valueMember: (t) => t.boolValue,
           displayMember: displayName,
         );
-      case BoolWidgetType.ToggleButtons:
+      case BoolWidgetType.toggleButton:
         return ToggleButtonFormField<bool, BoolValues>(
           autofocus: autofocus,
           enabled: enabled,

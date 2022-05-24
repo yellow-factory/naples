@@ -156,6 +156,7 @@ class CollectionEditorState<ListItem, Update, Create>
       _updateItem as Update,
     );
     return _InnerEditWidget(
+      key: UniqueKey(),
       title: "UPDATE",
       form: updateWidget,
       accept: update,
