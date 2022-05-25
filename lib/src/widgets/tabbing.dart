@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:navy/navy.dart';
 
-class TabbingItem extends StatelessWidget {
+abstract class TabbingItem extends StatelessWidget {
+  const TabbingItem({Key? key}) : super(key: key);
+
+  String get name;
+  IconData? get iconData;
+}
+
+class DefaultTabbingItem extends StatelessWidget implements TabbingItem {
+  @override
   final String name;
+  @override
   final IconData? iconData;
   final Widget child;
-  const TabbingItem({
+  const DefaultTabbingItem({
     Key? key,
     required this.name,
     this.iconData,
