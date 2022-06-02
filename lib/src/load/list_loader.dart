@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -32,17 +33,20 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
 
   Future<void> load() async {
     try {
-      print('load list_loader');
+      developer.log('load method - initiated', name: 'naples.listloader');
       _loading = true;
       _notifyLoading();
 
       await for (var m in widget.getStream()) {
-        if (!mounted) break;
-        setState(() {
-          _items.add(m);
-          if (_lengthWidget != null) {
-            scheduleMicrotask(() => _lengthWidget?.length.value = _items.length);
-          }
+        WidgetsBinding.instance.endOfFrame.then((_) {
+          developer.log('load method - processing item received ', name: 'naples.listloader');
+          if (!mounted) return;
+          setState(() {
+            _items.add(m);
+            if (_lengthWidget != null) {
+              _lengthWidget?.length.value = _items.length;
+            }
+          });
         });
       }
     } catch (e) {
@@ -50,6 +54,7 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
     } finally {
       _loading = false;
       _notifyLoading();
+      developer.log('load method - finished', name: 'naples.listloader');
     }
   }
 

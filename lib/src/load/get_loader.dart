@@ -1,3 +1,5 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:naples/src/load/refresh.dart';
@@ -30,18 +32,23 @@ class GetLoaderState<T> extends State<GetLoader<T>> {
 
   Future<void> load() async {
     try {
+      developer.log('load method - initiated', name: 'naples.getloader');
       _loading = true;
       _notifyLoading();
       var item = await widget.get();
-      if (!mounted) return;
-      setState(() {
-        _item = item;
+      WidgetsBinding.instance.endOfFrame.then((_) {
+        developer.log('load method - processing item received', name: 'naples.getloader');
+        if (!mounted) return;
+        setState(() {
+          _item = item;
+        });
       });
     } catch (e) {
       rethrow;
     } finally {
       _loading = false;
       _notifyLoading();
+      developer.log('load method - finished', name: 'naples.getloader');
     }
   }
 
