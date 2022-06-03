@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:naples/edit.dart';
 import 'package:naples/src/dialogs/accept_cancel_delete_dialog.dart';
 import 'package:navy/navy.dart';
 
@@ -25,7 +24,7 @@ class CustomProperty extends StatefulWidget {
 }
 
 class _CustomPropertyState extends State<CustomProperty> {
-  ValidFormState? _validFormState;
+  final _formKey = GlobalKey<FormState>();
 
   final _descriptionController = TextEditingController();
 
@@ -51,7 +50,7 @@ class _CustomPropertyState extends State<CustomProperty> {
   }
 
   Future<void> _set() async {
-    _validFormState?.formState?.save();
+    _formKey.currentState?.save();
     widget.set();
     _descriptionController.text = await widget.description();
   }
@@ -60,23 +59,19 @@ class _CustomPropertyState extends State<CustomProperty> {
     var dialogResult = await showDialog<AcceptCancelDeleteDialogOptions>(
       context: context,
       builder: (context) {
-        return ValidForm(
-          child: widget.editContent,
-          builder: (validFormState) {
-            _validFormState = validFormState;
-            return AcceptCancelDeleteDialog(
-              title: widget.name,
-              showDelete: widget.delete != null,
-              valid: validFormState.valid,
-              validate: validFormState.validate,
-              child: SingleChildScrollView(
-                child: SizedBox(
-                  width: 300,
-                  child: validFormState.form,
-                ),
+        return Form(
+          key: _formKey,
+          child: AcceptCancelDeleteDialog(
+            title: widget.name,
+            showDelete: widget.delete != null,
+            validate: () => _formKey.currentState?.validate() ?? true,
+            child: SingleChildScrollView(
+              child: SizedBox(
+                width: 300,
+                child: widget.editContent,
               ),
-            );
-          },
+            ),
+          ),
         );
       },
     );
