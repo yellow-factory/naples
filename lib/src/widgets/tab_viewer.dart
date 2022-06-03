@@ -137,7 +137,6 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
 
   void _changeTabController() {
     _tabController.removeListener(notifyIndexChange);
-    _tabController.dispose();
     _tabController = TabController(
       vsync: this,
       length: tabCollection.length,
