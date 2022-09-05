@@ -8,6 +8,7 @@ import 'package:navy/navy.dart';
 //Combination of List + Edit to edit a collection of items...(add,delete,update)
 //Where ListItem is the type holding the collection
 class CollectionEditor<ListItem> extends StatefulWidget with Expandable {
+  final FunctionOf0<String>? title;
   @override
   final int flex;
   final List<ListItem> items;
@@ -23,6 +24,7 @@ class CollectionEditor<ListItem> extends StatefulWidget with Expandable {
   final ActionOf1<ListItem>? delete;
 
   CollectionEditor({
+    this.title,
     required this.items,
     required this.itemTitle,
     this.itemSubtitle,
@@ -51,7 +53,16 @@ class CollectionEditorState<ListItem> extends State<CollectionEditor<ListItem>> 
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if (widget.existCreate) getCreateButton(context),
+        Row(
+          children: [
+            Expanded(
+              child: Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Text(widget.title == null ? '' : widget.title!())),
+            ),
+            if (widget.existCreate) getCreateButton(context),
+          ],
+        ),
         const Divider(height: 1),
         Expanded(
           child: Row(

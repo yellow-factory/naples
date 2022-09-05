@@ -8,6 +8,7 @@ class CustomProperty extends StatefulWidget {
   final String name;
   final FunctionOf0<Future<String>> description;
   final Widget editContent;
+  final double editContentWidth;
   final Function set;
   final Function? delete;
   const CustomProperty({
@@ -15,6 +16,7 @@ class CustomProperty extends StatefulWidget {
     required this.name,
     required this.description,
     required this.editContent,
+    this.editContentWidth = 300,
     required this.set,
     this.delete,
   }) : super(key: key);
@@ -67,7 +69,7 @@ class _CustomPropertyState extends State<CustomProperty> {
             validate: () => _formKey.currentState?.validate() ?? true,
             child: SingleChildScrollView(
               child: SizedBox(
-                width: 300,
+                width: widget.editContentWidth,
                 child: widget.editContent,
               ),
             ),
