@@ -57,8 +57,11 @@ class CollectionEditorState<ListItem> extends State<CollectionEditor<ListItem>> 
           children: [
             Expanded(
               child: Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: Text(widget.title == null ? '' : widget.title!())),
+                  padding: const EdgeInsets.only(left: 15),
+                  child: Text(
+                    widget.title == null ? '' : widget.title!(),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  )),
             ),
             if (widget.existCreate) getCreateButton(context),
           ],

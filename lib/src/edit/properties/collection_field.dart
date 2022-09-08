@@ -52,7 +52,7 @@ class _CollectionFieldState<T> extends State<CollectionField<T>> {
       _descriptionController.text = await widget.description!();
       return;
     }
-    _descriptionController.text = "Collection of ${typeOf<T>()}(${_items.length})";
+    _descriptionController.text = "Items in the collection: ${_items.length}";
   }
 
   @override
@@ -69,7 +69,7 @@ class _CollectionFieldState<T> extends State<CollectionField<T>> {
           child: SizedBox(
             height: 500,
             child: CollectionEditor<T>(
-              title: () => "Collection of ${widget.name}",
+              title: () => widget.name,
               items: _items,
               itemTitle: widget.itemTitle,
               updateWidget: (itemToUpdate) {
