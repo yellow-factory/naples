@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:naples/src/common/common.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/edit/properties/model_property.dart';
+import 'package:clipboard/clipboard.dart';
 
 class StringProperty extends StatelessWidget with ModelProperty<String?>, Expandable {
   @override
@@ -23,6 +24,8 @@ class StringProperty extends StatelessWidget with ModelProperty<String?>, Expand
   final FunctionOf1<String?, String?>? validator;
   final bool obscureText;
   final int maxLength;
+  final bool showCopyButton;
+  final bool readOnly;
 
   StringProperty({
     Key? key,
@@ -36,6 +39,8 @@ class StringProperty extends StatelessWidget with ModelProperty<String?>, Expand
     this.flex = 1,
     this.obscureText = false,
     this.maxLength = -1,
+    this.showCopyButton = false,
+    this.readOnly = false,
   }) : super(key: key);
 
   @override
@@ -46,6 +51,14 @@ class StringProperty extends StatelessWidget with ModelProperty<String?>, Expand
         //filled: true,
         hintText: hint,
         labelText: label,
+        suffixIcon: showCopyButton
+            ? IconButton(
+                icon: const Icon(Icons.copy),
+                onPressed: () {
+                  FlutterClipboard.copy(getProperty() ?? '');
+                },
+              )
+            : null,
       ),
       enabled: enabled,
       autofocus: autofocus,
@@ -58,6 +71,7 @@ class StringProperty extends StatelessWidget with ModelProperty<String?>, Expand
       // minLines: 1,
       // maxLines: 3,
       onSaved: setProperty,
+      readOnly: readOnly,
     );
   }
 }
