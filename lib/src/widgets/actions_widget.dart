@@ -4,7 +4,7 @@ class ActionWidget extends StatelessWidget {
   final String title;
   final VoidCallback? action;
   final bool primary;
-  const ActionWidget({required this.title, this.action, this.primary = false});
+  const ActionWidget({super.key, required this.title, this.action, this.primary = false});
 
   @override
   Widget build(BuildContext context) {
