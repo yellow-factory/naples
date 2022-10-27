@@ -22,8 +22,11 @@ class FilterDynamicList<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     return FilterList<T>(
         items: items,
-        getItemValue: itemTitle,
-        filterBy: filterBy,
+        filterBy: (itemToFilter) {
+          var curatedFilterBy = filterBy.toLowerCase().trim();
+          if (curatedFilterBy.isEmpty) return true;
+          return itemTitle(itemToFilter).toLowerCase().trim().contains(curatedFilterBy);
+        },
         builder: (filteredItems) {
           return DynamicList<T>(
             separated: true,
