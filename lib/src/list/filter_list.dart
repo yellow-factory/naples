@@ -5,36 +5,29 @@ import 'package:flutter/widgets.dart';
 import 'package:naples/src/widgets/length.dart';
 import 'package:navy/navy.dart';
 
-/// Filter list of items, defining the value to filter with getItemValue
-/// and the filter value with filterBy.
-/// The value to filter is always a String filtered with the contains clause.
+/// Filter list of items, with a predicate: filterBy
 /// T Data type of the List to filter
 class FilterList<T> extends StatelessWidget {
   final List<T> items;
-  final FunctionOf1<T, String> getItemValue;
-  final String filterBy;
+  final PredicateOf1<T> filterBy;
   final FunctionOf1<List<T>, Widget> builder;
 
   const FilterList({
     required this.items,
     required this.builder,
-    required this.getItemValue,
     required this.filterBy,
     super.key,
   });
 
   List<T> _filterItems(List<T> items) {
-    var curatedFilterBy = filterBy.toLowerCase().trim();
-    if (curatedFilterBy.isEmpty) return items;
-    var predicate = _buildPredicate(curatedFilterBy);
+    var predicate = _buildPredicate();
     return items.where(predicate).toList();
   }
 
-  bool Function(T item) _buildPredicate(String curatedFilterBy) {
+  bool Function(T item) _buildPredicate() {
     return (item) {
       if (item == null) return false;
-      var itemValue = getItemValue(item);
-      return itemValue.toLowerCase().trim().contains(curatedFilterBy);
+      return filterBy(item);
     };
   }
 
