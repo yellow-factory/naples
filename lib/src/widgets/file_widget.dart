@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:navy/navy.dart';
@@ -29,10 +27,10 @@ class FileWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _FileWidgetState createState() => _FileWidgetState();
+  FileWidgetState createState() => FileWidgetState();
 }
 
-class _FileWidgetState extends State<FileWidget> {
+class FileWidgetState extends State<FileWidget> {
   String? fileId;
   String? fileName;
   late bool waiting;
@@ -114,6 +112,7 @@ class _FileWidgetState extends State<FileWidget> {
     if (widget.publicUrl == null) return;
     if (fileId == null || fileId!.isEmpty) return; //Aquí hauria d'ensenyar un diàleg
     var url = await widget.publicUrl!(fileId!);
+    if (url == null) return;
     Clipboard.setData(ClipboardData(text: url));
   }
 
@@ -121,7 +120,7 @@ class _FileWidgetState extends State<FileWidget> {
     try {
       if (widget.upload == null) return;
       // show a dialog to open a file
-      final typeGroup = XTypeGroup(label: 'documents', extensions: ['pdf', 'png']);
+      const typeGroup = XTypeGroup(label: 'documents', extensions: ['pdf', 'png']);
       final file = await openFile(acceptedTypeGroups: [typeGroup]);
       if (file == null) return;
       setState(() {

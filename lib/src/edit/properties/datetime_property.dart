@@ -5,7 +5,9 @@ import 'package:naples/src/widgets/datetime_form_field.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/edit/properties/model_property.dart';
 
-class DateTimeProperty extends StatelessWidget with ModelProperty<DateTime?>, Expandable {
+class DateTimeProperty extends ModelPropertyWidget<DateTime?>
+    with ModelPropertyMixin<DateTime?>
+    implements Expandable {
   @override
   final int flex;
   @override

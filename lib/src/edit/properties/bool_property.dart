@@ -23,7 +23,9 @@ extension BoolValuesExtension on BoolValues {
   String get displayName => describeEnum(this);
 }
 
-class BoolProperty extends StatelessWidget with ModelProperty<bool?>, Expandable {
+class BoolProperty extends ModelPropertyWidget<bool?>
+    with ModelPropertyMixin<bool?>
+    implements Expandable {
   @override
   final int flex;
   @override

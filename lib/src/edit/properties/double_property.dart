@@ -4,7 +4,9 @@ import 'package:naples/src/common/common.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/edit/properties/model_property.dart';
 
-class DoubleProperty extends StatelessWidget with ModelProperty<double?>, Expandable {
+class DoubleProperty extends ModelPropertyWidget<double?>
+    with ModelPropertyMixin<double?>
+    implements Expandable {
   @override
   final int flex;
   @override

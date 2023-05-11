@@ -4,7 +4,9 @@ import 'package:naples/src/widgets/file_widget.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/edit/properties/model_property.dart';
 
-class FileProperty extends StatelessWidget with ModelProperty<String?>, Expandable {
+class FileProperty extends ModelPropertyWidget<String?>
+    with ModelPropertyMixin<String?>
+    implements Expandable {
   @override
   final int flex;
   @override

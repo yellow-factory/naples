@@ -7,7 +7,7 @@ import 'package:navy/navy.dart';
 
 //Combination of List + Edit to edit a collection of items...(add,delete,update)
 //Where ListItem is the type holding the collection
-class CollectionEditor<ListItem> extends StatefulWidget with Expandable {
+class CollectionEditor<ListItem> extends StatefulWidget implements Expandable {
   final FunctionOf0<String>? title;
   @override
   final int flex;

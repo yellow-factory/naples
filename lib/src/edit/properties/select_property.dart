@@ -13,7 +13,9 @@ enum SelectWidgetType { DropDown, Radio }
 ///U defines the type of the property being edited which is a member of T
 ///V defines the type of the list of items being exposed in the list of options
 ///In some cases U and V may coincide
-class SelectProperty<U, V> extends StatelessWidget with ModelProperty<U?>, Expandable {
+class SelectProperty<U, V> extends ModelPropertyWidget<U?>
+    with ModelPropertyMixin<U?>
+    implements Expandable {
   @override
   final int flex;
   @override
