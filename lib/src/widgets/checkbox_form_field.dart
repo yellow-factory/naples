@@ -30,7 +30,7 @@ class CheckboxFormField extends FormField<bool> {
         );
 
   static Widget _getSubtitle(String? hint, FormFieldState<bool> state) {
-    final errorColor = Theme.of(state.context).errorColor;
+    final errorColor = Theme.of(state.context).colorScheme.error;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

@@ -20,7 +20,7 @@ extension BoolValuesExtension on BoolValues {
     return false;
   }
 
-  String get displayName => describeEnum(this);
+  String get displayName => name;
 }
 
 class BoolProperty extends ModelPropertyWidget<bool?>

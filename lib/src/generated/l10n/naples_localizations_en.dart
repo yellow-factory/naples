@@ -1,6 +1,3 @@
-
-
-
 import 'naples_localizations.dart';
 
 /// The translations for English (`en`).

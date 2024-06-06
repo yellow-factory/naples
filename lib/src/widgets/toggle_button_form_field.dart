@@ -58,7 +58,7 @@ class ToggleButtonFormField<U, V> extends FormField<U> {
         );
 
   static Widget _getSubtitle(String? hint, FormFieldState state) {
-    final errorColor = Theme.of(state.context).errorColor;
+    final errorColor = Theme.of(state.context).colorScheme.error;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

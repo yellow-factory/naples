@@ -10,10 +10,14 @@ import 'package:navy/navy.dart';
 class ListLoader<T> extends StatefulWidget {
   final FunctionOf0<Stream<T>> getStream;
   final FunctionOf1<List<T>, Widget> builder;
+  final ActionOf0? onLoading; //When load is initiated
+  final ActionOf1<List<T>>? onLoaded; //When load is finished
 
   const ListLoader({
     required this.getStream,
     required this.builder,
+    this.onLoading,
+    this.onLoaded,
     Key? key,
   }) : super(key: key);
 
@@ -36,6 +40,9 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
       developer.log('load method - initiated', name: 'naples.listloader');
       _loading = true;
       _notifyLoading();
+      if (widget.onLoading != null) {
+        widget.onLoading!();
+      }
 
       await for (var m in widget.getStream()) {
         WidgetsBinding.instance.endOfFrame.then((_) {
@@ -48,6 +55,10 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
             }
           });
         });
+      }
+
+      if (widget.onLoaded != null) {
+        widget.onLoaded!(_items);
       }
     } catch (e) {
       rethrow;
