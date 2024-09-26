@@ -1,5 +1,7 @@
 import 'naples_localizations.dart';
 
+// ignore_for_file: type=lint
+
 /// The translations for Catalan Valencian (`ca`).
 class NaplesLocalizationsCa extends NaplesLocalizations {
   NaplesLocalizationsCa([String locale = 'ca']) : super(locale);

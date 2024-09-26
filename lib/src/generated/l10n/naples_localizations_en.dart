@@ -1,5 +1,7 @@
 import 'naples_localizations.dart';
 
+// ignore_for_file: type=lint
+
 /// The translations for English (`en`).
 class NaplesLocalizationsEn extends NaplesLocalizations {
   NaplesLocalizationsEn([String locale = 'en']) : super(locale);

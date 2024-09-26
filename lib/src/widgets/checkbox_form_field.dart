@@ -11,6 +11,7 @@ class CheckboxFormField extends FormField<bool> {
     bool enabled = true,
     FormFieldSetter<bool>? onSaved,
     FormFieldValidator<bool>? validator,
+    bool saveOnValueChanged = false,
   }) : super(
           key: key,
           onSaved: onSaved,
@@ -22,12 +23,25 @@ class CheckboxFormField extends FormField<bool> {
               subtitle: _getSubtitle(hint, state),
               controlAffinity: controlAffinity,
               value: state.value,
-              onChanged: enabled ? state.didChange : null, //?
+              onChanged: (bool? newValue) => _onChanged(
+                enabled,
+                newValue,
+                state,
+                saveOnValueChanged,
+              ),
               autofocus: autofocus,
               contentPadding: EdgeInsets.zero,
             );
           },
         );
+
+  static void _onChanged(
+      bool enabled, bool? newValue, FormFieldState<bool> state, bool saveOnValueChanged) {
+    if (!enabled) return;
+    if (state.value == newValue) return;
+    state.didChange(newValue);
+    if (saveOnValueChanged) state.save();
+  }
 
   static Widget _getSubtitle(String? hint, FormFieldState<bool> state) {
     final errorColor = Theme.of(state.context).colorScheme.error;

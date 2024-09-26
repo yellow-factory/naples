@@ -4,13 +4,11 @@ class CardTopBar extends StatelessWidget {
   final Widget child;
   final String? title;
   final List<Widget> actions;
-  final List<Widget> filters;
   const CardTopBar({
     Key? key,
     required this.child,
     this.title,
     this.actions = const [],
-    this.filters = const [],
   }) : super(key: key);
 
   @override
@@ -21,13 +19,19 @@ class CardTopBar extends StatelessWidget {
         ListTile(
           //tileColor: Colors.grey.shade200,
           title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
             textBaseline: TextBaseline.alphabetic,
             crossAxisAlignment: CrossAxisAlignment.baseline,
             children: [
               if (title != null) Text(title!),
-              ButtonBar(
-                children: actions,
+              Expanded(
+                child: OverflowBar(
+                  alignment: MainAxisAlignment.end,
+                  spacing: 5,
+                  overflowSpacing: 5,
+                  overflowAlignment: OverflowBarAlignment.end,
+                  children: actions,
+                ),
               ),
             ],
           ),
@@ -36,12 +40,6 @@ class CardTopBar extends StatelessWidget {
           indent: 5,
           endIndent: 5,
         ),
-        if (filters.isNotEmpty)
-          ButtonBar(
-            alignment: MainAxisAlignment.start,
-            overflowButtonSpacing: 10,
-            children: filters,
-          ),
         Expanded(child: child)
       ]),
     );

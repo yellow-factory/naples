@@ -14,6 +14,7 @@ class CollectionProperty<T> extends StatelessWidget {
   final FunctionOf1<T, Widget> updateWidget;
   final Iterable<T>? initialValue;
   final FormFieldSetter<Iterable<T>>? onSaved;
+  final PredicateOf0? editable;
 
   const CollectionProperty({
     Key? key,
@@ -27,6 +28,7 @@ class CollectionProperty<T> extends StatelessWidget {
     required this.createWidget,
     required this.updateWidget,
     this.onSaved,
+    this.editable,
   }) : super(key: key);
 
   @override
@@ -40,6 +42,7 @@ class CollectionProperty<T> extends StatelessWidget {
       createWidget: createWidget,
       updateWidget: updateWidget,
       onSaved: onSaved,
+      editable: editable,
     );
   }
 }

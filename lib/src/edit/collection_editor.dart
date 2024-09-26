@@ -23,7 +23,9 @@ class CollectionEditor<ListItem> extends StatefulWidget implements Expandable {
 
   final ActionOf1<ListItem>? delete;
 
-  CollectionEditor({
+  final PredicateOf0? editable;
+
+  const CollectionEditor({
     this.title,
     required this.items,
     required this.itemTitle,
@@ -34,13 +36,15 @@ class CollectionEditor<ListItem> extends StatefulWidget implements Expandable {
     this.create,
     this.delete,
     this.flex = 1,
+    this.editable,
     Key? key,
   }) : super(key: key);
 
   @override
   CollectionEditorState<ListItem> createState() => CollectionEditorState<ListItem>();
 
-  bool get existCreate => create != null && createWidget != null;
+  bool get existCreate =>
+      create != null && createWidget != null && (editable == null || editable!());
 }
 
 enum CollectionEditorMode { list, create, update }
@@ -80,17 +84,19 @@ class CollectionEditorState<ListItem> extends State<CollectionEditor<ListItem>> 
                         itemSubtitle: widget.itemSubtitle,
                         separated: true,
                         select: (ListItem item) async {
+                          if (widget.editable == null || !widget.editable!()) return;
                           setState(() {
                             _mode = CollectionEditorMode.update;
                             _selectedItem = item;
                           });
                         },
-                        itemTrailing: widget.delete != null
-                            ? (ListItem item) => IconButton(
-                                  onPressed: () async => await delete(item),
-                                  icon: const Icon(Icons.delete),
-                                )
-                            : null,
+                        itemTrailing:
+                            widget.delete != null && (widget.editable == null || widget.editable!())
+                                ? (ListItem item) => IconButton(
+                                      onPressed: () async => await delete(item),
+                                      icon: const Icon(Icons.delete),
+                                    )
+                                : null,
                         onlyShowItemTrailingOnHover: true,
                       ),
                     ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:navy/navy.dart';
 
-class DynamicPaginatedTable<T> extends StatelessWidget {
+class DynamicPaginatedTable<T> extends StatefulWidget {
   static const double paginateDataTableTitleRow = 68.0;
   static const double pagerWidgetHeight = 56;
   static const double paginateDataTableRowHeight = kMinInteractiveDimension;
@@ -12,9 +12,9 @@ class DynamicPaginatedTable<T> extends StatelessWidget {
   final double maxHeightAvailable;
   final int? sortColumnIndex;
   final bool sortAscending;
-  final ScrollController scrollController = ScrollController();
+  final ActionOf1<List<T>>? onItemsVisibleChanged;
 
-  DynamicPaginatedTable({
+  const DynamicPaginatedTable({
     super.key,
     required this.dataColumns,
     required this.getDataRow,
@@ -22,30 +22,69 @@ class DynamicPaginatedTable<T> extends StatelessWidget {
     required this.maxHeightAvailable,
     this.sortColumnIndex,
     this.sortAscending = true,
+    this.onItemsVisibleChanged,
   });
 
   @override
+  State<DynamicPaginatedTable<T>> createState() => DynamicPaginatedTableState<T>();
+
+  int get rowsPerPage =>
+      (maxHeightAvailable - paginateDataTableTitleRow - pagerWidgetHeight) ~/
+      paginateDataTableRowHeight;
+}
+
+class DynamicPaginatedTableState<T> extends State<DynamicPaginatedTable<T>> {
+  final ScrollController scrollController = ScrollController();
+  final GlobalKey<PaginatedDataTableState> _tableKey = GlobalKey<PaginatedDataTableState>();
+  int _currentPage = 0;
+  int _rowsPerPage = 0;
+
+  @override
   Widget build(BuildContext context) {
-    var rowsPerPage = (maxHeightAvailable - paginateDataTableTitleRow - pagerWidgetHeight) ~/
-        paginateDataTableRowHeight;
+    if (widget.rowsPerPage != _rowsPerPage) {
+      _rowsPerPage = widget.rowsPerPage;
+      callOnItemsVisibleChanged(_currentPage, _rowsPerPage);
+    }
 
     return PaginatedDataTable(
+      key: _tableKey,
       showCheckboxColumn: false, //Not show the selector in case we only want to navigate
-      columns: dataColumns,
+      columns: widget.dataColumns,
       source: DynamicPaginatedTableSource<T>(
-        items: items,
-        getDataRow: getDataRow,
+        items: widget.items,
+        getDataRow: widget.getDataRow,
       ),
-      availableRowsPerPage: [rowsPerPage],
-      rowsPerPage: rowsPerPage,
-      dataRowMaxHeight: paginateDataTableRowHeight,
-      dataRowMinHeight: paginateDataTableRowHeight,
+      availableRowsPerPage: [_rowsPerPage],
+      rowsPerPage: _rowsPerPage,
+      dataRowMaxHeight: DynamicPaginatedTable.paginateDataTableRowHeight,
+      dataRowMinHeight: DynamicPaginatedTable.paginateDataTableRowHeight,
       showEmptyRows: false,
       showFirstLastButtons: true,
-      sortColumnIndex: sortColumnIndex,
-      sortAscending: sortAscending,
+      sortColumnIndex: widget.sortColumnIndex,
+      sortAscending: widget.sortAscending,
       controller: scrollController,
+      onPageChanged: (int pageIndex) {
+        //Based on pageIndex and rowsPerPage we can calculate the items that are shown
+        setState(() {
+          _currentPage = pageIndex ~/ _rowsPerPage;
+        });
+        callOnItemsVisibleChanged(_currentPage, _rowsPerPage);
+      },
     );
+  }
+
+  void callOnItemsVisibleChanged(int pageIndex, int rowsPerPage) {
+    if (widget.onItemsVisibleChanged == null) return;
+    widget.onItemsVisibleChanged!(getItemsVisible());
+  }
+
+  List<T> getItemsVisible() {
+    //Based on pageIndex and rowsPerPage we can calculate the items that are shown
+    var from = _currentPage * _rowsPerPage;
+    var to = from + _rowsPerPage;
+    if (from > widget.items.length) from = widget.items.length;
+    if (to > widget.items.length) to = widget.items.length;
+    return widget.items.sublist(from, to);
   }
 }
 

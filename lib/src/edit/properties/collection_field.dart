@@ -14,6 +14,7 @@ class CollectionField<T> extends StatefulWidget {
   final FunctionOf1<T, Widget>? createWidget;
   final FunctionOf1<T, Widget> updateWidget;
   final ActionOf1<List<T>>? onChanged;
+  final PredicateOf0? editable;
 
   const CollectionField(
       {Key? key,
@@ -26,6 +27,7 @@ class CollectionField<T> extends StatefulWidget {
       required this.updateT,
       required this.createWidget,
       required this.updateWidget,
+      this.editable,
       this.onChanged})
       : super(key: key);
 
@@ -72,6 +74,7 @@ class _CollectionFieldState<T> extends State<CollectionField<T>> {
               title: () => widget.name,
               items: _items,
               itemTitle: widget.itemTitle,
+              editable: widget.editable,
               updateWidget: (itemToUpdate) {
                 itemToEdit = itemToUpdate;
                 itemEdited = widget.updateT(itemToUpdate);

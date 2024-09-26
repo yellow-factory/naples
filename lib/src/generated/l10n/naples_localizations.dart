@@ -9,6 +9,8 @@ import 'naples_localizations_ca.dart';
 import 'naples_localizations_en.dart';
 import 'naples_localizations_es.dart';
 
+// ignore_for_file: type=lint
+
 /// Callers can lookup localized strings with an instance of NaplesLocalizations
 /// returned by `NaplesLocalizations.of(context)`.
 ///

@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:naples/src/widgets/radio_list_form_field.dart';
 import 'package:naples/src/widgets/switch_form_field.dart';
@@ -45,6 +44,8 @@ class BoolProperty extends ModelPropertyWidget<bool?>
   final BoolWidgetType widgetType;
   final BoolWidgetPosition widgetPosition;
   final FunctionOf1<BoolValues, FunctionOf0<String>> displayName;
+  //Calls setProperty on control value change
+  final bool saveOnValueChanged;
 
   BoolProperty({
     Key? key,
@@ -59,6 +60,7 @@ class BoolProperty extends ModelPropertyWidget<bool?>
     this.widgetType = BoolWidgetType.checkBox,
     this.widgetPosition = BoolWidgetPosition.leading,
     this.displayName = defaultDisplayName,
+    this.saveOnValueChanged = false,
   }) : super(key: key);
 
   static FunctionOf0<String> defaultDisplayName(BoolValues t) => () => t.displayName;
@@ -78,7 +80,11 @@ class BoolProperty extends ModelPropertyWidget<bool?>
       onSaved: setProperty,
       validator: validator,
       controlAffinity: controlAffinity,
+      saveOnValueChanged: saveOnValueChanged,
     );
+
+//TODO: He implementat el saveOnValueChanged a CheckboxFormField, però no a SwitchFormField, ToggleButtonFormField, RadioListFormField
+//però també cal fer el mateix amb els altres widgets
 
     switch (widgetType) {
       case BoolWidgetType.switchBox:

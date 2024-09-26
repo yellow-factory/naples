@@ -31,38 +31,42 @@ class DateTimeFormField extends FormField<DateTime> {
               labelText: label,
               errorText: state.errorText,
               filled: filled,
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.calendar_today_outlined),
-                onPressed: () async {
-                  final DateTime datePicked = await showDatePicker(
-                        context: state.context,
-                        initialDate: currentValue,
-                        firstDate: currentFirstDate,
-                        lastDate: currentLastDate,
-                      ) ??
-                      currentValue;
+              suffixIcon: enabled
+                  ? IconButton(
+                      icon: const Icon(Icons.calendar_today_outlined),
+                      onPressed: () async {
+                        final DateTime datePicked = await showDatePicker(
+                              context: state.context,
+                              initialDate: currentValue,
+                              firstDate: currentFirstDate,
+                              lastDate: currentLastDate,
+                            ) ??
+                            currentValue;
 
-                  if (onlyDate) {
-                    if (currentValue.compareTo(datePicked) != 0) state.didChange(datePicked);
-                    return;
-                  }
+                        if (onlyDate) {
+                          if (currentValue.compareTo(datePicked) != 0) state.didChange(datePicked);
+                          return;
+                        }
 
-                  final TimeOfDay time = TimeOfDay.fromDateTime(currentValue);
-                  final TimeOfDay timePicked = await showTimePicker(
-                        context: state.context,
-                        initialTime: time,
-                      ) ??
-                      time;
+                        final TimeOfDay time = TimeOfDay.fromDateTime(currentValue);
+                        final TimeOfDay timePicked = state.mounted
+                            ? await showTimePicker(
+                                  context: state.context,
+                                  initialTime: time,
+                                ) ??
+                                time
+                            : time;
 
-                  state.didChange(DateTime(
-                    datePicked.year,
-                    datePicked.month,
-                    datePicked.day,
-                    timePicked.hour,
-                    timePicked.minute,
-                  ));
-                },
-              ),
+                        state.didChange(DateTime(
+                          datePicked.year,
+                          datePicked.month,
+                          datePicked.day,
+                          timePicked.hour,
+                          timePicked.minute,
+                        ));
+                      },
+                    )
+                  : null,
             );
 
             return TextField(

@@ -17,7 +17,7 @@ class LengthWidget extends InheritedWidget {
   }
 
   @override
-  bool updateShouldNotify(LengthWidget old) => length != old.length;
+  bool updateShouldNotify(LengthWidget oldWidget) => length != oldWidget.length;
 }
 
 class LengthConsumerWidget extends StatelessWidget {

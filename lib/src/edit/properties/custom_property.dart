@@ -11,6 +11,7 @@ class CustomProperty extends StatefulWidget {
   final double editContentWidth;
   final Function set;
   final Function? delete;
+  final PredicateOf0? editable;
   const CustomProperty({
     Key? key,
     required this.name,
@@ -19,6 +20,7 @@ class CustomProperty extends StatefulWidget {
     this.editContentWidth = 300,
     required this.set,
     this.delete,
+    this.editable,
   }) : super(key: key);
 
   @override
@@ -102,10 +104,12 @@ class _CustomPropertyState extends State<CustomProperty> {
       autofocus: false,
       decoration: InputDecoration(
         labelText: widget.name,
-        suffixIcon: IconButton(
-          onPressed: _showSelectDialog,
-          icon: const Icon(Icons.edit),
-        ),
+        suffixIcon: (widget.editable ?? () => true)()
+            ? IconButton(
+                onPressed: _showSelectDialog,
+                icon: const Icon(Icons.edit),
+              )
+            : null,
       ),
     );
   }

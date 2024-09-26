@@ -78,12 +78,13 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
     if (mounted) LoadingNotification(_loading).dispatch(context);
   }
 
-  Future<void> refresh() async {
-    if (_loading) return;
+  Future<bool> refresh() async {
+    if (_loading) return false;
     setState(() {
       _items.clear();
     });
     await load();
+    return true;
   }
 
   @override

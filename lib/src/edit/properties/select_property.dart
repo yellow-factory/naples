@@ -85,8 +85,6 @@ class SelectProperty<U, V> extends ModelPropertyWidget<U?>
         if (dropdownKey.currentState!.value != value) {
           dropdownKey.currentState!.didChange(value);
         }
-
-        //print('didchange selectpropery');
       },
     );
 

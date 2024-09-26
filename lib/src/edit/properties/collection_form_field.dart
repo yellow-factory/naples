@@ -16,6 +16,7 @@ class CollectionFormField<T> extends FormField<Iterable<T>> {
     required FunctionOf1<T, Widget>? createWidget,
     required FunctionOf1<T, Widget> updateWidget,
     FormFieldSetter<Iterable<T>>? onSaved,
+    PredicateOf0? editable,
   }) : super(
           key: key,
           onSaved: onSaved,
@@ -32,6 +33,7 @@ class CollectionFormField<T> extends FormField<Iterable<T>> {
               description: description,
               width: width,
               onChanged: (t) => state.didChange(t),
+              editable: editable,
             );
           },
         );

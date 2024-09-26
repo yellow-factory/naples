@@ -21,6 +21,7 @@ class AsyncActionIconButtonWidget extends StatelessWidget {
         if (action == null) return;
         await action!();
         if (message == null) return;
+        if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(message!),
