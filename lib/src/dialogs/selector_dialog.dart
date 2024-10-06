@@ -90,7 +90,13 @@ class SelectorDialogState<T> extends State<SelectorDialog<T>> {
                 children: [
                   for (var instance in filteredInstances)
                     SimpleDialogOption(
-                      child: Text(instance.toString()),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(instance.toString()),
+                          ),
+                        ],
+                      ),
                       onPressed: () {
                         Navigator.pop(context, instance);
                       },
