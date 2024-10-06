@@ -5,11 +5,13 @@ import 'package:navy/navy.dart';
 
 class StreamSelectorDialog<T> extends StatelessWidget {
   final String? title;
+  final String? subtitle;
   final FunctionOf0<Stream<T>> getStream;
 
   const StreamSelectorDialog({
     super.key,
-    required this.title,
+    this.title,
+    this.subtitle,
     required this.getStream,
   });
 
@@ -20,6 +22,7 @@ class StreamSelectorDialog<T> extends StatelessWidget {
       builder: (items) {
         return SelectorDialog<T>(
           title: title,
+          subtitle: subtitle,
           items: items,
         );
       },
@@ -29,11 +32,13 @@ class StreamSelectorDialog<T> extends StatelessWidget {
 
 class SelectorDialog<T> extends StatefulWidget {
   final String? title;
+  final String? subtitle;
   final List<T> items;
 
   const SelectorDialog({
     super.key,
-    required this.title,
+    this.title,
+    this.subtitle,
     required this.items,
   });
 
@@ -55,7 +60,13 @@ class SelectorDialogState<T> extends State<SelectorDialog<T>> {
       },
       builder: (filteredInstances) {
         return SimpleDialog(
-          title: widget.title != null ? Text(widget.title!) : null,
+          title: widget.title == null
+              ? null
+              : ListTile(
+                  title: Text(widget.title!),
+                  subtitle: widget.subtitle == null ? null : Text(widget.subtitle!),
+                  contentPadding: EdgeInsets.zero,
+                ),
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -98,12 +109,14 @@ Future<T?> showStreamSelectDialog<T>({
   required BuildContext context,
   required Stream<T> items,
   String? title,
+  String? subtitle,
 }) async {
   var dialogResult = await showDialog<T>(
     context: context,
     builder: (context) {
       return StreamSelectorDialog<T>(
         title: title,
+        subtitle: subtitle,
         getStream: () => items,
       );
     },
@@ -116,12 +129,14 @@ Future<T?> showSelectDialog<T>({
   required BuildContext context,
   required List<T> items,
   String? title,
+  String? subtitle,
 }) async {
   var dialogResult = await showDialog<T>(
     context: context,
     builder: (context) {
       return SelectorDialog<T>(
         title: title,
+        subtitle: subtitle,
         items: items,
       );
     },

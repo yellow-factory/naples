@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:naples/src/common/common.dart';
 import 'package:naples/src/widgets/radio_list_form_field.dart';
+import 'package:naples/src/widgets/select_dialog_form_field.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/edit/properties/model_property.dart';
 
@@ -8,7 +9,7 @@ import 'package:naples/src/edit/properties/model_property.dart';
 //TODO: En el cas de MultipleSelect les opcions han de ser CheckBox, Chips o algun tipus de Dropdown...
 //TODO: Cal comprovar que tots aquests casos Select funcionen correctament per class i per enum amb multiidioma inclòs...
 
-enum SelectWidgetType { DropDown, Radio }
+enum SelectWidgetType { dropDown, radio, dialog }
 
 ///U defines the type of the property being edited which is a member of T
 ///V defines the type of the list of items being exposed in the list of options
@@ -54,21 +55,74 @@ class SelectProperty<U, V> extends ModelPropertyWidget<U?>
     required this.listItems,
     required this.valueMember,
     required this.displayMember,
-    this.widgetType = SelectWidgetType.DropDown,
+    this.widgetType = SelectWidgetType.dropDown,
     this.saveOnValueChanged = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    switch (widgetType) {
+      case SelectWidgetType.dropDown:
+        return _getDropDown(listItems());
+      case SelectWidgetType.radio:
+        return _getRadioList(listItems());
+      case SelectWidgetType.dialog:
+        return _getDialog(listItems());
+      default:
+        return _getDropDown(listItems());
+    }
+  }
+
+  Widget _getRadioList(List<V> items) {
+    return RadioListFormField<U, V>(
+      label: label,
+      hint: hint,
+      autofocus: autofocus,
+      displayMember: displayMember,
+      valueMember: valueMember,
+      listItems: listItems,
+      enabled: enabled,
+      initialValue: getProperty(),
+      onSaved: setProperty,
+      validator: validator,
+      controlAffinity: ListTileControlAffinity.leading,
+    );
+  }
+
+  Widget _getDialog(List<V> items) {
+    return SelectDialogFormField<U, V>(
+      label: label,
+      hint: hint,
+      autofocus: autofocus,
+      enabled: enabled,
+      initialValue: getProperty(),
+      onSaved: setProperty,
+      validator: validator,
+      listItems: listItems,
+      valueMember: valueMember,
+      displayMember: displayMember,
+    );
+  }
+
+  Widget _getDropDown(List<V> items) {
+    final dropdownKey = GlobalKey<FormFieldState<U>>();
     final items = <DropdownMenuItem<U>>[
       for (var item in listItems())
         DropdownMenuItem<U>(
           value: valueMember(item),
-          child: Text(displayMember(item)()),
+          child: Text(
+            displayMember(item)(),
+            overflow: TextOverflow.ellipsis,
+          ),
         )
     ];
-    final dropdownKey = GlobalKey<FormFieldState<U>>();
-    final defaultWidget = DropdownButtonFormField<U>(
+    if (items.isEmpty) {
+      return const Text(
+        "No items to select",
+        overflow: TextOverflow.ellipsis,
+      );
+    }
+    return DropdownButtonFormField<U>(
       key: dropdownKey,
       items: items,
       value: getProperty(),
@@ -87,26 +141,5 @@ class SelectProperty<U, V> extends ModelPropertyWidget<U?>
         }
       },
     );
-
-    switch (widgetType) {
-      case SelectWidgetType.DropDown:
-        return defaultWidget;
-      case SelectWidgetType.Radio:
-        return RadioListFormField<U, V>(
-          label: label,
-          hint: hint,
-          autofocus: autofocus,
-          displayMember: displayMember,
-          valueMember: valueMember,
-          listItems: listItems,
-          enabled: enabled,
-          initialValue: getProperty(),
-          onSaved: setProperty,
-          validator: validator,
-          controlAffinity: ListTileControlAffinity.leading,
-        );
-      default:
-        return defaultWidget;
-    }
   }
 }
