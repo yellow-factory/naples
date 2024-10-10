@@ -7,12 +7,14 @@ class StreamSelectorDialog<T> extends StatelessWidget {
   final String? title;
   final String? subtitle;
   final FunctionOf0<Stream<T>> getStream;
+  final T? selectedItem;
 
   const StreamSelectorDialog({
     super.key,
     this.title,
     this.subtitle,
     required this.getStream,
+    this.selectedItem,
   });
 
   @override
@@ -24,6 +26,7 @@ class StreamSelectorDialog<T> extends StatelessWidget {
           title: title,
           subtitle: subtitle,
           items: items,
+          selectedItem: selectedItem,
         );
       },
     );
@@ -34,12 +37,14 @@ class SelectorDialog<T> extends StatefulWidget {
   final String? title;
   final String? subtitle;
   final List<T> items;
+  final T? selectedItem;
 
   const SelectorDialog({
     super.key,
     this.title,
     this.subtitle,
     required this.items,
+    this.selectedItem,
   });
 
   @override
@@ -62,26 +67,28 @@ class SelectorDialogState<T> extends State<SelectorDialog<T>> {
         return SimpleDialog(
           title: widget.title == null
               ? null
-              : ListTile(
-                  title: Text(widget.title!),
-                  subtitle: widget.subtitle == null ? null : Text(widget.subtitle!),
-                  contentPadding: EdgeInsets.zero,
+              : Column(
+                  children: <Widget>[
+                    ListTile(
+                      title: Text(widget.title!),
+                      subtitle: widget.subtitle == null ? null : Text(widget.subtitle!),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    TextField(
+                      autofocus: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Filter by',
+                      ),
+                      style: const TextStyle(fontSize: 14),
+                      onChanged: (value) {
+                        setState(() {
+                          _filterBy = value;
+                        });
+                      },
+                    ),
+                  ],
                 ),
           children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: TextField(
-                autofocus: true,
-                decoration: const InputDecoration(
-                    labelText: 'Filter by', contentPadding: EdgeInsets.only(left: 10)),
-                style: const TextStyle(fontSize: 14),
-                onChanged: (value) {
-                  setState(() {
-                    _filterBy = value;
-                  });
-                },
-              ),
-            ),
             ConstrainedBox(
               constraints: const BoxConstraints(minHeight: 400, minWidth: 400),
               child: Column(
@@ -91,10 +98,17 @@ class SelectorDialogState<T> extends State<SelectorDialog<T>> {
                   for (var instance in filteredInstances)
                     SimpleDialogOption(
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
-                            child: Text(instance.toString()),
+                            child: Text(
+                              instance.toString(),
+                              style: widget.selectedItem == instance
+                                  ? const TextStyle(fontWeight: FontWeight.bold)
+                                  : null,
+                            ),
                           ),
+                          if (widget.selectedItem == instance) const Icon(Icons.check),
                         ],
                       ),
                       onPressed: () {
@@ -116,6 +130,7 @@ Future<T?> showStreamSelectDialog<T>({
   required Stream<T> items,
   String? title,
   String? subtitle,
+  T? selectedItem,
 }) async {
   var dialogResult = await showDialog<T>(
     context: context,
@@ -124,6 +139,7 @@ Future<T?> showStreamSelectDialog<T>({
         title: title,
         subtitle: subtitle,
         getStream: () => items,
+        selectedItem: selectedItem,
       );
     },
   );
@@ -136,6 +152,7 @@ Future<T?> showSelectDialog<T>({
   required List<T> items,
   String? title,
   String? subtitle,
+  T? selectedItem,
 }) async {
   var dialogResult = await showDialog<T>(
     context: context,
@@ -144,6 +161,7 @@ Future<T?> showSelectDialog<T>({
         title: title,
         subtitle: subtitle,
         items: items,
+        selectedItem: selectedItem,
       );
     },
   );

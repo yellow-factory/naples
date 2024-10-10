@@ -77,6 +77,7 @@ class SelectDialogFormField<U, V> extends FormField<U> {
                                 subtitle: hint,
                                 context: state.context,
                                 items: projectedItems,
+                                selectedItem: state.value,
                               );
                               if (result != null) {
                                 onChangedCall(result);
