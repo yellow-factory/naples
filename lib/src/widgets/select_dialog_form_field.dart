@@ -24,74 +24,40 @@ class SelectDialogFormField<U, V> extends FormField<U> {
           initialValue: initialValue,
           enabled: enabled,
           builder: (FormFieldState<U> state) {
-            void onChangedCall(U? value) {
-              state.didChange(value);
-              if (onChanged != null) onChanged(value);
-            }
-
             final items = listItems();
-            final projectedItems = items.map(valueMember).toList();
             final valueV = state.value == null ||
                     items.isEmpty ||
                     !items.any((element) => valueMember(element) == state.value)
                 ? null
                 : items.firstWhere((element) => valueMember(element) == state.value);
             final initialValueDisplayed = valueV == null ? null : displayMember(valueV);
-
             final title = initialValueDisplayed == null ? label : initialValueDisplayed();
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (state.value != null)
-                            Padding(
-                              padding: const EdgeInsets.only(left: 0, bottom: 5),
-                              child: Text(
-                                label,
-                                style: TextStyle(
-                                  fontSize: 12.0,
-                                  color: Colors.grey[800],
-                                ),
-                              ),
-                            ),
-                          Text(
-                            title,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.edit),
-                      onPressed: enabled
-                          ? () async {
-                              final result = await showSelectDialog<U>(
-                                title: label,
-                                subtitle: hint,
-                                context: state.context,
-                                items: projectedItems,
-                                selectedItem: state.value,
-                              );
-                              if (result != null) {
-                                onChangedCall(result);
-                              }
-                            }
-                          : null,
-                    )
-                  ],
+            return TextField(
+              controller: TextEditingController(text: title),
+              decoration: InputDecoration(
+                hintText: hint,
+                labelText: label,
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.edit),
+                  onPressed: enabled
+                      ? () async {
+                          final result = await showSelectDialog<V>(
+                              title: label,
+                              subtitle: hint,
+                              context: state.context,
+                              items: items,
+                              selectedItem: valueV,
+                              displayMember: (t) => displayMember(t)());
+                          if (result == null) return;
+                          var value = valueMember(result);
+                          state.didChange(value);
+                          if (onChanged != null) onChanged(value);
+                        }
+                      : null,
                 ),
-                const Divider(
-                  height: 10,
-                  thickness: 1,
-                ),
-              ],
+              ),
+              readOnly: true,
             );
           },
         );

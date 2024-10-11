@@ -8,6 +8,7 @@ class StreamSelectorDialog<T> extends StatelessWidget {
   final String? subtitle;
   final FunctionOf0<Stream<T>> getStream;
   final T? selectedItem;
+  final FunctionOf1<T, String>? displayMember;
 
   const StreamSelectorDialog({
     super.key,
@@ -15,6 +16,7 @@ class StreamSelectorDialog<T> extends StatelessWidget {
     this.subtitle,
     required this.getStream,
     this.selectedItem,
+    this.displayMember,
   });
 
   @override
@@ -27,6 +29,7 @@ class StreamSelectorDialog<T> extends StatelessWidget {
           subtitle: subtitle,
           items: items,
           selectedItem: selectedItem,
+          displayMember: displayMember,
         );
       },
     );
@@ -38,6 +41,7 @@ class SelectorDialog<T> extends StatefulWidget {
   final String? subtitle;
   final List<T> items;
   final T? selectedItem;
+  final FunctionOf1<T, String>? displayMember;
 
   const SelectorDialog({
     super.key,
@@ -45,6 +49,7 @@ class SelectorDialog<T> extends StatefulWidget {
     this.subtitle,
     required this.items,
     this.selectedItem,
+    this.displayMember,
   });
 
   @override
@@ -61,7 +66,10 @@ class SelectorDialogState<T> extends State<SelectorDialog<T>> {
       filterBy: (itemToFilter) {
         var curatedFilterBy = _filterBy.toLowerCase().trim();
         if (curatedFilterBy.isEmpty) return true;
-        return itemToFilter.toString().toLowerCase().trim().contains(curatedFilterBy);
+        var itemToFilterString = widget.displayMember != null
+            ? widget.displayMember!(itemToFilter)
+            : itemToFilter.toString();
+        return itemToFilterString.toLowerCase().trim().contains(curatedFilterBy);
       },
       builder: (filteredInstances) {
         return SimpleDialog(
@@ -102,7 +110,9 @@ class SelectorDialogState<T> extends State<SelectorDialog<T>> {
                         children: [
                           Expanded(
                             child: Text(
-                              instance.toString(),
+                              widget.displayMember != null
+                                  ? widget.displayMember!(instance)
+                                  : instance.toString(),
                               style: widget.selectedItem == instance
                                   ? const TextStyle(fontWeight: FontWeight.bold)
                                   : null,
@@ -131,6 +141,7 @@ Future<T?> showStreamSelectDialog<T>({
   String? title,
   String? subtitle,
   T? selectedItem,
+  FunctionOf1<T, String>? displayMember,
 }) async {
   var dialogResult = await showDialog<T>(
     context: context,
@@ -140,6 +151,7 @@ Future<T?> showStreamSelectDialog<T>({
         subtitle: subtitle,
         getStream: () => items,
         selectedItem: selectedItem,
+        displayMember: displayMember,
       );
     },
   );
@@ -153,6 +165,7 @@ Future<T?> showSelectDialog<T>({
   String? title,
   String? subtitle,
   T? selectedItem,
+  FunctionOf1<T, String>? displayMember,
 }) async {
   var dialogResult = await showDialog<T>(
     context: context,
@@ -162,6 +175,7 @@ Future<T?> showSelectDialog<T>({
         subtitle: subtitle,
         items: items,
         selectedItem: selectedItem,
+        displayMember: displayMember,
       );
     },
   );

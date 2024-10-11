@@ -74,7 +74,9 @@ class SelectProperty<U, V> extends ModelPropertyWidget<U?>
   }
 
   Widget _getRadioList(List<V> items) {
+    final radioKey = GlobalKey<FormFieldState<U>>();
     return RadioListFormField<U, V>(
+      key: radioKey,
       label: label,
       hint: hint,
       autofocus: autofocus,
@@ -86,11 +88,21 @@ class SelectProperty<U, V> extends ModelPropertyWidget<U?>
       onSaved: setProperty,
       validator: validator,
       controlAffinity: ListTileControlAffinity.leading,
+      onChanged: (value) {
+        if (radioKey.currentState == null) return;
+        if (saveOnValueChanged) radioKey.currentState!.save();
+        // I THINK THIS IS NOT NEEDED
+        // if (radioKey.currentState!.value != value) {
+        //   radioKey.currentState!.didChange(value);
+        // }
+      },
     );
   }
 
   Widget _getDialog(List<V> items) {
+    final dialogKey = GlobalKey<FormFieldState<U>>();
     return SelectDialogFormField<U, V>(
+      key: dialogKey,
       label: label,
       hint: hint,
       autofocus: autofocus,
@@ -101,6 +113,10 @@ class SelectProperty<U, V> extends ModelPropertyWidget<U?>
       listItems: listItems,
       valueMember: valueMember,
       displayMember: displayMember,
+      onChanged: (value) {
+        if (dialogKey.currentState == null) return;
+        if (saveOnValueChanged) dialogKey.currentState!.save();
+      },
     );
   }
 
@@ -136,9 +152,10 @@ class SelectProperty<U, V> extends ModelPropertyWidget<U?>
       onChanged: (value) {
         if (dropdownKey.currentState == null) return;
         if (saveOnValueChanged) dropdownKey.currentState!.save();
-        if (dropdownKey.currentState!.value != value) {
-          dropdownKey.currentState!.didChange(value);
-        }
+        // I THINK THIS IS NOT NEEDED
+        // if (dropdownKey.currentState!.value != value) {
+        //   dropdownKey.currentState!.didChange(value);
+        // }
       },
     );
   }
