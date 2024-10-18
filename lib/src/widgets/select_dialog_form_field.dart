@@ -31,7 +31,7 @@ class SelectDialogFormField<U, V> extends FormField<U> {
                 ? null
                 : items.firstWhere((element) => valueMember(element) == state.value);
             final initialValueDisplayed = valueV == null ? null : displayMember(valueV);
-            final title = initialValueDisplayed == null ? label : initialValueDisplayed();
+            final title = initialValueDisplayed == null ? null : initialValueDisplayed();
 
             return TextField(
               controller: TextEditingController(text: title),
