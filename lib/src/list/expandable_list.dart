@@ -36,7 +36,7 @@ class ExpandableList<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IntrinsicHeight(
-      child: Loading(
+      child: LoadingProgress(
         child: ListLoader<T>(
           getStream: getStream,
           builder: (items) {

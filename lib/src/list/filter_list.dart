@@ -35,7 +35,7 @@ class FilterList<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     var fitems = _filterItems(items);
     var lengthWidget = context.dependOnInheritedWidgetOfExactType<LengthWidget>();
-    if (lengthWidget != null) {
+    if (lengthWidget != null && lengthWidget.length.value != fitems.length) {
       scheduleMicrotask(() => lengthWidget.length.value = fitems.length);
     }
     return builder(fitems);

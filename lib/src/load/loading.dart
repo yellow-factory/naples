@@ -2,16 +2,23 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-class Loading extends StatefulWidget {
-  final Widget child;
-  final bool keepSpace;
-  const Loading({Key? key, required this.child, this.keepSpace = true}) : super(key: key);
-
-  @override
-  State<Loading> createState() => _LoadingState();
+class LoadingNotification extends Notification {
+  final bool loading;
+  LoadingNotification(this.loading);
 }
 
-class _LoadingState extends State<Loading> {
+class LoadingNotificationBuilder extends StatefulWidget {
+  final Widget Function(BuildContext context, bool loading) builder;
+  const LoadingNotificationBuilder({
+    Key? key,
+    required this.builder,
+  }) : super(key: key);
+
+  @override
+  State<LoadingNotificationBuilder> createState() => _LoadingNotificationBuilderState();
+}
+
+class _LoadingNotificationBuilderState extends State<LoadingNotificationBuilder> {
   bool _loading = false;
 
   @override
@@ -26,17 +33,66 @@ class _LoadingState extends State<Loading> {
         });
         return true;
       },
-      child: Column(
-        children: [
-          _loading ? const LinearProgressIndicator() : SizedBox(height: widget.keepSpace ? 4 : 0),
-          Expanded(child: widget.child),
-        ],
-      ),
+      child: widget.builder(context, _loading),
     );
   }
 }
 
-class LoadingNotification extends Notification {
-  final bool loading;
-  LoadingNotification(this.loading);
+//Use this to absorb pointer events when loading
+class Loading extends StatelessWidget {
+  final Widget child;
+  const Loading({
+    Key? key,
+    required this.child,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return LoadingNotificationBuilder(
+      builder: (context, loading) {
+        return AbsorbPointer(
+          absorbing: loading,
+          child: child,
+        );
+      },
+    );
+  }
+}
+
+enum LoadingProgressType {
+  linear,
+  circular,
+}
+
+//Use this to show a progress indicator when loading and absorb pointer events
+class LoadingProgress extends StatelessWidget {
+  final Widget child;
+  final LoadingProgressType type;
+  const LoadingProgress({
+    super.key,
+    required this.child,
+    this.type = LoadingProgressType.linear,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return LoadingNotificationBuilder(
+      builder: (context, loading) {
+        return Stack(
+          children: [
+            child,
+            if (loading)
+              AbsorbPointer(
+                absorbing: true,
+                child: Container(
+                    color: Colors.white.withOpacity(0.5),
+                    child: type == LoadingProgressType.circular
+                        ? const Center(child: CircularProgressIndicator())
+                        : const LinearProgressIndicator()),
+              ),
+          ],
+        );
+      },
+    );
+  }
 }

@@ -8,12 +8,23 @@ class TabItem {
   final Widget body;
   String? title;
   IconData? icon;
-  TabItem({required this.body, this.title, this.icon});
+  int? length;
+  TabCollection? tabCollection;
+
+  TabItem({
+    required this.body,
+    this.title,
+    this.icon,
+    this.length,
+    this.tabCollection,
+  });
+
+  bool get isSelected => tabCollection?.currentItem == this;
 }
 
 class TabCollection extends ChangeNotifier {
   final List<TabItem> _items = [];
-  final _selectedItemIndexes = <int>[];
+  final _selectionItemOrderIndexes = <int>[];
 
   TabItem? get currentItem {
     if (currentIndex == null) return null;
@@ -21,19 +32,21 @@ class TabCollection extends ChangeNotifier {
     return _items[currentIndex!];
   }
 
-  int? get currentIndex => _selectedItemIndexes.isNotEmpty ? _selectedItemIndexes.last : null;
+  int? get currentIndex =>
+      _selectionItemOrderIndexes.isNotEmpty ? _selectionItemOrderIndexes.last : null;
   List<TabItem> get items => UnmodifiableListView(_items);
 
   void notifyIndexChange(int index) {
-    if (_selectedItemIndexes.last != index) {
-      _selectedItemIndexes.add(index);
+    if (_selectionItemOrderIndexes.last != index) {
+      _selectionItemOrderIndexes.add(index);
     }
   }
 
   void add(TabItem tab) {
     var newIndex = _items.length;
     _items.add(tab);
-    _selectedItemIndexes.add(newIndex);
+    _selectionItemOrderIndexes.add(newIndex);
+    tab.tabCollection = this;
     notifyListeners();
   }
 
@@ -41,11 +54,12 @@ class TabCollection extends ChangeNotifier {
     var indexToRemove = _items.indexOf(tab);
     if (indexToRemove == -1) return; //Not found
     _items.removeAt(indexToRemove);
-    _selectedItemIndexes.removeWhere((x) => x == indexToRemove);
+    _selectionItemOrderIndexes.removeWhere((x) => x == indexToRemove);
     var newSelectedItemIndexes =
-        _selectedItemIndexes.map((x) => x > indexToRemove ? x - 1 : x).toList();
-    _selectedItemIndexes.clear();
-    _selectedItemIndexes.addAll(newSelectedItemIndexes);
+        _selectionItemOrderIndexes.map((x) => x > indexToRemove ? x - 1 : x).toList();
+    _selectionItemOrderIndexes.clear();
+    _selectionItemOrderIndexes.addAll(newSelectedItemIndexes);
+    tab.tabCollection = null;
     notifyListeners();
   }
 
@@ -78,6 +92,20 @@ class TabCollection extends ChangeNotifier {
       var item = _items[_items.indexOf(tab)];
       if (item.icon == icon) return;
       item.icon = icon;
+      notifyListeners();
+    });
+  }
+
+  void changeCurrentLength(int length) {
+    if (currentItem == null) throw Exception('There is no current item');
+    changeLength(currentItem!, length);
+  }
+
+  void changeLength(TabItem tab, int length) {
+    scheduleMicrotask(() {
+      var item = _items[_items.indexOf(tab)];
+      if (item.length == length) return;
+      item.length = length;
       notifyListeners();
     });
   }
@@ -161,11 +189,14 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
       child: widget.builder(
         Column(
           children: [
-            TabBar(
-              controller: _tabController,
-              tabs: tabCollection.items.map<Widget>((x) => _getTab(x)).toList(),
-              labelPadding: const EdgeInsets.symmetric(horizontal: 10.0),
-              isScrollable: true,
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 41),
+              child: TabBar(
+                controller: _tabController,
+                tabs: tabCollection.items.map<Widget>((x) => _getTab(x)).toList(),
+                labelPadding: const EdgeInsets.symmetric(horizontal: 10.0),
+                isScrollable: true,
+              ),
             ),
             Expanded(
               child: TabBarView(
@@ -186,8 +217,14 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
         children: [
           if (tab.icon != null)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 5),
-              child: Icon(tab.icon),
+              padding: const EdgeInsets.only(left: 5, right: 20),
+              child: tab.length == null
+                  ? Icon(tab.icon)
+                  : Badge.count(
+                      count: tab.length!,
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      child: Icon(tab.icon),
+                    ),
             ),
           Text(tab.title ?? ''),
           IconButton(

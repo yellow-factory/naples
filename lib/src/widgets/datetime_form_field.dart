@@ -26,7 +26,7 @@ class DateTimeFormField extends FormField<DateTime> {
             var currentFirstDate = firstDate ?? DateTime(1900);
             var currentLastDate = lastDate ?? DateTime(2100);
 
-            final InputDecoration fieldDecoration = InputDecoration(
+            final fieldDecoration = InputDecoration(
               hintText: hint,
               labelText: label,
               errorText: state.errorText,
