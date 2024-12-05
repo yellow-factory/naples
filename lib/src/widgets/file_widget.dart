@@ -15,7 +15,7 @@ class FileWidget extends StatefulWidget {
   final ActionOf0? delete;
 
   const FileWidget({
-    Key? key,
+    super.key,
     required this.label,
     this.hint,
     this.upload,
@@ -24,7 +24,7 @@ class FileWidget extends StatefulWidget {
     this.delete,
     this.fileId,
     this.fileName,
-  }) : super(key: key);
+  });
 
   @override
   FileWidgetState createState() => FileWidgetState();
@@ -144,7 +144,7 @@ class FileWidgetState extends State<FileWidget> {
     try {
       if (fileId == null || fileId!.isEmpty) return; //Aquí hauria d'ensenyar un diàleg
       if (widget.download == null) return;
-      final path = await getSavePath(suggestedName: fileName);
+      final path = await getSaveLocation(suggestedName: fileName);
       if (path == null) return;
       var blob = await widget.download!(fileId!);
       if (blob == null) throw Exception("File is empty");
@@ -154,9 +154,9 @@ class FileWidgetState extends State<FileWidget> {
       setState(() {
         waiting = true;
       });
-      await file.saveTo(path);
+      await file.saveTo(path.path);
     } catch (e) {
-      print('error downloading file');
+      rethrow;
     } finally {
       setState(() {
         waiting = false;

@@ -5,7 +5,8 @@ import 'package:naples/src/dialogs/accept_cancel_delete_dialog.dart';
 import 'package:navy/navy.dart';
 
 class CustomProperty extends StatefulWidget {
-  final String name;
+  final String title;
+  final String? subtitle;
   final FunctionOf0<Future<String>> description;
   final Widget editContent;
   final double editContentWidth;
@@ -14,7 +15,8 @@ class CustomProperty extends StatefulWidget {
   final PredicateOf0? editable;
   const CustomProperty({
     Key? key,
-    required this.name,
+    required this.title,
+    this.subtitle,
     required this.description,
     required this.editContent,
     this.editContentWidth = 300,
@@ -66,7 +68,8 @@ class _CustomPropertyState extends State<CustomProperty> {
         return Form(
           key: _formKey,
           child: AcceptCancelDeleteDialog(
-            title: widget.name,
+            title: widget.title,
+            subtitle: widget.subtitle,
             showDelete: widget.delete != null,
             validate: () => _formKey.currentState?.validate() ?? true,
             child: SingleChildScrollView(
@@ -88,10 +91,12 @@ class _CustomPropertyState extends State<CustomProperty> {
         await _delete();
         break;
       case AcceptCancelDeleteDialogOptions.accept:
-        _set();
+        await _set();
+        break;
+      case AcceptCancelDeleteDialogOptions.cancel:
         break;
       default:
-        break;
+        throw Exception('Unexpected dialog result: $result');
     }
   }
 
@@ -103,7 +108,7 @@ class _CustomPropertyState extends State<CustomProperty> {
       enabled: true,
       autofocus: false,
       decoration: InputDecoration(
-        labelText: widget.name,
+        labelText: widget.title,
         suffixIcon: (widget.editable ?? () => true)()
             ? IconButton(
                 onPressed: _showSelectDialog,
@@ -114,3 +119,5 @@ class _CustomPropertyState extends State<CustomProperty> {
     );
   }
 }
+
+//TODO: Cal repensar si cal que hi hagi un Form i si TextFormField pot ser simplement TextField

@@ -7,6 +7,7 @@ enum AcceptCancelDeleteDialogOptions { accept, cancel, delete }
 
 class AcceptCancelDeleteDialog extends StatefulWidget {
   final String title;
+  final String? subtitle;
   final Widget child;
   final bool valid; //Indicates if it's valid in the initial state
   final PredicateOf0? validate; //Function to validate the current child before select
@@ -15,6 +16,7 @@ class AcceptCancelDeleteDialog extends StatefulWidget {
   const AcceptCancelDeleteDialog({
     Key? key,
     required this.title,
+    this.subtitle,
     required this.child,
     this.valid = true,
     this.validate,
@@ -59,6 +61,7 @@ class _AcceptCancelDeleteDialogState extends State<AcceptCancelDeleteDialog> {
     return AlertDialog(
       title: ListTile(
         title: Text(widget.title),
+        subtitle: widget.subtitle != null ? Text(widget.subtitle!) : null,
         contentPadding: EdgeInsets.zero,
         trailing: widget.showDelete
             ? IconButton(

@@ -17,7 +17,7 @@ class TabItem {
     this.icon,
     this.length,
     this.tabCollection,
-  });
+  }); 
 
   bool get isSelected => tabCollection?.currentItem == this;
 }
@@ -37,7 +37,7 @@ class TabCollection extends ChangeNotifier {
   List<TabItem> get items => UnmodifiableListView(_items);
 
   void notifyIndexChange(int index) {
-    if (_selectionItemOrderIndexes.last != index) {
+    if (_selectionItemOrderIndexes.isEmpty || _selectionItemOrderIndexes.last != index) {
       _selectionItemOrderIndexes.add(index);
     }
   }
@@ -45,20 +45,27 @@ class TabCollection extends ChangeNotifier {
   void add(TabItem tab) {
     var newIndex = _items.length;
     _items.add(tab);
-    _selectionItemOrderIndexes.add(newIndex);
+    notifyIndexChange(newIndex);
     tab.tabCollection = this;
     notifyListeners();
   }
 
   void remove(TabItem tab) {
     var indexToRemove = _items.indexOf(tab);
-    if (indexToRemove == -1) return; //Not found
+    if (indexToRemove == -1) {
+      return; // Not found
+    }
+
     _items.removeAt(indexToRemove);
     _selectionItemOrderIndexes.removeWhere((x) => x == indexToRemove);
-    var newSelectedItemIndexes =
-        _selectionItemOrderIndexes.map((x) => x > indexToRemove ? x - 1 : x).toList();
-    _selectionItemOrderIndexes.clear();
-    _selectionItemOrderIndexes.addAll(newSelectedItemIndexes);
+
+    // Update the indices in _selectionItemOrderIndexes
+    for (int i = 0; i < _selectionItemOrderIndexes.length; i++) {
+      if (_selectionItemOrderIndexes[i] > indexToRemove) {
+        _selectionItemOrderIndexes[i]--;
+      }
+    }
+
     tab.tabCollection = null;
     notifyListeners();
   }
@@ -115,11 +122,10 @@ class TabCollection extends ChangeNotifier {
 
 class _TabViewerScope extends InheritedWidget {
   const _TabViewerScope({
-    Key? key,
-    required Widget child,
+    super.key,
+    required super.child,
     required TabViewerState tabbingViewerState,
-  })  : _tabbingViewerState = tabbingViewerState,
-        super(key: key, child: child);
+  })  : _tabbingViewerState = tabbingViewerState;
 
   final TabViewerState _tabbingViewerState;
 
