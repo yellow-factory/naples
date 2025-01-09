@@ -17,7 +17,7 @@ class TabItem {
     this.icon,
     this.length,
     this.tabCollection,
-  }); 
+  });
 
   bool get isSelected => tabCollection?.currentItem == this;
 }
@@ -125,7 +125,7 @@ class _TabViewerScope extends InheritedWidget {
     super.key,
     required super.child,
     required TabViewerState tabbingViewerState,
-  })  : _tabbingViewerState = tabbingViewerState;
+  }) : _tabbingViewerState = tabbingViewerState;
 
   final TabViewerState _tabbingViewerState;
 

@@ -25,8 +25,8 @@ class DynamicList<T> extends StatelessWidget {
     this.onlyShowItemTrailingOnHover = false,
     this.select,
     this.separated = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
