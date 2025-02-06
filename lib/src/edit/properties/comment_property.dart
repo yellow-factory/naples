@@ -13,15 +13,14 @@ class CommentProperty extends StatelessWidget implements Expandable {
   final double bottomPadding;
 
   const CommentProperty(
-      {Key? key,
+      {super.key,
       required this.comment,
       this.flex = 99,
       this.textStyle,
       this.textAlign,
       this.linkStyle,
       this.topPadding = 0.0,
-      this.bottomPadding = 0.0})
-      : super(key: key);
+      this.bottomPadding = 0.0});
 
   @override
   Widget build(BuildContext context) {

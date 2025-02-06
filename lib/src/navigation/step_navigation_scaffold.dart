@@ -8,11 +8,11 @@ class StepNavigationScaffold<T> extends StatelessWidget {
   final FunctionOf2<T, ActionOf1<bool>, Widget> currentStepContentBuilder;
 
   const StepNavigationScaffold({
-    Key? key,
+    super.key,
     this.title,
     this.currentStepTitleBuilder,
     required this.currentStepContentBuilder,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -28,7 +28,7 @@ class FileProperty extends ModelPropertyWidget<String?>
   final FunctionOf1<String, Future<String?>>? publicUrl;
 
   FileProperty({
-    Key? key,
+    super.key,
     required this.label,
     this.hint,
     this.autofocus = false,
@@ -40,7 +40,7 @@ class FileProperty extends ModelPropertyWidget<String?>
     this.upload,
     this.download,
     this.publicUrl,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class FileProperty extends ModelPropertyWidget<String?>
         if (id == null) throw Exception("Upload has not returned an identifier");
         if (setProperty == null) return id;
         setProperty!(id);
-        print('File id: $id');
+        //print('File id: $id');
         return id;
       },
       download: download,

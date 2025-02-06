@@ -14,14 +14,14 @@ class MustacheProperty<T extends IMustacheValues> extends StatelessWidget implem
   final double? height;
 
   const MustacheProperty({
-    Key? key,
+    super.key,
     this.flex = 99,
     required this.source,
     required this.template,
     required this.locale,
     this.processMarkdown = false,
     this.height,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

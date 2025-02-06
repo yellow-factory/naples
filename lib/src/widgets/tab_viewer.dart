@@ -122,7 +122,6 @@ class TabCollection extends ChangeNotifier {
 
 class _TabViewerScope extends InheritedWidget {
   const _TabViewerScope({
-    super.key,
     required super.child,
     required TabViewerState tabbingViewerState,
   }) : _tabbingViewerState = tabbingViewerState;

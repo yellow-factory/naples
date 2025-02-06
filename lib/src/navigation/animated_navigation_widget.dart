@@ -13,14 +13,14 @@ class AnimatedNavigationWidget<T> extends StatefulWidget {
     required this.currentStepBuilder,
     this.duration = const Duration(milliseconds: 500),
     this.reverseDuration = const Duration(milliseconds: 500),
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
-  _AnimatedNavigationWidgetState<T> createState() => _AnimatedNavigationWidgetState<T>();
+  AnimatedNavigationWidgetState<T> createState() => AnimatedNavigationWidgetState<T>();
 }
 
-class _AnimatedNavigationWidgetState<T> extends State<AnimatedNavigationWidget<T>> {
+class AnimatedNavigationWidgetState<T> extends State<AnimatedNavigationWidget<T>> {
   final key = GlobalKey<BackForwardAnimationWidgetState>();
   @override
   Widget build(BuildContext context) {

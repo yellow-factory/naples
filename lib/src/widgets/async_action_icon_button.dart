@@ -10,8 +10,8 @@ class AsyncActionIconButtonWidget extends StatelessWidget {
     required this.iconData,
     this.action,
     this.message,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

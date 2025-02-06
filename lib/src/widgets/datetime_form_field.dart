@@ -3,24 +3,20 @@ import 'package:intl/intl.dart';
 
 class DateTimeFormField extends FormField<DateTime> {
   DateTimeFormField({
-    Key? key,
+    super.key,
     required String label,
     String? hint,
     bool filled = false,
-    DateTime? initialValue,
+    super.initialValue,
     bool autofocus = false,
     bool enabled = true,
-    FormFieldSetter<DateTime>? onSaved,
-    FormFieldValidator<DateTime>? validator,
+    super.onSaved,
+    super.validator,
     DateTime? firstDate,
     DateTime? lastDate,
     required DateFormat dateFormat,
     bool onlyDate = true,
   }) : super(
-          key: key,
-          onSaved: onSaved,
-          validator: validator,
-          initialValue: initialValue,
           builder: (FormFieldState<DateTime> state) {
             var currentValue = state.value ?? DateTime.now();
             var currentFirstDate = firstDate ?? DateTime(1900);

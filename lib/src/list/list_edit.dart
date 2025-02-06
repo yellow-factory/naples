@@ -1,8 +1,7 @@
-
 //TODO: Segurament sobra si tenim el collection editor
 
-///Receives a list and edits it's data on the side through an edit component
-///It provides a way to add new elements to the list
+//Receives a list and edits it's data on the side through an edit component
+//It provides a way to add new elements to the list
 // class ListSideEdit<T> extends StatefulWidget {
 //   final FunctionOf0<Stream<T>> getStream;
 //   final FunctionOf1<int, String> title;

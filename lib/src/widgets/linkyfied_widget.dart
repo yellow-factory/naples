@@ -9,12 +9,12 @@ class LinkyfiedWidget extends StatelessWidget {
   final TextAlign? textAlign;
 
   const LinkyfiedWidget({
-    Key? key,
+    super.key,
     required this.text,
     this.textStyle,
     this.linkStyle,
     this.textAlign,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

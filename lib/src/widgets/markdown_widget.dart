@@ -12,8 +12,7 @@ class MarkdownWidget extends StatelessWidget {
       {required this.template,
       this.height,
       this.wrapAlignment = WrapAlignment.spaceBetween,
-      Key? key})
-      : super(key: key);
+      super.key});
 
   void onTapLink(text, href, title) async {
     if (await canLaunchUrl(href)) {

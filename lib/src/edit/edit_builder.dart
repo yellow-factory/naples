@@ -12,8 +12,8 @@ abstract class EditBuilder<T> extends StatelessWidget {
   const EditBuilder({
     required this.model,
     required this.builder,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 }
 
 abstract class EditBuilder2<T, U> extends StatelessWidget {
@@ -25,6 +25,6 @@ abstract class EditBuilder2<T, U> extends StatelessWidget {
     required this.model1,
     required this.model2,
     required this.builder,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 }

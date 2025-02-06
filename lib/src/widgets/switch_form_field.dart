@@ -2,19 +2,16 @@ import 'package:flutter/material.dart';
 
 class SwitchFormField extends FormField<bool> {
   SwitchFormField({
-    Key? key,
+    super.key,
     required String label,
     String? hint,
     ListTileControlAffinity controlAffinity = ListTileControlAffinity.platform,
     bool initialValue = false,
     bool autofocus = false,
     bool enabled = true,
-    FormFieldSetter<bool>? onSaved,
-    FormFieldValidator<bool>? validator,
+    super.onSaved,
+    super.validator,
   }) : super(
-          key: key,
-          onSaved: onSaved,
-          validator: validator,
           initialValue: initialValue,
           builder: (FormFieldState<bool> state) {
             return SwitchListTile(

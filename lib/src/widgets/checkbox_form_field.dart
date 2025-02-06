@@ -2,20 +2,17 @@ import 'package:flutter/material.dart';
 
 class CheckboxFormField extends FormField<bool> {
   CheckboxFormField({
-    Key? key,
+    super.key,
     required String label,
     String? hint,
     ListTileControlAffinity controlAffinity = ListTileControlAffinity.platform,
     bool initialValue = false,
     bool autofocus = false,
     bool enabled = true,
-    FormFieldSetter<bool>? onSaved,
-    FormFieldValidator<bool>? validator,
+    super.onSaved,
+    super.validator,
     bool saveOnValueChanged = false,
   }) : super(
-          key: key,
-          onSaved: onSaved,
-          validator: validator,
           initialValue: initialValue,
           builder: (FormFieldState<bool> state) {
             return CheckboxListTile(

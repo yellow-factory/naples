@@ -5,10 +5,10 @@ class LengthWidget extends InheritedWidget {
   final ValueNotifier<int> length;
 
   const LengthWidget({
-    Key? key,
-    required Widget child,
+    super.key,
+    required super.child,
     required this.length,
-  }) : super(key: key, child: child);
+  });
 
   static LengthWidget of(BuildContext context) {
     var result = context.dependOnInheritedWidgetOfExactType<LengthWidget>();
@@ -23,7 +23,7 @@ class LengthWidget extends InheritedWidget {
 class LengthProvider extends StatefulWidget {
   final Widget child;
 
-  const LengthProvider({Key? key, required this.child}) : super(key: key);
+  const LengthProvider({super.key, required this.child});
 
   @override
   LengthProviderState createState() => LengthProviderState();
@@ -56,9 +56,9 @@ class LengthProviderState extends State<LengthProvider> {
 class LengthConsumerWidget extends StatelessWidget {
   final FunctionOf1<int, Widget> builder;
   const LengthConsumerWidget({
-    Key? key,
+    super.key,
     required this.builder,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

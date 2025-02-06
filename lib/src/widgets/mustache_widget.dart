@@ -14,8 +14,8 @@ class MustacheWidget<T extends IMustacheValues> extends StatelessWidget {
     required this.template,
     required this.locale,
     required this.builder,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -9,11 +9,11 @@ class MarkdownProperty extends StatelessWidget implements Expandable {
   final double? height;
 
   const MarkdownProperty({
-    Key? key,
+    super.key,
     required this.markdown,
     this.flex = 99,
     this.height,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

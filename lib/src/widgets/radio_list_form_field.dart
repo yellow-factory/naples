@@ -3,25 +3,20 @@ import 'package:navy/navy.dart';
 
 class RadioListFormField<U, V> extends FormField<U> {
   RadioListFormField({
-    Key? key,
+    super.key,
     required String label,
     String? hint,
     ListTileControlAffinity controlAffinity = ListTileControlAffinity.platform,
-    U? initialValue,
+    super.initialValue,
     bool autofocus = false,
-    bool enabled = true,
-    FormFieldSetter<U>? onSaved,
-    FormFieldValidator<U>? validator,
+    super.enabled = true,
+    super.onSaved,
+    super.validator,
     required FunctionOf0<List<V>> listItems,
     required FunctionOf1<V, U> valueMember, //Function to project U from V
     required FunctionOf1<V, FunctionOf0<String>> displayMember,
     Function(U?)? onChanged,
   }) : super(
-          key: key,
-          onSaved: onSaved,
-          validator: validator,
-          initialValue: initialValue,
-          enabled: enabled,
           builder: (FormFieldState<U> state) {
             void onChangedCall(U? value) {
               state.didChange(value);

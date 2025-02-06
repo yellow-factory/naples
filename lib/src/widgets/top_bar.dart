@@ -4,10 +4,10 @@ class TopBar extends StatelessWidget {
   final String? title;
   final List<Widget> actions;
   const TopBar({
-    Key? key,
+    super.key,
     this.title,
     this.actions = const [],
-  }) : super(key: key);
+  });
 
   Widget _getActions() {
     return OverflowBar(

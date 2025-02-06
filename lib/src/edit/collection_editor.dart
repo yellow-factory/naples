@@ -37,8 +37,8 @@ class CollectionEditor<ListItem> extends StatefulWidget implements Expandable {
     this.delete,
     this.flex = 1,
     this.editable,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   CollectionEditorState<ListItem> createState() => CollectionEditorState<ListItem>();
@@ -193,12 +193,12 @@ class _InnerEditWidget extends StatelessWidget {
   final String? title;
 
   const _InnerEditWidget({
-    Key? key,
+    super.key,
     required this.child,
     required this.accept,
     required this.cancel,
     this.title,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

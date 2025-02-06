@@ -4,10 +4,10 @@ class CardDividedContainer extends StatelessWidget {
   final Widget headerChild;
   final Widget bodyChild;
   const CardDividedContainer({
-    Key? key,
+    super.key,
     required this.headerChild,
     required this.bodyChild,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +29,12 @@ class DividedContainer extends StatelessWidget {
   final bool showDivider;
   final bool indentDivider;
   const DividedContainer({
-    Key? key,
+    super.key,
     required this.headerChild,
     required this.bodyChild,
     this.indentDivider = true,
     this.showDivider = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

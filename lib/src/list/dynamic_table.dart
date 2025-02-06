@@ -7,11 +7,11 @@ class DynamicTable<T> extends StatelessWidget {
   final List<T> items;
 
   const DynamicTable({
-    Key? key,
+    super.key,
     required this.dataColumns,
     required this.getDataRow,
     required this.items,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

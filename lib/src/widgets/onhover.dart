@@ -4,7 +4,7 @@ typedef HoverBuilder = Widget Function(bool hover);
 
 class OnHoverWidget extends StatefulWidget {
   final HoverBuilder builder;
-  const OnHoverWidget({Key? key, required this.builder}) : super(key: key);
+  const OnHoverWidget({super.key, required this.builder});
 
   @override
   State<OnHoverWidget> createState() => _OnHoverWidgetState();

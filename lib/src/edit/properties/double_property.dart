@@ -26,7 +26,7 @@ class DoubleProperty extends ModelPropertyWidget<double?>
   final bool obscureText;
 
   DoubleProperty({
-    Key? key,
+    super.key,
     required this.label,
     this.hint,
     this.autofocus = false,
@@ -36,7 +36,7 @@ class DoubleProperty extends ModelPropertyWidget<double?>
     this.validator,
     this.flex = 1,
     this.obscureText = false,
-  }) : super(key: key);
+  });
 
   double? _getValue(String? x) => x == null ? null : double.tryParse(x);
 

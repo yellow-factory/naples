@@ -13,7 +13,7 @@ class ActionWidget extends StatelessWidget {
       return FocusTraversalOrder(
         order: const NumericFocusOrder(0),
         child: ElevatedButton(
-          onPressed: action == null ? null : action!,
+          onPressed: action,
           child: txtTitle,
         ),
       );
@@ -31,13 +31,13 @@ class ActionWidget extends StatelessWidget {
 class ActionsListWidget extends StatelessWidget {
   final List<ActionWidget> actions;
 
-  const ActionsListWidget({Key? key, required this.actions}) : super(key: key);
+  const ActionsListWidget({super.key, required this.actions});
 
   @override
   Widget build(BuildContext context) {
     return FocusTraversalGroup(
         policy: OrderedTraversalPolicy(),
-        child: ButtonBar(
+        child: OverflowBar(
           children: actions.reversed.toList(),
         ));
   }

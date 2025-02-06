@@ -43,7 +43,7 @@ class SelectProperty<U, V> extends ModelPropertyWidget<U?>
   final bool saveOnValueChanged;
 
   SelectProperty({
-    Key? key,
+    super.key,
     required this.label,
     this.hint,
     this.autofocus = false,
@@ -57,7 +57,7 @@ class SelectProperty<U, V> extends ModelPropertyWidget<U?>
     required this.displayMember,
     this.widgetType = SelectWidgetType.dropDown,
     this.saveOnValueChanged = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -68,8 +68,6 @@ class SelectProperty<U, V> extends ModelPropertyWidget<U?>
         return _getRadioList(listItems());
       case SelectWidgetType.dialog:
         return _getDialog(listItems());
-      default:
-        return _getDropDown(listItems());
     }
   }
 

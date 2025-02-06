@@ -18,8 +18,8 @@ class ListLoader<T> extends StatefulWidget {
     required this.builder,
     this.onLoading,
     this.onLoaded,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   ListLoaderState<T> createState() => ListLoaderState<T>();

@@ -65,7 +65,7 @@ class FileWidgetState extends State<FileWidget> {
                 leading: const Icon(Icons.attachment_outlined),
                 title: Text(fileName!),
               ),
-            ButtonBar(
+            OverflowBar(
               children: <Widget>[
                 if (fileId != null)
                   OutlinedButton.icon(

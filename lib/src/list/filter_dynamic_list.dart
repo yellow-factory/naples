@@ -10,13 +10,13 @@ class FilterDynamicList<T> extends StatelessWidget {
   final String filterBy;
 
   const FilterDynamicList({
-    Key? key,
+    super.key,
     required this.items,
     required this.itemTitle,
     this.itemSubtitle,
     this.onSelected,
     required this.filterBy,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

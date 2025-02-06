@@ -7,10 +7,10 @@ class NavigationWidget<T> extends StatefulWidget {
   final FunctionOf1<T, Widget> currentStepBuilder;
 
   const NavigationWidget({
-    Key? key,
+    super.key,
     required this.currentStepBuilder,
     required this.navigationModel,
-  }) : super(key: key);
+  });
 
   @override
   State<NavigationWidget<T>> createState() => _NavigationWidgetState<T>();

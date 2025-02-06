@@ -5,9 +5,9 @@ class DividerProperty extends StatelessWidget implements Expandable {
   @override
   final int flex;
   const DividerProperty({
-    Key? key,
+    super.key,
     this.flex = 99,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) => const Divider();
@@ -20,5 +20,4 @@ class DividerProperty extends StatelessWidget implements Expandable {
   //           indent: 20,
   //           endIndent: 0,
   //         ),
-
 }

@@ -30,7 +30,7 @@ class DateTimeProperty extends ModelPropertyWidget<DateTime?>
   final DateTime? lastDate;
 
   DateTimeProperty({
-    Key? key,
+    super.key,
     required this.getProperty,
     required this.label,
     this.hint,
@@ -43,7 +43,7 @@ class DateTimeProperty extends ModelPropertyWidget<DateTime?>
     this.onlyDate = false,
     this.firstDate,
     this.lastDate,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

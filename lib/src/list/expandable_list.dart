@@ -21,7 +21,7 @@ class ExpandableList<T> extends StatelessWidget {
   final double expandedHeight;
 
   const ExpandableList({
-    Key? key,
+    super.key,
     required this.title,
     required this.getStream,
     required this.itemTitle,
@@ -31,7 +31,7 @@ class ExpandableList<T> extends StatelessWidget {
     this.select,
     this.create,
     this.expandedHeight = 400,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

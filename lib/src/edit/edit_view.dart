@@ -21,8 +21,8 @@ class EditView extends StatelessWidget {
     this.savedMessage,
     this.valid = true,
     this.goBack = true,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -69,8 +69,7 @@ class NavigationModel<T> extends ChangeNotifier {
 
   @protected
   Transition<T>? getTransition(T beginningState, T endingState) {
-    var test =
-        (element) => element.beginningState == beginningState && element.endingState == endingState;
+    test(element) => element.beginningState == beginningState && element.endingState == endingState;
     if (_transitions.any(test)) return _transitions.firstWhere(test);
     return null;
   }
@@ -137,7 +136,7 @@ class StateMachineWidget<T, U> extends StatefulWidget {
   //TODO: a partir d'un estat de tipus T torna un widget??
   final Map<T, T> builder;
 
-  const StateMachineWidget(this.currentState, this.builder);
+  const StateMachineWidget(this.currentState, this.builder, {super.key});
 
   @override
   _StateMachineWidgetState<T, U> createState() => _StateMachineWidgetState<T, U>();

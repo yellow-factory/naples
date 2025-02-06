@@ -17,7 +17,7 @@ class CollectionProperty<T> extends StatelessWidget {
   final PredicateOf0? editable;
 
   const CollectionProperty({
-    Key? key,
+    super.key,
     required this.name,
     this.description,
     this.width = 800,
@@ -29,7 +29,7 @@ class CollectionProperty<T> extends StatelessWidget {
     required this.updateWidget,
     this.onSaved,
     this.editable,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -9,12 +9,12 @@ class ExpandableProperty extends StatelessWidget implements Expandable {
   final double expandedHeight;
 
   const ExpandableProperty({
-    Key? key,
+    super.key,
     required this.label,
     required this.child,
     this.flex = 1,
     this.expandedHeight = 400,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

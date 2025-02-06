@@ -45,14 +45,14 @@ class DistributionWidget extends StatelessWidget {
   final EdgeInsetsGeometry? childPadding;
 
   const DistributionWidget({
-    Key? key,
+    super.key,
     required this.children,
     this.fixed = 1,
     this.maxFlex = 1,
     this.normalize = true,
     this.distribution = DistributionType.leftToRight,
     this.childPadding,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -93,8 +93,7 @@ class _TopToBottomDistributionWidget extends StatelessWidget {
   final int maxFlex;
 
   const _TopToBottomDistributionWidget(this.children,
-      {Key? key, this.fixedWidgetsPerColumn = 1, this.maxFlex = 1, this.normalize = true})
-      : super(key: key);
+      {this.fixedWidgetsPerColumn = 1, this.maxFlex = 1, this.normalize = true});
 
   @override
   Widget build(BuildContext context) {
@@ -197,8 +196,7 @@ class _LeftToRightDistributionWidget extends StatelessWidget {
   final bool normalize;
 
   const _LeftToRightDistributionWidget(this.children,
-      {Key? key, this.fixedWidgetsPerRow = 1, this.maxFlex = 99, this.normalize = true})
-      : super(key: key);
+      {this.fixedWidgetsPerRow = 1, this.maxFlex = 99, this.normalize = true});
 
   @override
   Widget build(BuildContext context) {
@@ -241,8 +239,7 @@ class _ContainerDistributionWidget extends StatelessWidget {
   final List<List<_DistributionExpanded>> children;
   final bool normalize;
 
-  const _ContainerDistributionWidget(this.children, {Key? key, this.normalize = true})
-      : super(key: key);
+  const _ContainerDistributionWidget(this.children, {this.normalize = true});
 
   @override
   Widget build(BuildContext context) {
@@ -288,12 +285,11 @@ class PlaygroundDistributionWidget extends StatefulWidget {
   final DistributionType distribution;
 
   const PlaygroundDistributionWidget(this.children,
-      {Key? key,
+      {super.key,
       this.fixed = 1,
       this.maxFlex = 99,
       this.normalize = true,
-      this.distribution = DistributionType.leftToRight})
-      : super(key: key);
+      this.distribution = DistributionType.leftToRight});
 
   @override
   PlaygroundDistributionWidgetState createState() => PlaygroundDistributionWidgetState();

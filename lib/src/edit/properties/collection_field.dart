@@ -17,7 +17,7 @@ class CollectionField<T> extends StatefulWidget {
   final PredicateOf0? editable;
 
   const CollectionField(
-      {Key? key,
+      {super.key,
       required this.name,
       this.description,
       this.width = 800,
@@ -28,8 +28,7 @@ class CollectionField<T> extends StatefulWidget {
       required this.createWidget,
       required this.updateWidget,
       this.editable,
-      this.onChanged})
-      : super(key: key);
+      this.onChanged});
 
   @override
   State<CollectionField> createState() => _CollectionFieldState<T>();

@@ -30,7 +30,7 @@ class StringProperty extends ModelPropertyWidget<String?>
   final bool readOnly;
 
   StringProperty({
-    Key? key,
+    super.key,
     required this.label,
     this.hint,
     this.autofocus = false,
@@ -43,7 +43,7 @@ class StringProperty extends ModelPropertyWidget<String?>
     this.maxLength = -1,
     this.showCopyButton = false,
     this.readOnly = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

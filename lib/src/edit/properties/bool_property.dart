@@ -48,7 +48,7 @@ class BoolProperty extends ModelPropertyWidget<bool?>
   final bool saveOnValueChanged;
 
   BoolProperty({
-    Key? key,
+    super.key,
     required this.label,
     this.hint,
     this.autofocus = false,
@@ -61,7 +61,7 @@ class BoolProperty extends ModelPropertyWidget<bool?>
     this.widgetPosition = BoolWidgetPosition.leading,
     this.displayName = defaultDisplayName,
     this.saveOnValueChanged = false,
-  }) : super(key: key);
+  });
 
   static FunctionOf0<String> defaultDisplayName(BoolValues t) => () => t.displayName;
 
@@ -128,8 +128,6 @@ class BoolProperty extends ModelPropertyWidget<bool?>
           valueMember: (t) => t.boolValue,
           displayMember: displayName,
         );
-      default:
-        return defaultWidget;
     }
   }
 }

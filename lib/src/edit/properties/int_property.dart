@@ -27,7 +27,7 @@ class IntProperty extends ModelPropertyWidget<int?>
   final bool obscureText;
 
   IntProperty({
-    Key? key,
+    super.key,
     required this.label,
     this.hint,
     this.autofocus = false,
@@ -38,7 +38,7 @@ class IntProperty extends ModelPropertyWidget<int?>
     this.flex = 1,
     this.obscureText = false,
     this.maxLength,
-  }) : super(key: key);
+  });
 
   int? _getValue(String? x) => x == null ? null : int.tryParse(x);
 

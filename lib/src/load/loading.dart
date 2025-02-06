@@ -10,9 +10,9 @@ class LoadingNotification extends Notification {
 class LoadingNotificationBuilder extends StatefulWidget {
   final Widget Function(BuildContext context, bool loading) builder;
   const LoadingNotificationBuilder({
-    Key? key,
+    super.key,
     required this.builder,
-  }) : super(key: key);
+  });
 
   @override
   State<LoadingNotificationBuilder> createState() => _LoadingNotificationBuilderState();
@@ -42,9 +42,9 @@ class _LoadingNotificationBuilderState extends State<LoadingNotificationBuilder>
 class Loading extends StatelessWidget {
   final Widget child;
   const Loading({
-    Key? key,
+    super.key,
     required this.child,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

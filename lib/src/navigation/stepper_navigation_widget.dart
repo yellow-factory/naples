@@ -14,7 +14,7 @@ class StepperNavigationWidget<T> extends StatefulWidget {
   final bool indexedIcons;
 
   const StepperNavigationWidget({
-    Key? key,
+    super.key,
     required this.currentStepTitleBuilder,
     required this.currentStepContentBuilder,
     required this.navigationModel,
@@ -23,10 +23,10 @@ class StepperNavigationWidget<T> extends StatefulWidget {
   });
 
   @override
-  _StepperNavigationWidgetState<T> createState() => _StepperNavigationWidgetState<T>();
+  StepperNavigationWidgetState<T> createState() => StepperNavigationWidgetState<T>();
 }
 
-class _StepperNavigationWidgetState<T> extends State<StepperNavigationWidget<T>> {
+class StepperNavigationWidgetState<T> extends State<StepperNavigationWidget<T>> {
   bool _isValid = false;
   late T _currentState;
   late Iterable<T> _history;

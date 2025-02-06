@@ -11,16 +11,16 @@ class StepNavigationWidget<T> extends StatefulWidget {
   final FunctionOf2<T, ActionOf1<bool>, Widget> currentStepContentBuilder;
 
   const StepNavigationWidget({
-    Key? key,
+    super.key,
     this.currentStepTitleBuilder,
     required this.currentStepContentBuilder,
-  }) : super(key: key);
+  });
 
   @override
-  _StepNavigationWidgetState<T> createState() => _StepNavigationWidgetState<T>();
+  StepNavigationWidgetState<T> createState() => StepNavigationWidgetState<T>();
 }
 
-class _StepNavigationWidgetState<T> extends State<StepNavigationWidget<T>> {
+class StepNavigationWidgetState<T> extends State<StepNavigationWidget<T>> {
   final _animationKey = GlobalKey<BackForwardAnimationWidgetState>();
   bool _isValid = false;
 
@@ -61,7 +61,7 @@ class _StepNavigationWidgetState<T> extends State<StepNavigationWidget<T>> {
                 action: _isValid
                     ? () {
                         _animationKey.currentState?.direction =
-                            BackForwardAnimationDirection.Forward;
+                            BackForwardAnimationDirection.forward;
                         navigationModel.forward();
                       }
                     : null,
@@ -71,7 +71,7 @@ class _StepNavigationWidgetState<T> extends State<StepNavigationWidget<T>> {
                 ActionWidget(
                   title: naplesLocalizations.torna,
                   action: () {
-                    _animationKey.currentState?.direction = BackForwardAnimationDirection.Back;
+                    _animationKey.currentState?.direction = BackForwardAnimationDirection.back;
                     navigationModel.back();
                   },
                 ),

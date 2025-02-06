@@ -10,17 +10,17 @@ class BackForwardAnimationWidget extends StatefulWidget {
     this.duration = const Duration(milliseconds: 500),
     this.reverseDuration = const Duration(milliseconds: 500),
     this.showOnlyInWidget = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   BackForwardAnimationWidgetState createState() => BackForwardAnimationWidgetState();
 }
 
-enum BackForwardAnimationDirection { Back, Forward }
+enum BackForwardAnimationDirection { back, forward }
 
 class BackForwardAnimationWidgetState extends State<BackForwardAnimationWidget> {
-  BackForwardAnimationDirection _direction = BackForwardAnimationDirection.Forward;
+  BackForwardAnimationDirection _direction = BackForwardAnimationDirection.forward;
   BackForwardAnimationDirection get direction => _direction;
   set direction(BackForwardAnimationDirection value) {
     setState(() {
@@ -28,7 +28,7 @@ class BackForwardAnimationWidgetState extends State<BackForwardAnimationWidget> 
     });
   }
 
-  double get directionV => direction == BackForwardAnimationDirection.Forward ? 1 : -1;
+  double get directionV => direction == BackForwardAnimationDirection.forward ? 1 : -1;
 
   @override
   Widget build(BuildContext context) {
