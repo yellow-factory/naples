@@ -14,7 +14,7 @@ class CustomProperty extends StatefulWidget {
   final Function? delete;
   final PredicateOf0? editable;
   const CustomProperty({
-    Key? key,
+    super.key,
     required this.title,
     this.subtitle,
     required this.description,
@@ -23,7 +23,7 @@ class CustomProperty extends StatefulWidget {
     required this.set,
     this.delete,
     this.editable,
-  }) : super(key: key);
+  });
 
   @override
   State<CustomProperty> createState() => _CustomPropertyState();
@@ -95,8 +95,6 @@ class _CustomPropertyState extends State<CustomProperty> {
         break;
       case AcceptCancelDeleteDialogOptions.cancel:
         break;
-      default:
-        throw Exception('Unexpected dialog result: $result');
     }
   }
 
@@ -106,7 +104,7 @@ class _CustomPropertyState extends State<CustomProperty> {
       controller: _descriptionController,
       readOnly: true,
       enabled: true,
-      autofocus: false,
+      autofocus: false,      
       decoration: InputDecoration(
         labelText: widget.title,
         suffixIcon: (widget.editable ?? () => true)()

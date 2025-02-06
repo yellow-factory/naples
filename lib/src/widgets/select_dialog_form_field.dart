@@ -4,25 +4,20 @@ import 'package:navy/navy.dart';
 
 class SelectDialogFormField<U, V> extends FormField<U> {
   SelectDialogFormField({
-    Key? key,
+    super.key,
     required String label,
     String? hint,
     ListTileControlAffinity controlAffinity = ListTileControlAffinity.platform,
-    U? initialValue,
+    super.initialValue,
     bool autofocus = false,
-    bool enabled = true,
-    FormFieldSetter<U>? onSaved,
-    FormFieldValidator<U>? validator,
+    super.enabled = true,
+    super.onSaved,
+    super.validator,
     required FunctionOf0<List<V>> listItems,
     required FunctionOf1<V, U> valueMember, //Function to project U from V
     required FunctionOf1<V, FunctionOf0<String>> displayMember,
     Function(U?)? onChanged,
   }) : super(
-          key: key,
-          onSaved: onSaved,
-          validator: validator,
-          initialValue: initialValue,
-          enabled: enabled,
           builder: (FormFieldState<U> state) {
             final items = listItems();
             final valueV = state.value == null ||

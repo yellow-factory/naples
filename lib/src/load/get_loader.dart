@@ -11,10 +11,10 @@ class GetLoader<T> extends StatefulWidget {
   final FunctionOf1<T, Widget> builder;
 
   const GetLoader({
+    super.key,
     required this.get,
     required this.builder,
-    Key? key,
-  }) : super(key: key);
+  });
 
   @override
   GetLoaderState<T> createState() => GetLoaderState<T>();

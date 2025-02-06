@@ -14,14 +14,14 @@ class AcceptCancelDeleteDialog extends StatefulWidget {
   final bool showDelete;
 
   const AcceptCancelDeleteDialog({
-    Key? key,
+    super.key,
     required this.title,
     this.subtitle,
     required this.child,
     this.valid = true,
     this.validate,
     this.showDelete = false,
-  }) : super(key: key);
+  });
 
   @override
   State<AcceptCancelDeleteDialog> createState() => _AcceptCancelDeleteDialogState();

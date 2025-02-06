@@ -5,9 +5,9 @@ enum YesNoDialogOptions { yes, no }
 class ConfirmDeleteDialog extends StatelessWidget {
   final String itemName;
   const ConfirmDeleteDialog({
-    Key? key,
+    super.key,
     required this.itemName,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
