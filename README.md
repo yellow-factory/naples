@@ -24,7 +24,6 @@ The file must be imported in the project that uses naples:
 
 ````
     ...
-    import 'package:flutter_gen/gen_l10n/app_localizations.dart';
     import 'package:naples/l10n/generated/naples_localizations.dart';
 
     ...
