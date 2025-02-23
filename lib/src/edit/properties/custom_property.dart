@@ -52,13 +52,13 @@ class _CustomPropertyState extends State<CustomProperty> {
 
   Future<void> _delete() async {
     await widget.delete!();
-    _descriptionController.text = '';
+    if (mounted) _descriptionController.text = '';
   }
 
   Future<void> _set() async {
     _formKey.currentState?.save();
     widget.set();
-    _descriptionController.text = await widget.description();
+    if (mounted) _descriptionController.text = await widget.description();
   }
 
   Future<void> _showSelectDialog() async {
@@ -73,10 +73,7 @@ class _CustomPropertyState extends State<CustomProperty> {
             showDelete: widget.delete != null,
             validate: () => _formKey.currentState?.validate() ?? true,
             child: SingleChildScrollView(
-              child: SizedBox(
-                width: widget.editContentWidth,
-                child: widget.editContent,
-              ),
+              child: SizedBox(width: widget.editContentWidth, child: widget.editContent),
             ),
           ),
         );
@@ -104,15 +101,13 @@ class _CustomPropertyState extends State<CustomProperty> {
       controller: _descriptionController,
       readOnly: true,
       enabled: true,
-      autofocus: false,      
+      autofocus: false,
       decoration: InputDecoration(
         labelText: widget.title,
-        suffixIcon: (widget.editable ?? () => true)()
-            ? IconButton(
-                onPressed: _showSelectDialog,
-                icon: const Icon(Icons.edit),
-              )
-            : null,
+        suffixIcon:
+            (widget.editable ?? () => true)()
+                ? IconButton(onPressed: _showSelectDialog, icon: const Icon(Icons.edit))
+                : null,
       ),
     );
   }

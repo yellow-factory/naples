@@ -15,6 +15,10 @@ abstract class ModelPropertyWidget<U> extends StatelessWidget implements ModelPr
   const ModelPropertyWidget({super.key});
 }
 
+abstract class ModelPropertyStatefulWidget<U> extends StatefulWidget implements ModelProperty<U> {
+  const ModelPropertyStatefulWidget({super.key});
+}
+
 mixin ModelPropertyMixin<U> on ModelProperty<U> {
   bool get initialValid => validator == null ? true : validator!(getProperty()) == null;
   bool get enabled => ifNotNullPredicateOf0(editable, setProperty == null ? false : true);
