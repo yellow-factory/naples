@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:naples/src/widgets/radio_list_form_field.dart';
 import 'package:naples/src/widgets/switch_form_field.dart';
 import 'package:naples/src/widgets/checkbox_form_field.dart';
-import 'package:naples/src/edit/properties/model_property.dart';
+import 'package:naples/src/edit/properties/property.dart';
 import 'package:naples/src/common/common.dart';
 import 'package:naples/src/widgets/toggle_button_form_field.dart';
 import 'package:navy/navy.dart';
@@ -22,9 +22,7 @@ extension BoolValuesExtension on BoolValues {
   String get displayName => name;
 }
 
-class BoolProperty extends ModelPropertyWidget<bool?>
-    with ModelPropertyMixin<bool?>
-    implements Expandable {
+class BoolProperty extends PropertyWidget<bool?> with PropertyMixin<bool?> implements Expandable {
   @override
   final int flex;
   @override
@@ -67,9 +65,10 @@ class BoolProperty extends ModelPropertyWidget<bool?>
 
   @override
   Widget build(BuildContext context) {
-    final controlAffinity = widgetPosition == BoolWidgetPosition.leading
-        ? ListTileControlAffinity.leading
-        : ListTileControlAffinity.trailing;
+    final controlAffinity =
+        widgetPosition == BoolWidgetPosition.leading
+            ? ListTileControlAffinity.leading
+            : ListTileControlAffinity.trailing;
 
     final defaultWidget = CheckboxFormField(
       autofocus: autofocus,
@@ -83,8 +82,8 @@ class BoolProperty extends ModelPropertyWidget<bool?>
       saveOnValueChanged: saveOnValueChanged,
     );
 
-//TODO: He implementat el saveOnValueChanged a CheckboxFormField, però no a SwitchFormField, ToggleButtonFormField, RadioListFormField
-//però també cal fer el mateix amb els altres widgets
+    //TODO: He implementat el saveOnValueChanged a CheckboxFormField, però no a SwitchFormField, ToggleButtonFormField, RadioListFormField
+    //però també cal fer el mateix amb els altres widgets
 
     switch (widgetType) {
       case BoolWidgetType.switchBox:

@@ -3,7 +3,7 @@ import 'package:naples/src/common/common.dart';
 import 'package:naples/src/widgets/radio_list_form_field.dart';
 import 'package:naples/src/widgets/select_dialog_form_field.dart';
 import 'package:navy/navy.dart';
-import 'package:naples/src/edit/properties/model_property.dart';
+import 'package:naples/src/edit/properties/property.dart';
 
 //TODO: Crec que hi hauria d'haver un Select i un MultipleSelect per a casos de selecció múltiple
 //TODO: En el cas de MultipleSelect les opcions han de ser CheckBox, Chips o algun tipus de Dropdown...
@@ -14,9 +14,7 @@ enum SelectWidgetType { dropDown, radio, dialog }
 ///U defines the type of the property being edited which is a member of T
 ///V defines the type of the list of items being exposed in the list of options
 ///In some cases U and V may coincide
-class SelectProperty<U, V> extends ModelPropertyWidget<U?>
-    with ModelPropertyMixin<U?>
-    implements Expandable {
+class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> implements Expandable {
   @override
   final int flex;
   @override
@@ -124,17 +122,11 @@ class SelectProperty<U, V> extends ModelPropertyWidget<U?>
       for (var item in listItems())
         DropdownMenuItem<U>(
           value: valueMember(item),
-          child: Text(
-            displayMember(item)(),
-            overflow: TextOverflow.ellipsis,
-          ),
-        )
+          child: Text(displayMember(item)(), overflow: TextOverflow.ellipsis),
+        ),
     ];
     if (items.isEmpty) {
-      return const Text(
-        "No items to select",
-        overflow: TextOverflow.ellipsis,
-      );
+      return const Text("No items to select", overflow: TextOverflow.ellipsis);
     }
     return DropdownButtonFormField<U>(
       key: dropdownKey,
@@ -143,10 +135,7 @@ class SelectProperty<U, V> extends ModelPropertyWidget<U?>
       onSaved: setProperty,
       validator: validator,
       autofocus: autofocus,
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-      ),
+      decoration: InputDecoration(labelText: label, hintText: hint),
       onChanged: (value) {
         if (dropdownKey.currentState == null) return;
         if (saveOnValueChanged) dropdownKey.currentState!.save();

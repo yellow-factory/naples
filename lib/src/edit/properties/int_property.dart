@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:naples/src/common/common.dart';
 import 'package:navy/navy.dart';
-import 'package:naples/src/edit/properties/model_property.dart';
+import 'package:naples/src/edit/properties/property.dart';
 
-class IntProperty extends ModelPropertyWidget<int?>
-    with ModelPropertyMixin<int?>
-    implements Expandable {
+class IntProperty extends PropertyWidget<int?> with PropertyMixin<int?> implements Expandable {
   @override
   final int flex;
   @override

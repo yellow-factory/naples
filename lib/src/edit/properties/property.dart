@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:navy/navy.dart';
 
-abstract interface class ModelProperty<U> {
+abstract interface class Property<U> {
   String get label;
   String? get hint;
   bool get autofocus;
@@ -11,15 +11,15 @@ abstract interface class ModelProperty<U> {
   FunctionOf1<U, String?>? get validator;
 }
 
-abstract class ModelPropertyWidget<U> extends StatelessWidget implements ModelProperty<U> {
-  const ModelPropertyWidget({super.key});
+abstract class PropertyWidget<U> extends StatelessWidget implements Property<U> {
+  const PropertyWidget({super.key});
 }
 
-abstract class ModelPropertyStatefulWidget<U> extends StatefulWidget implements ModelProperty<U> {
-  const ModelPropertyStatefulWidget({super.key});
+abstract class PropertyStatefulWidget<U> extends StatefulWidget implements Property<U> {
+  const PropertyStatefulWidget({super.key});
 }
 
-mixin ModelPropertyMixin<U> on ModelProperty<U> {
+mixin PropertyMixin<U> on Property<U> {
   bool get initialValid => validator == null ? true : validator!(getProperty()) == null;
   bool get enabled => ifNotNullPredicateOf0(editable, setProperty == null ? false : true);
 }

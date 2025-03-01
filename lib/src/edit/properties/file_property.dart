@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:naples/src/common/common.dart';
 import 'package:naples/src/widgets/file_widget.dart';
 import 'package:navy/navy.dart';
-import 'package:naples/src/edit/properties/model_property.dart';
+import 'package:naples/src/edit/properties/property.dart';
 
-class FileProperty extends ModelPropertyWidget<String?>
-    with ModelPropertyMixin<String?>
+class FileProperty extends PropertyWidget<String?>
+    with PropertyMixin<String?>
     implements Expandable {
   @override
   final int flex;

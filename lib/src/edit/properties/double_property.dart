@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:naples/src/common/common.dart';
 import 'package:navy/navy.dart';
-import 'package:naples/src/edit/properties/model_property.dart';
+import 'package:naples/src/edit/properties/property.dart';
 
-class DoubleProperty extends ModelPropertyWidget<double?>
-    with ModelPropertyMixin<double?>
+class DoubleProperty extends PropertyWidget<double?>
+    with PropertyMixin<double?>
     implements Expandable {
   @override
   final int flex;
@@ -67,9 +67,7 @@ class DoubleProperty extends ModelPropertyWidget<double?>
       keyboardType: TextInputType.number,
       inputFormatters: [
         FilteringTextInputFormatter.singleLineFormatter,
-        FilteringTextInputFormatter.allow(
-          RegExp(r'[0-9.,E\-]'),
-        ),
+        FilteringTextInputFormatter.allow(RegExp(r'[0-9.,E\-]')),
       ],
       obscureText: obscureText,
       onSaved: setProperty == null ? null : (x) => setProperty!(_getValue(x)),

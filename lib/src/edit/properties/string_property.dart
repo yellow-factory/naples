@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:naples/src/common/common.dart';
 import 'package:navy/navy.dart';
-import 'package:naples/src/edit/properties/model_property.dart';
+import 'package:naples/src/edit/properties/property.dart';
 import 'package:clipboard/clipboard.dart';
 
-class StringProperty extends ModelPropertyWidget<String?>
-    with ModelPropertyMixin<String?>
+class StringProperty extends PropertyWidget<String?>
+    with PropertyMixin<String?>
     implements Expandable {
   @override
   final int flex;
@@ -53,23 +53,22 @@ class StringProperty extends ModelPropertyWidget<String?>
         //filled: true,
         hintText: hint,
         labelText: label,
-        suffixIcon: showCopyButton
-            ? IconButton(
-                icon: const Icon(Icons.copy),
-                onPressed: () {
-                  FlutterClipboard.copy(getProperty() ?? '');
-                },
-              )
-            : null,
+        suffixIcon:
+            showCopyButton
+                ? IconButton(
+                  icon: const Icon(Icons.copy),
+                  onPressed: () {
+                    FlutterClipboard.copy(getProperty() ?? '');
+                  },
+                )
+                : null,
       ),
       enabled: enabled,
       autofocus: autofocus,
       validator: validator,
       obscureText: obscureText,
       //maxLength: property.maxLength,
-      inputFormatters: [
-        LengthLimitingTextInputFormatter(maxLength),
-      ],
+      inputFormatters: [LengthLimitingTextInputFormatter(maxLength)],
       // minLines: 1,
       // maxLines: 3,
       onSaved: setProperty,
