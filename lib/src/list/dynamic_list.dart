@@ -14,6 +14,7 @@ class DynamicList<T> extends StatelessWidget {
   final bool onlyShowItemTrailingOnHover;
   final FunctionOf1<T, Future<void>>? select;
   final bool separated;
+  final bool dense;
   final ScrollController _scrollController = ScrollController();
 
   DynamicList({
@@ -25,6 +26,7 @@ class DynamicList<T> extends StatelessWidget {
     this.onlyShowItemTrailingOnHover = false,
     this.select,
     this.separated = false,
+    this.dense = false,
     super.key,
   });
 
@@ -33,49 +35,43 @@ class DynamicList<T> extends StatelessWidget {
     return Scrollbar(
       controller: _scrollController,
       child: ListView.builder(
-          itemExtent: _tileHeight(context),
-          controller: _scrollController,
-          itemCount: items.length,
-          itemBuilder: (BuildContext ctx, int index) {
-            if (index >= items.length) return const SizedBox();
-            final model = items[index];
-            return Column(
-              children: [
-                OnHoverWidget(
-                  builder: (hover) {
-                    return ListTile(
-                      dense: false,
-                      title: Text(
-                        itemTitle(model),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      subtitle: itemSubtitle != null
-                          ? Text(
-                              itemSubtitle!(model),
-                              overflow: TextOverflow.ellipsis,
-                            )
-                          : null,
-                      leading: itemLeading != null ? itemLeading!(model) : null,
-                      trailing: itemTrailing != null
-                          ? onlyShowItemTrailingOnHover == false ||
-                                  onlyShowItemTrailingOnHover && hover
-                              ? itemTrailing!(model)
-                              : null
-                          : null,
-                      onTap: () {
-                        if (select == null) return;
-                        select!(model);
-                      },
-                    );
-                  },
-                ),
-                if (separated)
-                  Divider(
-                    height: _defaultDividerHeight(context),
-                  ),
-              ],
-            );
-          }),
+        itemExtent: _tileHeight(context),
+        controller: _scrollController,
+        itemCount: items.length,
+        itemBuilder: (BuildContext ctx, int index) {
+          if (index >= items.length) return const SizedBox();
+          final model = items[index];
+          return Column(
+            children: [
+              OnHoverWidget(
+                builder: (hover) {
+                  return ListTile(
+                    dense: dense,
+                    title: Text(itemTitle(model), overflow: TextOverflow.ellipsis),
+                    subtitle:
+                        itemSubtitle != null
+                            ? Text(itemSubtitle!(model), overflow: TextOverflow.ellipsis)
+                            : null,
+                    leading: itemLeading != null ? itemLeading!(model) : null,
+                    trailing:
+                        itemTrailing != null
+                            ? onlyShowItemTrailingOnHover == false ||
+                                    onlyShowItemTrailingOnHover && hover
+                                ? itemTrailing!(model)
+                                : null
+                            : null,
+                    onTap: () {
+                      if (select == null) return;
+                      select!(model);
+                    },
+                  );
+                },
+              ),
+              if (separated) Divider(height: _defaultDividerHeight(context)),
+            ],
+          );
+        },
+      ),
     );
   }
 
