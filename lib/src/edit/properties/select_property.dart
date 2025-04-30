@@ -116,18 +116,18 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
     );
   }
 
-  Widget _getDropDown(List<V> items) {
+  Widget _getDropDown(List<V> itemsProvided) {
     final dropdownKey = GlobalKey<FormFieldState<U>>();
+    if (itemsProvided.isEmpty) {
+      return const Text("No items to select", overflow: TextOverflow.ellipsis);
+    }
     final items = <DropdownMenuItem<U>>[
-      for (var item in listItems())
+      for (var item in itemsProvided)
         DropdownMenuItem<U>(
           value: valueMember(item),
           child: Text(displayMember(item)(), overflow: TextOverflow.ellipsis),
         ),
     ];
-    if (items.isEmpty) {
-      return const Text("No items to select", overflow: TextOverflow.ellipsis);
-    }
     return DropdownButtonFormField<U>(
       key: dropdownKey,
       items: items,
