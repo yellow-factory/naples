@@ -7,7 +7,7 @@ import 'package:navy/navy.dart';
 class CustomProperty extends StatefulWidget {
   final String title;
   final String? subtitle;
-  final FunctionOf0<Future<String>> description;
+  final FunctionOf0<FutureOr<String>> description;
   final Widget editContent;
   final double editContentWidth;
   final Function set;

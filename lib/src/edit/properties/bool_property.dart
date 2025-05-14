@@ -44,6 +44,7 @@ class BoolProperty extends PropertyWidget<bool?> with PropertyMixin<bool?> imple
   final FunctionOf1<BoolValues, FunctionOf0<String>> displayName;
   //Calls setProperty on control value change
   final bool saveOnValueChanged;
+  final bool showHintExplicitly;
 
   BoolProperty({
     super.key,
@@ -59,9 +60,11 @@ class BoolProperty extends PropertyWidget<bool?> with PropertyMixin<bool?> imple
     this.widgetPosition = BoolWidgetPosition.leading,
     this.displayName = defaultDisplayName,
     this.saveOnValueChanged = false,
+    this.showHintExplicitly = false,
   });
 
-  static FunctionOf0<String> defaultDisplayName(BoolValues t) => () => t.displayName;
+  static FunctionOf0<String> defaultDisplayName(BoolValues t) =>
+      t == BoolValues.isTrue ? () => 'Yes' : () => 'No';
 
   @override
   Widget build(BuildContext context) {
@@ -80,9 +83,13 @@ class BoolProperty extends PropertyWidget<bool?> with PropertyMixin<bool?> imple
       validator: validator,
       controlAffinity: controlAffinity,
       saveOnValueChanged: saveOnValueChanged,
+      showHintExplicitly: showHintExplicitly,
     );
 
     //TODO: He implementat el saveOnValueChanged a CheckboxFormField, però no a SwitchFormField, ToggleButtonFormField, RadioListFormField
+    //però també cal fer el mateix amb els altres widgets
+
+    //TODO: He implementat el showHintExplicitly a CheckboxFormField, però no a SwitchFormField, ToggleButtonFormField, RadioListFormField
     //però també cal fer el mateix amb els altres widgets
 
     switch (widgetType) {

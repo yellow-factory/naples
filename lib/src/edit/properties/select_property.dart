@@ -1,3 +1,5 @@
+import 'dart:async'; // Added for FutureOr
+
 import 'package:flutter/material.dart';
 import 'package:naples/src/common/common.dart';
 import 'package:naples/src/widgets/radio_list_form_field.dart';
@@ -32,7 +34,7 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
   @override
   final FunctionOf1<U?, String?>? validator;
   final SelectWidgetType widgetType;
-  final FunctionOf0<List<V>> listItems;
+  final FunctionOf0<FutureOr<List<V>>> listItems; // Changed type here
   //Function to project U from V
   final FunctionOf1<V, U> valueMember;
   //Function to display the member as String
@@ -59,13 +61,47 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
 
   @override
   Widget build(BuildContext context) {
+    if (widgetType == SelectWidgetType.dialog) {
+      // For dialogs, pass listItems directly to _getDialog,
+      // which will pass it to SelectDialogFormField for deferred loading.
+      return _getDialog();
+    }
+
+    // For dropdown and radio, resolve listItems upfront.
+    final itemsFutureOrList = listItems();
+
+    if (itemsFutureOrList is Future<List<V>>) {
+      return FutureBuilder<List<V>>(
+        future: itemsFutureOrList,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Text('Error loading items: ${snapshot.error}');
+          }
+          if (snapshot.hasData) {
+            return _buildNonDialogWidgets(snapshot.data!);
+          }
+          return const Text("No items to select"); // Should not happen if future resolves
+        },
+      );
+    } else {
+      // Synchronous case
+      return _buildNonDialogWidgets(itemsFutureOrList);
+    }
+  }
+
+  Widget _buildNonDialogWidgets(List<V> resolvedItems) {
+    // This helper handles widgets that require items to be pre-loaded.
     switch (widgetType) {
       case SelectWidgetType.dropDown:
-        return _getDropDown(listItems());
+        return _getDropDown(resolvedItems);
       case SelectWidgetType.radio:
-        return _getRadioList(listItems());
+        return _getRadioList(resolvedItems);
       case SelectWidgetType.dialog:
-        return _getDialog(listItems());
+        // This case should not be reached here as dialogs are handled separately.
+        return const SizedBox.shrink(); // Should ideally throw an error or be unreachable
     }
   }
 
@@ -78,7 +114,7 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
       autofocus: autofocus,
       displayMember: displayMember,
       valueMember: valueMember,
-      listItems: listItems,
+      listItems: () => items, // Changed: pass resolved items
       enabled: enabled,
       initialValue: getProperty(),
       onSaved: setProperty,
@@ -95,18 +131,20 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
     );
   }
 
-  Widget _getDialog(List<V> items) {
+  Widget _getDialog() {
+    // No 'items' parameter needed here, as listItems is passed directly.
     final dialogKey = GlobalKey<FormFieldState<U>>();
     return SelectDialogFormField<U, V>(
       key: dialogKey,
       label: label,
       hint: hint,
-      autofocus: autofocus,
+      // autofocus is not directly applicable to SelectDialogFormField's TextField in this setup
+      // as it's read-only. Autofocus for the dialog itself would be handled by showSelectDialog.
       enabled: enabled,
       initialValue: getProperty(),
       onSaved: setProperty,
       validator: validator,
-      listItems: listItems,
+      listItems: listItems, // Pass the original listItems function
       valueMember: valueMember,
       displayMember: displayMember,
       onChanged: (value) {

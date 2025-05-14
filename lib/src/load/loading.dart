@@ -89,7 +89,7 @@ class LoadingProgressIndicator extends StatelessWidget {
           AbsorbPointer(
             absorbing: true,
             child: Container(
-              color: Colors.black.withAlpha(50),
+              color: Colors.black.withAlpha(15),
               child:
                   type == LoadingProgressType.circular
                       ? const Center(child: CircularProgressIndicator())
@@ -112,14 +112,14 @@ class BlinkingShadowIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     //return Container(color: const Color.fromARGB(196, 224, 224, 224));
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
+      baseColor: Colors.grey[200]!,
       highlightColor: Colors.grey[100]!,
       child: Container(
         width: double.infinity,
         height: height,
 
         decoration: BoxDecoration(
-          color: Colors.grey[300],
+          color: Colors.grey[200],
           borderRadius: BorderRadius.circular(borderRadius),
         ),
       ),
