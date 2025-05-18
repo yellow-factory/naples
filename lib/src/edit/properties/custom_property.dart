@@ -106,7 +106,7 @@ class _CustomPropertyState extends State<CustomProperty> {
         labelText: widget.title,
         suffixIcon:
             (widget.editable ?? () => true)()
-                ? IconButton(onPressed: _showSelectDialog, icon: const Icon(Icons.edit))
+                ? IconButton(onPressed: _showSelectDialog, icon: const Icon(Icons.edit_outlined))
                 : null,
       ),
     );

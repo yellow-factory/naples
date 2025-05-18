@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
@@ -7,14 +8,10 @@ import 'package:navy/navy.dart';
 import 'loading.dart';
 
 class GetLoader<T> extends StatefulWidget {
-  final FunctionOf0<Future<T>> get;
+  final FunctionOf0<FutureOr<T>> get;
   final FunctionOf1<T, Widget> builder;
 
-  const GetLoader({
-    super.key,
-    required this.get,
-    required this.builder,
-  });
+  const GetLoader({super.key, required this.get, required this.builder});
 
   @override
   GetLoaderState<T> createState() => GetLoaderState<T>();
@@ -68,11 +65,7 @@ class GetLoaderState<T> extends State<GetLoader<T>> {
         refresh();
         return true;
       },
-      child: ifNotNullFunctionOf1(
-        _item,
-        (T item) => widget.builder(item),
-        const SizedBox(),
-      ),
+      child: ifNotNullFunctionOf1(_item, (T item) => widget.builder(item), const SizedBox()),
     );
   }
 }

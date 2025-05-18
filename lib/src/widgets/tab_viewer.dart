@@ -7,6 +7,8 @@ import 'package:navy/navy.dart';
 class TabItem {
   final Widget body;
   String? title;
+  String? titleBadge;
+  String? tooltip;
   IconData? icon;
   int? length;
   TabCollection? tabCollection;
@@ -14,6 +16,8 @@ class TabItem {
   TabItem({
     required this.body,
     this.title,
+    this.titleBadge,
+    this.tooltip,
     this.icon,
     this.length,
     this.tabCollection,
@@ -40,14 +44,14 @@ class TabCollection extends ChangeNotifier {
     if (_selectionItemOrderIndexes.isEmpty || _selectionItemOrderIndexes.last != index) {
       _selectionItemOrderIndexes.add(index);
     }
+    notifyListeners();
   }
 
   void add(TabItem tab) {
     var newIndex = _items.length;
     _items.add(tab);
-    notifyIndexChange(newIndex);
     tab.tabCollection = this;
-    notifyListeners();
+    notifyIndexChange(newIndex);
   }
 
   void remove(TabItem tab) {
@@ -89,6 +93,34 @@ class TabCollection extends ChangeNotifier {
     });
   }
 
+  void changeCurrentTitleBadge(String titleBadge) {
+    if (currentItem == null) throw Exception('There is no current item');
+    changeTitleBadge(currentItem!, titleBadge);
+  }
+
+  void changeTitleBadge(TabItem tab, String titleBadge) {
+    scheduleMicrotask(() {
+      var item = _items[_items.indexOf(tab)];
+      if (item.titleBadge == titleBadge) return;
+      item.titleBadge = titleBadge;
+      notifyListeners();
+    });
+  }
+
+  void changeCurrentTooltip(String tooltip) {
+    if (currentItem == null) throw Exception('There is no current item');
+    changeTooltip(currentItem!, tooltip);
+  }
+
+  void changeTooltip(TabItem tab, String tooltip) {
+    scheduleMicrotask(() {
+      var item = _items[_items.indexOf(tab)];
+      if (item.tooltip == tooltip) return;
+      item.tooltip = tooltip;
+      notifyListeners();
+    });
+  }
+
   void changeCurrentIcon(IconData icon) {
     if (currentItem == null) throw Exception('There is no current item');
     changeIcon(currentItem!, icon);
@@ -121,10 +153,8 @@ class TabCollection extends ChangeNotifier {
 }
 
 class _TabViewerScope extends InheritedWidget {
-  const _TabViewerScope({
-    required super.child,
-    required TabViewerState tabbingViewerState,
-  }) : _tabbingViewerState = tabbingViewerState;
+  const _TabViewerScope({required super.child, required TabViewerState tabbingViewerState})
+    : _tabbingViewerState = tabbingViewerState;
 
   final TabViewerState _tabbingViewerState;
 
@@ -134,10 +164,7 @@ class _TabViewerScope extends InheritedWidget {
 
 class TabViewer extends StatefulWidget {
   final FunctionOf1<Widget, Widget> builder;
-  const TabViewer({
-    super.key,
-    required this.builder,
-  });
+  const TabViewer({super.key, required this.builder});
 
   @override
   State<TabViewer> createState() => TabViewerState();
@@ -156,11 +183,7 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     tabCollection.addListener(_changeTabController);
-    _tabController = TabController(
-      vsync: this,
-      length: tabCollection.length,
-      initialIndex: 0,
-    );
+    _tabController = TabController(vsync: this, length: tabCollection.length, initialIndex: 0);
     _tabController.addListener(notifyIndexChange);
   }
 
@@ -215,32 +238,58 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
     );
   }
 
-  Widget _getTab(TabItem tab) {
-    return Tab(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          if (tab.icon != null)
-            Padding(
-              padding: const EdgeInsets.only(left: 5, right: 20),
-              child: tab.length == null
-                  ? Icon(tab.icon)
-                  : Badge.count(
-                      count: tab.length!,
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
-                      child: Icon(tab.icon),
-                    ),
-            ),
-          Text(tab.title ?? ''),
-          IconButton(
-            icon: const Icon(Icons.close),
-            splashRadius: 16,
-            iconSize: 16,
-            onPressed: () {
-              tabCollection.remove(tab);
-            },
+  Widget? _getIconWidget(TabItem tab) {
+    if (tab.icon == null) return null;
+    var icon = Icon(tab.icon, color: Theme.of(context).colorScheme.secondary);
+    // If length is not null, show a badge with the count
+    return Padding(
+      padding: const EdgeInsets.only(left: 5, right: 20),
+      child:
+          tab.length == null
+              ? icon
+              : Badge.count(
+                count: tab.length!,
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                child: icon,
+              ),
+    );
+  }
+
+  Widget _getTitleWidget(TabItem tab) {
+    var title = Text(tab.title ?? '', style: const TextStyle(fontSize: 12));
+    // If titleBadge is not null, show a badge with the count
+    return tab.titleBadge == null
+        ? title
+        : Padding(
+          padding: EdgeInsets.only(right: 30),
+          child: Badge(
+            offset: const Offset(20, -4),
+            label: Text(tab.titleBadge!),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            child: title,
           ),
-        ],
+        );
+  }
+
+  Widget _getTab(TabItem tab) {
+    return Tooltip(
+      message: !tab.isSelected ? tab.tooltip ?? '' : '',
+      child: Tab(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _getIconWidget(tab) ?? SizedBox(),
+            _getTitleWidget(tab),
+            IconButton(
+              icon: const Icon(Icons.close),
+              splashRadius: 16,
+              iconSize: 16,
+              onPressed: () {
+                tabCollection.remove(tab);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

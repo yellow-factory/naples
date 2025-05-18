@@ -198,7 +198,7 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
                   ),
                 )
                 : IconButton(
-                  icon: const Icon(Icons.edit),
+                  icon: const Icon(Icons.edit_outlined),
                   onPressed: widget.enabled ? _showSelectionDialog : null,
                 ),
       ),

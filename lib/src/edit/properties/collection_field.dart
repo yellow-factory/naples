@@ -16,19 +16,20 @@ class CollectionField<T> extends StatefulWidget {
   final ActionOf1<List<T>>? onChanged;
   final PredicateOf0? editable;
 
-  const CollectionField(
-      {super.key,
-      required this.name,
-      this.description,
-      this.width = 800,
-      required this.itemTitle,
-      this.initialValue,
-      required this.createT,
-      required this.updateT,
-      required this.createWidget,
-      required this.updateWidget,
-      this.editable,
-      this.onChanged});
+  const CollectionField({
+    super.key,
+    required this.name,
+    this.description,
+    this.width = 800,
+    required this.itemTitle,
+    this.initialValue,
+    required this.createT,
+    required this.updateT,
+    required this.createWidget,
+    required this.updateWidget,
+    this.editable,
+    this.onChanged,
+  });
 
   @override
   State<CollectionField> createState() => _CollectionFieldState<T>();
@@ -77,10 +78,7 @@ class _CollectionFieldState<T> extends State<CollectionField<T>> {
               updateWidget: (itemToUpdate) {
                 itemToEdit = itemToUpdate;
                 itemEdited = widget.updateT(itemToUpdate);
-                return Form(
-                  key: _formKey,
-                  child: widget.updateWidget(itemEdited as T),
-                );
+                return Form(key: _formKey, child: widget.updateWidget(itemEdited as T));
               },
               update: () {
                 if (itemEdited == null) {
@@ -99,10 +97,7 @@ class _CollectionFieldState<T> extends State<CollectionField<T>> {
               createWidget: () {
                 itemEdited = widget.createT();
                 if (widget.createWidget == null) return const Placeholder();
-                return Form(
-                  key: _formKey,
-                  child: widget.createWidget!(itemEdited as T),
-                );
+                return Form(key: _formKey, child: widget.createWidget!(itemEdited as T));
               },
               create: () async {
                 if (itemEdited == null) {
@@ -139,10 +134,7 @@ class _CollectionFieldState<T> extends State<CollectionField<T>> {
       autofocus: false,
       decoration: InputDecoration(
         labelText: widget.name,
-        suffixIcon: IconButton(
-          onPressed: _showSelectDialog,
-          icon: const Icon(Icons.edit),
-        ),
+        suffixIcon: IconButton(onPressed: _showSelectDialog, icon: const Icon(Icons.edit_outlined)),
       ),
     );
   }
