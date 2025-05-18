@@ -272,24 +272,25 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
   }
 
   Widget _getTab(TabItem tab) {
-    return Tooltip(
-      message: !tab.isSelected ? tab.tooltip ?? '' : '',
-      child: Tab(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _getIconWidget(tab) ?? SizedBox(),
-            _getTitleWidget(tab),
-            IconButton(
-              icon: const Icon(Icons.close),
-              splashRadius: 16,
-              iconSize: 16,
-              onPressed: () {
-                tabCollection.remove(tab);
-              },
-            ),
-          ],
-        ),
+    // Remove Tooltip to avoid overlay assertion error on tab close
+    // Optionally, wrap only the title with Tooltip if you want to keep it
+    return Tab(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _getIconWidget(tab) ?? SizedBox(),
+          tab.tooltip != null && tab.tooltip!.isNotEmpty && !tab.isSelected
+              ? Tooltip(message: tab.tooltip!, child: _getTitleWidget(tab))
+              : _getTitleWidget(tab),
+          IconButton(
+            icon: const Icon(Icons.close),
+            splashRadius: 16,
+            iconSize: 16,
+            onPressed: () {
+              tabCollection.remove(tab);
+            },
+          ),
+        ],
       ),
     );
   }
