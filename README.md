@@ -8,17 +8,14 @@ A Flutter framework to help creating ViewModels of different kinds: to make list
 
 ## Localization
 
-To generate the files needed for Localization:
+Naples provides built-in support for localization using the Flutter localization system. To add localization to your Naples application, follow these steps:
 
-````
-gen-l10n 
-    --arb-dir=lib/l10n 
-    --template-arb-file=intl_en.arb 
-    --output-localization-file=naples_localizations.dart 
-    --output-class=NaplesLocalizations 
-    --no-synthetic-package 
-    --output-dir=lib/l10n/generated
-````
+1. Create a directory for your localization files (e.g., `lib/l10n`).
+2. Create ARB files for each language you want to support (e.g., `intl_en.arb`, `intl_es.arb`, etc.).
+3. Add your localized strings to the ARB files.
+4. Generate the file l10n.yaml and specify the tool options.
+5. Run the `flutter gen-l10n` command to generate the necessary localization files or activate the synthetic package support modifying the `pubspec.yaml` file: with `flutter: generate: true ` as said in the https://docs.flutter.dev/ui/accessibility-and-internationalization/internationalization
+
 
 The file must be imported in the project that uses naples:
 

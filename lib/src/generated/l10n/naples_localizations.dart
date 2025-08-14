@@ -63,7 +63,8 @@ import 'naples_localizations_es.dart';
 /// be consistent with the languages listed in the NaplesLocalizations.supportedLocales
 /// property.
 abstract class NaplesLocalizations {
-  NaplesLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  NaplesLocalizations(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -71,7 +72,8 @@ abstract class NaplesLocalizations {
     return Localizations.of<NaplesLocalizations>(context, NaplesLocalizations);
   }
 
-  static const LocalizationsDelegate<NaplesLocalizations> delegate = _NaplesLocalizationsDelegate();
+  static const LocalizationsDelegate<NaplesLocalizations> delegate =
+      _NaplesLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -83,18 +85,19 @@ abstract class NaplesLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('ca'),
     Locale('en'),
-    Locale('es')
+    Locale('es'),
   ];
 
   /// To go to the next step
@@ -132,37 +135,48 @@ abstract class NaplesLocalizations {
   /// In en, this message translates to:
   /// **'Delete'**
   String get delete;
+
+  /// No description provided for @close.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
 }
 
-class _NaplesLocalizationsDelegate extends LocalizationsDelegate<NaplesLocalizations> {
+class _NaplesLocalizationsDelegate
+    extends LocalizationsDelegate<NaplesLocalizations> {
   const _NaplesLocalizationsDelegate();
 
   @override
   Future<NaplesLocalizations> load(Locale locale) {
-    return SynchronousFuture<NaplesLocalizations>(lookupNaplesLocalizations(locale));
+    return SynchronousFuture<NaplesLocalizations>(
+      lookupNaplesLocalizations(locale),
+    );
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['ca', 'en', 'es'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['ca', 'en', 'es'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_NaplesLocalizationsDelegate old) => false;
 }
 
 NaplesLocalizations lookupNaplesLocalizations(Locale locale) {
-
-
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'ca': return NaplesLocalizationsCa();
-    case 'en': return NaplesLocalizationsEn();
-    case 'es': return NaplesLocalizationsEs();
+    case 'ca':
+      return NaplesLocalizationsCa();
+    case 'en':
+      return NaplesLocalizationsEn();
+    case 'es':
+      return NaplesLocalizationsEs();
   }
 
   throw FlutterError(
     'NaplesLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.'
+    'that was used.',
   );
 }

@@ -14,5 +14,6 @@
   },
   "accept": "Accept",
   "cancel": "Cancel",
-  "delete": "Delete"
+  "delete": "Delete",
+  "close": "Close"
 }

@@ -1,3 +1,5 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
 import 'naples_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -23,4 +25,7 @@ class NaplesLocalizationsEn extends NaplesLocalizations {
 
   @override
   String get delete => 'Delete';
+
+  @override
+  String get close => 'Close';
 }

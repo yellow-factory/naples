@@ -2,17 +2,18 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:naples/src/dialogs/accept_cancel_delete_dialog.dart';
+import 'package:naples/src/dialogs/close_dialog.dart';
 import 'package:navy/navy.dart';
 
 class CustomProperty<T> extends StatefulWidget {
   final String label;
   final String? hint;
   final FunctionOf0<FutureOr<String>> description;
-  final FunctionOf1<T?, Widget> editContent;
+  final FunctionOf1<T?, Widget> content;
   final FunctionOf0<bool>? onContentValidated;
   //The content notifies the CustomProperty that the content has changed and establish the new value
   final FunctionOf0<T?>? onContentChanged;
-  final double editContentWidth;
+  final double contentWidth;
   final Function? delete;
   final PredicateOf0? editable;
   final FunctionOf1<T?, String?>? validator;
@@ -26,10 +27,10 @@ class CustomProperty<T> extends StatefulWidget {
     required this.label,
     this.hint,
     required this.description,
-    required this.editContent,
+    required this.content,
     this.onContentValidated,
     this.onContentChanged,
-    this.editContentWidth = 300,
+    this.contentWidth = 300,
     this.delete,
     this.editable,
     this.validator,
@@ -73,6 +74,22 @@ class _CustomPropertyState<T> extends State<CustomProperty<T>> {
   }
 
   Future<void> _showSelectDialog(T? currentValue) async {
+    if ((widget.editable?.call() ?? true) == false) {
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return CloseDialog(
+            title: widget.label,
+            subtitle: widget.hint,
+            child: SingleChildScrollView(
+              child: SizedBox(width: widget.contentWidth, child: widget.content(currentValue)),
+            ),
+          );
+        },
+      );
+      return;
+    }
+
     var dialogResult = await showDialog<AcceptCancelDeleteDialogOptions>(
       context: context,
       builder: (context) {
@@ -82,10 +99,7 @@ class _CustomPropertyState<T> extends State<CustomProperty<T>> {
           showDelete: widget.delete != null,
           validate: widget.onContentValidated,
           child: SingleChildScrollView(
-            child: SizedBox(
-              width: widget.editContentWidth,
-              child: widget.editContent(currentValue),
-            ),
+            child: SizedBox(width: widget.contentWidth, child: widget.content(currentValue)),
           ),
         );
       },
@@ -125,19 +139,19 @@ class _CustomPropertyState<T> extends State<CustomProperty<T>> {
         return TextField(
           controller: _descriptionController,
           readOnly: true,
-          enabled: widget.editable?.call() ?? true,
+          //enabled: widget.editable?.call() ?? true,
           autofocus: false,
           decoration: InputDecoration(
             labelText: widget.label,
             hintText: widget.hint,
             errorText: formFieldState.errorText,
-            suffixIcon:
-                widget.editable?.call() ?? true
-                    ? IconButton(
-                      onPressed: () => _showSelectDialog(formFieldState.value),
-                      icon: const Icon(Icons.edit_outlined),
-                    )
-                    : null,
+            suffixIcon: IconButton(
+              onPressed: () => _showSelectDialog(formFieldState.value),
+              icon:
+                  widget.editable?.call() ?? true
+                      ? const Icon(Icons.edit_outlined)
+                      : const Icon(Icons.remove_red_eye_outlined),
+            ),
           ),
         );
       },
