@@ -169,7 +169,7 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
     return DropdownButtonFormField<U>(
       key: dropdownKey,
       items: items,
-      value: getProperty(),
+      initialValue: getProperty(),
       onSaved: setProperty,
       validator: validator,
       autofocus: autofocus,
