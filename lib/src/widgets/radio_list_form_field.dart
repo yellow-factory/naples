@@ -17,26 +17,30 @@ class RadioListFormField<U, V> extends FormField<U> {
     required FunctionOf1<V, FunctionOf0<String>> displayMember,
     Function(U?)? onChanged,
   }) : super(
-          builder: (FormFieldState<U> state) {
-            void onChangedCall(U? value) {
-              state.didChange(value);
-              if (onChanged != null) onChanged(value);
-            }
+         builder: (FormFieldState<U> state) {
+           void onChangedCall(U? value) {
+             state.didChange(value);
+             if (enabled && onChanged != null) onChanged(value);
+           }
 
-            return Column(
-              children: <Widget>[
-                ListTile(title: Text(label), subtitle: hint == null ? null : Text(hint)),
-                for (var item in listItems())
-                  RadioListTile<U>(
-                    title: Text(displayMember(item)()),
-                    value: valueMember(item),
-                    //groupValue: property.currentValue,
-                    groupValue: state.value,
-                    onChanged: enabled ? onChangedCall : null, //?
-                    controlAffinity: controlAffinity,
-                  ),
-              ],
-            );
-          },
-        );
+           return Column(
+             children: <Widget>[
+               ListTile(title: Text(label), subtitle: hint == null ? null : Text(hint)),
+               RadioGroup<U>(
+                 groupValue: state.value,
+                 onChanged: onChangedCall,
+                 child: Column(
+                   children: [
+                     for (var item in listItems())
+                       ListTile(
+                         title: Text(displayMember(item)()),
+                         leading: Radio<U>(value: valueMember(item)),
+                       ),
+                   ],
+                 ),
+               ),
+             ],
+           );
+         },
+       );
 }

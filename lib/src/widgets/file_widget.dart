@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:navy/navy.dart';
@@ -61,10 +62,7 @@ class FileWidgetState extends State<FileWidget> {
               isThreeLine: true,
             ),
             if (fileName != null && fileName!.isNotEmpty)
-              ListTile(
-                leading: const Icon(Icons.attachment_outlined),
-                title: Text(fileName!),
-              ),
+              ListTile(leading: const Icon(Icons.attachment_outlined), title: Text(fileName!)),
             OverflowBar(
               children: <Widget>[
                 if (fileId != null)
@@ -132,7 +130,7 @@ class FileWidgetState extends State<FileWidget> {
         fileId = id;
       });
     } catch (e) {
-      print('error uploading file: $e');
+      developer.log('error uploading file: $e');
     } finally {
       setState(() {
         waiting = false;

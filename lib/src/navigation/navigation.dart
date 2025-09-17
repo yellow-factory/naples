@@ -26,11 +26,7 @@ class Transition<T> {
   final T endingState;
   final bool allowBack;
 
-  Transition(
-    this.beginningState,
-    this.endingState,
-    this.allowBack,
-  );
+  Transition(this.beginningState, this.endingState, this.allowBack);
 }
 
 //TODO: Es podria renombrar a NavigationStateMachine o NavigationConfiguration
@@ -47,11 +43,7 @@ class NavigationModel<T> extends ChangeNotifier {
   }
 
   @protected
-  void addTransition(
-    T beginningState,
-    T endingState, {
-    bool allowBack = true,
-  }) {
+  void addTransition(T beginningState, T endingState, {bool allowBack = true}) {
     var transitionModel = Transition<T>(beginningState, endingState, allowBack);
     addTransitionModel(transitionModel);
   }
@@ -139,10 +131,10 @@ class StateMachineWidget<T, U> extends StatefulWidget {
   const StateMachineWidget(this.currentState, this.builder, {super.key});
 
   @override
-  _StateMachineWidgetState<T, U> createState() => _StateMachineWidgetState<T, U>();
+  StateMachineWidgetState<T, U> createState() => StateMachineWidgetState<T, U>();
 }
 
-class _StateMachineWidgetState<T, U> extends State<StateMachineWidget<T, U>> {
+class StateMachineWidgetState<T, U> extends State<StateMachineWidget<T, U>> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build

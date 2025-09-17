@@ -4,19 +4,26 @@ import 'package:naples/src/navigation/navigation.dart';
 class WillPopScopeNavigationWidget extends StatelessWidget {
   final Widget child;
   final NavigationModel navigationModel;
-  const WillPopScopeNavigationWidget(
-      {super.key, required this.child, required this.navigationModel});
+  const WillPopScopeNavigationWidget({
+    super.key,
+    required this.child,
+    required this.navigationModel,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return; // Already popped by framework.
         try {
-          var isBack = navigationModel.back();
-          if (isBack) return false;
-          return true;
-        } catch (e) {
-          return false;
+          final handled = navigationModel.back();
+          if (handled) {
+            return; // consumed
+          }
+          Navigator.maybePop(context, result);
+        } catch (_) {
+          // ignore
         }
       },
       child: child,

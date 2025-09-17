@@ -45,11 +45,17 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
       }
 
       await for (var m in widget.getStream()) {
-        WidgetsBinding.instance.endOfFrame.then((_) {
+        // Capture the current item in a final variable so the scheduled callback
+        // doesn't close over the loop variable (which would otherwise end up
+        // pointing to the last value on web when all callbacks run together).
+        final currentItem = m;
+        // Using addPostFrameCallback instead of endOfFrame gives each iteration
+        // its own callback without waiting for a shared future that completes once.
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           developer.log('load method - processing item received ', name: 'naples.listloader');
           if (!mounted) return;
           setState(() {
-            _items.add(m);
+            _items.add(currentItem);
             if (_lengthWidget != null) {
               _lengthWidget?.length.value = _items.length;
             }

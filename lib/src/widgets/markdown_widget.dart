@@ -8,15 +8,18 @@ class MarkdownWidget extends StatelessWidget {
   final double? height;
   final WrapAlignment wrapAlignment;
 
-  const MarkdownWidget(
-      {required this.template,
-      this.height,
-      this.wrapAlignment = WrapAlignment.spaceBetween,
-      super.key});
+  const MarkdownWidget({
+    required this.template,
+    this.height,
+    this.wrapAlignment = WrapAlignment.spaceBetween,
+    super.key,
+  });
 
-  void onTapLink(text, href, title) async {
-    if (await canLaunchUrl(href)) {
-      await launchUrl(href);
+  void onTapLink(String text, String? href, String title) async {
+    if (href == null) return;
+    var uri = Uri.parse(href);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
     } else {
       throw 'Could not launch $href';
     }
