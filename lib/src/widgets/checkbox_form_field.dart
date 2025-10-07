@@ -19,23 +19,21 @@ class CheckboxFormField extends FormField<bool> {
          builder: (FormFieldState<bool> state) {
            return CheckboxListTile(
              title: Text(label),
-             subtitle:
-                 showHintExplicitly
-                     ? _getSubtitle(hint, state)
-                     : state.hasError
-                     ? _getErrorText(state)
-                     : null,
-             secondary:
-                 showHintExplicitly
-                     ? null
-                     : Padding(
-                       padding: EdgeInsets.only(right: 10),
-                       child: Tooltip(message: hint, child: const Icon(Icons.info_outline)),
-                     ),
+             subtitle: showHintExplicitly
+                 ? _getSubtitle(hint, state)
+                 : state.hasError
+                 ? _getErrorText(state)
+                 : null,
+             secondary: showHintExplicitly
+                 ? null
+                 : Padding(
+                     padding: EdgeInsets.only(right: 10),
+                     child: Tooltip(message: hint ?? '', child: const Icon(Icons.info_outline)),
+                   ),
              controlAffinity: controlAffinity,
              value: state.value,
-             onChanged:
-                 (bool? newValue) => _onChanged(enabled, newValue, state, saveOnValueChanged),
+             onChanged: (bool? newValue) =>
+                 _onChanged(enabled, newValue, state, saveOnValueChanged),
              autofocus: autofocus,
              contentPadding: EdgeInsets.zero,
            );
