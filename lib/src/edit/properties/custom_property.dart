@@ -54,7 +54,10 @@ class _CustomPropertyState<T> extends State<CustomProperty<T>> {
   }
 
   Future<void> initDescription() async {
-    _descriptionController.text = await widget.description();
+    if (!mounted) return;
+    final description = await widget.description();
+    if (!mounted) return;
+    _descriptionController.text = description;
   }
 
   @override
@@ -147,10 +150,9 @@ class _CustomPropertyState<T> extends State<CustomProperty<T>> {
             errorText: formFieldState.errorText,
             suffixIcon: IconButton(
               onPressed: () => _showSelectDialog(formFieldState.value),
-              icon:
-                  widget.editable?.call() ?? true
-                      ? const Icon(Icons.edit_outlined)
-                      : const Icon(Icons.remove_red_eye_outlined),
+              icon: widget.editable?.call() ?? true
+                  ? const Icon(Icons.edit_outlined)
+                  : const Icon(Icons.remove_red_eye_outlined),
             ),
           ),
         );
