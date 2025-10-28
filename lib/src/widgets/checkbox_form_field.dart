@@ -32,8 +32,9 @@ class CheckboxFormField extends FormField<bool> {
                    ),
              controlAffinity: controlAffinity,
              value: state.value,
-             onChanged: (bool? newValue) =>
-                 _onChanged(enabled, newValue, state, saveOnValueChanged),
+             onChanged: enabled
+                 ? (bool? newValue) => _onChanged(enabled, newValue, state, saveOnValueChanged)
+                 : null,
              autofocus: autofocus,
              contentPadding: EdgeInsets.zero,
            );
