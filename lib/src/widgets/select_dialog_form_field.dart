@@ -187,20 +187,18 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
         labelText: widget.label,
         hintText: widget.hint,
         errorText: widget.state.errorText,
-        suffixIcon:
-            _isDialogLoadingItems
-                ? const Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2.0),
-                  ),
-                )
-                : IconButton(
-                  icon: const Icon(Icons.edit_outlined),
-                  onPressed: widget.enabled ? _showSelectionDialog : null,
+        suffixIcon: _isDialogLoadingItems
+            ? const Padding(
+                padding: EdgeInsets.all(12.0),
+                child: SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(strokeWidth: 2.0),
                 ),
+              )
+            : widget.enabled
+            ? IconButton(icon: const Icon(Icons.edit_outlined), onPressed: _showSelectionDialog)
+            : null,
       ),
     );
   }

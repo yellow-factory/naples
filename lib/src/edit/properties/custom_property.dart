@@ -139,22 +139,53 @@ class _CustomPropertyState<T> extends State<CustomProperty<T>> {
       initialValue: widget.getProperty(),
       onSaved: (t) => _set(t),
       builder: (FormFieldState<T> formFieldState) {
-        return TextField(
-          controller: _descriptionController,
-          readOnly: true,
-          //enabled: widget.editable?.call() ?? true,
-          autofocus: false,
-          decoration: InputDecoration(
-            labelText: widget.label,
-            hintText: widget.hint,
-            errorText: formFieldState.errorText,
-            suffixIcon: IconButton(
-              onPressed: () => _showSelectDialog(formFieldState.value),
-              icon: widget.editable?.call() ?? true
-                  ? const Icon(Icons.edit_outlined)
-                  : const Icon(Icons.remove_red_eye_outlined),
+        final isEditable = widget.editable?.call() ?? true;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _descriptionController,
+                    enabled: isEditable,
+                    autofocus: false,
+                    decoration: InputDecoration(
+                      labelText: widget.label,
+                      hintText: widget.hint,
+                      errorText: formFieldState.errorText,
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      disabledBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      focusedErrorBorder: InputBorder.none,
+                      // No suffixIcon here anymore
+                    ),
+                  ),
+                ),
+                // Separate IconButton that's always enabled
+                Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: IconButton(
+                    onPressed: () => _showSelectDialog(formFieldState.value),
+                    icon: Icon(
+                      isEditable ? Icons.edit_outlined : Icons.remove_red_eye_outlined,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
+            Divider(
+              height: 1,
+              thickness: 1,
+              color: isEditable ? null : Theme.of(context).colorScheme.onSurface.withOpacity(0.12),
+            ),
+          ],
         );
       },
     );
