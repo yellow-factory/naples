@@ -152,6 +152,7 @@ class _CustomPropertyState<T> extends State<CustomProperty<T>> {
                   child: TextField(
                     controller: _descriptionController,
                     enabled: isEditable,
+                    readOnly: true,
                     autofocus: false,
                     decoration: InputDecoration(
                       labelText: widget.label,
