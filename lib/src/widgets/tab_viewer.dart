@@ -229,7 +229,12 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
             Expanded(
               child: TabBarView(
                 controller: _tabController,
-                children: tabCollection.items.map((e) => e.body).toList(),
+                children: tabCollection.items.map((e) {
+                  return KeyedSubtree(
+                    key: ObjectKey(e),
+                    child: e.body,
+                  );
+                }).toList(),
               ),
             ),
           ],
