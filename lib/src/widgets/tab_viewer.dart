@@ -346,31 +346,89 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
     return ListenableBuilder(
       listenable: tab,
       builder: (context, child) {
-        return GestureDetector(
-          onSecondaryTapDown: (details) {
-            _showTabContextMenu(context, tab, details.globalPosition);
-          },
-          child: Tab(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _getIconWidget(tab) ?? SizedBox(),
-                tab.tooltip != null && tab.tooltip!.isNotEmpty && !tab.isSelected
-                    ? Tooltip(message: tab.tooltip!, child: _getTitleWidget(tab))
-                    : _getTitleWidget(tab),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  splashRadius: 16,
-                  iconSize: 16,
-                  onPressed: () {
-                    tabCollection.remove(tab);
-                  },
-                ),
-              ],
+        return MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+            onSecondaryTapDown: (details) {
+              _showTabContextMenu(context, tab, details.globalPosition);
+            },
+            child: Tab(
+              child: _TabContent(
+                tab: tab,
+                tabCollection: tabCollection,
+                getIconWidget: _getIconWidget,
+                getTitleWidget: _getTitleWidget,
+              ),
             ),
           ),
         );
       },
+    );
+  }
+}
+
+class _TabContent extends StatefulWidget {
+  final TabItem tab;
+  final TabCollection tabCollection;
+  final Widget? Function(TabItem) getIconWidget;
+  final Widget Function(TabItem) getTitleWidget;
+
+  const _TabContent({
+    required this.tab,
+    required this.tabCollection,
+    required this.getIconWidget,
+    required this.getTitleWidget,
+  });
+
+  @override
+  State<_TabContent> createState() => _TabContentState();
+}
+
+class _TabContentState extends State<_TabContent> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isSelected = widget.tab.isSelected;
+    final showCloseButton = isSelected || _isHovered;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          widget.getIconWidget(widget.tab) ?? const SizedBox(),
+          widget.tab.tooltip != null && widget.tab.tooltip!.isNotEmpty && !isSelected
+              ? Tooltip(
+                  message: widget.tab.tooltip!,
+                  child: widget.getTitleWidget(widget.tab),
+                )
+              : widget.getTitleWidget(widget.tab),
+          if (showCloseButton)
+            SizedBox(
+              width: 24,
+              height: 24,
+              child: IconButton(
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                icon: const Icon(Icons.close, size: 16),
+                style: IconButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  minimumSize: const Size(24, 24),
+                  maximumSize: const Size(24, 24),
+                ),
+                onPressed: () {
+                  widget.tabCollection.remove(widget.tab);
+                },
+              ),
+            )
+          else
+            const SizedBox(width: 24), // Reserve space for the close button
+        ],
+      ),
     );
   }
 }
