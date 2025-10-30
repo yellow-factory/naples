@@ -292,13 +292,6 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
         PopupMenuItem(
           height: 32,
           enabled: hasOtherItems,
-          child: Text(
-            'Close others',
-            style: TextStyle(
-              fontSize: 13,
-              color: hasOtherItems ? null : Colors.grey,
-            ),
-          ),
           onTap: hasOtherItems
               ? () {
                   final itemsToRemove = tabCollection.items.where((item) => item != tab).toList();
@@ -307,17 +300,17 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
                   }
                 }
               : null,
+          child: Text(
+            'Close others',
+            style: TextStyle(
+              fontSize: 13,
+              color: hasOtherItems ? null : Colors.grey,
+            ),
+          ),
         ),
         PopupMenuItem(
           height: 32,
           enabled: hasItemsToRight,
-          child: Text(
-            'Close to the right',
-            style: TextStyle(
-              fontSize: 13,
-              color: hasItemsToRight ? null : Colors.grey,
-            ),
-          ),
           onTap: hasItemsToRight
               ? () {
                   final itemsToRemove = tabCollection.items.skip(tabIndex + 1).toList();
@@ -326,6 +319,13 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
                   }
                 }
               : null,
+          child: Text(
+            'Close to the right',
+            style: TextStyle(
+              fontSize: 13,
+              color: hasItemsToRight ? null : Colors.grey,
+            ),
+          ),
         ),
         PopupMenuItem(
           height: 32,
