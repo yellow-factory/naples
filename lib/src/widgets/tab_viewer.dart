@@ -1,27 +1,70 @@
-import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:navy/navy.dart';
 
-class TabItem {
+class TabItem extends ChangeNotifier {
   final Widget body;
-  String? title;
-  String? titleBadge;
-  String? tooltip;
-  IconData? icon;
-  int? length;
+  String? _title;
+  String? _titleBadge;
+  String? _tooltip;
+  IconData? _icon;
+  int? _length;
   TabCollection? tabCollection;
 
   TabItem({
     required this.body,
-    this.title,
-    this.titleBadge,
-    this.tooltip,
-    this.icon,
-    this.length,
+    String? title,
+    String? titleBadge,
+    String? tooltip,
+    IconData? icon,
+    int? length,
     this.tabCollection,
-  });
+  })  : _title = title,
+        _titleBadge = titleBadge,
+        _tooltip = tooltip,
+        _icon = icon,
+        _length = length;
+
+  String? get title => _title;
+  set title(String? value) {
+    if (_title != value) {
+      _title = value;
+      notifyListeners();
+    }
+  }
+
+  String? get titleBadge => _titleBadge;
+  set titleBadge(String? value) {
+    if (_titleBadge != value) {
+      _titleBadge = value;
+      notifyListeners();
+    }
+  }
+
+  String? get tooltip => _tooltip;
+  set tooltip(String? value) {
+    if (_tooltip != value) {
+      _tooltip = value;
+      notifyListeners();
+    }
+  }
+
+  IconData? get icon => _icon;
+  set icon(IconData? value) {
+    if (_icon != value) {
+      _icon = value;
+      notifyListeners();
+    }
+  }
+
+  int? get length => _length;
+  set length(int? value) {
+    if (_length != value) {
+      _length = value;
+      notifyListeners();
+    }
+  }
 
   bool get isSelected => tabCollection?.currentItem == this;
 }
@@ -71,6 +114,7 @@ class TabCollection extends ChangeNotifier {
     }
 
     tab.tabCollection = null;
+    tab.dispose(); // Clean up the TabItem ChangeNotifier
     notifyListeners();
   }
 
@@ -79,77 +123,21 @@ class TabCollection extends ChangeNotifier {
     remove(currentItem!);
   }
 
-  void changeCurrentTitle(String title) {
-    if (currentItem == null) throw Exception('There is no current item');
-    changeTitle(currentItem!, title);
-  }
-
-  void changeTitle(TabItem tab, String title) {
-    scheduleMicrotask(() {
-      var item = _items[_items.indexOf(tab)];
-      if (item.title == title) return;
-      item.title = title;
-      notifyListeners();
-    });
-  }
-
-  void changeCurrentTitleBadge(String titleBadge) {
-    if (currentItem == null) throw Exception('There is no current item');
-    changeTitleBadge(currentItem!, titleBadge);
-  }
-
-  void changeTitleBadge(TabItem tab, String titleBadge) {
-    scheduleMicrotask(() {
-      var item = _items[_items.indexOf(tab)];
-      if (item.titleBadge == titleBadge) return;
-      item.titleBadge = titleBadge;
-      notifyListeners();
-    });
-  }
-
-  void changeCurrentTooltip(String tooltip) {
-    if (currentItem == null) throw Exception('There is no current item');
-    changeTooltip(currentItem!, tooltip);
-  }
-
-  void changeTooltip(TabItem tab, String tooltip) {
-    scheduleMicrotask(() {
-      var item = _items[_items.indexOf(tab)];
-      if (item.tooltip == tooltip) return;
-      item.tooltip = tooltip;
-      notifyListeners();
-    });
-  }
-
-  void changeCurrentIcon(IconData icon) {
-    if (currentItem == null) throw Exception('There is no current item');
-    changeIcon(currentItem!, icon);
-  }
-
-  void changeIcon(TabItem tab, IconData icon) {
-    scheduleMicrotask(() {
-      var item = _items[_items.indexOf(tab)];
-      if (item.icon == icon) return;
-      item.icon = icon;
-      notifyListeners();
-    });
-  }
-
-  void changeCurrentLength(int length) {
-    if (currentItem == null) throw Exception('There is no current item');
-    changeLength(currentItem!, length);
-  }
-
-  void changeLength(TabItem tab, int length) {
-    scheduleMicrotask(() {
-      var item = _items[_items.indexOf(tab)];
-      if (item.length == length) return;
-      item.length = length;
-      notifyListeners();
-    });
-  }
-
   int get length => _items.length;
+}
+
+class TabItemScope extends InheritedWidget {
+  const TabItemScope({required super.child, required this.tabItem});
+
+  final TabItem tabItem;
+
+  @override
+  bool updateShouldNotify(TabItemScope old) => old.tabItem != tabItem;
+
+  static TabItem? of(BuildContext context) {
+    final TabItemScope? scope = context.dependOnInheritedWidgetOfExactType<TabItemScope>();
+    return scope?.tabItem;
+  }
 }
 
 class _TabViewerScope extends InheritedWidget {
@@ -232,7 +220,10 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
                 children: tabCollection.items.map((e) {
                   return KeyedSubtree(
                     key: ObjectKey(e),
-                    child: e.body,
+                    child: TabItemScope(
+                      tabItem: e,
+                      child: e.body,
+                    ),
                   );
                 }).toList(),
               ),
@@ -277,26 +268,30 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
   }
 
   Widget _getTab(TabItem tab) {
-    // Remove Tooltip to avoid overlay assertion error on tab close
-    // Optionally, wrap only the title with Tooltip if you want to keep it
-    return Tab(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _getIconWidget(tab) ?? SizedBox(),
-          tab.tooltip != null && tab.tooltip!.isNotEmpty && !tab.isSelected
-              ? Tooltip(message: tab.tooltip!, child: _getTitleWidget(tab))
-              : _getTitleWidget(tab),
-          IconButton(
-            icon: const Icon(Icons.close),
-            splashRadius: 16,
-            iconSize: 16,
-            onPressed: () {
-              tabCollection.remove(tab);
-            },
+    // Wrap in ListenableBuilder to rebuild when TabItem properties change
+    return ListenableBuilder(
+      listenable: tab,
+      builder: (context, child) {
+        return Tab(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _getIconWidget(tab) ?? SizedBox(),
+              tab.tooltip != null && tab.tooltip!.isNotEmpty && !tab.isSelected
+                  ? Tooltip(message: tab.tooltip!, child: _getTitleWidget(tab))
+                  : _getTitleWidget(tab),
+              IconButton(
+                icon: const Icon(Icons.close),
+                splashRadius: 16,
+                iconSize: 16,
+                onPressed: () {
+                  tabCollection.remove(tab);
+                },
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
