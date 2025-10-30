@@ -5,6 +5,7 @@ import 'package:navy/navy.dart';
 
 class TabItem extends ChangeNotifier {
   final Widget body;
+  final GlobalKey _bodyKey = GlobalKey();
   String? _title;
   String? _titleBadge;
   String? _tooltip;
@@ -181,12 +182,17 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
 
   void _changeTabController() {
     _tabController.removeListener(notifyIndexChange);
+    final oldController = _tabController;
     _tabController = TabController(
       vsync: this,
       length: tabCollection.length,
       initialIndex: tabCollection.currentIndex ?? 0,
     );
     _tabController.addListener(notifyIndexChange);
+    // Dispose old controller after the frame to avoid issues
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      oldController.dispose();
+    });
     setState(() {});
   }
 
@@ -219,7 +225,7 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
                 controller: _tabController,
                 children: tabCollection.items.map((e) {
                   return KeyedSubtree(
-                    key: ObjectKey(e),
+                    key: e._bodyKey,
                     child: TabItemScope(
                       tabItem: e,
                       child: e.body,
