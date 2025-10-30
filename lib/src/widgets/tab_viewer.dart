@@ -21,11 +21,11 @@ class TabItem extends ChangeNotifier {
     IconData? icon,
     int? length,
     this.tabCollection,
-  })  : _title = title,
-        _titleBadge = titleBadge,
-        _tooltip = tooltip,
-        _icon = icon,
-        _length = length;
+  }) : _title = title,
+       _titleBadge = titleBadge,
+       _tooltip = tooltip,
+       _icon = icon,
+       _length = length;
 
   String? get title => _title;
   set title(String? value) {
@@ -128,7 +128,7 @@ class TabCollection extends ChangeNotifier {
 }
 
 class TabItemScope extends InheritedWidget {
-  const TabItemScope({required super.child, required this.tabItem});
+  const TabItemScope({super.key, required super.child, required this.tabItem});
 
   final TabItem tabItem;
 
@@ -226,10 +226,7 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
                 children: tabCollection.items.map((e) {
                   return KeyedSubtree(
                     key: e._bodyKey,
-                    child: TabItemScope(
-                      tabItem: e,
-                      child: e.body,
-                    ),
+                    child: TabItemScope(tabItem: e, child: e.body),
                   );
                 }).toList(),
               ),
@@ -246,14 +243,13 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
     // If length is not null, show a badge with the count
     return Padding(
       padding: const EdgeInsets.only(left: 5, right: 20),
-      child:
-          tab.length == null
-              ? icon
-              : Badge.count(
-                count: tab.length!,
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                child: icon,
-              ),
+      child: tab.length == null
+          ? icon
+          : Badge.count(
+              count: tab.length!,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              child: icon,
+            ),
     );
   }
 
@@ -263,14 +259,86 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
     return tab.titleBadge == null
         ? title
         : Padding(
-          padding: EdgeInsets.only(right: 30),
-          child: Badge(
-            offset: const Offset(20, -4),
-            label: Text(tab.titleBadge!),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            child: title,
+            padding: EdgeInsets.only(right: 30),
+            child: Badge(
+              offset: const Offset(20, -4),
+              label: Text(tab.titleBadge!),
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              child: title,
+            ),
+          );
+  }
+
+  void _showTabContextMenu(BuildContext context, TabItem tab, Offset position) {
+    final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+    final tabIndex = tabCollection.items.indexOf(tab);
+    final hasItemsToRight = tabIndex != -1 && tabIndex < tabCollection.items.length - 1;
+    final hasOtherItems = tabCollection.items.length > 1;
+
+    showMenu(
+      context: context,
+      position: RelativeRect.fromRect(
+        position & const Size(1, 1),
+        Offset.zero & overlay.size,
+      ),
+      items: [
+        PopupMenuItem(
+          height: 32,
+          child: const Text('Close', style: TextStyle(fontSize: 13)),
+          onTap: () {
+            tabCollection.remove(tab);
+          },
+        ),
+        PopupMenuItem(
+          height: 32,
+          enabled: hasOtherItems,
+          child: Text(
+            'Close others',
+            style: TextStyle(
+              fontSize: 13,
+              color: hasOtherItems ? null : Colors.grey,
+            ),
           ),
-        );
+          onTap: hasOtherItems
+              ? () {
+                  final itemsToRemove = tabCollection.items.where((item) => item != tab).toList();
+                  for (var item in itemsToRemove) {
+                    tabCollection.remove(item);
+                  }
+                }
+              : null,
+        ),
+        PopupMenuItem(
+          height: 32,
+          enabled: hasItemsToRight,
+          child: Text(
+            'Close to the right',
+            style: TextStyle(
+              fontSize: 13,
+              color: hasItemsToRight ? null : Colors.grey,
+            ),
+          ),
+          onTap: hasItemsToRight
+              ? () {
+                  final itemsToRemove = tabCollection.items.skip(tabIndex + 1).toList();
+                  for (var item in itemsToRemove) {
+                    tabCollection.remove(item);
+                  }
+                }
+              : null,
+        ),
+        PopupMenuItem(
+          height: 32,
+          child: const Text('Close all', style: TextStyle(fontSize: 13)),
+          onTap: () {
+            final itemsToRemove = tabCollection.items.toList();
+            for (var item in itemsToRemove) {
+              tabCollection.remove(item);
+            }
+          },
+        ),
+      ],
+    );
   }
 
   Widget _getTab(TabItem tab) {
@@ -278,23 +346,28 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
     return ListenableBuilder(
       listenable: tab,
       builder: (context, child) {
-        return Tab(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              _getIconWidget(tab) ?? SizedBox(),
-              tab.tooltip != null && tab.tooltip!.isNotEmpty && !tab.isSelected
-                  ? Tooltip(message: tab.tooltip!, child: _getTitleWidget(tab))
-                  : _getTitleWidget(tab),
-              IconButton(
-                icon: const Icon(Icons.close),
-                splashRadius: 16,
-                iconSize: 16,
-                onPressed: () {
-                  tabCollection.remove(tab);
-                },
-              ),
-            ],
+        return GestureDetector(
+          onSecondaryTapDown: (details) {
+            _showTabContextMenu(context, tab, details.globalPosition);
+          },
+          child: Tab(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _getIconWidget(tab) ?? SizedBox(),
+                tab.tooltip != null && tab.tooltip!.isNotEmpty && !tab.isSelected
+                    ? Tooltip(message: tab.tooltip!, child: _getTitleWidget(tab))
+                    : _getTitleWidget(tab),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  splashRadius: 16,
+                  iconSize: 16,
+                  onPressed: () {
+                    tabCollection.remove(tab);
+                  },
+                ),
+              ],
+            ),
           ),
         );
       },
