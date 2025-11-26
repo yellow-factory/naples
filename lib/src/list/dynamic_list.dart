@@ -48,18 +48,16 @@ class DynamicList<T> extends StatelessWidget {
                   return ListTile(
                     dense: dense,
                     title: Text(itemTitle(model), overflow: TextOverflow.ellipsis),
-                    subtitle:
-                        itemSubtitle != null
-                            ? Text(itemSubtitle!(model), overflow: TextOverflow.ellipsis)
-                            : null,
+                    subtitle: itemSubtitle != null
+                        ? Text(itemSubtitle!(model), overflow: TextOverflow.ellipsis)
+                        : null,
                     leading: itemLeading != null ? itemLeading!(model) : null,
-                    trailing:
-                        itemTrailing != null
-                            ? onlyShowItemTrailingOnHover == false ||
-                                    onlyShowItemTrailingOnHover && hover
-                                ? itemTrailing!(model)
-                                : null
-                            : null,
+                    trailing: itemTrailing != null
+                        ? onlyShowItemTrailingOnHover == false ||
+                                  onlyShowItemTrailingOnHover && hover
+                              ? itemTrailing!(model)
+                              : null
+                        : null,
                     onTap: () {
                       if (select == null) return;
                       select!(model);
