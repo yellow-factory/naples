@@ -17,6 +17,7 @@ class SelectDialogFormField<U, V> extends FormField<U> {
     required FunctionOf1<V, U> valueMember,
     required FunctionOf1<V, FunctionOf0<String>> displayMember,
     Function(U?)? onChanged,
+    FutureOr<void> Function(V)? onNavigate,
   }) : super(
          builder: (FormFieldState<U> state) {
            return _SelectDialogWidget<U, V>(
@@ -28,6 +29,7 @@ class SelectDialogFormField<U, V> extends FormField<U> {
              valueMember: valueMember,
              displayMember: displayMember,
              onChanged: onChanged,
+             onNavigate: onNavigate,
            );
          },
        );
@@ -42,6 +44,7 @@ class _SelectDialogWidget<U, V> extends StatefulWidget {
   final FunctionOf1<V, U> valueMember;
   final FunctionOf1<V, FunctionOf0<String>> displayMember;
   final Function(U?)? onChanged;
+  final FutureOr<void> Function(V)? onNavigate;
 
   const _SelectDialogWidget({
     required this.state,
@@ -52,6 +55,7 @@ class _SelectDialogWidget<U, V> extends StatefulWidget {
     required this.valueMember,
     required this.displayMember,
     this.onChanged,
+    this.onNavigate,
   });
 
   @override
@@ -177,8 +181,34 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
     _updateTextController(value);
   }
 
+  Future<void> _handleNavigate() async {
+    if (widget.onNavigate == null || widget.state.value == null) return;
+
+    // Find the V item corresponding to the current value
+    if (_cachedResolvedItems == null) {
+      final itemsOrFuture = widget.listItems();
+      if (itemsOrFuture is Future<List<V>>) {
+        _cachedResolvedItems = await itemsOrFuture;
+      } else {
+        _cachedResolvedItems = itemsOrFuture;
+      }
+    }
+
+    if (_cachedResolvedItems == null) return;
+
+    final matchingItems = _cachedResolvedItems!.where(
+      (element) => widget.valueMember(element) == widget.state.value,
+    );
+
+    if (matchingItems.isNotEmpty) {
+      await widget.onNavigate!(matchingItems.first);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final hasNavigateAction = widget.onNavigate != null && widget.state.value != null;
+
     return TextField(
       controller: _controller,
       readOnly: true,
@@ -197,7 +227,22 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
                 ),
               )
             : widget.enabled
-            ? IconButton(icon: const Icon(Icons.edit_outlined), onPressed: _showSelectionDialog)
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (hasNavigateAction)
+                    IconButton(
+                      icon: const Icon(Icons.open_in_new),
+                      onPressed: _handleNavigate,
+                      tooltip: 'Open for editing',
+                    ),
+                  IconButton(
+                    icon: const Icon(Icons.edit_outlined),
+                    onPressed: _showSelectionDialog,
+                    tooltip: 'Select',
+                  ),
+                ],
+              )
             : null,
       ),
     );

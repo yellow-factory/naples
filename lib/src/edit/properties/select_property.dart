@@ -41,6 +41,8 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
   final FunctionOf1<V, FunctionOf0<String>> displayMember;
   //Calls setProperty on control value change
   final bool saveOnValueChanged;
+  //Optional action to navigate to the selected item (e.g., open in editor)
+  final FutureOr<void> Function(V)? onNavigate;
 
   SelectProperty({
     super.key,
@@ -57,6 +59,7 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
     required this.displayMember,
     this.widgetType = SelectWidgetType.dropDown,
     this.saveOnValueChanged = false,
+    this.onNavigate,
   });
 
   @override
@@ -151,6 +154,7 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
         if (dialogKey.currentState == null) return;
         if (saveOnValueChanged) dialogKey.currentState!.save();
       },
+      onNavigate: onNavigate,
     );
   }
 
