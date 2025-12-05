@@ -114,7 +114,7 @@ class DynamicPaginatedTableState<T> extends State<DynamicPaginatedTable<T>> {
               widget.dataRowHeight ?? DynamicPaginatedTable.paginateDataTableRowHeight,
           dataRowMinHeight:
               widget.dataRowHeight ?? DynamicPaginatedTable.paginateDataTableRowHeight,
-          showEmptyRows: true,
+          showEmptyRows: false,
           showFirstLastButtons: true,
           sortColumnIndex: widget.sortColumnIndex,
           sortAscending: widget.sortAscending,
