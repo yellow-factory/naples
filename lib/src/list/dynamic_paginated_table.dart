@@ -151,8 +151,8 @@ class DynamicPaginatedTableState<T> extends State<DynamicPaginatedTable<T>> {
 
   // Load more data proactively if we're near the end of loaded items
   Future<void> _loadMoreDataIfNeeded() async {
-    if (_loading) return;
     try {
+      if (_loading) return;
       _loading = true;
 
       if (widget.onNeedLoadData == null) return;
