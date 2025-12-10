@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:naples/src/common/common.dart';
 import 'package:naples/src/edit/properties/collection_form_field.dart';
 import 'package:navy/navy.dart';
 
-class CollectionProperty<T> extends StatelessWidget {
+class CollectionProperty<T> extends StatelessWidget implements Expandable {
   final String name;
   final FunctionOf0<Future<String>>? description;
   final double width;
@@ -15,6 +16,8 @@ class CollectionProperty<T> extends StatelessWidget {
   final Iterable<T>? initialValue;
   final FormFieldSetter<Iterable<T>>? onSaved;
   final PredicateOf0? editable;
+  @override
+  final int flex;
 
   const CollectionProperty({
     super.key,
@@ -29,6 +32,7 @@ class CollectionProperty<T> extends StatelessWidget {
     required this.updateWidget,
     this.onSaved,
     this.editable,
+    this.flex = 1,
   });
 
   @override

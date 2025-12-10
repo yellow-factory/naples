@@ -1,11 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:naples/src/common/common.dart';
 import 'package:naples/src/dialogs/accept_cancel_delete_dialog.dart';
 import 'package:naples/src/dialogs/close_dialog.dart';
 import 'package:navy/navy.dart';
 
-class CustomProperty<T> extends StatefulWidget {
+class CustomProperty<T> extends StatefulWidget implements Expandable {
   final String label;
   final String? hint;
   final FunctionOf0<FutureOr<String>> description;
@@ -21,6 +22,8 @@ class CustomProperty<T> extends StatefulWidget {
   final ActionOf1<T?>? setProperty;
   //The control notifies the CustomProperty that the value has changed
   final ActionOf1<T?>? onChanged;
+  @override
+  final int flex;
 
   const CustomProperty({
     super.key,
@@ -37,6 +40,7 @@ class CustomProperty<T> extends StatefulWidget {
     required this.getProperty,
     this.setProperty,
     this.onChanged,
+    this.flex = 1,
   });
 
   @override
