@@ -33,11 +33,11 @@ class TopBar extends StatelessWidget {
   Widget? _getChip(BuildContext context) {
     return chip != null
         ? Badge(
-          offset: const Offset(20, -4),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          label: Text(chip!),
-          child: _getTitle(context),
-        )
+            offset: const Offset(20, -4),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            label: Text(chip!),
+            child: _getTitle(context),
+          )
         : null;
   }
 
@@ -48,7 +48,10 @@ class TopBar extends StatelessWidget {
       textBaseline: TextBaseline.alphabetic,
       crossAxisAlignment: CrossAxisAlignment.baseline,
       spacing: titleBadgeWidget != null ? 5 : 0,
-      children: [if (titleBadgeWidget != null) titleBadgeWidget, Expanded(child: _getActions())],
+      children: [
+        if (titleBadgeWidget != null) titleBadgeWidget,
+        Expanded(child: _getActions()),
+      ],
     );
   }
 
@@ -58,7 +61,7 @@ class TopBar extends StatelessWidget {
       constraints: const BoxConstraints(minHeight: 60, maxHeight: 60),
       child: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: title != null ? _getActionsWithTitle(context) : _getActions(),
         ),
       ),

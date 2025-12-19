@@ -32,22 +32,34 @@ class DateTimeField extends StatefulWidget {
 }
 
 class DateTimeFieldState extends State<DateTimeField> {
-
   late TextEditingController editingController;
 
   @override
   void initState() {
     super.initState();
     editingController = TextEditingController();
-    widget.dateTimeController.addListener(() {
-      if (widget.dateTimeController.value != null) {
-        editingController.text = widget.dateFormat.format(widget.dateTimeController.value!);
-      }
-    });
+    _syncText();
+    widget.dateTimeController.addListener(_syncText);
+  }
+
+  void _syncText() {
+    final value = widget.dateTimeController.value;
+    editingController.text = value != null ? widget.dateFormat.format(value.toLocal()) : '';
+  }
+
+  @override
+  void didUpdateWidget(DateTimeField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.dateTimeController != widget.dateTimeController) {
+      oldWidget.dateTimeController.removeListener(_syncText);
+      widget.dateTimeController.addListener(_syncText);
+      _syncText();
+    }
   }
 
   @override
   void dispose() {
+    widget.dateTimeController.removeListener(_syncText);
     editingController.dispose();
     super.dispose();
   }
@@ -66,11 +78,14 @@ class DateTimeFieldState extends State<DateTimeField> {
           ? IconButton(
               icon: const Icon(Icons.calendar_today_outlined),
               onPressed: () async {
-                final DateTime datePicked = await showDatePicker(
+                final DateTime datePicked =
+                    await showDatePicker(
                       context: context,
                       initialDate: currentValue,
                       firstDate: currentFirstDate,
                       lastDate: currentLastDate,
+                      fieldLabelText: widget.label,
+                      fieldHintText: widget.hint,
                     ) ??
                     currentValue;
 
@@ -84,10 +99,10 @@ class DateTimeFieldState extends State<DateTimeField> {
                 final TimeOfDay time = TimeOfDay.fromDateTime(currentValue);
                 final TimeOfDay timePicked = mounted
                     ? await showTimePicker(
-                          context: mounted ? context : throw Exception('Context not found'),
-                          initialTime: time,
-                        ) ??
-                        time
+                            context: mounted ? context : throw Exception('Context not found'),
+                            initialTime: time,
+                          ) ??
+                          time
                     : time;
 
                 widget.dateTimeController.value = DateTime(
@@ -103,9 +118,7 @@ class DateTimeFieldState extends State<DateTimeField> {
     );
 
     return TextField(
-      controller: editingController
-        ..text =
-            widget.dateTimeController.value != null ? widget.dateFormat.format(currentValue) : '',
+      controller: editingController,
       decoration: fieldDecoration,
       autofocus: widget.autofocus,
       readOnly: true,
