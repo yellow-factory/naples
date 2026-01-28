@@ -181,6 +181,14 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
   }
 
   void _changeTabController() {
+    if (_tabController.length == tabCollection.length) {
+      if (tabCollection.currentIndex != null &&
+          _tabController.index != tabCollection.currentIndex) {
+        _tabController.animateTo(tabCollection.currentIndex!);
+      }
+      return;
+    }
+
     _tabController.removeListener(notifyIndexChange);
     final oldController = _tabController;
     _tabController = TabController(
@@ -189,11 +197,11 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
       initialIndex: tabCollection.currentIndex ?? 0,
     );
     _tabController.addListener(notifyIndexChange);
-    // Dispose old controller after the frame to avoid issues
+    // Dispose old controller and trigger rebuild after the frame to avoid layout mutation issues
     WidgetsBinding.instance.addPostFrameCallback((_) {
       oldController.dispose();
+      if (mounted) setState(() {});
     });
-    setState(() {});
   }
 
   @override
@@ -277,10 +285,7 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
 
     showMenu(
       context: context,
-      position: RelativeRect.fromRect(
-        position & const Size(1, 1),
-        Offset.zero & overlay.size,
-      ),
+      position: RelativeRect.fromRect(position & const Size(1, 1), Offset.zero & overlay.size),
       items: [
         PopupMenuItem(
           height: 32,
@@ -302,10 +307,7 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
               : null,
           child: Text(
             'Close others',
-            style: TextStyle(
-              fontSize: 13,
-              color: hasOtherItems ? null : Colors.grey,
-            ),
+            style: TextStyle(fontSize: 13, color: hasOtherItems ? null : Colors.grey),
           ),
         ),
         PopupMenuItem(
@@ -321,10 +323,7 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
               : null,
           child: Text(
             'Close to the right',
-            style: TextStyle(
-              fontSize: 13,
-              color: hasItemsToRight ? null : Colors.grey,
-            ),
+            style: TextStyle(fontSize: 13, color: hasItemsToRight ? null : Colors.grey),
           ),
         ),
         PopupMenuItem(
@@ -400,10 +399,7 @@ class _TabContentState extends State<_TabContent> {
         children: [
           widget.getIconWidget(widget.tab) ?? const SizedBox(),
           widget.tab.tooltip != null && widget.tab.tooltip!.isNotEmpty && !isSelected
-              ? Tooltip(
-                  message: widget.tab.tooltip!,
-                  child: widget.getTitleWidget(widget.tab),
-                )
+              ? Tooltip(message: widget.tab.tooltip!, child: widget.getTitleWidget(widget.tab))
               : widget.getTitleWidget(widget.tab),
           if (showCloseButton)
             SizedBox(
@@ -414,9 +410,7 @@ class _TabContentState extends State<_TabContent> {
                 constraints: const BoxConstraints(),
                 icon: const Icon(Icons.close, size: 16),
                 style: IconButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                   minimumSize: const Size(24, 24),
                   maximumSize: const Size(24, 24),
                 ),

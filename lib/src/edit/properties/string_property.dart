@@ -28,6 +28,8 @@ class StringProperty extends PropertyWidget<String?>
   final int maxLength;
   final bool showCopyButton;
   final bool readOnly;
+  final int minLines;
+  final int maxLines;
 
   StringProperty({
     super.key,
@@ -43,6 +45,8 @@ class StringProperty extends PropertyWidget<String?>
     this.maxLength = -1,
     this.showCopyButton = false,
     this.readOnly = false,
+    this.minLines = 1,
+    this.maxLines = 1,
   });
 
   @override
@@ -53,15 +57,14 @@ class StringProperty extends PropertyWidget<String?>
         //filled: true,
         hintText: hint,
         labelText: label,
-        suffixIcon:
-            showCopyButton
-                ? IconButton(
-                  icon: const Icon(Icons.copy),
-                  onPressed: () {
-                    FlutterClipboard.copy(getProperty() ?? '');
-                  },
-                )
-                : null,
+        suffixIcon: showCopyButton
+            ? IconButton(
+                icon: const Icon(Icons.copy),
+                onPressed: () {
+                  FlutterClipboard.copy(getProperty() ?? '');
+                },
+              )
+            : null,
       ),
       enabled: enabled,
       autofocus: autofocus,
@@ -69,8 +72,8 @@ class StringProperty extends PropertyWidget<String?>
       obscureText: obscureText,
       //maxLength: property.maxLength,
       inputFormatters: [LengthLimitingTextInputFormatter(maxLength)],
-      // minLines: 1,
-      // maxLines: 3,
+      minLines: minLines,
+      maxLines: maxLines,
       onSaved: setProperty,
       readOnly: readOnly,
     );

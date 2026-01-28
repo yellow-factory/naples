@@ -19,8 +19,15 @@ class MustacheWidget<T extends IMustacheValues> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var t = Template(template, htmlEscapeValues: false);
-    var output = t.renderString(source.mustacheValues(locale));
-    return builder(output);
+    try {
+      // lenient: true makes missing values render as empty strings instead of throwing
+      var t = Template(template, htmlEscapeValues: false, lenient: true);
+      var output = t.renderString(source.mustacheValues(locale));
+      return builder(output);
+    } catch (e) {
+      // If template parsing fails (e.g., malformed mustache tags),
+      // fall back to rendering the original template without processing
+      return builder(template);
+    }
   }
 }
