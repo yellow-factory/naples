@@ -3,26 +3,39 @@ import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:navy/navy.dart';
 
+/// Callback that returns true if the tab can be closed, false to cancel closing.
+typedef OnBeforeCloseCallback = Future<bool> Function();
+
 class TabItem extends ChangeNotifier {
   final Widget body;
   final GlobalKey _bodyKey = GlobalKey();
   String? _title;
   String? _titleBadge;
+  Color? _titleBadgeBackgroundColor;
+  Color? _titleBadgeForegroundColor;
   String? _tooltip;
   IconData? _icon;
   int? _length;
   TabCollection? tabCollection;
 
+  /// Callback invoked before closing the tab. Return false to prevent closing.
+  OnBeforeCloseCallback? onBeforeClose;
+
   TabItem({
     required this.body,
     String? title,
     String? titleBadge,
+    Color? titleBadgeBackgroundColor,
+    Color? titleBadgeForegroundColor,
     String? tooltip,
     IconData? icon,
     int? length,
     this.tabCollection,
+    this.onBeforeClose,
   }) : _title = title,
        _titleBadge = titleBadge,
+       _titleBadgeBackgroundColor = titleBadgeBackgroundColor,
+       _titleBadgeForegroundColor = titleBadgeForegroundColor,
        _tooltip = tooltip,
        _icon = icon,
        _length = length;
@@ -39,6 +52,22 @@ class TabItem extends ChangeNotifier {
   set titleBadge(String? value) {
     if (_titleBadge != value) {
       _titleBadge = value;
+      notifyListeners();
+    }
+  }
+
+  Color? get titleBadgeBackgroundColor => _titleBadgeBackgroundColor;
+  set titleBadgeBackgroundColor(Color? value) {
+    if (_titleBadgeBackgroundColor != value) {
+      _titleBadgeBackgroundColor = value;
+      notifyListeners();
+    }
+  }
+
+  Color? get titleBadgeForegroundColor => _titleBadgeForegroundColor;
+  set titleBadgeForegroundColor(Color? value) {
+    if (_titleBadgeForegroundColor != value) {
+      _titleBadgeForegroundColor = value;
       notifyListeners();
     }
   }
@@ -98,10 +127,16 @@ class TabCollection extends ChangeNotifier {
     notifyIndexChange(newIndex);
   }
 
-  void remove(TabItem tab) {
+  Future<void> remove(TabItem tab) async {
     var indexToRemove = _items.indexOf(tab);
     if (indexToRemove == -1) {
       return; // Not found
+    }
+
+    // Call onBeforeClose callback if present
+    if (tab.onBeforeClose != null) {
+      final shouldClose = await tab.onBeforeClose!();
+      if (!shouldClose) return;
     }
 
     _items.removeAt(indexToRemove);
@@ -119,9 +154,9 @@ class TabCollection extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeCurrent() {
+  Future<void> removeCurrent() async {
     if (currentItem == null) throw Exception('There is no current item');
-    remove(currentItem!);
+    await remove(currentItem!);
   }
 
   int get length => _items.length;
@@ -271,7 +306,8 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
             child: Badge(
               offset: const Offset(20, -4),
               label: Text(tab.titleBadge!),
-              backgroundColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: tab.titleBadgeBackgroundColor ?? Theme.of(context).colorScheme.primary,
+              textColor: tab.titleBadgeForegroundColor,
               child: title,
             ),
           );
