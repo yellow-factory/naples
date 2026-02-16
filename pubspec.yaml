@@ -18,9 +18,9 @@ dependencies:
   #end Internationalization support.
   provider: ^6.1.5+1 # upgraded to latest 6.x patch
   list_ext: ^1.0.2
-  flutter_markdown: ^0.7.4+3
+  flutter_markdown_plus: ^1.0.7
   mustache_template: ^2.0.1 # patch update
-  markdown: ^7.1.0 
+  markdown: ^7.3.0 
   #flutter_linkify: ^4.1.0
   url_launcher: ^6.3.2 # bring to latest 6.x (web fixes, newer intents)
   file_selector: ^1.0.4 # patch (bug fixes)

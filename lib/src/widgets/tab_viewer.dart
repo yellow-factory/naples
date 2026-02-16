@@ -18,6 +18,9 @@ class TabItem extends ChangeNotifier {
   int? _length;
   TabCollection? tabCollection;
 
+  /// Whether the tab can be closed by the user. Defaults to true.
+  final bool closeable;
+
   /// Callback invoked before closing the tab. Return false to prevent closing.
   OnBeforeCloseCallback? onBeforeClose;
 
@@ -30,6 +33,7 @@ class TabItem extends ChangeNotifier {
     String? tooltip,
     IconData? icon,
     int? length,
+    this.closeable = true,
     this.tabCollection,
     this.onBeforeClose,
   }) : _title = title,
@@ -316,8 +320,11 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
   void _showTabContextMenu(BuildContext context, TabItem tab, Offset position) {
     final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
     final tabIndex = tabCollection.items.indexOf(tab);
-    final hasItemsToRight = tabIndex != -1 && tabIndex < tabCollection.items.length - 1;
-    final hasOtherItems = tabCollection.items.length > 1;
+    final isCloseable = tab.closeable;
+    final hasCloseableItemsToRight =
+        tabIndex != -1 && tabCollection.items.skip(tabIndex + 1).any((item) => item.closeable);
+    final hasOtherCloseableItems =
+        tabCollection.items.where((item) => item != tab).any((item) => item.closeable);
 
     showMenu(
       context: context,
@@ -325,17 +332,24 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
       items: [
         PopupMenuItem(
           height: 32,
-          child: const Text('Close', style: TextStyle(fontSize: 13)),
-          onTap: () {
-            tabCollection.remove(tab);
-          },
+          enabled: isCloseable,
+          onTap: isCloseable
+              ? () {
+                  tabCollection.remove(tab);
+                }
+              : null,
+          child: Text(
+            'Close',
+            style: TextStyle(fontSize: 13, color: isCloseable ? null : Colors.grey),
+          ),
         ),
         PopupMenuItem(
           height: 32,
-          enabled: hasOtherItems,
-          onTap: hasOtherItems
+          enabled: hasOtherCloseableItems,
+          onTap: hasOtherCloseableItems
               ? () {
-                  final itemsToRemove = tabCollection.items.where((item) => item != tab).toList();
+                  final itemsToRemove =
+                      tabCollection.items.where((item) => item != tab && item.closeable).toList();
                   for (var item in itemsToRemove) {
                     tabCollection.remove(item);
                   }
@@ -343,15 +357,16 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
               : null,
           child: Text(
             'Close others',
-            style: TextStyle(fontSize: 13, color: hasOtherItems ? null : Colors.grey),
+            style: TextStyle(fontSize: 13, color: hasOtherCloseableItems ? null : Colors.grey),
           ),
         ),
         PopupMenuItem(
           height: 32,
-          enabled: hasItemsToRight,
-          onTap: hasItemsToRight
+          enabled: hasCloseableItemsToRight,
+          onTap: hasCloseableItemsToRight
               ? () {
-                  final itemsToRemove = tabCollection.items.skip(tabIndex + 1).toList();
+                  final itemsToRemove =
+                      tabCollection.items.skip(tabIndex + 1).where((item) => item.closeable).toList();
                   for (var item in itemsToRemove) {
                     tabCollection.remove(item);
                   }
@@ -359,18 +374,25 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
               : null,
           child: Text(
             'Close to the right',
-            style: TextStyle(fontSize: 13, color: hasItemsToRight ? null : Colors.grey),
+            style: TextStyle(fontSize: 13, color: hasCloseableItemsToRight ? null : Colors.grey),
           ),
         ),
         PopupMenuItem(
           height: 32,
-          child: const Text('Close all', style: TextStyle(fontSize: 13)),
+          enabled: tabCollection.items.any((item) => item.closeable),
           onTap: () {
-            final itemsToRemove = tabCollection.items.toList();
+            final itemsToRemove = tabCollection.items.where((item) => item.closeable).toList();
             for (var item in itemsToRemove) {
               tabCollection.remove(item);
             }
           },
+          child: Text(
+            'Close all',
+            style: TextStyle(
+              fontSize: 13,
+              color: tabCollection.items.any((item) => item.closeable) ? null : Colors.grey,
+            ),
+          ),
         ),
       ],
     );
@@ -425,7 +447,8 @@ class _TabContentState extends State<_TabContent> {
   @override
   Widget build(BuildContext context) {
     final isSelected = widget.tab.isSelected;
-    final showCloseButton = isSelected || _isHovered;
+    final isCloseable = widget.tab.closeable;
+    final showCloseButton = isCloseable && (isSelected || _isHovered);
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),

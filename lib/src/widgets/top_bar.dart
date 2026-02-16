@@ -49,7 +49,7 @@ class TopBar extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.baseline,
       spacing: titleBadgeWidget != null ? 5 : 0,
       children: [
-        if (titleBadgeWidget != null) titleBadgeWidget,
+        ?titleBadgeWidget,
         Expanded(child: _getActions()),
       ],
     );
