@@ -141,6 +141,9 @@ class TabCollection extends ChangeNotifier {
     if (tab.onBeforeClose != null) {
       final shouldClose = await tab.onBeforeClose!();
       if (!shouldClose) return;
+      // Re-lookup index after async gap — other removals may have shifted it
+      indexToRemove = _items.indexOf(tab);
+      if (indexToRemove == -1) return;
     }
 
     _items.removeAt(indexToRemove);
