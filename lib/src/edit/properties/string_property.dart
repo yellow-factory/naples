@@ -30,6 +30,7 @@ class StringProperty extends PropertyWidget<String?>
   final bool readOnly;
   final int minLines;
   final int maxLines;
+  final VoidCallback? onEditPressed;
 
   StringProperty({
     super.key,
@@ -47,7 +48,27 @@ class StringProperty extends PropertyWidget<String?>
     this.readOnly = false,
     this.minLines = 1,
     this.maxLines = 1,
+    this.onEditPressed,
   });
+
+  Widget? _buildSuffixIcon() {
+    final List<Widget> icons = [];
+    if (showCopyButton) {
+      icons.add(IconButton(
+        icon: const Icon(Icons.copy),
+        onPressed: () => FlutterClipboard.copy(getProperty() ?? ''),
+      ));
+    }
+    if (onEditPressed != null) {
+      icons.add(IconButton(
+        icon: const Icon(Icons.edit),
+        onPressed: onEditPressed,
+      ));
+    }
+    if (icons.isEmpty) return null;
+    if (icons.length == 1) return icons.first;
+    return Row(mainAxisSize: MainAxisSize.min, children: icons);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,14 +78,7 @@ class StringProperty extends PropertyWidget<String?>
         //filled: true,
         hintText: hint,
         labelText: label,
-        suffixIcon: showCopyButton
-            ? IconButton(
-                icon: const Icon(Icons.copy),
-                onPressed: () {
-                  FlutterClipboard.copy(getProperty() ?? '');
-                },
-              )
-            : null,
+        suffixIcon: _buildSuffixIcon(),
       ),
       enabled: enabled,
       autofocus: autofocus,
