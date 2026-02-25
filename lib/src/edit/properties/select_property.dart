@@ -43,6 +43,8 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
   final bool saveOnValueChanged;
   //Optional action to navigate to the selected item (e.g., open in editor)
   final FutureOr<void> Function(V)? onNavigate;
+  //Shows a clear button to reset the value to null (dialog mode only)
+  final bool clearable;
 
   SelectProperty({
     super.key,
@@ -60,6 +62,7 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
     this.widgetType = SelectWidgetType.dropDown,
     this.saveOnValueChanged = false,
     this.onNavigate,
+    this.clearable = false,
   });
 
   @override
@@ -109,9 +112,7 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
   }
 
   Widget _getRadioList(List<V> items) {
-    final radioKey = GlobalKey<FormFieldState<U>>();
     return RadioListFormField<U, V>(
-      key: radioKey,
       label: label,
       hint: hint,
       autofocus: autofocus,
@@ -124,42 +125,33 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
       validator: validator,
       controlAffinity: ListTileControlAffinity.leading,
       onChanged: (value) {
-        if (radioKey.currentState == null) return;
-        if (saveOnValueChanged) radioKey.currentState!.save();
-        // I THINK THIS IS NOT NEEDED
-        // if (radioKey.currentState!.value != value) {
-        //   radioKey.currentState!.didChange(value);
-        // }
+        if (saveOnValueChanged) setProperty?.call(value);
       },
     );
   }
 
   Widget _getDialog() {
-    // No 'items' parameter needed here, as listItems is passed directly.
-    final dialogKey = GlobalKey<FormFieldState<U>>();
+    final currentValue = getProperty();
     return SelectDialogFormField<U, V>(
-      key: dialogKey,
+      key: ValueKey(currentValue),
       label: label,
       hint: hint,
-      // autofocus is not directly applicable to SelectDialogFormField's TextField in this setup
-      // as it's read-only. Autofocus for the dialog itself would be handled by showSelectDialog.
       enabled: enabled,
-      initialValue: getProperty(),
+      initialValue: currentValue,
       onSaved: setProperty,
       validator: validator,
       listItems: listItems, // Pass the original listItems function
       valueMember: valueMember,
       displayMember: displayMember,
       onChanged: (value) {
-        if (dialogKey.currentState == null) return;
-        if (saveOnValueChanged) dialogKey.currentState!.save();
+        if (saveOnValueChanged) setProperty?.call(value);
       },
       onNavigate: onNavigate,
+      clearable: clearable,
     );
   }
 
   Widget _getDropDown(List<V> itemsProvided) {
-    final dropdownKey = GlobalKey<FormFieldState<U>>();
     if (itemsProvided.isEmpty) {
       return const Text("No items to select", overflow: TextOverflow.ellipsis);
     }
@@ -171,7 +163,6 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
         ),
     ];
     return DropdownButtonFormField<U>(
-      key: dropdownKey,
       items: items,
       initialValue: getProperty(),
       onSaved: setProperty,
@@ -179,12 +170,7 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
       autofocus: autofocus,
       decoration: InputDecoration(labelText: label, hintText: hint),
       onChanged: (value) {
-        if (dropdownKey.currentState == null) return;
-        if (saveOnValueChanged) dropdownKey.currentState!.save();
-        // I THINK THIS IS NOT NEEDED
-        // if (dropdownKey.currentState!.value != value) {
-        //   dropdownKey.currentState!.didChange(value);
-        // }
+        if (saveOnValueChanged) setProperty?.call(value);
       },
     );
   }

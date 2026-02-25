@@ -1,7 +1,7 @@
 import 'dart:async'; // Added for FutureOr
 
 import 'package:flutter/material.dart';
-import 'package:naples/dialogs.dart';
+import 'package:naples/src/dialogs/selector_dialog.dart';
 import 'package:navy/navy.dart';
 
 class SelectDialogFormField<U, V> extends FormField<U> {
@@ -18,6 +18,7 @@ class SelectDialogFormField<U, V> extends FormField<U> {
     required FunctionOf1<V, FunctionOf0<String>> displayMember,
     Function(U?)? onChanged,
     FutureOr<void> Function(V)? onNavigate,
+    bool clearable = false,
   }) : super(
          builder: (FormFieldState<U> state) {
            return _SelectDialogWidget<U, V>(
@@ -30,6 +31,7 @@ class SelectDialogFormField<U, V> extends FormField<U> {
              displayMember: displayMember,
              onChanged: onChanged,
              onNavigate: onNavigate,
+             clearable: clearable,
            );
          },
        );
@@ -45,6 +47,7 @@ class _SelectDialogWidget<U, V> extends StatefulWidget {
   final FunctionOf1<V, FunctionOf0<String>> displayMember;
   final Function(U?)? onChanged;
   final FutureOr<void> Function(V)? onNavigate;
+  final bool clearable;
 
   const _SelectDialogWidget({
     required this.state,
@@ -56,6 +59,7 @@ class _SelectDialogWidget<U, V> extends StatefulWidget {
     required this.displayMember,
     this.onChanged,
     this.onNavigate,
+    this.clearable = false,
   });
 
   @override
@@ -66,6 +70,7 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
   final TextEditingController _controller = TextEditingController();
   List<V>? _cachedResolvedItems;
   bool _isDialogLoadingItems = false;
+  bool _isNavigating = false;
 
   @override
   void initState() {
@@ -82,12 +87,15 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
     super.didUpdateWidget(oldWidget);
 
     bool listItemsChanged = widget.listItems != oldWidget.listItems;
-    if (listItemsChanged) {
-      _cachedResolvedItems = null; // Invalidate cache
-    }
 
     if (widget.state.value != oldWidget.state.value || listItemsChanged) {
+      // Update text controller BEFORE invalidating cache so the display
+      // member lookup still works with the existing cached items.
       _updateTextController(widget.state.value);
+    }
+
+    if (listItemsChanged) {
+      _cachedResolvedItems = null; // Invalidate cache
     }
   }
 
@@ -160,48 +168,80 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
       }
     }
 
-    final result = await showSelectDialog<V>(
-      title: widget.label,
-      subtitle: widget.hint,
-      context: context,
-      items: _cachedResolvedItems!,
-      selectedItem: currentSelectedV,
-      displayMember: (t) => widget.displayMember(t)(),
-    );
+    if (widget.clearable) {
+      final result = await showSelectDialogClearable<V>(
+        title: widget.label,
+        subtitle: widget.hint,
+        context: context,
+        items: _cachedResolvedItems!,
+        selectedItem: currentSelectedV,
+        displayMember: (t) => widget.displayMember(t)(),
+      );
 
-    if (result == null) return;
+      if (!mounted) return;
 
-    var value = widget.valueMember(result);
-    widget.state.didChange(value);
-    if (widget.onChanged != null) {
-      widget.onChanged!(value);
+      if (result.cleared) {
+        _clearValue();
+      } else if (result.value != null) {
+        final value = widget.valueMember(result.value as V);
+        widget.state.didChange(value);
+        widget.onChanged?.call(value);
+        _updateTextController(value);
+      }
+    } else {
+      final result = await showSelectDialog<V>(
+        title: widget.label,
+        subtitle: widget.hint,
+        context: context,
+        items: _cachedResolvedItems!,
+        selectedItem: currentSelectedV,
+        displayMember: (t) => widget.displayMember(t)(),
+      );
+
+      if (result == null) return;
+
+      final value = widget.valueMember(result);
+      widget.state.didChange(value);
+      widget.onChanged?.call(value);
+      // Explicitly update the text controller with the new value
+      // to ensure the TextField reflects the selection immediately.
+      _updateTextController(value);
     }
-    // Explicitly update the text controller with the new value
-    // to ensure the TextField reflects the selection immediately.
-    _updateTextController(value);
+  }
+
+  void _clearValue() {
+    widget.state.didChange(null);
+    widget.onChanged?.call(null);
+    _updateTextController(null);
   }
 
   Future<void> _handleNavigate() async {
     if (widget.onNavigate == null || widget.state.value == null) return;
+    if (_isNavigating) return;
 
-    // Find the V item corresponding to the current value
-    if (_cachedResolvedItems == null) {
-      final itemsOrFuture = widget.listItems();
-      if (itemsOrFuture is Future<List<V>>) {
-        _cachedResolvedItems = await itemsOrFuture;
-      } else {
-        _cachedResolvedItems = itemsOrFuture;
+    setState(() => _isNavigating = true);
+    try {
+      // Find the V item corresponding to the current value
+      if (_cachedResolvedItems == null) {
+        final itemsOrFuture = widget.listItems();
+        if (itemsOrFuture is Future<List<V>>) {
+          _cachedResolvedItems = await itemsOrFuture;
+        } else {
+          _cachedResolvedItems = itemsOrFuture;
+        }
       }
-    }
 
-    if (_cachedResolvedItems == null) return;
+      if (_cachedResolvedItems == null) return;
 
-    final matchingItems = _cachedResolvedItems!.where(
-      (element) => widget.valueMember(element) == widget.state.value,
-    );
+      final matchingItems = _cachedResolvedItems!.where(
+        (element) => widget.valueMember(element) == widget.state.value,
+      );
 
-    if (matchingItems.isNotEmpty) {
-      await widget.onNavigate!(matchingItems.first);
+      if (matchingItems.isNotEmpty) {
+        await widget.onNavigate!(matchingItems.first);
+      }
+    } finally {
+      if (mounted) setState(() => _isNavigating = false);
     }
   }
 
@@ -231,11 +271,20 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (hasNavigateAction)
-                    IconButton(
-                      icon: const Icon(Icons.open_in_new),
-                      onPressed: _handleNavigate,
-                      tooltip: 'Open for editing',
-                    ),
+                    _isNavigating
+                        ? const Padding(
+                            padding: EdgeInsets.all(12.0),
+                            child: SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2.0),
+                            ),
+                          )
+                        : IconButton(
+                            icon: const Icon(Icons.open_in_new),
+                            onPressed: _handleNavigate,
+                            tooltip: 'Open for editing',
+                          ),
                   IconButton(
                     icon: const Icon(Icons.edit_outlined),
                     onPressed: _showSelectionDialog,

@@ -36,12 +36,19 @@ class StreamSelectorDialog<T> extends StatelessWidget {
   }
 }
 
+class _ClearedSentinel {
+  const _ClearedSentinel();
+}
+
+const _clearedSentinel = _ClearedSentinel();
+
 class SelectorDialog<T> extends StatefulWidget {
   final String? title;
   final String? subtitle;
   final List<T> items;
   final T? selectedItem;
   final FunctionOf1<T, String>? displayMember;
+  final bool clearable;
 
   const SelectorDialog({
     super.key,
@@ -50,6 +57,7 @@ class SelectorDialog<T> extends StatefulWidget {
     required this.items,
     this.selectedItem,
     this.displayMember,
+    this.clearable = false,
   });
 
   @override
@@ -81,6 +89,15 @@ class SelectorDialogState<T> extends State<SelectorDialog<T>> {
                       title: Text(widget.title!),
                       subtitle: widget.subtitle == null ? null : Text(widget.subtitle!),
                       contentPadding: EdgeInsets.zero,
+                      trailing: widget.clearable && widget.selectedItem != null
+                          ? IconButton(
+                              icon: const Icon(Icons.delete),
+                              tooltip: 'Clear selection',
+                              onPressed: () {
+                                Navigator.pop(context, _clearedSentinel);
+                              },
+                            )
+                          : null,
                     ),
                     TextField(
                       autofocus: true,
@@ -181,4 +198,36 @@ Future<T?> showSelectDialog<T>({
   );
 
   return dialogResult;
+}
+
+/// Shows a selection dialog with an optional "Clear selection" option.
+///
+/// Returns `(cleared: true, value: null)` when the user clears the selection,
+/// `(cleared: false, value: T)` when an item is selected, and
+/// `(cleared: false, value: null)` when the dialog is dismissed.
+Future<({bool cleared, T? value})> showSelectDialogClearable<T>({
+  required BuildContext context,
+  required List<T> items,
+  String? title,
+  String? subtitle,
+  T? selectedItem,
+  FunctionOf1<T, String>? displayMember,
+}) async {
+  final result = await showDialog<Object?>(
+    context: context,
+    builder: (context) {
+      return SelectorDialog<T>(
+        title: title,
+        subtitle: subtitle,
+        items: items,
+        selectedItem: selectedItem,
+        displayMember: displayMember,
+        clearable: true,
+      );
+    },
+  );
+
+  if (result == _clearedSentinel) return (cleared: true, value: null);
+  if (result is T) return (cleared: false, value: result);
+  return (cleared: false, value: null);
 }
