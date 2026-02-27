@@ -28,4 +28,28 @@ class NaplesLocalizationsEn extends NaplesLocalizations {
 
   @override
   String get close => 'Close';
+
+  @override
+  String get clearSelection => 'Clear selection';
+
+  @override
+  String get openForEditing => 'Open for editing';
+
+  @override
+  String get select => 'Select';
+
+  @override
+  String get filterBy => 'Filter by';
+
+  @override
+  String confirmDeleteMessage(String itemName) => 'Are you sure you want to delete the $itemName?';
+
+  @override
+  String get yes => 'Yes';
+
+  @override
+  String get no => 'No';
+
+  @override
+  String errorLoadingItems(String error) => 'Error loading items: $error';
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:naples/list.dart';
 import 'package:naples/load.dart';
+import 'package:naples/src/generated/l10n/naples_localizations.dart';
 import 'package:navy/navy.dart';
 
 class StreamSelectorDialog<T> extends StatelessWidget {
@@ -67,6 +68,10 @@ class SelectorDialog<T> extends StatefulWidget {
 class SelectorDialogState<T> extends State<SelectorDialog<T>> {
   String _filterBy = "";
 
+  NaplesLocalizations get _l =>
+      NaplesLocalizations.of(context) ??
+      (throw Exception("NaplesLocalizations not found in the context"));
+
   @override
   Widget build(BuildContext context) {
     return FilterList<T>(
@@ -92,7 +97,7 @@ class SelectorDialogState<T> extends State<SelectorDialog<T>> {
                       trailing: widget.clearable && widget.selectedItem != null
                           ? IconButton(
                               icon: const Icon(Icons.delete),
-                              tooltip: 'Clear selection',
+                              tooltip: _l.clearSelection,
                               onPressed: () {
                                 Navigator.pop(context, _clearedSentinel);
                               },
@@ -101,8 +106,8 @@ class SelectorDialogState<T> extends State<SelectorDialog<T>> {
                     ),
                     TextField(
                       autofocus: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Filter by',
+                      decoration: InputDecoration(
+                        labelText: _l.filterBy,
                       ),
                       style: const TextStyle(fontSize: 14),
                       onChanged: (value) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:naples/src/generated/l10n/naples_localizations.dart';
 
 enum YesNoDialogOptions { yes, no }
 
@@ -11,17 +12,19 @@ class ConfirmDeleteDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = NaplesLocalizations.of(context) ??
+        (throw Exception("NaplesLocalizations not found in the context"));
     return AlertDialog(
-      title: const Text('Delete'),
-      content: Text('Are you sure you want to delete the $itemName?'),
+      title: Text(l.delete),
+      content: Text(l.confirmDeleteMessage(itemName)),
       actions: <Widget>[
         TextButton(
           onPressed: () => Navigator.pop(context, YesNoDialogOptions.no),
-          child: const Text('No'),
+          child: Text(l.no),
         ),
         TextButton(
           onPressed: () => Navigator.pop(context, YesNoDialogOptions.yes),
-          child: const Text('Yes'),
+          child: Text(l.yes),
         ),
       ],
     );

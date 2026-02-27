@@ -2,6 +2,7 @@ import 'dart:async'; // Added for FutureOr
 
 import 'package:flutter/material.dart';
 import 'package:naples/src/dialogs/selector_dialog.dart';
+import 'package:naples/src/generated/l10n/naples_localizations.dart';
 import 'package:navy/navy.dart';
 
 class SelectDialogFormField<U, V> extends FormField<U> {
@@ -67,6 +68,10 @@ class _SelectDialogWidget<U, V> extends StatefulWidget {
 }
 
 class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
+  NaplesLocalizations get _l =>
+      NaplesLocalizations.of(context) ??
+      (throw Exception("NaplesLocalizations not found in the context"));
+
   final TextEditingController _controller = TextEditingController();
   List<V>? _cachedResolvedItems;
   bool _isDialogLoadingItems = false;
@@ -145,7 +150,7 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
         if (mounted) {
           ScaffoldMessenger.of(
             context,
-          ).showSnackBar(SnackBar(content: Text("Error loading items: $e")));
+          ).showSnackBar(SnackBar(content: Text(_l.errorLoadingItems(e.toString()))));
         }
       } finally {
         if (mounted) {
@@ -283,12 +288,12 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
                         : IconButton(
                             icon: const Icon(Icons.open_in_new),
                             onPressed: _handleNavigate,
-                            tooltip: 'Open for editing',
+                            tooltip: _l.openForEditing,
                           ),
                   IconButton(
                     icon: const Icon(Icons.edit_outlined),
                     onPressed: _showSelectionDialog,
-                    tooltip: 'Select',
+                    tooltip: _l.select,
                   ),
                 ],
               )

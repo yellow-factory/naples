@@ -15,5 +15,23 @@
   "accept": "Accepta",
   "cancel": "Cancel·la",
   "delete": "Elimina",
-  "close": "Tanca"
+  "close": "Tanca",
+  "clearSelection": "Esborrar selecció",
+  "openForEditing": "Obrir per editar",
+  "select": "Seleccionar",
+  "filterBy": "Filtrar per",
+  "confirmDeleteMessage": "Estàs segur que vols eliminar {itemName}?",
+  "@confirmDeleteMessage": {
+    "placeholders": {
+      "itemName": { "type": "String" }
+    }
+  },
+  "yes": "Sí",
+  "no": "No",
+  "errorLoadingItems": "Error carregant elements: {error}",
+  "@errorLoadingItems": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  }
 }

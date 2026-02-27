@@ -141,6 +141,54 @@ abstract class NaplesLocalizations {
   /// In en, this message translates to:
   /// **'Close'**
   String get close;
+
+  /// No description provided for @clearSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear selection'**
+  String get clearSelection;
+
+  /// No description provided for @openForEditing.
+  ///
+  /// In en, this message translates to:
+  /// **'Open for editing'**
+  String get openForEditing;
+
+  /// No description provided for @select.
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get select;
+
+  /// No description provided for @filterBy.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by'**
+  String get filterBy;
+
+  /// No description provided for @confirmDeleteMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete the {itemName}?'**
+  String confirmDeleteMessage(String itemName);
+
+  /// No description provided for @yes.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get yes;
+
+  /// No description provided for @no.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get no;
+
+  /// No description provided for @errorLoadingItems.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading items: {error}'**
+  String errorLoadingItems(String error);
 }
 
 class _NaplesLocalizationsDelegate

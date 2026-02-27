@@ -309,9 +309,9 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
     return tab.titleBadge == null
         ? title
         : Padding(
-            padding: EdgeInsets.only(right: 30),
+            padding: const EdgeInsets.only(right: 44),
             child: Badge(
-              offset: const Offset(20, -4),
+              offset: const Offset(14, -4),
               label: Text(tab.titleBadge!),
               backgroundColor: tab.titleBadgeBackgroundColor ?? Theme.of(context).colorScheme.primary,
               textColor: tab.titleBadgeForegroundColor,

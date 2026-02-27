@@ -15,5 +15,23 @@
   "accept": "Accept",
   "cancel": "Cancel",
   "delete": "Delete",
-  "close": "Close"
+  "close": "Close",
+  "clearSelection": "Clear selection",
+  "openForEditing": "Open for editing",
+  "select": "Select",
+  "filterBy": "Filter by",
+  "confirmDeleteMessage": "Are you sure you want to delete the {itemName}?",
+  "@confirmDeleteMessage": {
+    "placeholders": {
+      "itemName": { "type": "String" }
+    }
+  },
+  "yes": "Yes",
+  "no": "No",
+  "errorLoadingItems": "Error loading items: {error}",
+  "@errorLoadingItems": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  }
 }

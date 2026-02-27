@@ -2,6 +2,7 @@ import 'dart:async'; // Added for FutureOr
 
 import 'package:flutter/material.dart';
 import 'package:naples/src/common/common.dart';
+import 'package:naples/src/generated/l10n/naples_localizations.dart';
 import 'package:naples/src/widgets/radio_list_form_field.dart';
 import 'package:naples/src/widgets/select_dialog_form_field.dart';
 import 'package:navy/navy.dart';
@@ -84,7 +85,10 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Text('Error loading items: ${snapshot.error}');
+            return Text(
+              NaplesLocalizations.of(context)?.errorLoadingItems(snapshot.error.toString()) ??
+                  'Error loading items: ${snapshot.error}',
+            );
           }
           if (snapshot.hasData) {
             return _buildNonDialogWidgets(snapshot.data!);

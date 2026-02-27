@@ -28,4 +28,28 @@ class NaplesLocalizationsCa extends NaplesLocalizations {
 
   @override
   String get close => 'Tanca';
+
+  @override
+  String get clearSelection => 'Esborrar selecció';
+
+  @override
+  String get openForEditing => 'Obrir per editar';
+
+  @override
+  String get select => 'Seleccionar';
+
+  @override
+  String get filterBy => 'Filtrar per';
+
+  @override
+  String confirmDeleteMessage(String itemName) => 'Estàs segur que vols eliminar $itemName?';
+
+  @override
+  String get yes => 'Sí';
+
+  @override
+  String get no => 'No';
+
+  @override
+  String errorLoadingItems(String error) => 'Error carregant elements: $error';
 }
