@@ -94,6 +94,7 @@ class DynamicPaginatedTableState<T> extends State<DynamicPaginatedTable<T>> {
           elevation: 0,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
           margin: EdgeInsets.zero,
+          color: Colors.transparent,
         ),
       ),
       child: Scrollbar(
