@@ -14,6 +14,7 @@ class CardDividedContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.transparent,
       elevation: elevatedCard ? 4 : 0,
       child: DividedContainer(
         showDivider: true,

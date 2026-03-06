@@ -309,11 +309,12 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
     return tab.titleBadge == null
         ? title
         : Padding(
-            padding: const EdgeInsets.only(right: 44),
+            padding: const EdgeInsets.only(right: 40),
             child: Badge(
-              offset: const Offset(14, -4),
+              offset: const Offset(18, -4),
               label: Text(tab.titleBadge!),
-              backgroundColor: tab.titleBadgeBackgroundColor ?? Theme.of(context).colorScheme.primary,
+              backgroundColor:
+                  tab.titleBadgeBackgroundColor ?? Theme.of(context).colorScheme.primary,
               textColor: tab.titleBadgeForegroundColor,
               child: title,
             ),
@@ -326,8 +327,9 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
     final isCloseable = tab.closeable;
     final hasCloseableItemsToRight =
         tabIndex != -1 && tabCollection.items.skip(tabIndex + 1).any((item) => item.closeable);
-    final hasOtherCloseableItems =
-        tabCollection.items.where((item) => item != tab).any((item) => item.closeable);
+    final hasOtherCloseableItems = tabCollection.items
+        .where((item) => item != tab)
+        .any((item) => item.closeable);
 
     showMenu(
       context: context,
@@ -351,8 +353,9 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
           enabled: hasOtherCloseableItems,
           onTap: hasOtherCloseableItems
               ? () {
-                  final itemsToRemove =
-                      tabCollection.items.where((item) => item != tab && item.closeable).toList();
+                  final itemsToRemove = tabCollection.items
+                      .where((item) => item != tab && item.closeable)
+                      .toList();
                   for (var item in itemsToRemove) {
                     tabCollection.remove(item);
                   }
@@ -368,8 +371,10 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
           enabled: hasCloseableItemsToRight,
           onTap: hasCloseableItemsToRight
               ? () {
-                  final itemsToRemove =
-                      tabCollection.items.skip(tabIndex + 1).where((item) => item.closeable).toList();
+                  final itemsToRemove = tabCollection.items
+                      .skip(tabIndex + 1)
+                      .where((item) => item.closeable)
+                      .toList();
                   for (var item in itemsToRemove) {
                     tabCollection.remove(item);
                   }
