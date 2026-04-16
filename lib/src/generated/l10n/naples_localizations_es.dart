@@ -36,7 +36,7 @@ class NaplesLocalizationsEs extends NaplesLocalizations {
   String get openForEditing => 'Abrir para editar';
 
   @override
-  String get select => 'Seleccionar';
+  String get select => 'Cambiar';
 
   @override
   String get filterBy => 'Filtrar por';

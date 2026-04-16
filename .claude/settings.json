@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs -I {} basename {})",
+      "Bash(xargs -I {} sh -c 'basename {}')"
+    ]
+  }
+}

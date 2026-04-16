@@ -28,7 +28,8 @@ class SwitchFormField extends FormField<bool> {
           },
         );
 
-  static Widget _getSubtitle(String? hint, FormFieldState<bool> state) {
+  static Widget? _getSubtitle(String? hint, FormFieldState<bool> state) {
+    if (hint == null && !state.hasError) return null;
     final errorColor = Theme.of(state.context).colorScheme.error;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

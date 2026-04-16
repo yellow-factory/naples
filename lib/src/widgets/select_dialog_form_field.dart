@@ -76,6 +76,8 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
   List<V>? _cachedResolvedItems;
   bool _isDialogLoadingItems = false;
   bool _isNavigating = false;
+  bool _isHovered = false;
+  U? _lastDisplayedValue;
 
   @override
   void initState() {
@@ -84,6 +86,7 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
     if (itemsOrFuture is List<V>) {
       _cachedResolvedItems = itemsOrFuture;
     }
+    _lastDisplayedValue = widget.state.value;
     _updateTextController(widget.state.value);
   }
 
@@ -92,10 +95,15 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
     super.didUpdateWidget(oldWidget);
 
     bool listItemsChanged = widget.listItems != oldWidget.listItems;
+    bool valueChanged = widget.state.value != _lastDisplayedValue;
 
-    if (widget.state.value != oldWidget.state.value || listItemsChanged) {
-      // Update text controller BEFORE invalidating cache so the display
-      // member lookup still works with the existing cached items.
+    if (valueChanged) {
+      // Value changed: always update, using cache if available.
+      _updateTextController(widget.state.value);
+      _lastDisplayedValue = widget.state.value;
+    } else if (listItemsChanged && _cachedResolvedItems != null) {
+      // Items changed but value hasn't: update BEFORE invalidating cache.
+      // If cache is already null, skip — the text controller is already correct.
       _updateTextController(widget.state.value);
     }
 
@@ -253,51 +261,56 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
   @override
   Widget build(BuildContext context) {
     final hasNavigateAction = widget.onNavigate != null && widget.state.value != null;
+    final showButtons = _isHovered || _isDialogLoadingItems || _isNavigating;
 
-    return TextField(
-      controller: _controller,
-      readOnly: true,
-      enabled: widget.enabled,
-      decoration: InputDecoration(
-        labelText: widget.label,
-        hintText: widget.hint,
-        errorText: widget.state.errorText,
-        suffixIcon: _isDialogLoadingItems
-            ? const Padding(
-                padding: EdgeInsets.all(12.0),
-                child: SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(strokeWidth: 2.0),
-                ),
-              )
-            : widget.enabled
-            ? Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (hasNavigateAction)
-                    _isNavigating
-                        ? const Padding(
-                            padding: EdgeInsets.all(12.0),
-                            child: SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(strokeWidth: 2.0),
-                            ),
-                          )
-                        : IconButton(
-                            icon: const Icon(Icons.open_in_new),
-                            onPressed: _handleNavigate,
-                            tooltip: _l.openForEditing,
-                          ),
-                  IconButton(
-                    icon: const Icon(Icons.edit_outlined),
-                    onPressed: _showSelectionDialog,
-                    tooltip: _l.select,
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: TextField(
+        controller: _controller,
+        readOnly: true,
+        enabled: widget.enabled,
+        decoration: InputDecoration(
+          labelText: widget.label,
+          hintText: widget.hint,
+          errorText: widget.state.errorText,
+          suffixIcon: _isDialogLoadingItems
+              ? const Padding(
+                  padding: EdgeInsets.all(12.0),
+                  child: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2.0),
                   ),
-                ],
-              )
-            : null,
+                )
+              : widget.enabled && showButtons
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (hasNavigateAction)
+                      _isNavigating
+                          ? const Padding(
+                              padding: EdgeInsets.all(12.0),
+                              child: SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(strokeWidth: 2.0),
+                              ),
+                            )
+                          : IconButton(
+                              icon: const Icon(Icons.open_in_new),
+                              onPressed: _handleNavigate,
+                              tooltip: _l.openForEditing,
+                            ),
+                    IconButton(
+                      icon: const Icon(Icons.edit_outlined),
+                      onPressed: _showSelectionDialog,
+                      tooltip: _l.select,
+                    ),
+                  ],
+                )
+              : null,
+        ),
       ),
     );
   }

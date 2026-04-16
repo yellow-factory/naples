@@ -18,7 +18,7 @@
   "close": "Cerrar",
   "clearSelection": "Borrar selección",
   "openForEditing": "Abrir para editar",
-  "select": "Seleccionar",
+  "select": "Cambiar",
   "filterBy": "Filtrar por",
   "confirmDeleteMessage": "¿Estás seguro de que quieres eliminar {itemName}?",
   "@confirmDeleteMessage": {

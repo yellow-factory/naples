@@ -36,7 +36,7 @@ class NaplesLocalizationsCa extends NaplesLocalizations {
   String get openForEditing => 'Obrir per editar';
 
   @override
-  String get select => 'Seleccionar';
+  String get select => 'Canvia';
 
   @override
   String get filterBy => 'Filtrar per';
