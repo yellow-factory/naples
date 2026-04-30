@@ -8,7 +8,7 @@ class ActionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var txtTitle = Text(title.toUpperCase());
+    var txtTitle = Text(title);
     if (primary) {
       return FocusTraversalOrder(
         order: const NumericFocusOrder(0),
