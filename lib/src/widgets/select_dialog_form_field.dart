@@ -264,8 +264,8 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
     final showButtons = _isHovered || _isDialogLoadingItems || _isNavigating;
 
     return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
+      onEnter: (_) { if (widget.enabled) setState(() => _isHovered = true); },
+      onExit: (_) { if (widget.enabled) setState(() => _isHovered = false); },
       child: TextField(
         controller: _controller,
         readOnly: true,

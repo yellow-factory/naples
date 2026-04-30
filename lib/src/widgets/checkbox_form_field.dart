@@ -21,7 +21,6 @@ class CheckboxFormField extends FormField<bool> {
              state: state,
              label: label,
              hint: hint,
-             controlAffinity: controlAffinity,
              autofocus: autofocus,
              enabled: enabled,
              saveOnValueChanged: saveOnValueChanged,
@@ -35,7 +34,6 @@ class _CheckboxWidget extends StatefulWidget {
   final FormFieldState<bool> state;
   final String label;
   final String? hint;
-  final ListTileControlAffinity controlAffinity;
   final bool autofocus;
   final bool enabled;
   final bool saveOnValueChanged;
@@ -45,7 +43,6 @@ class _CheckboxWidget extends StatefulWidget {
     required this.state,
     required this.label,
     this.hint,
-    required this.controlAffinity,
     required this.autofocus,
     required this.enabled,
     required this.saveOnValueChanged,
@@ -60,6 +57,7 @@ class _CheckboxWidgetState extends State<_CheckboxWidget> {
   OverlayEntry? _overlayEntry;
 
   void _showTooltip() {
+    if (_overlayEntry != null) return;
     if (widget.hint == null || widget.hint!.isEmpty) return;
     final renderBox = context.findRenderObject() as RenderBox;
     final offset = renderBox.localToGlobal(Offset.zero);
@@ -115,7 +113,7 @@ class _CheckboxWidgetState extends State<_CheckboxWidget> {
   static Widget _getSubtitle(String? hint, FormFieldState<bool> state) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [if (hint != null) Text(hint), if (!state.hasError) _getErrorText(state)],
+      children: [if (hint != null) Text(hint), if (state.hasError) _getErrorText(state)],
     );
   }
 
