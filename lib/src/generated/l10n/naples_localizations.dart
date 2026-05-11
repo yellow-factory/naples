@@ -118,6 +118,12 @@ abstract class NaplesLocalizations {
   /// **'Finalize'**
   String get finalitza;
 
+  /// No description provided for @newItem.
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get newItem;
+
   /// No description provided for @accept.
   ///
   /// In en, this message translates to:

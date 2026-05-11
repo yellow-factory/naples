@@ -12,14 +12,15 @@
   "@finalitza": {
     "description": "Per finalitzar la seqüència de passos"
   },
+  "newItem": "Nou",
   "accept": "Accepta",
   "cancel": "Cancel·la",
   "delete": "Elimina",
   "close": "Tanca",
-  "clearSelection": "Esborrar selecció",
-  "openForEditing": "Obrir per editar",
+  "clearSelection": "Esborra la selecció",
+  "openForEditing": "Obre per editar",
   "select": "Canvia",
-  "filterBy": "Filtrar per",
+  "filterBy": "Filtra per",
   "confirmDeleteMessage": "Estàs segur que vols eliminar {itemName}?",
   "@confirmDeleteMessage": {
     "placeholders": {

@@ -18,6 +18,9 @@ class NaplesLocalizationsCa extends NaplesLocalizations {
   String get finalitza => 'Finalitza';
 
   @override
+  String get newItem => 'Nou';
+
+  @override
   String get accept => 'Accepta';
 
   @override
@@ -30,16 +33,16 @@ class NaplesLocalizationsCa extends NaplesLocalizations {
   String get close => 'Tanca';
 
   @override
-  String get clearSelection => 'Esborrar selecció';
+  String get clearSelection => 'Esborra la selecció';
 
   @override
-  String get openForEditing => 'Obrir per editar';
+  String get openForEditing => 'Obre per editar';
 
   @override
   String get select => 'Canvia';
 
   @override
-  String get filterBy => 'Filtrar per';
+  String get filterBy => 'Filtra per';
 
   @override
   String confirmDeleteMessage(String itemName) => 'Estàs segur que vols eliminar $itemName?';

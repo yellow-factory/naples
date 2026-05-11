@@ -18,6 +18,9 @@ class NaplesLocalizationsEn extends NaplesLocalizations {
   String get finalitza => 'Finalize';
 
   @override
+  String get newItem => 'New';
+
+  @override
   String get accept => 'Accept';
 
   @override

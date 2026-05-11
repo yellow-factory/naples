@@ -12,6 +12,7 @@
   "@finalitza": {
     "description": "Para finalizar la secuencia de pasos"
   },
+  "newItem": "Nuevo",
   "accept": "Aceptar",
   "cancel": "Cancelar",
   "delete": "Eliminar",
@@ -19,7 +20,7 @@
   "clearSelection": "Borrar selección",
   "openForEditing": "Abrir para editar",
   "select": "Cambiar",
-  "filterBy": "Filtrar por",
+  "filterBy": "Filtra por",
   "confirmDeleteMessage": "¿Estás seguro de que quieres eliminar {itemName}?",
   "@confirmDeleteMessage": {
     "placeholders": {

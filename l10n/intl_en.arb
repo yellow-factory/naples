@@ -12,6 +12,7 @@
   "@finalitza": {
     "description": "To end the sequence of steps"
   },
+  "newItem": "New",
   "accept": "Accept",
   "cancel": "Cancel",
   "delete": "Delete",

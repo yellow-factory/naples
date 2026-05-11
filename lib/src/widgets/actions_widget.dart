@@ -38,6 +38,7 @@ class ActionsListWidget extends StatelessWidget {
     return FocusTraversalGroup(
         policy: OrderedTraversalPolicy(),
         child: OverflowBar(
+          spacing: 8,
           children: actions.reversed.toList(),
         ));
   }

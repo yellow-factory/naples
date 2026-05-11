@@ -297,7 +297,6 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
           ? icon
           : Badge.count(
               count: tab.length!,
-              backgroundColor: Theme.of(context).colorScheme.primary,
               child: icon,
             ),
     );
@@ -313,8 +312,7 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
             child: Badge(
               offset: const Offset(18, -4),
               label: Text(tab.titleBadge!),
-              backgroundColor:
-                  tab.titleBadgeBackgroundColor ?? Theme.of(context).colorScheme.primary,
+              backgroundColor: tab.titleBadgeBackgroundColor,
               textColor: tab.titleBadgeForegroundColor,
               child: title,
             ),

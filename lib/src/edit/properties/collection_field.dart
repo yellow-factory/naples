@@ -5,16 +5,20 @@ import '../collection_editor.dart';
 
 class CollectionField<T> extends StatefulWidget {
   final String name;
-  final FunctionOf0<Future<String>>? description;
+  final FunctionOf1<int, Future<String>>? description;
   final double width;
   final Iterable<T>? initialValue;
   final FunctionOf1<T, String> itemTitle;
-  final FunctionOf0<T> createT;
+  final FunctionOf1<T, String>? itemSubtitle;
+  final Future<T?> Function() createT;
   final FunctionOf1<T, T> updateT;
   final FunctionOf1<T, Widget>? createWidget;
   final FunctionOf1<T, Widget> updateWidget;
   final ActionOf1<List<T>>? onChanged;
   final PredicateOf0? editable;
+  final FunctionOf1<T, String>? itemDialogTitle;
+  final String? dialogSubtitle;
+  final String? errorText;
 
   const CollectionField({
     super.key,
@@ -22,6 +26,7 @@ class CollectionField<T> extends StatefulWidget {
     this.description,
     this.width = 800,
     required this.itemTitle,
+    this.itemSubtitle,
     this.initialValue,
     required this.createT,
     required this.updateT,
@@ -29,6 +34,9 @@ class CollectionField<T> extends StatefulWidget {
     required this.updateWidget,
     this.editable,
     this.onChanged,
+    this.itemDialogTitle,
+    this.dialogSubtitle,
+    this.errorText,
   });
 
   @override
@@ -51,7 +59,7 @@ class _CollectionFieldState<T> extends State<CollectionField<T>> {
 
   Future<void> _updateDescription() async {
     if (widget.description != null) {
-      _descriptionController.text = await widget.description!();
+      _descriptionController.text = await widget.description!(_items.length);
       return;
     }
     _descriptionController.text = "Items in the collection: ${_items.length}";
@@ -69,12 +77,16 @@ class _CollectionFieldState<T> extends State<CollectionField<T>> {
       builder: (context) {
         return Dialog(
           child: SizedBox(
-            height: 500,
+            width: 440,
+            height: 520,
             child: CollectionEditor<T>(
               title: () => widget.name,
+              subtitle: () => widget.dialogSubtitle ?? _descriptionController.text,
               items: _items,
               itemTitle: widget.itemTitle,
+              itemSubtitle: widget.itemSubtitle,
               editable: widget.editable,
+              itemDialogTitle: widget.itemDialogTitle,
               updateWidget: (itemToUpdate) {
                 itemToEdit = itemToUpdate;
                 itemEdited = widget.updateT(itemToUpdate);
@@ -82,40 +94,43 @@ class _CollectionFieldState<T> extends State<CollectionField<T>> {
               },
               update: () {
                 if (itemEdited == null) {
-                  throw Exception('The createItem cannot be null in this context');
+                  throw Exception('The editItem cannot be null in this context');
                 }
-                if (_formKey.currentState == null) {
-                  throw Exception('The form containing the createWidget does not exist');
-                }
-                var formState = _formKey.currentState!;
-                if (!formState.validate()) return;
+                if (_formKey.currentState == null) return false;
+                final formState = _formKey.currentState!;
+                if (!formState.validate()) return false;
                 formState.save();
                 _items.remove(itemToEdit);
                 _items.add(itemEdited as T);
                 if (widget.onChanged != null) widget.onChanged!(_items);
+                _updateDescription();
+                return true;
               },
-              createWidget: () {
-                itemEdited = widget.createT();
-                if (widget.createWidget == null) return const Placeholder();
-                return Form(key: _formKey, child: widget.createWidget!(itemEdited as T));
+              createWidget: () async {
+                final newItem = await widget.createT();
+                if (newItem == null) return null;
+                itemEdited = newItem;
+                if (widget.createWidget == null) return null;
+                final form = Form(key: _formKey, child: widget.createWidget!(itemEdited as T));
+                final title = widget.itemDialogTitle?.call(itemEdited as T);
+                return (widget: form, title: title);
               },
-              create: () async {
+              create: () {
                 if (itemEdited == null) {
                   throw Exception('The createItem cannot be null in this context');
                 }
-                if (_formKey.currentState == null) {
-                  throw Exception('The form containing the createWidget does not exist');
-                }
-                var formState = _formKey.currentState!;
-                if (!formState.validate()) return;
+                if (_formKey.currentState == null) return false;
+                final formState = _formKey.currentState!;
+                if (!formState.validate()) return false;
                 formState.save();
-
                 _items.add(itemEdited as T);
-                await _updateDescription();
                 if (widget.onChanged != null) widget.onChanged!(_items);
+                _updateDescription();
+                return true;
               },
               delete: (itemToDelete) {
                 _items.remove(itemToDelete);
+                _updateDescription();
                 if (widget.onChanged != null) widget.onChanged!(_items);
               },
             ),
@@ -127,13 +142,14 @@ class _CollectionFieldState<T> extends State<CollectionField<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
+    return TextField(
       controller: _descriptionController,
       readOnly: true,
       enabled: true,
       autofocus: false,
       decoration: InputDecoration(
         labelText: widget.name,
+        errorText: widget.errorText,
         suffixIcon: IconButton(onPressed: _showSelectDialog, icon: const Icon(Icons.edit_outlined)),
       ),
     );

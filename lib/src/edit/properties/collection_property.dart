@@ -6,16 +6,20 @@ import 'package:navy/navy.dart';
 
 class CollectionProperty<T> extends StatelessWidget implements Expandable {
   final String name;
-  final FunctionOf0<Future<String>>? description;
+  final FunctionOf1<int, Future<String>>? description;
   final double width;
   final FunctionOf1<T, String> itemTitle;
-  final FunctionOf0<T> create;
+  final FunctionOf1<T, String>? itemSubtitle;
+  final Future<T?> Function() create;
   final FunctionOf1<T, T> update;
   final FunctionOf1<T, Widget>? createWidget;
   final FunctionOf1<T, Widget> updateWidget;
   final Iterable<T>? initialValue;
   final FormFieldSetter<Iterable<T>>? onSaved;
   final PredicateOf0? editable;
+  final FunctionOf1<T, String>? itemDialogTitle;
+  final String? dialogSubtitle;
+  final FormFieldValidator<Iterable<T>>? validator;
   @override
   final int flex;
 
@@ -26,12 +30,16 @@ class CollectionProperty<T> extends StatelessWidget implements Expandable {
     this.width = 800,
     this.initialValue,
     required this.itemTitle,
+    this.itemSubtitle,
     required this.create,
     required this.update,
     required this.createWidget,
     required this.updateWidget,
     this.onSaved,
     this.editable,
+    this.itemDialogTitle,
+    this.dialogSubtitle,
+    this.validator,
     this.flex = 1,
   });
 
@@ -39,7 +47,9 @@ class CollectionProperty<T> extends StatelessWidget implements Expandable {
   Widget build(BuildContext context) {
     return CollectionFormField(
       name: name,
+      description: description,
       itemTitle: itemTitle,
+      itemSubtitle: itemSubtitle,
       initialValue: initialValue,
       createT: create,
       updateT: update,
@@ -47,6 +57,9 @@ class CollectionProperty<T> extends StatelessWidget implements Expandable {
       updateWidget: updateWidget,
       onSaved: onSaved,
       editable: editable,
+      itemDialogTitle: itemDialogTitle,
+      dialogSubtitle: dialogSubtitle,
+      validator: validator,
     );
   }
 }

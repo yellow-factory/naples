@@ -299,6 +299,7 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
                             )
                           : IconButton(
                               icon: const Icon(Icons.open_in_new),
+                              iconSize: 16,
                               onPressed: _handleNavigate,
                               tooltip: _l.openForEditing,
                             ),
