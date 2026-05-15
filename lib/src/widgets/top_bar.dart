@@ -20,13 +20,29 @@ class TopBar extends StatelessWidget {
     var titleWidget = _getTitle(context);
     var badgeWidget = _getChip(context);
     if (titleWidget == null && badgeWidget == null) return null;
-    return Row(children: [badgeWidget ?? titleWidget!]);
+    // No Row wrapper here: the outer Flexible in _getActionsWithTitle imposes
+    // a hard maxWidth, and we want that constraint to reach the Text directly
+    // so its maxLines/ellipsis kick in. A wrapping Row(mainAxisSize.min) would
+    // ask the child for its intrinsic width and bypass the ellipsis entirely.
+    return badgeWidget ?? titleWidget!;
   }
 
   Widget? _getTitle(BuildContext context) {
-    return title != null
-        ? Text(title!, style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.primary))
-        : null;
+    if (title == null) return null;
+    return Tooltip(
+      message: title!,
+      child: Text(
+        title!,
+        // Long descriptions used as titles (model descriptions, instance
+        // descriptions, etc.) shouldn't wrap or push the action buttons off
+        // the right edge — clip with an ellipsis and rely on the tooltip for
+        // the full text.
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        softWrap: false,
+        style: TextStyle(fontSize: 14, color: Theme.of(context).colorScheme.primary),
+      ),
+    );
   }
 
   //TOREMOVE
@@ -49,7 +65,10 @@ class TopBar extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.baseline,
       spacing: titleBadgeWidget != null ? 5 : 0,
       children: [
-        ?titleBadgeWidget,
+        // Flexible (not Expanded) so a short title doesn't reserve more space
+        // than it needs. Combined with the ellipsis in _getTitle this lets the
+        // title shrink as the actions grow.
+        if (titleBadgeWidget != null) Flexible(child: titleBadgeWidget),
         Expanded(child: _getActions()),
       ],
     );
