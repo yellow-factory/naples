@@ -11,17 +11,21 @@ int _viewIdCounter = 0;
 Widget buildHtmlViewer({
   required String html,
   String? baseUrl,
+  String? url,
+  Map<String, String>? headers,
 }) {
-  return _HtmlViewerWeb(html: html, baseUrl: baseUrl);
+  return _HtmlViewerWeb(html: html, baseUrl: baseUrl, url: url);
 }
 
 class _HtmlViewerWeb extends StatefulWidget {
   final String html;
   final String? baseUrl;
+  final String? url;
 
   const _HtmlViewerWeb({
     required this.html,
     this.baseUrl,
+    this.url,
   });
 
   @override
@@ -47,9 +51,6 @@ class _HtmlViewerWebState extends State<_HtmlViewerWeb> {
           ..style.border = 'none'
           ..style.width = '100%'
           ..style.height = '100%';
-        // Enable scripts in sandbox
-        _iframe!.sandbox.add('allow-scripts');
-        _iframe!.sandbox.add('allow-same-origin');
 
         _updateContent();
         return _iframe!;
@@ -60,7 +61,15 @@ class _HtmlViewerWebState extends State<_HtmlViewerWeb> {
   void _updateContent() {
     if (_iframe == null) return;
 
-    // Create a data URL with the HTML content
+    if (widget.url != null) {
+      _iframe!.src = widget.url!;
+      return;
+    }
+
+    // Inline HTML mode — restrict sandbox to scripts + same-origin only
+    _iframe!.sandbox.add('allow-scripts');
+    _iframe!.sandbox.add('allow-same-origin');
+
     final content = '''
 <!DOCTYPE html>
 <html>
@@ -87,7 +96,9 @@ ${widget.html}
   @override
   void didUpdateWidget(covariant _HtmlViewerWeb oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.html != widget.html || oldWidget.baseUrl != widget.baseUrl) {
+    if (oldWidget.url != widget.url ||
+        oldWidget.html != widget.html ||
+        oldWidget.baseUrl != widget.baseUrl) {
       _updateContent();
     }
   }

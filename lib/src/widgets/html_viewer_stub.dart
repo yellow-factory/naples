@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 Widget buildHtmlViewer({
   required String html,
   String? baseUrl,
+  String? url,
+  Map<String, String>? headers,
 }) {
   throw UnsupportedError(
     'Cannot build HTML viewer without platform implementation',

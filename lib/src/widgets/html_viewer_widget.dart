@@ -8,16 +8,28 @@ import 'html_viewer_stub.dart'
 ///
 /// On web platforms, uses an iframe via HtmlElementView.
 /// On native platforms (macOS, Windows, Linux), uses webview_flutter.
+///
+/// Provide either [url] to load a remote page, or [html] to render inline HTML.
+/// When [url] is given it takes precedence over [html].
 class HtmlViewerWidget extends StatelessWidget {
-  /// The HTML content to display
+  /// Remote URL to load in the viewer (takes precedence over [html]).
+  final String? url;
+
+  /// The HTML content to display (used when [url] is null).
   final String html;
 
-  /// Optional base URL for resolving relative URLs
+  /// Optional base URL for resolving relative URLs (used with [html] only).
   final String? baseUrl;
 
+  /// Optional HTTP headers to include when loading [url] (native only).
+  /// Ignored on web because iframes cannot send custom request headers.
+  final Map<String, String>? headers;
+
   const HtmlViewerWidget({
-    required this.html,
+    this.url,
+    this.html = '',
     this.baseUrl,
+    this.headers,
     super.key,
   });
 
@@ -26,6 +38,8 @@ class HtmlViewerWidget extends StatelessWidget {
     return platform.buildHtmlViewer(
       html: html,
       baseUrl: baseUrl,
+      url: url,
+      headers: headers,
     );
   }
 }
