@@ -25,11 +25,19 @@ class HtmlViewerWidget extends StatelessWidget {
   /// Ignored on web because iframes cannot send custom request headers.
   final Map<String, String>? headers;
 
+  /// Called whenever the viewer finishes loading a new URL — including
+  /// navigations triggered from inside the page. Implemented on native via
+  /// `webview_flutter`'s onPageFinished callback. On web, iframe navigation
+  /// can't be observed from the outside; consumers that need it should
+  /// listen to `postMessage` events from the embedded page instead.
+  final void Function(String url)? onUrlChanged;
+
   const HtmlViewerWidget({
     this.url,
     this.html = '',
     this.baseUrl,
     this.headers,
+    this.onUrlChanged,
     super.key,
   });
 
@@ -40,6 +48,7 @@ class HtmlViewerWidget extends StatelessWidget {
       baseUrl: baseUrl,
       url: url,
       headers: headers,
+      onUrlChanged: onUrlChanged,
     );
   }
 }

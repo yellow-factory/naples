@@ -6,6 +6,7 @@ Widget buildHtmlViewer({
   String? baseUrl,
   String? url,
   Map<String, String>? headers,
+  void Function(String url)? onUrlChanged,
 }) {
   throw UnsupportedError(
     'Cannot build HTML viewer without platform implementation',

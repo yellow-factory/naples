@@ -13,7 +13,11 @@ Widget buildHtmlViewer({
   String? baseUrl,
   String? url,
   Map<String, String>? headers,
+  void Function(String url)? onUrlChanged,
 }) {
+  // onUrlChanged isn't used on web: iframe navigations are visible to the
+  // embedding page only via postMessage from the iframe contents. Consumers
+  // that need the path should add their own `window` `message` listener.
   return _HtmlViewerWeb(html: html, baseUrl: baseUrl, url: url);
 }
 

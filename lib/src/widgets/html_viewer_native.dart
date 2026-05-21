@@ -7,8 +7,15 @@ Widget buildHtmlViewer({
   String? baseUrl,
   String? url,
   Map<String, String>? headers,
+  void Function(String url)? onUrlChanged,
 }) {
-  return _HtmlViewerNative(html: html, baseUrl: baseUrl, url: url, headers: headers);
+  return _HtmlViewerNative(
+    html: html,
+    baseUrl: baseUrl,
+    url: url,
+    headers: headers,
+    onUrlChanged: onUrlChanged,
+  );
 }
 
 class _HtmlViewerNative extends StatefulWidget {
@@ -16,12 +23,14 @@ class _HtmlViewerNative extends StatefulWidget {
   final String? baseUrl;
   final String? url;
   final Map<String, String>? headers;
+  final void Function(String url)? onUrlChanged;
 
   const _HtmlViewerNative({
     required this.html,
     this.baseUrl,
     this.url,
     this.headers,
+    this.onUrlChanged,
   });
 
   @override
@@ -43,7 +52,10 @@ class _HtmlViewerNativeState extends State<_HtmlViewerNative> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(NavigationDelegate(
         onPageStarted: (url) => debugPrint('[HtmlViewer] onPageStarted: $url'),
-        onPageFinished: (url) => debugPrint('[HtmlViewer] onPageFinished: $url'),
+        onPageFinished: (url) {
+          debugPrint('[HtmlViewer] onPageFinished: $url');
+          widget.onUrlChanged?.call(url);
+        },
         onWebResourceError: (error) => debugPrint(
           '[HtmlViewer] onWebResourceError: code=${error.errorCode} type=${error.errorType} desc=${error.description} url=${error.url}',
         ),
