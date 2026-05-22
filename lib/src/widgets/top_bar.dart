@@ -8,7 +8,11 @@ class TopBar extends StatelessWidget {
 
   Widget _getActions() {
     return OverflowBar(
-      alignment: title != null ? MainAxisAlignment.end : MainAxisAlignment.spaceBetween,
+      // When a title is present, this widget is placed as a non-flex Row child
+      // on the right, so leaving alignment null lets it size to its intrinsic
+      // width (children + spacing) instead of expanding via constraints.maxWidth.
+      // Without a title, we fill the full width and use spaceBetween.
+      alignment: title != null ? null : MainAxisAlignment.spaceBetween,
       spacing: 5,
       overflowSpacing: 5,
       overflowAlignment: OverflowBarAlignment.end,
@@ -65,11 +69,13 @@ class TopBar extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.baseline,
       spacing: titleBadgeWidget != null ? 5 : 0,
       children: [
-        // Flexible (not Expanded) so a short title doesn't reserve more space
-        // than it needs. Combined with the ellipsis in _getTitle this lets the
-        // title shrink as the actions grow.
-        if (titleBadgeWidget != null) Flexible(child: titleBadgeWidget),
-        Expanded(child: _getActions()),
+        // Expanded so the title fills all remaining width (its Text inside
+        // is left-aligned with ellipsis, so short titles still appear at the
+        // start). Actions sit at intrinsic width on the right — see
+        // _getActions which returns an OverflowBar without an alignment when
+        // a title is present.
+        if (titleBadgeWidget != null) Expanded(child: titleBadgeWidget),
+        _getActions(),
       ],
     );
   }
