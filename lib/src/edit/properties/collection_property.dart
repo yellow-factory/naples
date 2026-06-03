@@ -20,6 +20,7 @@ class CollectionProperty<T> extends StatelessWidget implements Expandable {
   final FunctionOf1<T, String>? itemDialogTitle;
   final String? dialogSubtitle;
   final FormFieldValidator<Iterable<T>>? validator;
+  final double itemDialogContentWidth;
   @override
   final int flex;
 
@@ -40,6 +41,7 @@ class CollectionProperty<T> extends StatelessWidget implements Expandable {
     this.itemDialogTitle,
     this.dialogSubtitle,
     this.validator,
+    this.itemDialogContentWidth = 400,
     this.flex = 1,
   });
 
@@ -60,6 +62,7 @@ class CollectionProperty<T> extends StatelessWidget implements Expandable {
       itemDialogTitle: itemDialogTitle,
       dialogSubtitle: dialogSubtitle,
       validator: validator,
+      itemDialogContentWidth: itemDialogContentWidth,
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:naples/src/widgets/date_picker_utils.dart';
 
 class DateTimeFormField extends FormField<DateTime> {
   DateTimeFormField({
@@ -14,6 +15,7 @@ class DateTimeFormField extends FormField<DateTime> {
     super.validator,
     DateTime? firstDate,
     DateTime? lastDate,
+    bool Function(DateTime)? selectableDayPredicate,
     required DateFormat dateFormat,
     bool onlyDate = true,
   }) : super(
@@ -27,6 +29,7 @@ class DateTimeFormField extends FormField<DateTime> {
              enabled: enabled,
              firstDate: firstDate,
              lastDate: lastDate,
+             selectableDayPredicate: selectableDayPredicate,
              dateFormat: dateFormat,
              onlyDate: onlyDate,
            );
@@ -43,6 +46,7 @@ class _DateTimeFormFieldContent extends StatefulWidget {
   final bool enabled;
   final DateTime? firstDate;
   final DateTime? lastDate;
+  final bool Function(DateTime)? selectableDayPredicate;
   final DateFormat dateFormat;
   final bool onlyDate;
 
@@ -55,6 +59,7 @@ class _DateTimeFormFieldContent extends StatefulWidget {
     required this.enabled,
     this.firstDate,
     this.lastDate,
+    this.selectableDayPredicate,
     required this.dateFormat,
     required this.onlyDate,
   });
@@ -100,6 +105,15 @@ class _DateTimeFormFieldContentState extends State<_DateTimeFormFieldContent> {
     var currentValue = widget.state.value?.toLocal() ?? DateTime.now();
     var currentFirstDate = widget.firstDate ?? DateTime(1900);
     var currentLastDate = widget.lastDate ?? DateTime(2100);
+    // Flutter's showDatePicker asserts that the supplied initialDate is in
+    // range AND satisfies selectableDayPredicate. Pick a safe seed so we
+    // never trip that assertion when the current value is filtered out.
+    final pickerInitial = safeInitialDate(
+      preferred: currentValue,
+      first: currentFirstDate,
+      last: currentLastDate,
+      predicate: widget.selectableDayPredicate,
+    );
 
     final fieldDecoration = InputDecoration(
       hintText: widget.hint,
@@ -114,9 +128,10 @@ class _DateTimeFormFieldContentState extends State<_DateTimeFormFieldContent> {
                 final DateTime datePicked =
                     await showDatePicker(
                       context: context,
-                      initialDate: currentValue,
+                      initialDate: pickerInitial,
                       firstDate: currentFirstDate,
                       lastDate: currentLastDate,
+                      selectableDayPredicate: widget.selectableDayPredicate,
                       fieldLabelText: widget.label,
                       fieldHintText: widget.hint,
                     ) ??

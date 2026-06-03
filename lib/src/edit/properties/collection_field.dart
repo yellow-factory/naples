@@ -19,6 +19,7 @@ class CollectionField<T> extends StatefulWidget {
   final FunctionOf1<T, String>? itemDialogTitle;
   final String? dialogSubtitle;
   final String? errorText;
+  final double itemDialogContentWidth;
 
   const CollectionField({
     super.key,
@@ -37,6 +38,7 @@ class CollectionField<T> extends StatefulWidget {
     this.itemDialogTitle,
     this.dialogSubtitle,
     this.errorText,
+    this.itemDialogContentWidth = 400,
   });
 
   @override
@@ -87,6 +89,7 @@ class _CollectionFieldState<T> extends State<CollectionField<T>> {
               itemSubtitle: widget.itemSubtitle,
               editable: widget.editable,
               itemDialogTitle: widget.itemDialogTitle,
+              dialogContentWidth: widget.itemDialogContentWidth,
               updateWidget: (itemToUpdate) {
                 itemToEdit = itemToUpdate;
                 itemEdited = widget.updateT(itemToUpdate);

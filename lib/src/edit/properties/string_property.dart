@@ -31,6 +31,27 @@ class StringProperty extends PropertyWidget<String?>
   final int minLines;
   final int maxLines;
   final VoidCallback? onEditPressed;
+  /// Optional callback invoked on every text change (i.e. on each
+  /// keystroke). Use sparingly — most callers should rely on `setProperty`
+  /// at form-save time. Needed when the field's surrounding affordances
+  /// must react to the current text without waiting for the host form to
+  /// save (e.g. a per-field button whose enabled state depends on the
+  /// value being non-empty).
+  final ValueChanged<String>? onChanged;
+  /// Optional callback that, when non-null, surfaces a translate icon inside
+  /// the field's suffix slot — same row as `onEditPressed`/copy. Used by
+  /// upstream apps to attach a per-field translations dialog without
+  /// breaking the field's underline (a wrapper widget would split it).
+  final VoidCallback? onTranslatePressed;
+  /// Whether the translate icon should be interactive. When false the
+  /// icon still renders (so users see the affordance is *available* for
+  /// this field) but is greyed out and ignores taps — typically used by
+  /// callers to gate translation editing behind a precondition such as
+  /// "the source-language value must be entered first". The supplied
+  /// [translateTooltip] should explain the gate.
+  final bool translateEnabled;
+  /// Optional tooltip shown on the translate icon.
+  final String? translateTooltip;
 
   StringProperty({
     super.key,
@@ -49,6 +70,10 @@ class StringProperty extends PropertyWidget<String?>
     this.minLines = 1,
     this.maxLines = 1,
     this.onEditPressed,
+    this.onChanged,
+    this.onTranslatePressed,
+    this.translateEnabled = true,
+    this.translateTooltip,
   });
 
   Widget? _buildSuffixIcon() {
@@ -63,6 +88,17 @@ class StringProperty extends PropertyWidget<String?>
       icons.add(IconButton(
         icon: const Icon(Icons.edit),
         onPressed: onEditPressed,
+      ));
+    }
+    if (onTranslatePressed != null) {
+      icons.add(IconButton(
+        tooltip: translateTooltip,
+        icon: const Icon(Icons.translate),
+        // null onPressed → Material renders the IconButton greyed out and
+        // makes it non-interactive. We keep the IconButton in the row (vs
+        // hiding it) so the user still sees the affordance is supported
+        // for this field; the tooltip is expected to explain the gate.
+        onPressed: translateEnabled ? onTranslatePressed : null,
       ));
     }
     if (icons.isEmpty) return null;
@@ -88,6 +124,7 @@ class StringProperty extends PropertyWidget<String?>
       inputFormatters: [LengthLimitingTextInputFormatter(maxLength)],
       minLines: minLines,
       maxLines: maxLines,
+      onChanged: onChanged,
       onSaved: setProperty,
       readOnly: readOnly,
     );

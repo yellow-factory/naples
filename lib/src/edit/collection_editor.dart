@@ -26,6 +26,11 @@ class CollectionEditor<ListItem> extends StatefulWidget implements Expandable {
 
   final FunctionOf1<ListItem, String>? itemDialogTitle;
 
+  /// Width (logical px) of the create/update dialog content area. Lets the
+  /// host pick a roomier layout when the item editor is a full form rather
+  /// than a single-row input.
+  final double dialogContentWidth;
+
   const CollectionEditor({
     this.title,
     this.subtitle,
@@ -40,6 +45,7 @@ class CollectionEditor<ListItem> extends StatefulWidget implements Expandable {
     this.flex = 1,
     this.editable,
     this.itemDialogTitle,
+    this.dialogContentWidth = 400,
     super.key,
   });
 
@@ -144,6 +150,7 @@ class CollectionEditorState<ListItem> extends State<CollectionEditor<ListItem>> 
       builder: (_) => _CollectionItemDialog(
         title: widget.itemDialogTitle?.call(item) ?? widget.title?.call() ?? '',
         onAccept: widget.update,
+        contentWidth: widget.dialogContentWidth,
         child: editWidget,
       ),
     );
@@ -160,6 +167,7 @@ class CollectionEditorState<ListItem> extends State<CollectionEditor<ListItem>> 
       builder: (_) => _CollectionItemDialog(
         title: result.title ?? widget.title?.call() ?? '',
         onAccept: widget.create ?? () => true,
+        contentWidth: widget.dialogContentWidth,
         child: result.widget,
       ),
     );
@@ -182,11 +190,13 @@ class _CollectionItemDialog extends StatelessWidget {
   final String title;
   final Widget child;
   final PredicateOf0 onAccept;
+  final double contentWidth;
 
   const _CollectionItemDialog({
     required this.title,
     required this.child,
     required this.onAccept,
+    this.contentWidth = 400,
   });
 
   @override
@@ -195,7 +205,7 @@ class _CollectionItemDialog extends StatelessWidget {
     return AlertDialog(
       title: Text(title),
       content: SingleChildScrollView(
-        child: SizedBox(width: 400, child: child),
+        child: SizedBox(width: contentWidth, child: child),
       ),
       actions: [
         TextButton(

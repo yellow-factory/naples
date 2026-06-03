@@ -21,6 +21,7 @@ class CollectionFormField<T> extends FormField<Iterable<T>> {
     PredicateOf0? editable,
     FunctionOf1<T, String>? itemDialogTitle,
     String? dialogSubtitle,
+    double itemDialogContentWidth = 400,
   }) : super(
           builder: (FormFieldState<Iterable<T>> state) {
             return CollectionField<T>(
@@ -39,6 +40,7 @@ class CollectionFormField<T> extends FormField<Iterable<T>> {
               itemDialogTitle: itemDialogTitle,
               dialogSubtitle: dialogSubtitle,
               errorText: state.errorText,
+              itemDialogContentWidth: itemDialogContentWidth,
             );
           },
         );

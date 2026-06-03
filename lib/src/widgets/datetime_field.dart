@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:naples/src/widgets/date_picker_utils.dart';
 
 class DateTimeField extends StatefulWidget {
   final String label;
@@ -9,6 +10,9 @@ class DateTimeField extends StatefulWidget {
   final bool enabled;
   final DateTime? firstDate;
   final DateTime? lastDate;
+  /// Predicate to filter selectable days. Mirrors
+  /// `showDatePicker(selectableDayPredicate:)`.
+  final bool Function(DateTime)? selectableDayPredicate;
   final DateFormat dateFormat;
   final bool onlyDate;
   final ValueNotifier<DateTime?> dateTimeController;
@@ -22,6 +26,7 @@ class DateTimeField extends StatefulWidget {
     this.enabled = true,
     this.firstDate,
     this.lastDate,
+    this.selectableDayPredicate,
     required this.dateFormat,
     this.onlyDate = true,
     required this.dateTimeController,
@@ -69,6 +74,12 @@ class DateTimeFieldState extends State<DateTimeField> {
     var currentValue = widget.dateTimeController.value ?? DateTime.now();
     var currentFirstDate = widget.firstDate ?? DateTime(1900);
     var currentLastDate = widget.lastDate ?? DateTime(2100);
+    final pickerInitial = safeInitialDate(
+      preferred: currentValue,
+      first: currentFirstDate,
+      last: currentLastDate,
+      predicate: widget.selectableDayPredicate,
+    );
 
     final fieldDecoration = InputDecoration(
       hintText: widget.hint,
@@ -81,9 +92,10 @@ class DateTimeFieldState extends State<DateTimeField> {
                 final DateTime datePicked =
                     await showDatePicker(
                       context: context,
-                      initialDate: currentValue,
+                      initialDate: pickerInitial,
                       firstDate: currentFirstDate,
                       lastDate: currentLastDate,
+                      selectableDayPredicate: widget.selectableDayPredicate,
                       fieldLabelText: widget.label,
                       fieldHintText: widget.hint,
                     ) ??
