@@ -188,7 +188,7 @@ class _CustomPropertyState<T> extends State<CustomProperty<T>> {
             Divider(
               height: 1,
               thickness: 1,
-              color: isEditable ? null : Theme.of(context).colorScheme.onSurface.withOpacity(0.12),
+              color: isEditable ? null : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
             ),
           ],
         );
