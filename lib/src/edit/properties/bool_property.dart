@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:naples/src/widgets/radio_list_form_field.dart';
-import 'package:naples/src/widgets/switch_form_field.dart';
+import 'package:naples/src/widgets/switch_box_form_field.dart';
 import 'package:naples/src/widgets/checkbox_form_field.dart';
 import 'package:naples/src/edit/properties/property.dart';
 import 'package:naples/src/common/common.dart';
@@ -46,6 +46,10 @@ class BoolProperty extends PropertyWidget<bool?> with PropertyMixin<bool?> imple
   final bool saveOnValueChanged;
   final bool showHintExplicitly;
 
+  /// Inline help shown under the label in the boxed switch (falls back to
+  /// [hint]); only visible when an ancestor `FieldHelpScope` is on.
+  final String? help;
+
   BoolProperty({
     super.key,
     required this.label,
@@ -61,6 +65,7 @@ class BoolProperty extends PropertyWidget<bool?> with PropertyMixin<bool?> imple
     this.displayName = defaultDisplayName,
     this.saveOnValueChanged = false,
     this.showHintExplicitly = false,
+    this.help,
   });
 
   static FunctionOf0<String> defaultDisplayName(BoolValues t) =>
@@ -94,15 +99,15 @@ class BoolProperty extends PropertyWidget<bool?> with PropertyMixin<bool?> imple
 
     switch (widgetType) {
       case BoolWidgetType.switchBox:
-        return SwitchFormField(
-          autofocus: autofocus,
+        return SwitchBoxFormField(
           enabled: enabled,
           label: label,
-          hint: hint,
+          help: help ?? hint,
           initialValue: getProperty() ?? false,
           onSaved: setProperty,
           validator: validator,
-          controlAffinity: controlAffinity,
+          saveOnValueChanged: saveOnValueChanged,
+          onImmediateChange: setProperty,
         );
       case BoolWidgetType.checkBox:
         return defaultWidget;

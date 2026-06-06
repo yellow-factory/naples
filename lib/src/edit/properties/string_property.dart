@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:naples/src/common/common.dart';
+import 'package:naples/src/common/field_tokens.dart';
+import 'package:naples/src/widgets/field_box.dart';
+import 'package:naples/src/widgets/field_scaffold.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/edit/properties/property.dart';
 import 'package:clipboard/clipboard.dart';
@@ -31,6 +34,20 @@ class StringProperty extends PropertyWidget<String?>
   final int minLines;
   final int maxLines;
   final VoidCallback? onEditPressed;
+
+  /// Inline help/description shown below the control when an ancestor
+  /// [FieldHelpScope] is visible (driven by the host's global "Help" toggle).
+  final String? help;
+
+  /// Placeholder shown when the field is empty (e.g. an empty textarea).
+  final String? placeholder;
+
+  /// Render the value in a monospace face (UUIDs, codes, technical values).
+  final bool mono;
+
+  /// Optional unit shown inside the box after the value (e.g. `€`).
+  final String? unitSuffix;
+
   /// Optional callback invoked on every text change (i.e. on each
   /// keystroke). Use sparingly — most callers should rely on `setProperty`
   /// at form-save time. Needed when the field's surrounding affordances
@@ -38,11 +55,13 @@ class StringProperty extends PropertyWidget<String?>
   /// save (e.g. a per-field button whose enabled state depends on the
   /// value being non-empty).
   final ValueChanged<String>? onChanged;
+
   /// Optional callback that, when non-null, surfaces a translate icon inside
   /// the field's suffix slot — same row as `onEditPressed`/copy. Used by
   /// upstream apps to attach a per-field translations dialog without
   /// breaking the field's underline (a wrapper widget would split it).
   final VoidCallback? onTranslatePressed;
+
   /// Whether the translate icon should be interactive. When false the
   /// icon still renders (so users see the affordance is *available* for
   /// this field) but is greyed out and ignores taps — typically used by
@@ -50,6 +69,7 @@ class StringProperty extends PropertyWidget<String?>
   /// "the source-language value must be entered first". The supplied
   /// [translateTooltip] should explain the gate.
   final bool translateEnabled;
+
   /// Optional tooltip shown on the translate icon.
   final String? translateTooltip;
 
@@ -70,71 +90,107 @@ class StringProperty extends PropertyWidget<String?>
     this.minLines = 1,
     this.maxLines = 1,
     this.onEditPressed,
+    this.help,
+    this.placeholder,
+    this.mono = false,
+    this.unitSuffix,
     this.onChanged,
     this.onTranslatePressed,
     this.translateEnabled = true,
     this.translateTooltip,
   });
 
-  Widget? _buildSuffixIcon() {
-    final List<Widget> icons = [];
-    if (showCopyButton) {
-      icons.add(IconButton(
-        icon: const Icon(Icons.copy),
-        onPressed: () => FlutterClipboard.copy(getProperty() ?? ''),
-      ));
-    }
-    if (onEditPressed != null) {
-      icons.add(IconButton(
-        icon: const Icon(Icons.edit),
-        onPressed: onEditPressed,
-      ));
-    }
-    if (onTranslatePressed != null) {
-      icons.add(IconButton(
-        tooltip: translateTooltip,
-        icon: const Icon(Icons.translate),
-        // null onPressed → Material renders the IconButton greyed out and
-        // makes it non-interactive. We keep the IconButton in the row (vs
-        // hiding it) so the user still sees the affordance is supported
-        // for this field; the tooltip is expected to explain the gate.
-        onPressed: translateEnabled ? onTranslatePressed : null,
-      ));
-    }
-    if (icons.isEmpty) return null;
-    if (icons.length == 1) return icons.first;
-    return Row(mainAxisSize: MainAxisSize.min, children: icons);
+  List<Widget> _buildActions() {
+    return [
+      if (showCopyButton)
+        FieldActionButton(
+          icon: Icons.copy,
+          onPressed: () => FlutterClipboard.copy(getProperty() ?? ''),
+        ),
+      if (onEditPressed != null) FieldActionButton(icon: Icons.edit, onPressed: onEditPressed),
+      if (onTranslatePressed != null)
+        FieldActionButton(
+          icon: Icons.translate,
+          tooltip: translateTooltip,
+          onPressed: translateEnabled ? onTranslatePressed : null,
+        ),
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
+    final t = NaplesFieldTokens.of(context);
+    // "Read-only look" = dashed/transparent box + lock icon. Applies when the
+    // field isn't editable (computed/virtual/parent-readonly) or when the
+    // caller forced read-only (e.g. an editwidget-backed field).
+    final roLook = !enabled || readOnly;
+    final multiline = maxLines > 1;
+
+    final textStyle = TextStyle(
+      fontSize: mono ? 13.5 : 15,
+      color: roLook ? t.muted : t.text,
+      fontFamilyFallback: mono ? const ['JetBrains Mono', 'monospace'] : null,
+      letterSpacing: mono ? -0.1 : null,
+    );
+
+    final field = TextFormField(
       initialValue: getProperty(),
-      decoration: InputDecoration(
-        //filled: true,
-        hintText: hint,
-        labelText: label,
-        suffixIcon: _buildSuffixIcon(),
+      style: textStyle,
+      decoration: borderlessFieldDecoration(
+        // `placeholder` is the handoff empty-state text; fall back to `hint`
+        // so existing callers that pass a hint keep their placeholder.
+        hintText: placeholder ?? hint,
+        hintStyle: TextStyle(color: t.muted, fontSize: mono ? 13.5 : 15),
+        errorStyle: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 12),
       ),
-      enabled: enabled,
+      // Keep the field always "enabled" so our token styling (not Material's
+      // disabled greying) governs the look; gate editing via readOnly instead.
+      enabled: true,
+      readOnly: roLook,
       autofocus: autofocus,
       validator: validator,
       obscureText: obscureText,
-      //maxLength: property.maxLength,
       inputFormatters: [LengthLimitingTextInputFormatter(maxLength)],
       minLines: minLines,
       maxLines: maxLines,
+      textAlignVertical: TextAlignVertical.top,
       onChanged: onChanged,
       onSaved: setProperty,
-      readOnly: readOnly,
+    );
+
+    final actions = _buildActions();
+
+    final boxChild = Row(
+      crossAxisAlignment: multiline ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+      children: [
+        Expanded(child: field),
+        if (unitSuffix != null) ...[
+          const SizedBox(width: 8),
+          Text(
+            unitSuffix!,
+            style: TextStyle(color: t.muted, fontWeight: FontWeight.w600, fontSize: 14),
+          ),
+        ],
+        if (actions.isNotEmpty) ...[
+          const SizedBox(width: 4),
+          ...actions,
+        ],
+      ],
+    );
+
+    return FieldScaffold(
+      label: label,
+      readOnly: roLook,
+      help: help,
+      child: FieldBox(
+        readOnly: roLook,
+        minHeight: multiline ? 78 : FieldBox.singleLineHeight,
+        center: !multiline,
+        padding: multiline
+            ? const EdgeInsets.fromLTRB(12, 10, 12, 10)
+            : const EdgeInsets.fromLTRB(12, 6, 6, 6),
+        child: boxChild,
+      ),
     );
   }
 }
-
-//TODO: Potser seria millor que fos un stateful widget que implementés validable
-//i que no fés el save fins que és vàlid, així evitaríem per exmple que es mostressin
-//a l'informe valors incoherents. Es podria mirar el onchanged i fer que es validés el
-//resultat cada cop que onchanged, i si el resultat és vàlid que es fes el save
-//Ara tal com està actuant: qualsevol canvi que hi hagi al form provoca el setProperty
-//a través del onSaved
-//Això permetria que el Validable de DynamicForm tingués en compte el Validable dels de més avall

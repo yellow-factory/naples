@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:naples/src/common/field_tokens.dart';
 import 'package:naples/src/widgets/date_picker_utils.dart';
+import 'package:naples/src/widgets/field_box.dart';
+import 'package:naples/src/widgets/field_scaffold.dart';
 
 class DateTimeFormField extends FormField<DateTime> {
   DateTimeFormField({
     super.key,
     required String label,
     String? hint,
+    String? help,
     bool filled = false,
     super.initialValue,
     bool autofocus = false,
@@ -24,6 +28,7 @@ class DateTimeFormField extends FormField<DateTime> {
              state: state,
              label: label,
              hint: hint,
+             help: help,
              filled: filled,
              autofocus: autofocus,
              enabled: enabled,
@@ -41,6 +46,7 @@ class _DateTimeFormFieldContent extends StatefulWidget {
   final FormFieldState<DateTime> state;
   final String label;
   final String? hint;
+  final String? help;
   final bool filled;
   final bool autofocus;
   final bool enabled;
@@ -54,6 +60,7 @@ class _DateTimeFormFieldContent extends StatefulWidget {
     required this.state,
     required this.label,
     this.hint,
+    this.help,
     required this.filled,
     required this.autofocus,
     required this.enabled,
@@ -115,67 +122,91 @@ class _DateTimeFormFieldContentState extends State<_DateTimeFormFieldContent> {
       predicate: widget.selectableDayPredicate,
     );
 
-    final fieldDecoration = InputDecoration(
-      hintText: widget.hint,
-      labelText: widget.label,
-      errorText: widget.state.errorText,
-      filled: widget.filled,
-      enabled: widget.enabled,
-      suffixIcon: widget.enabled
-          ? IconButton(
-              icon: const Icon(Icons.calendar_today_outlined),
-              onPressed: () async {
-                final DateTime datePicked =
-                    await showDatePicker(
-                      context: context,
-                      initialDate: pickerInitial,
-                      firstDate: currentFirstDate,
-                      lastDate: currentLastDate,
-                      selectableDayPredicate: widget.selectableDayPredicate,
-                      fieldLabelText: widget.label,
-                      fieldHintText: widget.hint,
-                    ) ??
-                    currentValue;
+    Future<void> pick() async {
+      final DateTime datePicked =
+          await showDatePicker(
+            context: context,
+            initialDate: pickerInitial,
+            firstDate: currentFirstDate,
+            lastDate: currentLastDate,
+            selectableDayPredicate: widget.selectableDayPredicate,
+            fieldLabelText: widget.label,
+            fieldHintText: widget.hint,
+          ) ??
+          currentValue;
 
-                if (widget.onlyDate) {
-                  if (currentValue.compareTo(datePicked) != 0) {
-                    widget.state.didChange(datePicked);
-                  }
-                  return;
-                }
+      if (widget.onlyDate) {
+        if (currentValue.compareTo(datePicked) != 0) {
+          widget.state.didChange(datePicked);
+        }
+        return;
+      }
 
-                final TimeOfDay time = TimeOfDay.fromDateTime(currentValue);
-                final TimeOfDay timePicked = mounted
-                    ? await showTimePicker(
-                            context: mounted ? context : throw Exception('Not mounted'),
-                            initialTime: time,
-                            initialEntryMode: TimePickerEntryMode.input,
-                          ) ??
-                          time
-                    : time;
+      final TimeOfDay time = TimeOfDay.fromDateTime(currentValue);
+      final TimeOfDay timePicked = mounted
+          ? await showTimePicker(
+                  context: mounted ? context : throw Exception('Not mounted'),
+                  initialTime: time,
+                  initialEntryMode: TimePickerEntryMode.input,
+                ) ??
+                time
+          : time;
 
-                if (!mounted) return;
+      if (!mounted) return;
 
-                widget.state.didChange(
-                  DateTime(
-                    datePicked.year,
-                    datePicked.month,
-                    datePicked.day,
-                    timePicked.hour,
-                    timePicked.minute,
+      widget.state.didChange(
+        DateTime(
+          datePicked.year,
+          datePicked.month,
+          datePicked.day,
+          timePicked.hour,
+          timePicked.minute,
+        ),
+      );
+    }
+
+    final t = NaplesFieldTokens.of(context);
+    final roLook = !widget.enabled;
+    final value = _controller.text;
+    final empty = value.isEmpty;
+
+    return FieldScaffold(
+      label: widget.label,
+      readOnly: roLook,
+      help: widget.help,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FieldBox(
+            readOnly: roLook,
+            padding: const EdgeInsets.fromLTRB(12, 6, 6, 6),
+            minHeight: FieldBox.singleLineHeight,
+            center: true,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    empty ? (widget.hint ?? '') : value,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontSize: 15, color: empty ? t.muted : t.text),
                   ),
-                );
-              },
-            )
-          : null,
-    );
-
-    return TextField(
-      controller: _controller,
-      decoration: fieldDecoration,
-      autofocus: widget.autofocus,
-      readOnly: true,
-      enableInteractiveSelection: false,
+                ),
+                if (widget.enabled)
+                  FieldActionButton(icon: Icons.calendar_today_outlined, onPressed: pick),
+              ],
+            ),
+          ),
+          if (widget.state.hasError)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                widget.state.errorText ?? '',
+                style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.error),
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

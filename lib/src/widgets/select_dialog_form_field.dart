@@ -1,8 +1,11 @@
 import 'dart:async'; // Added for FutureOr
 
 import 'package:flutter/material.dart';
+import 'package:naples/src/common/field_tokens.dart';
 import 'package:naples/src/dialogs/selector_dialog.dart';
 import 'package:naples/src/generated/l10n/naples_localizations.dart';
+import 'package:naples/src/widgets/field_box.dart';
+import 'package:naples/src/widgets/field_scaffold.dart';
 import 'package:navy/navy.dart';
 
 class SelectDialogFormField<U, V> extends FormField<U> {
@@ -10,6 +13,7 @@ class SelectDialogFormField<U, V> extends FormField<U> {
     super.key,
     required String label,
     String? hint,
+    String? help,
     super.initialValue,
     super.enabled = true,
     super.onSaved,
@@ -20,12 +24,14 @@ class SelectDialogFormField<U, V> extends FormField<U> {
     Function(U?)? onChanged,
     FutureOr<void> Function(V)? onNavigate,
     bool clearable = false,
+    String? Function(U?)? labelForValue,
   }) : super(
          builder: (FormFieldState<U> state) {
            return _SelectDialogWidget<U, V>(
              state: state,
              label: label,
              hint: hint,
+             help: help,
              enabled: enabled,
              listItems: listItems,
              valueMember: valueMember,
@@ -33,6 +39,7 @@ class SelectDialogFormField<U, V> extends FormField<U> {
              onChanged: onChanged,
              onNavigate: onNavigate,
              clearable: clearable,
+             labelForValue: labelForValue,
            );
          },
        );
@@ -42,6 +49,7 @@ class _SelectDialogWidget<U, V> extends StatefulWidget {
   final FormFieldState<U> state;
   final String label;
   final String? hint;
+  final String? help;
   final bool enabled;
   final FunctionOf0<FutureOr<List<V>>> listItems;
   final FunctionOf1<V, U> valueMember;
@@ -50,10 +58,16 @@ class _SelectDialogWidget<U, V> extends StatefulWidget {
   final FutureOr<void> Function(V)? onNavigate;
   final bool clearable;
 
+  /// Resolves a display label directly from the current value, without needing
+  /// the (often lazily-loaded) item list. Lets the collapsed control show a
+  /// human-readable label on first render instead of the raw value/uid.
+  final String? Function(U?)? labelForValue;
+
   const _SelectDialogWidget({
     required this.state,
     required this.label,
     this.hint,
+    this.help,
     required this.enabled,
     required this.listItems,
     required this.valueMember,
@@ -61,6 +75,7 @@ class _SelectDialogWidget<U, V> extends StatefulWidget {
     this.onChanged,
     this.onNavigate,
     this.clearable = false,
+    this.labelForValue,
   });
 
   @override
@@ -72,12 +87,9 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
       NaplesLocalizations.of(context) ??
       (throw Exception("NaplesLocalizations not found in the context"));
 
-  final TextEditingController _controller = TextEditingController();
   List<V>? _cachedResolvedItems;
   bool _isDialogLoadingItems = false;
   bool _isNavigating = false;
-  bool _isHovered = false;
-  U? _lastDisplayedValue;
 
   @override
   void initState() {
@@ -86,58 +98,33 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
     if (itemsOrFuture is List<V>) {
       _cachedResolvedItems = itemsOrFuture;
     }
-    _lastDisplayedValue = widget.state.value;
-    _updateTextController(widget.state.value);
   }
 
   @override
   void didUpdateWidget(covariant _SelectDialogWidget<U, V> oldWidget) {
     super.didUpdateWidget(oldWidget);
-
-    bool listItemsChanged = widget.listItems != oldWidget.listItems;
-    bool valueChanged = widget.state.value != _lastDisplayedValue;
-
-    if (valueChanged) {
-      // Value changed: always update, using cache if available.
-      _updateTextController(widget.state.value);
-      _lastDisplayedValue = widget.state.value;
-    } else if (listItemsChanged && _cachedResolvedItems != null) {
-      // Items changed but value hasn't: update BEFORE invalidating cache.
-      // If cache is already null, skip — the text controller is already correct.
-      _updateTextController(widget.state.value);
-    }
-
-    if (listItemsChanged) {
+    if (widget.listItems != oldWidget.listItems) {
       _cachedResolvedItems = null; // Invalidate cache
     }
   }
 
-  void _updateTextController(U? currentValue) {
-    String newText;
-    if (currentValue == null) {
-      newText = "";
-    } else {
-      // Attempt to find the display text from cached items if available
-      if (_cachedResolvedItems != null && _cachedResolvedItems!.isNotEmpty) {
-        V? valueV;
-        final matchingItems = _cachedResolvedItems!.where(
-          (element) => widget.valueMember(element) == currentValue,
-        );
-        if (matchingItems.isNotEmpty) {
-          valueV = matchingItems.first;
-        }
-
-        // If found in cache, use its display string. Otherwise, fallback to toString().
-        newText = valueV == null ? currentValue.toString() : widget.displayMember(valueV)();
-      } else {
-        // If cache is not available or empty, just use toString().
-        newText = currentValue.toString();
-      }
+  /// The text shown for the current value, resolved from cached items when
+  /// available, falling back to `toString()`.
+  String _displayText() {
+    final currentValue = widget.state.value;
+    if (currentValue == null) return '';
+    // Prefer a label resolved straight from the value (e.g. a reference's
+    // description, or an enum-id → name lookup) so the first render isn't a
+    // raw uid/id while the item list is still loading.
+    final fromValue = widget.labelForValue?.call(currentValue);
+    if (fromValue != null && fromValue.isNotEmpty) return fromValue;
+    if (_cachedResolvedItems != null && _cachedResolvedItems!.isNotEmpty) {
+      final matching = _cachedResolvedItems!.where(
+        (element) => widget.valueMember(element) == currentValue,
+      );
+      if (matching.isNotEmpty) return widget.displayMember(matching.first)();
     }
-
-    if (_controller.text != newText) {
-      _controller.text = newText;
-    }
+    return currentValue.toString();
   }
 
   Future<void> _showSelectionDialog() async {
@@ -199,7 +186,7 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
         final value = widget.valueMember(result.value as V);
         widget.state.didChange(value);
         widget.onChanged?.call(value);
-        _updateTextController(value);
+        setState(() {});
       }
     } else {
       final result = await showSelectDialog<V>(
@@ -216,16 +203,14 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
       final value = widget.valueMember(result);
       widget.state.didChange(value);
       widget.onChanged?.call(value);
-      // Explicitly update the text controller with the new value
-      // to ensure the TextField reflects the selection immediately.
-      _updateTextController(value);
+      setState(() {});
     }
   }
 
   void _clearValue() {
     widget.state.didChange(null);
     widget.onChanged?.call(null);
-    _updateTextController(null);
+    setState(() {});
   }
 
   Future<void> _handleNavigate() async {
@@ -260,65 +245,75 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
 
   @override
   Widget build(BuildContext context) {
+    final t = NaplesFieldTokens.of(context);
+    final roLook = !widget.enabled;
     final hasNavigateAction = widget.onNavigate != null && widget.state.value != null;
-    final showButtons = _isHovered || _isDialogLoadingItems || _isNavigating;
+    final text = _displayText();
+    final empty = text.isEmpty;
 
-    return MouseRegion(
-      onEnter: (_) { if (widget.enabled) setState(() => _isHovered = true); },
-      onExit: (_) { if (widget.enabled) setState(() => _isHovered = false); },
-      child: TextField(
-        controller: _controller,
-        readOnly: true,
-        enabled: widget.enabled,
-        decoration: InputDecoration(
-          labelText: widget.label,
-          hintText: widget.hint,
-          errorText: widget.state.errorText,
-          suffixIcon: _isDialogLoadingItems
-              ? const Padding(
-                  padding: EdgeInsets.all(12.0),
-                  child: SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(strokeWidth: 2.0),
-                  ),
-                )
-              : widget.enabled && showButtons
-              ? Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (hasNavigateAction)
-                      _isNavigating
-                          ? const Padding(
-                              padding: EdgeInsets.all(12.0),
-                              child: SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2.0),
-                              ),
-                            )
-                          : IconButton(
-                              icon: const Icon(Icons.open_in_new),
-                              iconSize: 16,
-                              onPressed: _handleNavigate,
-                              tooltip: _l.openForEditing,
-                            ),
-                    IconButton(
-                      icon: const Icon(Icons.edit_outlined),
-                      onPressed: _showSelectionDialog,
-                      tooltip: _l.select,
+    Widget action(IconData icon, VoidCallback onTap, String tooltip) =>
+        FieldActionButton(icon: icon, onPressed: onTap, tooltip: tooltip);
+
+    const spinner = Padding(
+      padding: EdgeInsets.all(6.0),
+      child: SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2.0)),
+    );
+
+    final trailing = <Widget>[];
+    if (_isDialogLoadingItems) {
+      trailing.add(spinner);
+    } else if (widget.enabled) {
+      if (hasNavigateAction) {
+        trailing.add(_isNavigating
+            ? spinner
+            : action(Icons.open_in_new, _handleNavigate, _l.openForEditing));
+      }
+      trailing.add(action(Icons.search, _showSelectionDialog, _l.select));
+      if (widget.clearable && widget.state.value != null) {
+        trailing.add(action(Icons.close, _clearValue, _l.select));
+      }
+    }
+
+    return FieldScaffold(
+      label: widget.label,
+      readOnly: roLook,
+      help: widget.help,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FieldBox(
+            readOnly: roLook,
+            padding: const EdgeInsets.fromLTRB(12, 6, 6, 6),
+            minHeight: FieldBox.singleLineHeight,
+            center: true,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    empty ? (widget.hint ?? '—') : text,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 14.5,
+                      fontWeight: empty ? FontWeight.w400 : FontWeight.w600,
+                      color: empty ? t.muted : t.text,
                     ),
-                  ],
-                )
-              : null,
-        ),
+                  ),
+                ),
+                ...trailing,
+              ],
+            ),
+          ),
+          if (widget.state.hasError)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                widget.state.errorText ?? '',
+                style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.error),
+              ),
+            ),
+        ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 }

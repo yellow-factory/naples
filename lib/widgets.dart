@@ -1,4 +1,6 @@
 //Import this file to import the widgets
+export 'package:naples/src/widgets/field_box.dart';
+export 'package:naples/src/widgets/field_scaffold.dart';
 export 'package:naples/src/widgets/length.dart';
 export 'package:naples/src/widgets/markdown_widget.dart';
 export 'package:naples/src/widgets/html_viewer_widget.dart';
@@ -8,6 +10,7 @@ export 'package:naples/src/widgets/datetime_field.dart';
 export 'package:naples/src/widgets/datetime_form_field.dart';
 export 'package:naples/src/widgets/radio_list_form_field.dart';
 export 'package:naples/src/widgets/switch_form_field.dart';
+export 'package:naples/src/widgets/switch_box_form_field.dart';
 export 'package:naples/src/widgets/linkyfied_widget.dart';
 export 'package:naples/src/widgets/file_widget.dart';
 export 'package:naples/src/widgets/distribution_widget.dart';

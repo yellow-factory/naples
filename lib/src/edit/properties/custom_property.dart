@@ -2,13 +2,19 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:naples/src/common/common.dart';
+import 'package:naples/src/common/field_tokens.dart';
 import 'package:naples/src/dialogs/accept_cancel_delete_dialog.dart';
 import 'package:naples/src/dialogs/close_dialog.dart';
+import 'package:naples/src/widgets/field_box.dart';
+import 'package:naples/src/widgets/field_scaffold.dart';
 import 'package:navy/navy.dart';
 
 class CustomProperty<T> extends StatefulWidget implements Expandable {
   final String label;
   final String? hint;
+
+  /// Inline help shown below the control when the global help toggle is on.
+  final String? help;
   final FunctionOf0<FutureOr<String>> description;
   final FunctionOf1<T?, Widget> content;
   final FunctionOf0<bool>? onContentValidated;
@@ -29,6 +35,7 @@ class CustomProperty<T> extends StatefulWidget implements Expandable {
     super.key,
     required this.label,
     this.hint,
+    this.help,
     required this.description,
     required this.content,
     this.onContentValidated,
@@ -143,54 +150,59 @@ class _CustomPropertyState<T> extends State<CustomProperty<T>> {
       initialValue: widget.getProperty(),
       onSaved: (t) => _set(t),
       builder: (FormFieldState<T> formFieldState) {
+        final t = NaplesFieldTokens.of(context);
         final isEditable = widget.editable?.call() ?? true;
+        final roLook = !isEditable;
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _descriptionController,
-                    enabled: isEditable,
-                    readOnly: true,
-                    autofocus: false,
-                    decoration: InputDecoration(
-                      labelText: widget.label,
-                      hintText: widget.hint,
-                      errorText: formFieldState.errorText,
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      disabledBorder: InputBorder.none,
-                      errorBorder: InputBorder.none,
-                      focusedErrorBorder: InputBorder.none,
-                      // No suffixIcon here anymore
+        return FieldScaffold(
+          label: widget.label,
+          readOnly: roLook,
+          help: widget.help,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              FieldBox(
+                readOnly: roLook,
+                padding: const EdgeInsets.fromLTRB(12, 6, 6, 6),
+                minHeight: FieldBox.singleLineHeight,
+                center: true,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ValueListenableBuilder<TextEditingValue>(
+                        valueListenable: _descriptionController,
+                        builder: (context, value, _) {
+                          final empty = value.text.isEmpty;
+                          return Text(
+                            empty ? (widget.hint ?? '—') : value.text,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 14.5,
+                              fontWeight: empty ? FontWeight.w400 : FontWeight.w600,
+                              color: empty ? t.muted : t.text,
+                            ),
+                          );
+                        },
+                      ),
                     ),
-                  ),
+                    FieldActionButton(
+                      icon: isEditable ? Icons.edit_outlined : Icons.remove_red_eye_outlined,
+                      onPressed: () => _showSelectDialog(formFieldState.value),
+                    ),
+                  ],
                 ),
-                // Separate IconButton that's always enabled
+              ),
+              if (formFieldState.hasError)
                 Padding(
-                  padding: const EdgeInsets.only(left: 4),
-                  child: IconButton(
-                    onPressed: () => _showSelectDialog(formFieldState.value),
-                    icon: Icon(
-                      isEditable ? Icons.edit_outlined : Icons.remove_red_eye_outlined,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                  padding: const EdgeInsets.only(top: 4),
+                  child: Text(
+                    formFieldState.errorText ?? '',
+                    style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.error),
                   ),
                 ),
-              ],
-            ),
-            Divider(
-              height: 1,
-              thickness: 1,
-              color: isEditable ? null : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.12),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );

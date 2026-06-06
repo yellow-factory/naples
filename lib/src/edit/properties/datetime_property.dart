@@ -29,6 +29,9 @@ class DateTimeProperty extends PropertyWidget<DateTime?>
   final DateTime? firstDate;
   final DateTime? lastDate;
 
+  /// Inline help shown below the control when the global help toggle is on.
+  final String? help;
+
   /// Predicate to filter which days are selectable in the calendar picker.
   /// Mirrors Flutter's `showDatePicker(selectableDayPredicate:)`. Use this to
   /// gray out weekends, holidays, etc. Days the predicate rejects are still
@@ -50,6 +53,7 @@ class DateTimeProperty extends PropertyWidget<DateTime?>
     this.firstDate,
     this.lastDate,
     this.selectableDayPredicate,
+    this.help,
   });
 
   @override
@@ -57,6 +61,7 @@ class DateTimeProperty extends PropertyWidget<DateTime?>
     return DateTimeFormField(
       label: label,
       hint: hint,
+      help: help,
       autofocus: autofocus,
       dateFormat: dateFormat,
       enabled: enabled,

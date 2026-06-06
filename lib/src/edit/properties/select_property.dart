@@ -2,7 +2,10 @@ import 'dart:async'; // Added for FutureOr
 
 import 'package:flutter/material.dart';
 import 'package:naples/src/common/common.dart';
+import 'package:naples/src/common/field_tokens.dart';
 import 'package:naples/src/generated/l10n/naples_localizations.dart';
+import 'package:naples/src/widgets/field_box.dart';
+import 'package:naples/src/widgets/field_scaffold.dart';
 import 'package:naples/src/widgets/radio_list_form_field.dart';
 import 'package:naples/src/widgets/select_dialog_form_field.dart';
 import 'package:navy/navy.dart';
@@ -47,6 +50,14 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
   //Shows a clear button to reset the value to null (dialog mode only)
   final bool clearable;
 
+  /// Inline help shown below the control when the global help toggle is on.
+  final String? help;
+
+  /// Resolves a display label from the current value directly (dialog mode),
+  /// so the collapsed control shows a name instead of a raw id/uid before the
+  /// item list has loaded.
+  final String? Function(U?)? labelForValue;
+
   SelectProperty({
     super.key,
     required this.label,
@@ -64,6 +75,8 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
     this.saveOnValueChanged = false,
     this.onNavigate,
     this.clearable = false,
+    this.help,
+    this.labelForValue,
   });
 
   @override
@@ -140,6 +153,7 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
       key: ValueKey(currentValue),
       label: label,
       hint: hint,
+      help: help,
       enabled: enabled,
       initialValue: currentValue,
       onSaved: setProperty,
@@ -152,13 +166,11 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
       },
       onNavigate: onNavigate,
       clearable: clearable,
+      labelForValue: labelForValue,
     );
   }
 
   Widget _getDropDown(List<V> itemsProvided) {
-    if (itemsProvided.isEmpty) {
-      return const Text("No items to select", overflow: TextOverflow.ellipsis);
-    }
     final items = <DropdownMenuItem<U>>[
       for (var item in itemsProvided)
         DropdownMenuItem<U>(
@@ -166,15 +178,49 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
           child: Text(displayMember(item)(), overflow: TextOverflow.ellipsis),
         ),
     ];
-    return DropdownButtonFormField<U>(
-      items: items,
-      initialValue: getProperty(),
-      onSaved: setProperty,
-      validator: validator,
-      autofocus: autofocus,
-      decoration: InputDecoration(labelText: label, hintText: hint),
-      onChanged: (value) {
-        if (saveOnValueChanged) setProperty?.call(value);
+    return Builder(
+      builder: (context) {
+        final t = NaplesFieldTokens.of(context);
+        final roLook = !enabled;
+        return FieldScaffold(
+          label: label,
+          readOnly: roLook,
+          help: help,
+          child: FieldBox(
+            readOnly: roLook,
+            child: DropdownButtonFormField<U>(
+              items: items,
+              // Avoid the "value not in items" assertion when items are empty.
+              initialValue: itemsProvided.isEmpty ? null : getProperty(),
+              onSaved: setProperty,
+              validator: validator,
+              autofocus: autofocus,
+              isExpanded: true,
+              isDense: true,
+              icon: Icon(Icons.expand_more, size: 18, color: t.muted),
+              style: TextStyle(fontSize: 15, color: t.text),
+              decoration: const InputDecoration(
+                isDense: true,
+                isCollapsed: true,
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                disabledBorder: InputBorder.none,
+                errorBorder: InputBorder.none,
+                focusedErrorBorder: InputBorder.none,
+                contentPadding: EdgeInsets.zero,
+              ),
+              hint: itemsProvided.isEmpty
+                  ? Text('—', style: TextStyle(color: t.muted, fontSize: 15))
+                  : null,
+              onChanged: enabled
+                  ? (value) {
+                      if (saveOnValueChanged) setProperty?.call(value);
+                    }
+                  : null,
+            ),
+          ),
+        );
       },
     );
   }
