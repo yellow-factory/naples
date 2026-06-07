@@ -9,6 +9,11 @@ class FieldScaffold extends StatelessWidget {
   final String label;
   final bool readOnly;
   final String? help;
+
+  /// Validation error for the field, rendered below the box in the error
+  /// colour — in the same slot as [help] — so an error never grows the box or
+  /// shifts neighbouring fields out of alignment.
+  final String? errorText;
   final Widget child;
 
   const FieldScaffold({
@@ -17,12 +22,14 @@ class FieldScaffold extends StatelessWidget {
     required this.child,
     this.readOnly = false,
     this.help,
+    this.errorText,
   });
 
   @override
   Widget build(BuildContext context) {
     final t = NaplesFieldTokens.of(context);
     final showHelp = help != null && help!.trim().isNotEmpty && FieldHelpScope.of(context);
+    final hasError = errorText != null && errorText!.trim().isNotEmpty;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,6 +63,18 @@ class FieldScaffold extends StatelessWidget {
             child: Text(
               help!,
               style: TextStyle(fontSize: 12, height: 1.35, color: t.help),
+            ),
+          ),
+        if (hasError)
+          Padding(
+            padding: const EdgeInsets.only(top: 4),
+            child: Text(
+              errorText!,
+              style: TextStyle(
+                fontSize: 12,
+                height: 1.35,
+                color: Theme.of(context).colorScheme.error,
+              ),
             ),
           ),
       ],

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:naples/src/common/field_tokens.dart';
+import 'package:naples/src/widgets/field_box.dart';
 
 class CheckboxFormField extends FormField<bool> {
   final bool showHintExplicitly;
@@ -110,50 +112,78 @@ class _CheckboxWidgetState extends State<_CheckboxWidget> {
     if (saveOnValueChanged) state.save();
   }
 
-  static Widget _getSubtitle(String? hint, FormFieldState<bool> state) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [if (hint != null) Text(hint), if (state.hasError) _getErrorText(state)],
-    );
-  }
-
-  static Widget _getErrorText(FormFieldState<bool> state) {
-    final errorColor = Theme.of(state.context).colorScheme.error;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5.0),
-      child: Text(state.errorText ?? '', style: TextStyle(color: errorColor, fontSize: 12)),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final t = NaplesFieldTokens.of(context);
+    final showHint =
+        widget.showHintExplicitly && widget.hint != null && widget.hint!.trim().isNotEmpty;
+
     return MouseRegion(
       onEnter: (_) => _showTooltip(),
       onExit: (_) => _hideTooltip(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: [
-              Transform.translate(
-                offset: const Offset(-11, 0),
-                child: Checkbox(
-                  value: widget.state.value,
-                  onChanged: widget.enabled
-                      ? (bool? newValue) =>
-                          _onChanged(widget.enabled, newValue, widget.state, widget.saveOnValueChanged)
-                      : null,
-                  autofocus: widget.autofocus,
-                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
+      // Boxed chrome with the shared single-line height so the checkbox lines
+      // up with adjacent text fields (and the switch variant). See FieldBox.
+      child: FieldBox(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        minHeight: FieldBox.singleLineHeight,
+        center: true,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Constrain to the same 24px footprint as the switch variant so the
+            // FieldBox lands on the shared single-line height: a bare shrinkWrap +
+            // compact checkbox is 32px and would push the box past 42.
+            SizedBox(
+              width: 24,
+              height: 24,
+              child: Checkbox(
+                value: widget.state.value,
+                onChanged: widget.enabled
+                    ? (bool? newValue) =>
+                        _onChanged(widget.enabled, newValue, widget.state, widget.saveOnValueChanged)
+                    : null,
+                autofocus: widget.autofocus,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                visualDensity: VisualDensity.compact,
               ),
-              Flexible(child: Text(widget.label)),
-            ],
-          ),
-          if (widget.showHintExplicitly) _getSubtitle(widget.hint, widget.state),
-          if (!widget.showHintExplicitly && widget.state.hasError) _getErrorText(widget.state),
-        ],
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 1),
+                    child: Text(
+                      widget.label,
+                      style: TextStyle(fontSize: 14.5, fontWeight: FontWeight.w600, color: t.text),
+                    ),
+                  ),
+                  if (showHint)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(
+                        widget.hint!,
+                        style: TextStyle(fontSize: 12.5, height: 1.35, color: t.help),
+                      ),
+                    ),
+                  if (widget.state.hasError)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        widget.state.errorText ?? '',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

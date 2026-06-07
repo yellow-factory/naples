@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:naples/src/common/common.dart';
-import 'package:naples/src/common/field_tokens.dart';
+import 'package:naples/src/widgets/boxed_text_form_field.dart';
 import 'package:naples/src/widgets/field_box.dart';
-import 'package:naples/src/widgets/field_scaffold.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/edit/properties/property.dart';
 import 'package:clipboard/clipboard.dart';
@@ -119,78 +118,30 @@ class StringProperty extends PropertyWidget<String?>
 
   @override
   Widget build(BuildContext context) {
-    final t = NaplesFieldTokens.of(context);
     // "Read-only look" = dashed/transparent box + lock icon. Applies when the
     // field isn't editable (computed/virtual/parent-readonly) or when the
     // caller forced read-only (e.g. an editwidget-backed field).
     final roLook = !enabled || readOnly;
-    final multiline = maxLines > 1;
 
-    final textStyle = TextStyle(
-      fontSize: mono ? 13.5 : 15,
-      color: roLook ? t.muted : t.text,
-      fontFamilyFallback: mono ? const ['JetBrains Mono', 'monospace'] : null,
-      letterSpacing: mono ? -0.1 : null,
-    );
-
-    final field = TextFormField(
-      initialValue: getProperty(),
-      style: textStyle,
-      decoration: borderlessFieldDecoration(
-        // `placeholder` is the handoff empty-state text; fall back to `hint`
-        // so existing callers that pass a hint keep their placeholder.
-        hintText: placeholder ?? hint,
-        hintStyle: TextStyle(color: t.muted, fontSize: mono ? 13.5 : 15),
-        errorStyle: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 12),
-      ),
-      // Keep the field always "enabled" so our token styling (not Material's
-      // disabled greying) governs the look; gate editing via readOnly instead.
-      enabled: true,
-      readOnly: roLook,
+    return BoxedTextFormField(
+      label: label,
+      help: help,
+      // `placeholder` is the handoff empty-state text; fall back to `hint`
+      // so existing callers that pass a hint keep their placeholder.
+      hintText: placeholder ?? hint,
+      readOnlyLook: roLook,
       autofocus: autofocus,
-      validator: validator,
       obscureText: obscureText,
-      inputFormatters: [LengthLimitingTextInputFormatter(maxLength)],
+      mono: mono,
+      unitSuffix: unitSuffix,
       minLines: minLines,
       maxLines: maxLines,
-      textAlignVertical: TextAlignVertical.top,
+      inputFormatters: [LengthLimitingTextInputFormatter(maxLength)],
       onChanged: onChanged,
+      actions: _buildActions(),
+      initialValue: getProperty(),
+      validator: validator,
       onSaved: setProperty,
-    );
-
-    final actions = _buildActions();
-
-    final boxChild = Row(
-      crossAxisAlignment: multiline ? CrossAxisAlignment.start : CrossAxisAlignment.center,
-      children: [
-        Expanded(child: field),
-        if (unitSuffix != null) ...[
-          const SizedBox(width: 8),
-          Text(
-            unitSuffix!,
-            style: TextStyle(color: t.muted, fontWeight: FontWeight.w600, fontSize: 14),
-          ),
-        ],
-        if (actions.isNotEmpty) ...[
-          const SizedBox(width: 4),
-          ...actions,
-        ],
-      ],
-    );
-
-    return FieldScaffold(
-      label: label,
-      readOnly: roLook,
-      help: help,
-      child: FieldBox(
-        readOnly: roLook,
-        minHeight: multiline ? 78 : FieldBox.singleLineHeight,
-        center: !multiline,
-        padding: multiline
-            ? const EdgeInsets.fromLTRB(12, 10, 12, 10)
-            : const EdgeInsets.fromLTRB(12, 6, 6, 6),
-        child: boxChild,
-      ),
     );
   }
 }

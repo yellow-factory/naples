@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:naples/src/widgets/radio_list_form_field.dart';
 import 'package:naples/src/widgets/switch_box_form_field.dart';
 import 'package:naples/src/widgets/checkbox_form_field.dart';
+import 'package:naples/src/widgets/field_scaffold.dart';
 import 'package:naples/src/edit/properties/property.dart';
 import 'package:naples/src/common/common.dart';
 import 'package:naples/src/widgets/toggle_button_form_field.dart';
@@ -50,6 +51,16 @@ class BoolProperty extends PropertyWidget<bool?> with PropertyMixin<bool?> imple
   /// [hint]); only visible when an ancestor `FieldHelpScope` is on.
   final String? help;
 
+  /// The boxed variants ([BoolWidgetType.switchBox]/[BoolWidgetType.checkBox])
+  /// carry their label *inside* the box, so on their own they have no external
+  /// label line. When placed next to labelled fields (which render a label above
+  /// their box), this leaves the boolean's box riding up against the neighbour's
+  /// label. Set this true to reserve an empty external-label slot — matching the
+  /// labelled fields' anatomy — so the box lines up with theirs. Leave false for
+  /// standalone booleans (settings lists, dialogs) where the extra top gap is
+  /// unwanted.
+  final bool reserveLabelSpace;
+
   BoolProperty({
     super.key,
     required this.label,
@@ -66,6 +77,7 @@ class BoolProperty extends PropertyWidget<bool?> with PropertyMixin<bool?> imple
     this.saveOnValueChanged = false,
     this.showHintExplicitly = false,
     this.help,
+    this.reserveLabelSpace = false,
   });
 
   static FunctionOf0<String> defaultDisplayName(BoolValues t) =>
@@ -88,7 +100,9 @@ class BoolProperty extends PropertyWidget<bool?> with PropertyMixin<bool?> imple
       validator: validator,
       controlAffinity: controlAffinity,
       saveOnValueChanged: saveOnValueChanged,
-      showHintExplicitly: showHintExplicitly,
+      // When reserving a label slot the help is rendered below the box by the
+      // wrapping FieldScaffold (like other fields), so don't repeat it inside.
+      showHintExplicitly: reserveLabelSpace ? false : showHintExplicitly,
     );
 
     //TODO: He implementat el saveOnValueChanged a CheckboxFormField, però no a SwitchFormField, ToggleButtonFormField, RadioListFormField
@@ -97,22 +111,21 @@ class BoolProperty extends PropertyWidget<bool?> with PropertyMixin<bool?> imple
     //TODO: He implementat el showHintExplicitly a CheckboxFormField, però no a SwitchFormField, ToggleButtonFormField, RadioListFormField
     //però també cal fer el mateix amb els altres widgets
 
-    switch (widgetType) {
-      case BoolWidgetType.switchBox:
-        return SwitchBoxFormField(
+    final Widget control = switch (widgetType) {
+      BoolWidgetType.switchBox => SwitchBoxFormField(
           enabled: enabled,
           label: label,
-          help: help ?? hint,
+          // When reserving a label slot the help is rendered below the box by the
+          // wrapping FieldScaffold (like other fields), so don't repeat it inside.
+          help: reserveLabelSpace ? null : (help ?? hint),
           initialValue: getProperty() ?? false,
           onSaved: setProperty,
           validator: validator,
           saveOnValueChanged: saveOnValueChanged,
           onImmediateChange: setProperty,
-        );
-      case BoolWidgetType.checkBox:
-        return defaultWidget;
-      case BoolWidgetType.radioButton:
-        return RadioListFormField<bool, BoolValues>(
+        ),
+      BoolWidgetType.checkBox => defaultWidget,
+      BoolWidgetType.radioButton => RadioListFormField<bool, BoolValues>(
           autofocus: autofocus,
           enabled: enabled,
           label: label,
@@ -124,9 +137,8 @@ class BoolProperty extends PropertyWidget<bool?> with PropertyMixin<bool?> imple
           listItems: () => BoolValues.values,
           valueMember: (t) => t.boolValue,
           displayMember: displayName,
-        );
-      case BoolWidgetType.toggleButton:
-        return ToggleButtonFormField<bool, BoolValues>(
+        ),
+      BoolWidgetType.toggleButton => ToggleButtonFormField<bool, BoolValues>(
           autofocus: autofocus,
           enabled: enabled,
           label: label,
@@ -138,7 +150,15 @@ class BoolProperty extends PropertyWidget<bool?> with PropertyMixin<bool?> imple
           listItems: () => BoolValues.values,
           valueMember: (t) => t.boolValue,
           displayMember: displayName,
-        );
+        ),
+    };
+
+    // Reserve an empty external-label line so the boxed control lines up with
+    // labelled fields beside it, and render the help below the box (outside the
+    // grey area) the same way FieldScaffold does for every other field type.
+    if (reserveLabelSpace) {
+      return FieldScaffold(label: '', help: help ?? hint, child: control);
     }
+    return control;
   }
 }

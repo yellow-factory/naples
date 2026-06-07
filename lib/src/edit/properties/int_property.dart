@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:naples/src/common/common.dart';
-import 'package:naples/src/common/field_tokens.dart';
-import 'package:naples/src/widgets/field_box.dart';
-import 'package:naples/src/widgets/field_scaffold.dart';
+import 'package:naples/src/widgets/boxed_text_form_field.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/edit/properties/property.dart';
 
@@ -57,57 +55,25 @@ class IntProperty extends PropertyWidget<int?> with PropertyMixin<int?> implemen
 
   @override
   Widget build(BuildContext context) {
-    final t = NaplesFieldTokens.of(context);
     final roLook = !enabled;
 
-    final field = TextFormField(
-      initialValue: (getProperty() ?? 0).toString(),
-      style: TextStyle(
-        fontSize: mono ? 13.5 : 15,
-        color: roLook ? t.muted : t.text,
-        fontFamilyFallback: mono ? const ['JetBrains Mono', 'monospace'] : null,
-        letterSpacing: mono ? -0.1 : null,
-      ),
-      decoration: borderlessFieldDecoration(
-        hintText: hint,
-        hintStyle: TextStyle(color: t.muted, fontSize: mono ? 13.5 : 15),
-        errorStyle: TextStyle(color: Theme.of(context).colorScheme.error, fontSize: 12),
-      ),
-      enabled: true,
-      readOnly: roLook,
+    return BoxedTextFormField(
+      label: label,
+      help: help,
+      hintText: hint,
+      readOnlyLook: roLook,
       autofocus: autofocus,
-      validator: validator == null ? null : (x) => validator!(_getValue(x)),
+      obscureText: obscureText,
+      mono: mono,
+      unitSuffix: unitSuffix,
       keyboardType: TextInputType.number,
       inputFormatters: [
         FilteringTextInputFormatter.digitsOnly,
         LengthLimitingTextInputFormatter(maxLength),
       ],
-      obscureText: obscureText,
+      initialValue: (getProperty() ?? 0).toString(),
+      validator: validator == null ? null : (x) => validator!(_getValue(x)),
       onSaved: setProperty == null ? null : (x) => setProperty!(_getValue(x)),
-    );
-
-    return FieldScaffold(
-      label: label,
-      readOnly: roLook,
-      help: help,
-      child: FieldBox(
-        readOnly: roLook,
-        minHeight: FieldBox.singleLineHeight,
-        center: true,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        child: Row(
-          children: [
-            Expanded(child: field),
-            if (unitSuffix != null && unitSuffix!.isNotEmpty) ...[
-              const SizedBox(width: 8),
-              Text(
-                unitSuffix!,
-                style: TextStyle(color: t.muted, fontWeight: FontWeight.w600, fontSize: 14),
-              ),
-            ],
-          ],
-        ),
-      ),
     );
   }
 }
