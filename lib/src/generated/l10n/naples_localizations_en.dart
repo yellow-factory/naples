@@ -39,13 +39,15 @@ class NaplesLocalizationsEn extends NaplesLocalizations {
   String get openForEditing => 'Open for editing';
 
   @override
-  String get select => 'Change';
+  String get select => 'Search and select';
 
   @override
   String get filterBy => 'Filter by';
 
   @override
-  String confirmDeleteMessage(String itemName) => 'Are you sure you want to delete the $itemName?';
+  String confirmDeleteMessage(String itemName) {
+    return 'Are you sure you want to delete the $itemName?';
+  }
 
   @override
   String get yes => 'Yes';
@@ -54,5 +56,7 @@ class NaplesLocalizationsEn extends NaplesLocalizations {
   String get no => 'No';
 
   @override
-  String errorLoadingItems(String error) => 'Error loading items: $error';
+  String errorLoadingItems(String error) {
+    return 'Error loading items: $error';
+  }
 }

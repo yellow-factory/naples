@@ -19,7 +19,7 @@
   "close": "Tanca",
   "clearSelection": "Esborra la selecció",
   "openForEditing": "Obre per editar",
-  "select": "Canvia",
+  "select": "Cerca i selecciona",
   "filterBy": "Filtra per",
   "confirmDeleteMessage": "Estàs segur que vols eliminar {itemName}?",
   "@confirmDeleteMessage": {

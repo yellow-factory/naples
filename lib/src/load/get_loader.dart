@@ -58,6 +58,14 @@ class GetLoaderState<T> extends State<GetLoader<T>> {
     await load();
   }
 
+  /// Replaces the loaded item without invoking [GetLoader.get] — for callers
+  /// that already hold a fresh value (e.g. returned by a save RPC) and want
+  /// to avoid a redundant refetch. A later [refresh] still goes through [get].
+  void setItem(T item) {
+    if (!mounted) return;
+    setState(() => _item = item);
+  }
+
   @override
   Widget build(BuildContext context) {
     return NotificationListener<RefreshNotification>(

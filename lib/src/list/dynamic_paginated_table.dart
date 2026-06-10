@@ -51,11 +51,13 @@ class DynamicPaginatedTableState<T> extends State<DynamicPaginatedTable<T>> {
   late final DynamicPaginatedTableSource<T> _tableSource;
   bool _loading = false;
   int _loadUntil = 0;
+  int _lastItemsLength = 0;
 
   @override
   void initState() {
     super.initState();
     _loadUntil = widget.items.length;
+    _lastItemsLength = widget.items.length;
     _tableSource = DynamicPaginatedTableSource<T>(
       items: widget.items,
       columns: widget.dataColumns,
@@ -71,10 +73,13 @@ class DynamicPaginatedTableState<T> extends State<DynamicPaginatedTable<T>> {
     // Check if the number of columns has changed
     bool columnsChanged = widget.dataColumns.length != oldWidget.dataColumns.length;
 
-    // Update the data source when items or totalCount change
+    // Update the data source when items or totalCount change. Callers often
+    // append pages to the same list instance, so identity alone is not enough.
     if (widget.items != oldWidget.items ||
+        widget.items.length != _lastItemsLength ||
         widget.totalCount != oldWidget.totalCount ||
         columnsChanged) {
+      _lastItemsLength = widget.items.length;
       _tableSource.updateData(widget.items, widget.totalCount, widget.dataColumns, notify: true);
     }
   }
@@ -166,6 +171,7 @@ class DynamicPaginatedTableState<T> extends State<DynamicPaginatedTable<T>> {
       // If we don't have enough items for the next page, load more
       while (_loadUntil > widget.items.length) {
         await widget.onNeedLoadData!();
+        _lastItemsLength = widget.items.length;
         _tableSource.updateData(widget.items, widget.totalCount, widget.dataColumns, notify: true);
       }
     } catch (e) {

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:naples/src/widgets/onhover.dart';
 import 'package:navy/navy.dart';
 
-//TODO: S'hauria de poder mantenir un element seleccionat i per fer-ho cal convertir-lo a Stateful
+//TODO: S'hauria de poder mantenir un element seleccionat
 
 //T tipus de dades de la llista
-class DynamicList<T> extends StatelessWidget {
+class DynamicList<T> extends StatefulWidget {
   final List<T> items;
   final FunctionOf1<T, String> itemTitle;
   final FunctionOf1<T, String>? itemSubtitle;
@@ -16,9 +16,8 @@ class DynamicList<T> extends StatelessWidget {
   final FunctionOf1<T, Future<void>>? select;
   final bool separated;
   final bool dense;
-  final ScrollController _scrollController = ScrollController();
 
-  DynamicList({
+  const DynamicList({
     required this.items,
     required this.itemTitle,
     this.itemSubtitle,
@@ -33,42 +32,54 @@ class DynamicList<T> extends StatelessWidget {
   });
 
   @override
+  State<DynamicList<T>> createState() => _DynamicListState<T>();
+}
+
+class _DynamicListState<T> extends State<DynamicList<T>> {
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scrollbar(
       controller: _scrollController,
       child: ListView.builder(
-        //itemExtent: _tileHeight(context),
         controller: _scrollController,
-        itemCount: items.length,
+        itemCount: widget.items.length,
         itemBuilder: (BuildContext ctx, int index) {
-          if (index >= items.length) return const SizedBox();
-          final model = items[index];
+          if (index >= widget.items.length) return const SizedBox();
+          final model = widget.items[index];
           return Column(
             children: [
               OnHoverWidget(
                 builder: (hover) {
                   return ListTile(
-                    dense: dense,
-                    tileColor: itemTileColor?.call(model),
-                    title: Text(itemTitle(model), overflow: TextOverflow.ellipsis),
-                    subtitle: itemSubtitle != null
-                        ? Text(itemSubtitle!(model), overflow: TextOverflow.ellipsis)
+                    dense: widget.dense,
+                    tileColor: widget.itemTileColor?.call(model),
+                    title: Text(widget.itemTitle(model), overflow: TextOverflow.ellipsis),
+                    subtitle: widget.itemSubtitle != null
+                        ? Text(widget.itemSubtitle!(model), overflow: TextOverflow.ellipsis)
                         : null,
-                    leading: itemLeading != null ? itemLeading!(model) : null,
-                    trailing: itemTrailing != null
-                        ? onlyShowItemTrailingOnHover == false ||
-                                  onlyShowItemTrailingOnHover && hover
-                              ? itemTrailing!(model)
+                    leading: widget.itemLeading != null ? widget.itemLeading!(model) : null,
+                    trailing: widget.itemTrailing != null
+                        ? widget.onlyShowItemTrailingOnHover == false ||
+                                  widget.onlyShowItemTrailingOnHover && hover
+                              ? widget.itemTrailing!(model)
                               : null
                         : null,
                     onTap: () {
-                      if (select == null) return;
-                      select!(model);
+                      if (widget.select == null) return;
+                      widget.select!(model);
                     },
                   );
                 },
               ),
-              if (separated) Divider(height: _defaultDividerHeight(context)),
+              if (widget.separated) Divider(height: _defaultDividerHeight(context)),
             ],
           );
         },
@@ -76,31 +87,8 @@ class DynamicList<T> extends StatelessWidget {
     );
   }
 
-  // double _tileHeight(BuildContext context) {
-  //   double result = _defaultTileHeight(context);
-  //   if (separated) result += _defaultDividerHeight(context);
-  //   return result;
-  // }
-
   double _defaultDividerHeight(BuildContext context) {
     final DividerThemeData dividerTheme = DividerTheme.of(context);
     return dividerTheme.space ?? 1.0;
   }
-
-  // double _defaultTileHeight(BuildContext context) {
-  //   final ThemeData theme = Theme.of(context);
-  //   const bool isThreeLine = false;
-  //   //final bool isDense = false;
-  //   final bool hasSubtitle = itemSubtitle != null;
-  //   final bool isTwoLine = !isThreeLine && hasSubtitle;
-  //   final bool isOneLine = !isThreeLine && !hasSubtitle;
-
-  //   final Offset baseDensity = theme.visualDensity.baseSizeAdjustment;
-  //   if (isOneLine) return 56.0 + baseDensity.dy;
-  //   //return (isDense ? 48.0 : 56.0) + baseDensity.dy;
-  //   if (isTwoLine) return 72.0 + baseDensity.dy;
-  //   //if (isTwoLine) return (isDense ? 64.0 : 72.0) + baseDensity.dy;
-  //   //return (isDense ? 76.0 : 88.0) + baseDensity.dy;
-  //   return 88.0 + baseDensity.dy;
-  // }
 }

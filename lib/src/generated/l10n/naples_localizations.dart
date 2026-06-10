@@ -163,7 +163,7 @@ abstract class NaplesLocalizations {
   /// No description provided for @select.
   ///
   /// In en, this message translates to:
-  /// **'Select'**
+  /// **'Search and select'**
   String get select;
 
   /// No description provided for @filterBy.

@@ -19,7 +19,7 @@
   "close": "Cerrar",
   "clearSelection": "Borrar selección",
   "openForEditing": "Abrir para editar",
-  "select": "Cambiar",
+  "select": "Buscar y seleccionar",
   "filterBy": "Filtra por",
   "confirmDeleteMessage": "¿Estás seguro de que quieres eliminar {itemName}?",
   "@confirmDeleteMessage": {

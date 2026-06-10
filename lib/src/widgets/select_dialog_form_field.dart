@@ -270,7 +270,7 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
       }
       trailing.add(action(Icons.search, _showSelectionDialog, _l.select));
       if (widget.clearable && widget.state.value != null) {
-        trailing.add(action(Icons.close, _clearValue, _l.select));
+        trailing.add(action(Icons.close, _clearValue, _l.clearSelection));
       }
     }
 
