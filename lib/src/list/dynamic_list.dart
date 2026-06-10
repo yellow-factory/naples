@@ -11,6 +11,7 @@ class DynamicList<T> extends StatelessWidget {
   final FunctionOf1<T, String>? itemSubtitle;
   final FunctionOf1<T, Widget>? itemLeading;
   final FunctionOf1<T, Widget>? itemTrailing;
+  final FunctionOf1<T, Color?>? itemTileColor;
   final bool onlyShowItemTrailingOnHover;
   final FunctionOf1<T, Future<void>>? select;
   final bool separated;
@@ -23,6 +24,7 @@ class DynamicList<T> extends StatelessWidget {
     this.itemSubtitle,
     this.itemLeading,
     this.itemTrailing,
+    this.itemTileColor,
     this.onlyShowItemTrailingOnHover = false,
     this.select,
     this.separated = false,
@@ -47,6 +49,7 @@ class DynamicList<T> extends StatelessWidget {
                 builder: (hover) {
                   return ListTile(
                     dense: dense,
+                    tileColor: itemTileColor?.call(model),
                     title: Text(itemTitle(model), overflow: TextOverflow.ellipsis),
                     subtitle: itemSubtitle != null
                         ? Text(itemSubtitle!(model), overflow: TextOverflow.ellipsis)
