@@ -72,6 +72,10 @@ class StringProperty extends PropertyWidget<String?>
   /// Optional tooltip shown on the translate icon.
   final String? translateTooltip;
 
+  /// Forwarded to the underlying [FormField] so callers can opt into live
+  /// validation (e.g. per-keystroke) instead of validate-on-save.
+  final AutovalidateMode? autovalidateMode;
+
   StringProperty({
     super.key,
     required this.label,
@@ -97,6 +101,7 @@ class StringProperty extends PropertyWidget<String?>
     this.onTranslatePressed,
     this.translateEnabled = true,
     this.translateTooltip,
+    this.autovalidateMode,
   });
 
   List<Widget> _buildActions() {
@@ -142,6 +147,7 @@ class StringProperty extends PropertyWidget<String?>
       initialValue: getProperty(),
       validator: validator,
       onSaved: setProperty,
+      autovalidateMode: autovalidateMode,
     );
   }
 }

@@ -289,10 +289,11 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
 
   Widget? _getIconWidget(TabItem tab) {
     if (tab.icon == null) return null;
-    var icon = Icon(tab.icon, color: Theme.of(context).colorScheme.secondary);
-    // If length is not null, show a badge with the count
+    var icon = Icon(tab.icon, size: 18, color: Theme.of(context).colorScheme.secondary);
+    // If length is not null, show a badge with the count (extra right padding
+    // leaves room for the badge to overhang the icon)
     return Padding(
-      padding: const EdgeInsets.only(left: 5, right: 20),
+      padding: EdgeInsets.only(left: 4, right: tab.length == null ? 8 : 18),
       child: tab.length == null
           ? icon
           : Badge.count(
@@ -467,25 +468,28 @@ class _TabContentState extends State<_TabContent> {
               ? Tooltip(message: widget.tab.tooltip!, child: widget.getTitleWidget(widget.tab))
               : widget.getTitleWidget(widget.tab),
           if (showCloseButton)
-            SizedBox(
-              width: 24,
-              height: 24,
-              child: IconButton(
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-                icon: const Icon(Icons.close, size: 16),
-                style: IconButton.styleFrom(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                  minimumSize: const Size(24, 24),
-                  maximumSize: const Size(24, 24),
+            Padding(
+              padding: const EdgeInsets.only(left: 4),
+              child: SizedBox(
+                width: 18,
+                height: 18,
+                child: IconButton(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                  icon: const Icon(Icons.close, size: 13),
+                  style: IconButton.styleFrom(
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+                    minimumSize: const Size(18, 18),
+                    maximumSize: const Size(18, 18),
+                  ),
+                  onPressed: () {
+                    widget.tabCollection.remove(widget.tab);
+                  },
                 ),
-                onPressed: () {
-                  widget.tabCollection.remove(widget.tab);
-                },
               ),
             )
           else
-            const SizedBox(width: 24), // Reserve space for the close button
+            const SizedBox(width: 22), // Reserve space for the close button
         ],
       ),
     );

@@ -9,6 +9,15 @@ import 'package:naples/src/widgets/field_box.dart';
 import 'package:naples/src/widgets/field_scaffold.dart';
 import 'package:navy/navy.dart';
 
+/// Replacement for [CustomProperty]'s built-in edit dialog. Receives the
+/// current value and returns the outcome: `null` when the user cancelled,
+/// `(cleared: true, value: null)` when they removed the value (routed to
+/// [CustomProperty.delete]) and `(cleared: false, value: v)` on a new choice.
+typedef CustomPropertyDialogOpener<T> = Future<({bool cleared, T? value})?> Function(
+  BuildContext context,
+  T? currentValue,
+);
+
 class CustomProperty<T> extends StatefulWidget implements Expandable {
   final String label;
   final String? hint;
@@ -17,6 +26,11 @@ class CustomProperty<T> extends StatefulWidget implements Expandable {
   final String? help;
   final FunctionOf0<FutureOr<String>> description;
   final FunctionOf1<T?, Widget> content;
+
+  /// When set, tapping edit calls this instead of opening the built-in
+  /// accept/cancel/delete dialog around [content]. The read-only (eye) dialog
+  /// still uses [content].
+  final CustomPropertyDialogOpener<T>? dialogOpener;
   final FunctionOf0<bool>? onContentValidated;
   //The content notifies the CustomProperty that the content has changed and establish the new value
   final FunctionOf0<T?>? onContentChanged;
@@ -38,6 +52,7 @@ class CustomProperty<T> extends StatefulWidget implements Expandable {
     this.help,
     required this.description,
     required this.content,
+    this.dialogOpener,
     this.onContentValidated,
     this.onContentChanged,
     this.contentWidth = 300,
@@ -101,6 +116,24 @@ class _CustomPropertyState<T> extends State<CustomProperty<T>> {
           );
         },
       );
+      return;
+    }
+
+    final opener = widget.dialogOpener;
+    if (opener != null) {
+      final result = await opener(context, currentValue);
+      if (result == null) {
+        // Cancelled — restore whatever the form field last held.
+        _formFieldKey.currentState?.reset();
+        return;
+      }
+      if (result.cleared) {
+        if (widget.delete != null) await _delete();
+        return;
+      }
+      _formFieldKey.currentState?.didChange(result.value);
+      widget.onChanged?.call(result.value);
+      if (mounted) _descriptionController.text = await widget.description();
       return;
     }
 

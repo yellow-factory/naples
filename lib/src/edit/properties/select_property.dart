@@ -11,6 +11,9 @@ import 'package:naples/src/widgets/select_dialog_form_field.dart';
 import 'package:navy/navy.dart';
 import 'package:naples/src/edit/properties/property.dart';
 
+export 'package:naples/src/widgets/select_dialog_form_field.dart'
+    show SelectDialogOpener, SelectDialogResult;
+
 //TODO: Crec que hi hauria d'haver un Select i un MultipleSelect per a casos de selecció múltiple
 //TODO: En el cas de MultipleSelect les opcions han de ser CheckBox, Chips o algun tipus de Dropdown...
 //TODO: Cal comprovar que tots aquests casos Select funcionen correctament per class i per enum amb multiidioma inclòs...
@@ -58,6 +61,10 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
   /// item list has loaded.
   final String? Function(U?)? labelForValue;
 
+  /// Replaces the built-in selection dialog (dialog mode only), so callers can
+  /// provide an application-styled picker.
+  final SelectDialogOpener<V>? dialogOpener;
+
   SelectProperty({
     super.key,
     required this.label,
@@ -77,6 +84,7 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
     this.clearable = false,
     this.help,
     this.labelForValue,
+    this.dialogOpener,
   });
 
   @override
@@ -167,6 +175,7 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
       onNavigate: onNavigate,
       clearable: clearable,
       labelForValue: labelForValue,
+      dialogOpener: dialogOpener,
     );
   }
 

@@ -8,6 +8,16 @@ import 'package:naples/src/widgets/field_box.dart';
 import 'package:naples/src/widgets/field_scaffold.dart';
 import 'package:navy/navy.dart';
 
+/// Result of a custom selection dialog: [cleared] when the user explicitly
+/// removed the current value, otherwise [value] (null = dismissed).
+typedef SelectDialogResult<V> = ({bool cleared, V? value});
+
+/// Opens a custom selection dialog over [items] with [selectedItem]
+/// highlighted, replacing the built-in [SelectorDialog]. Lets applications
+/// style the picker without re-implementing the form-field plumbing.
+typedef SelectDialogOpener<V> =
+    Future<SelectDialogResult<V>> Function(BuildContext context, List<V> items, V? selectedItem);
+
 class SelectDialogFormField<U, V> extends FormField<U> {
   SelectDialogFormField({
     super.key,
@@ -25,6 +35,7 @@ class SelectDialogFormField<U, V> extends FormField<U> {
     FutureOr<void> Function(V)? onNavigate,
     bool clearable = false,
     String? Function(U?)? labelForValue,
+    SelectDialogOpener<V>? dialogOpener,
   }) : super(
          builder: (FormFieldState<U> state) {
            return _SelectDialogWidget<U, V>(
@@ -40,6 +51,7 @@ class SelectDialogFormField<U, V> extends FormField<U> {
              onNavigate: onNavigate,
              clearable: clearable,
              labelForValue: labelForValue,
+             dialogOpener: dialogOpener,
            );
          },
        );
@@ -63,6 +75,9 @@ class _SelectDialogWidget<U, V> extends StatefulWidget {
   /// human-readable label on first render instead of the raw value/uid.
   final String? Function(U?)? labelForValue;
 
+  /// When set, replaces the built-in selection dialog.
+  final SelectDialogOpener<V>? dialogOpener;
+
   const _SelectDialogWidget({
     required this.state,
     required this.label,
@@ -76,6 +91,7 @@ class _SelectDialogWidget<U, V> extends StatefulWidget {
     this.onNavigate,
     this.clearable = false,
     this.labelForValue,
+    this.dialogOpener,
   });
 
   @override
@@ -166,6 +182,23 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
       if (matchingItems.isNotEmpty) {
         currentSelectedV = matchingItems.first;
       }
+    }
+
+    final opener = widget.dialogOpener;
+    if (opener != null) {
+      final result = await opener(context, _cachedResolvedItems!, currentSelectedV);
+
+      if (!mounted) return;
+
+      if (result.cleared && widget.clearable) {
+        _clearValue();
+      } else if (result.value != null) {
+        final value = widget.valueMember(result.value as V);
+        widget.state.didChange(value);
+        widget.onChanged?.call(value);
+        setState(() {});
+      }
+      return;
     }
 
     if (widget.clearable) {
