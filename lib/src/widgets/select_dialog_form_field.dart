@@ -33,9 +33,11 @@ class SelectDialogFormField<U, V> extends FormField<U> {
     required FunctionOf1<V, FunctionOf0<String>> displayMember,
     Function(U?)? onChanged,
     FutureOr<void> Function(V)? onNavigate,
+    FutureOr<void> Function(U)? onNavigateValue,
     bool clearable = false,
     String? Function(U?)? labelForValue,
     SelectDialogOpener<V>? dialogOpener,
+    bool openerLoadsItems = false,
   }) : super(
          builder: (FormFieldState<U> state) {
            return _SelectDialogWidget<U, V>(
@@ -49,9 +51,11 @@ class SelectDialogFormField<U, V> extends FormField<U> {
              displayMember: displayMember,
              onChanged: onChanged,
              onNavigate: onNavigate,
+             onNavigateValue: onNavigateValue,
              clearable: clearable,
              labelForValue: labelForValue,
              dialogOpener: dialogOpener,
+             openerLoadsItems: openerLoadsItems,
            );
          },
        );
@@ -68,6 +72,11 @@ class _SelectDialogWidget<U, V> extends StatefulWidget {
   final FunctionOf1<V, FunctionOf0<String>> displayMember;
   final Function(U?)? onChanged;
   final FutureOr<void> Function(V)? onNavigate;
+
+  /// Like [onNavigate] but receives the current VALUE instead of the matching
+  /// item, so navigation doesn't require resolving [listItems] at all. Takes
+  /// precedence over [onNavigate] when both are set.
+  final FutureOr<void> Function(U)? onNavigateValue;
   final bool clearable;
 
   /// Resolves a display label directly from the current value, without needing
@@ -77,6 +86,11 @@ class _SelectDialogWidget<U, V> extends StatefulWidget {
 
   /// When set, replaces the built-in selection dialog.
   final SelectDialogOpener<V>? dialogOpener;
+
+  /// When true (requires [dialogOpener]), the opener is invoked immediately
+  /// with an empty item list instead of eagerly resolving [listItems] first —
+  /// for openers that load their own data (e.g. server-paged pickers).
+  final bool openerLoadsItems;
 
   const _SelectDialogWidget({
     required this.state,
@@ -89,9 +103,11 @@ class _SelectDialogWidget<U, V> extends StatefulWidget {
     required this.displayMember,
     this.onChanged,
     this.onNavigate,
+    this.onNavigateValue,
     this.clearable = false,
     this.labelForValue,
     this.dialogOpener,
+    this.openerLoadsItems = false,
   });
 
   @override
@@ -146,6 +162,15 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
   Future<void> _showSelectionDialog() async {
     if (_isDialogLoadingItems) return;
 
+    // Self-loading openers (server-paged pickers) get called straight away —
+    // resolving listItems here would defeat their whole purpose.
+    if (widget.openerLoadsItems && widget.dialogOpener != null) {
+      final result = await widget.dialogOpener!(context, const [], null);
+      if (!mounted) return;
+      _applyDialogResult(result);
+      return;
+    }
+
     if (_cachedResolvedItems == null) {
       setState(() {
         _isDialogLoadingItems = true;
@@ -190,14 +215,7 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
 
       if (!mounted) return;
 
-      if (result.cleared && widget.clearable) {
-        _clearValue();
-      } else if (result.value != null) {
-        final value = widget.valueMember(result.value as V);
-        widget.state.didChange(value);
-        widget.onChanged?.call(value);
-        setState(() {});
-      }
+      _applyDialogResult(result);
       return;
     }
 
@@ -240,6 +258,18 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
     }
   }
 
+  /// Applies a [SelectDialogResult] coming back from a custom opener.
+  void _applyDialogResult(SelectDialogResult<V> result) {
+    if (result.cleared && widget.clearable) {
+      _clearValue();
+    } else if (result.value != null) {
+      final value = widget.valueMember(result.value as V);
+      widget.state.didChange(value);
+      widget.onChanged?.call(value);
+      setState(() {});
+    }
+  }
+
   void _clearValue() {
     widget.state.didChange(null);
     widget.onChanged?.call(null);
@@ -247,8 +277,19 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
   }
 
   Future<void> _handleNavigate() async {
-    if (widget.onNavigate == null || widget.state.value == null) return;
+    if (widget.state.value == null) return;
+    if (widget.onNavigate == null && widget.onNavigateValue == null) return;
     if (_isNavigating) return;
+
+    if (widget.onNavigateValue != null) {
+      setState(() => _isNavigating = true);
+      try {
+        await widget.onNavigateValue!(widget.state.value as U);
+      } finally {
+        if (mounted) setState(() => _isNavigating = false);
+      }
+      return;
+    }
 
     setState(() => _isNavigating = true);
     try {
@@ -280,7 +321,9 @@ class _SelectDialogWidgetState<U, V> extends State<_SelectDialogWidget<U, V>> {
   Widget build(BuildContext context) {
     final t = NaplesFieldTokens.of(context);
     final roLook = !widget.enabled;
-    final hasNavigateAction = widget.onNavigate != null && widget.state.value != null;
+    final hasNavigateAction =
+        (widget.onNavigate != null || widget.onNavigateValue != null) &&
+        widget.state.value != null;
     final text = _displayText();
     final empty = text.isEmpty;
 

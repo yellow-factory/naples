@@ -50,6 +50,11 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
   final bool saveOnValueChanged;
   //Optional action to navigate to the selected item (e.g., open in editor)
   final FutureOr<void> Function(V)? onNavigate;
+
+  /// Like [onNavigate] but receives the current VALUE instead of the matching
+  /// item, so navigation doesn't force resolving [listItems] (dialog mode
+  /// only). Takes precedence over [onNavigate] when both are set.
+  final FutureOr<void> Function(U)? onNavigateValue;
   //Shows a clear button to reset the value to null (dialog mode only)
   final bool clearable;
 
@@ -64,6 +69,12 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
   /// Replaces the built-in selection dialog (dialog mode only), so callers can
   /// provide an application-styled picker.
   final SelectDialogOpener<V>? dialogOpener;
+
+  /// When true (requires [dialogOpener], dialog mode only), the opener is
+  /// invoked immediately with an empty item list instead of eagerly resolving
+  /// [listItems] first — for openers that load their own data (e.g.
+  /// server-paged pickers).
+  final bool openerLoadsItems;
 
   SelectProperty({
     super.key,
@@ -81,10 +92,12 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
     this.widgetType = SelectWidgetType.dropDown,
     this.saveOnValueChanged = false,
     this.onNavigate,
+    this.onNavigateValue,
     this.clearable = false,
     this.help,
     this.labelForValue,
     this.dialogOpener,
+    this.openerLoadsItems = false,
   });
 
   @override
@@ -173,9 +186,11 @@ class SelectProperty<U, V> extends PropertyWidget<U?> with PropertyMixin<U?> imp
         if (saveOnValueChanged) setProperty?.call(value);
       },
       onNavigate: onNavigate,
+      onNavigateValue: onNavigateValue,
       clearable: clearable,
       labelForValue: labelForValue,
       dialogOpener: dialogOpener,
+      openerLoadsItems: openerLoadsItems,
     );
   }
 
