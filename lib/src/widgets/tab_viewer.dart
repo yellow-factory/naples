@@ -24,6 +24,12 @@ class TabItem extends ChangeNotifier {
   /// Callback invoked before closing the tab. Return false to prevent closing.
   OnBeforeCloseCallback? onBeforeClose;
 
+  /// What this tab shows, for de-duplication: two tabs with equal identities
+  /// show the same thing (the same record, the same file). [TabCollection.add]
+  /// focuses the tab already open for an identity instead of opening a second
+  /// one. Null (the default) means the tab is always added.
+  final Object? identity;
+
   TabItem({
     required this.body,
     String? title,
@@ -36,6 +42,7 @@ class TabItem extends ChangeNotifier {
     this.closeable = true,
     this.tabCollection,
     this.onBeforeClose,
+    this.identity,
   }) : _title = title,
        _titleBadge = titleBadge,
        _titleBadgeBackgroundColor = titleBadgeBackgroundColor,
@@ -124,11 +131,36 @@ class TabCollection extends ChangeNotifier {
     notifyListeners();
   }
 
-  void add(TabItem tab) {
+  /// Adds [tab] and makes it current — unless [TabItem.identity] is set and a
+  /// tab with an equal identity is already open, in which case that tab is
+  /// focused instead and [tab] is discarded (any unsaved work in the open tab
+  /// is kept). Returns the tab that ended up current.
+  TabItem add(TabItem tab) {
+    final existing = tab.identity == null ? null : findByIdentity(tab.identity!);
+    if (existing != null) {
+      select(existing);
+      return existing;
+    }
     var newIndex = _items.length;
     _items.add(tab);
     tab.tabCollection = this;
     notifyIndexChange(newIndex);
+    return tab;
+  }
+
+  /// The open tab whose [TabItem.identity] equals [identity], if any.
+  TabItem? findByIdentity(Object identity) {
+    for (final item in _items) {
+      if (item.identity != null && item.identity == identity) return item;
+    }
+    return null;
+  }
+
+  /// Makes [tab] the current tab. Ignored when it is not in this collection.
+  void select(TabItem tab) {
+    final index = _items.indexOf(tab);
+    if (index == -1) return;
+    notifyIndexChange(index);
   }
 
   Future<void> remove(TabItem tab) async {
