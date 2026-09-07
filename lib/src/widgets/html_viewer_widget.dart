@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'html_viewer_controller.dart';
+
 import 'html_viewer_stub.dart'
     if (dart.library.html) 'html_viewer_web.dart'
     if (dart.library.io) 'html_viewer_native.dart' as platform;
@@ -32,12 +34,17 @@ class HtmlViewerWidget extends StatelessWidget {
   /// listen to `postMessage` events from the embedded page instead.
   final void Function(String url)? onUrlChanged;
 
+  /// Optional handle to run scripts in the page from Flutter — see
+  /// [HtmlViewerController].
+  final HtmlViewerController? controller;
+
   const HtmlViewerWidget({
     this.url,
     this.html = '',
     this.baseUrl,
     this.headers,
     this.onUrlChanged,
+    this.controller,
     super.key,
   });
 
@@ -49,6 +56,7 @@ class HtmlViewerWidget extends StatelessWidget {
       url: url,
       headers: headers,
       onUrlChanged: onUrlChanged,
+      controller: controller,
     );
   }
 }

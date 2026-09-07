@@ -5,6 +5,7 @@ export 'package:naples/src/widgets/field_scaffold.dart';
 export 'package:naples/src/widgets/length.dart';
 export 'package:naples/src/widgets/markdown_widget.dart';
 export 'package:naples/src/widgets/html_viewer_widget.dart';
+export 'package:naples/src/widgets/html_viewer_controller.dart';
 export 'package:naples/src/widgets/mustache_widget.dart';
 export 'package:naples/src/widgets/checkbox_form_field.dart';
 export 'package:naples/src/widgets/datetime_field.dart';

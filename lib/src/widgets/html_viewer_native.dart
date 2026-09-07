@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import 'html_viewer_controller.dart';
+
 /// Native implementation using webview_flutter
 Widget buildHtmlViewer({
   required String html,
@@ -8,6 +10,7 @@ Widget buildHtmlViewer({
   String? url,
   Map<String, String>? headers,
   void Function(String url)? onUrlChanged,
+  HtmlViewerController? controller,
 }) {
   return _HtmlViewerNative(
     html: html,
@@ -15,6 +18,7 @@ Widget buildHtmlViewer({
     url: url,
     headers: headers,
     onUrlChanged: onUrlChanged,
+    controller: controller,
   );
 }
 
@@ -24,6 +28,7 @@ class _HtmlViewerNative extends StatefulWidget {
   final String? url;
   final Map<String, String>? headers;
   final void Function(String url)? onUrlChanged;
+  final HtmlViewerController? controller;
 
   const _HtmlViewerNative({
     required this.html,
@@ -31,6 +36,7 @@ class _HtmlViewerNative extends StatefulWidget {
     this.url,
     this.headers,
     this.onUrlChanged,
+    this.controller,
   });
 
   @override
@@ -45,6 +51,18 @@ class _HtmlViewerNativeState extends State<_HtmlViewerNative> {
   void initState() {
     super.initState();
     _initController();
+    widget.controller?.attach(_runScript);
+  }
+
+  Future<String?> _runScript(String javaScript) async {
+    final result = await _controller.runJavaScriptReturningResult(javaScript);
+    return result.toString();
+  }
+
+  @override
+  void dispose() {
+    widget.controller?.detach(_runScript);
+    super.dispose();
   }
 
   void _initController() {
@@ -103,6 +121,10 @@ ${widget.html}
   @override
   void didUpdateWidget(covariant _HtmlViewerNative oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.controller, widget.controller)) {
+      oldWidget.controller?.detach(_runScript);
+      widget.controller?.attach(_runScript);
+    }
     if (oldWidget.url != widget.url ||
         oldWidget.html != widget.html ||
         oldWidget.baseUrl != widget.baseUrl) {
