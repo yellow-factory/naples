@@ -148,6 +148,24 @@ abstract class NaplesLocalizations {
   /// **'Close'**
   String get close;
 
+  /// No description provided for @closeOthers.
+  ///
+  /// In en, this message translates to:
+  /// **'Close others'**
+  String get closeOthers;
+
+  /// No description provided for @closeToTheRight.
+  ///
+  /// In en, this message translates to:
+  /// **'Close to the right'**
+  String get closeToTheRight;
+
+  /// No description provided for @closeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Close all'**
+  String get closeAll;
+
   /// No description provided for @clearSelection.
   ///
   /// In en, this message translates to:

@@ -33,6 +33,15 @@ class NaplesLocalizationsCa extends NaplesLocalizations {
   String get close => 'Tanca';
 
   @override
+  String get closeOthers => 'Tanca les altres';
+
+  @override
+  String get closeToTheRight => 'Tanca les de la dreta';
+
+  @override
+  String get closeAll => 'Tanca-les totes';
+
+  @override
   String get clearSelection => 'Esborra la selecció';
 
   @override

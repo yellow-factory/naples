@@ -17,6 +17,9 @@
   "cancel": "Cancelar",
   "delete": "Eliminar",
   "close": "Cerrar",
+  "closeOthers": "Cerrar las demás",
+  "closeToTheRight": "Cerrar las de la derecha",
+  "closeAll": "Cerrar todas",
   "clearSelection": "Borrar selección",
   "openForEditing": "Abrir para editar",
   "select": "Buscar y seleccionar",
@@ -24,7 +27,9 @@
   "confirmDeleteMessage": "¿Estás seguro de que quieres eliminar {itemName}?",
   "@confirmDeleteMessage": {
     "placeholders": {
-      "itemName": { "type": "String" }
+      "itemName": {
+        "type": "String"
+      }
     }
   },
   "yes": "Sí",
@@ -32,7 +37,9 @@
   "errorLoadingItems": "Error cargando elementos: {error}",
   "@errorLoadingItems": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   }
 }

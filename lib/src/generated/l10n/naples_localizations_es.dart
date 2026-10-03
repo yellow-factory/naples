@@ -33,6 +33,15 @@ class NaplesLocalizationsEs extends NaplesLocalizations {
   String get close => 'Cerrar';
 
   @override
+  String get closeOthers => 'Cerrar las demás';
+
+  @override
+  String get closeToTheRight => 'Cerrar las de la derecha';
+
+  @override
+  String get closeAll => 'Cerrar todas';
+
+  @override
   String get clearSelection => 'Borrar selección';
 
   @override

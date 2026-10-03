@@ -17,6 +17,9 @@
   "cancel": "Cancel·la",
   "delete": "Elimina",
   "close": "Tanca",
+  "closeOthers": "Tanca les altres",
+  "closeToTheRight": "Tanca les de la dreta",
+  "closeAll": "Tanca-les totes",
   "clearSelection": "Esborra la selecció",
   "openForEditing": "Obre per editar",
   "select": "Cerca i selecciona",
@@ -24,7 +27,9 @@
   "confirmDeleteMessage": "Estàs segur que vols eliminar {itemName}?",
   "@confirmDeleteMessage": {
     "placeholders": {
-      "itemName": { "type": "String" }
+      "itemName": {
+        "type": "String"
+      }
     }
   },
   "yes": "Sí",
@@ -32,7 +37,9 @@
   "errorLoadingItems": "Error carregant elements: {error}",
   "@errorLoadingItems": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   }
 }

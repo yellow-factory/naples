@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:naples/src/generated/l10n/naples_localizations.dart';
 import 'package:navy/navy.dart';
 
 /// Callback that returns true if the tab can be closed, false to cancel closing.
@@ -361,6 +362,9 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
     final hasOtherCloseableItems = tabCollection.items
         .where((item) => item != tab)
         .any((item) => item.closeable);
+    // Labels follow the app locale; English when the host app installs no
+    // NaplesLocalizations delegate.
+    final l10n = NaplesLocalizations.of(context);
 
     showMenu(
       context: context,
@@ -375,7 +379,7 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
                 }
               : null,
           child: Text(
-            'Close',
+            l10n?.close ?? 'Close',
             style: TextStyle(fontSize: 13, color: isCloseable ? null : Colors.grey),
           ),
         ),
@@ -393,7 +397,7 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
                 }
               : null,
           child: Text(
-            'Close others',
+            l10n?.closeOthers ?? 'Close others',
             style: TextStyle(fontSize: 13, color: hasOtherCloseableItems ? null : Colors.grey),
           ),
         ),
@@ -412,7 +416,7 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
                 }
               : null,
           child: Text(
-            'Close to the right',
+            l10n?.closeToTheRight ?? 'Close to the right',
             style: TextStyle(fontSize: 13, color: hasCloseableItemsToRight ? null : Colors.grey),
           ),
         ),
@@ -426,7 +430,7 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
             }
           },
           child: Text(
-            'Close all',
+            l10n?.closeAll ?? 'Close all',
             style: TextStyle(
               fontSize: 13,
               color: tabCollection.items.any((item) => item.closeable) ? null : Colors.grey,
