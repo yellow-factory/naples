@@ -336,8 +336,22 @@ class TabViewerState extends State<TabViewer> with TickerProviderStateMixin {
     );
   }
 
+  /// The widest a tab's title gets; a longer one ends in «…» (its full text
+  /// belongs in [TabItem.tooltip]). Keeps one long record name from pushing
+  /// the other tabs out of view.
+  static const double _maxTitleWidth = 240;
+
   Widget _getTitleWidget(TabItem tab) {
-    var title = Text(tab.title ?? '', style: const TextStyle(fontSize: 12));
+    Widget title = ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: _maxTitleWidth),
+      child: Text(
+        tab.title ?? '',
+        style: const TextStyle(fontSize: 12),
+        maxLines: 1,
+        softWrap: false,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
     // If titleBadge is not null, show a badge with the count
     return tab.titleBadge == null
         ? title
