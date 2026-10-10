@@ -51,6 +51,9 @@ class ListLoaderState<T> extends State<ListLoader<T>> {
         final currentItem = m;
         // Using addPostFrameCallback instead of endOfFrame gives each iteration
         // its own callback without waiting for a shared future that completes once.
+        // A post-frame callback does not ask for a frame by itself: on a still
+        // screen the item would wait for an unrelated repaint, so one is requested.
+        WidgetsBinding.instance.ensureVisualUpdate();
         WidgetsBinding.instance.addPostFrameCallback((_) {
           developer.log('load method - processing item received ', name: 'naples.listloader');
           if (!mounted) return;
