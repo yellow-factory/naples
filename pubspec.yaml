@@ -37,6 +37,7 @@ dependencies:
   navy:   
     git: https://github.com/yellow-factory/navy.git
 
+  material_ui: ^1.11.0
 dependency_overrides:
   crimson:
     path: ../crimson

@@ -1,6 +1,6 @@
 import 'dart:async'; // Added for FutureOr
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:naples/src/common/field_tokens.dart';
 import 'package:naples/src/dialogs/selector_dialog.dart';
 import 'package:naples/src/generated/l10n/naples_localizations.dart';

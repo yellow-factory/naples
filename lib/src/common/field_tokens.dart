@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Visual tokens for naples form fields (label/help/box/focus/switch).
 ///

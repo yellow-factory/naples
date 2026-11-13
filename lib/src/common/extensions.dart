@@ -1,5 +1,5 @@
 //Original idea from: https://medium.com/@ravi-pai/want-to-code-like-a-senior-flutter-dev-try-these-5-extensions-6097374a64fe
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 //1.-Track execution time on future
 //Example usage: await someFuture.trackTime('Loading data');
