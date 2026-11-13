@@ -33,24 +33,18 @@ class TabItem extends ChangeNotifier {
 
   TabItem({
     required this.body,
-    String? title,
-    String? titleBadge,
-    Color? titleBadgeBackgroundColor,
-    Color? titleBadgeForegroundColor,
-    String? tooltip,
-    IconData? icon,
-    int? length,
+    this._title,
+    this._titleBadge,
+    this._titleBadgeBackgroundColor,
+    this._titleBadgeForegroundColor,
+    this._tooltip,
+    this._icon,
+    this._length,
     this.closeable = true,
     this.tabCollection,
     this.onBeforeClose,
     this.identity,
-  }) : _title = title,
-       _titleBadge = titleBadge,
-       _titleBadgeBackgroundColor = titleBadgeBackgroundColor,
-       _titleBadgeForegroundColor = titleBadgeForegroundColor,
-       _tooltip = tooltip,
-       _icon = icon,
-       _length = length;
+  });
 
   String? get title => _title;
   set title(String? value) {
@@ -217,8 +211,7 @@ class TabItemScope extends InheritedWidget {
 }
 
 class _TabViewerScope extends InheritedWidget {
-  const _TabViewerScope({required super.child, required TabViewerState tabbingViewerState})
-    : _tabbingViewerState = tabbingViewerState;
+  const _TabViewerScope({required super.child, required this._tabbingViewerState});
 
   final TabViewerState _tabbingViewerState;
 
