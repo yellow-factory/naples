@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:naples/src/common/common.dart';
 
 class DividerProperty extends StatelessWidget implements Expandable {
