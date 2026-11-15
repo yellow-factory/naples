@@ -54,8 +54,9 @@ class _HtmlViewerWebState extends State<_HtmlViewerWeb> {
     widget.controller?.attach(_runScript);
   }
 
-  /// The iframe is same-origin (see the sandbox below), so the page's own
-  /// `eval` is reachable from here; the parent needs no bridge of its own.
+  /// With a controller the iframe is same-origin (see the sandbox below), so
+  /// the page's own `eval` is reachable from here; the parent needs no bridge
+  /// of its own.
   Future<String?> _runScript(String javaScript) async {
     final window = _iframe?.contentWindow;
     if (window == null) return null;
@@ -93,9 +94,15 @@ class _HtmlViewerWebState extends State<_HtmlViewerWeb> {
       return;
     }
 
-    // Inline HTML mode — restrict sandbox to scripts + same-origin only
+    // Inline HTML mode. Scripts run, but in an opaque origin: `allow-scripts`
+    // together with `allow-same-origin` lets the page remove its own sandbox
+    // and read the app's storage (its session tokens) and call its API as the
+    // viewer, and inline HTML is routinely content someone else wrote (an
+    // uploaded file, a template, an AI answer). Only a viewer driven through a
+    // controller needs the page's `eval` from here, so only it — which the
+    // embedder hands its OWN page, never third-party HTML — is same-origin.
     _iframe!.sandbox.add('allow-scripts');
-    _iframe!.sandbox.add('allow-same-origin');
+    if (widget.controller != null) _iframe!.sandbox.add('allow-same-origin');
 
     final content = '''
 <!DOCTYPE html>

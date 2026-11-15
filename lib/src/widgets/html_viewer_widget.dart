@@ -35,7 +35,10 @@ class HtmlViewerWidget extends StatelessWidget {
   final void Function(String url)? onUrlChanged;
 
   /// Optional handle to run scripts in the page from Flutter — see
-  /// [HtmlViewerController].
+  /// [HtmlViewerController]. On web it makes the inline page same-origin with
+  /// the app (that is how the script reaches it), so pass one only for HTML the
+  /// app itself builds: without it the page's scripts run in an opaque origin
+  /// and cannot read the app's storage or call its API.
   final HtmlViewerController? controller;
 
   const HtmlViewerWidget({
